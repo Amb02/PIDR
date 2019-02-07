@@ -1,0 +1,58 @@
+free c: channel.
+
+type host.
+type pkey.
+type skey.
+
+(* Public key encryption *)
+
+fun pk(skey): pkey.
+fun aenc(bitstring, pkey): bitstring.
+reduc forall x: bitstring, y: skey; adec(aenc(x,pk(y)),y) = x.
+
+(* Agents*)
+free A:host.
+free B:host.
+free C:host.
+
+(* Event declaration*)
+ event beginA(host,host,bitstring,bitstring).
+event endB(host,host,bitstring,bitstring).
+
+(* Security properties *)
+
+(* query  z:bitstring,zz:bitstring; event(endB(A,B,z,zz)) ==> event(beginA(A,B,z,zz)).*)
+ 
+free nb: bitstring [private].
+query attacker (nb).
+
+let clientA(A:host, B:host,pkA:pkey,skA:skey,pkB:pkey,n:bitstring) = 
+    out(c,aenc((A,n),pkB));
+    in(c,x:bitstring);
+    let ((=n,=B),nn: bitstring) = adec(x,skA) in
+    out(c, aenc(nn,pkB)).
+
+let clientB(B:host,A:host,pkB:pkey,skB:skey,pkA:pkey,n:bitstring) = 
+    in(c,x:bitstring); 
+    let (=A,na: bitstring) = adec(x,skB) in
+    out(c, aenc(((na,B), n),pkA)); 
+    in(c,y:bitstring);
+    if n = adec(y,skB) then 0.
+
+ 
+process
+	new skA:skey;
+	new skB:skey;
+	new skC:skey;
+	let pkA= pk(skA) in out(c,pkA);
+	let pkB = pk(skB) in out(c,pkB);
+	let pkC = pk(skC) in out(c,skC);
+(!new n:bitstring;clientA(A,B,pkA,skA,pkB,n) |
+ !new n:bitstring;clientA(A,C,pkA,skA,pkC,n) |
+ !new n:bitstring;clientA(B,A,pkB,skB,pkA,n) |
+ !new n:bitstring;clientA(B,C,pkB,skB,pkC,n) |
+ !clientB(B,A,pkB,skB,pkA,nb) |
+ !new n:bitstring;clientB(B,C,pkB,skB,pkC,n) |
+ !new n:bitstring;clientB(A,C,pkA,skA,pkC,n) |
+ !new n:bitstring;clientB(A,B,pkA,skA,pkB,n)
+ )
