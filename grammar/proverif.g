@@ -1,5 +1,54 @@
 grammar proverif;
 
+options {
+    language=Java;
+}
+
+/*term	:	'(' 'seq' term ')'
+	|	ident '(' 'seq' term ')'
+	|	term '=' term
+	|	term '<>' term
+	|	term '&&' term
+	|	term '||' term
+	|	'not' '(' term ')'
+	;*/
+
+//the same as the last one but without left-recursivity
+term	:	('(' 'seq' term ')' | ident '(' 'seq' term ')' | 'not' '(' term ')') ('=' term | '<>' term | '&&' term | '||' term)*
+	;
+
+
+/*pterm	:	ident
+	|	'(' 'seq' pterm ')'
+	|	ident '(' 'seq' pterm ')'
+	|	'choice' '[' pterm ',' pterm ']
+	|	pterm '=' pterm
+	|	pterm '<>' pterm
+	|	pterm '&&' pterm
+	|	pterm '||' pterm
+	|	'not' '(' pterm ')'
+	|	'new' ident ('[' 'seq' ident ']')? : typeid ';' pterm
+	|	ident '<-' 'R' typeid ';' pterm
+	;*/
+
+//the same as the last one but without left-recursivity
+pterm	:	(ident | '(' 'seq' pterm ')' | ident '(' 'seq' pterm ')' | 'choice' '[' pterm ',' pterm ']
+ | 'not' '(' pterm ')' | 'new' ident ('[' 'seq' ident ']')? : typeid ';' pterm | ident '<-' 'R' typeid ';' pterm) ('=' pterm | '<>' pterm | '&&' pterm | '||' pterm)*
+	;
+
+pattern	:
+	;
+
+typedecl
+	:
+	;
+
+typeid	:
+	;
+
+
+
+ident	:	;
 /*
 *This grammar "knows" as lexical items :
 	Identifier
@@ -16,6 +65,7 @@ grammar proverif;
 		"\r"
 
 */
+
 
 ID  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
     ;
@@ -72,3 +122,4 @@ fragment
 UNICODE_ESC
     :   '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
     ;
+
