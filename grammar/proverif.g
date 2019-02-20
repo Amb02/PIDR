@@ -17,8 +17,7 @@ options {
 term	:	('(' 'seq' term ')' | ident '(' 'seq' term ')' | 'not' '(' term ')') ('=' term | '<>' term | '&&' term | '||' term)*
 	;
 
-
-/*pterm	:	ident
+pterm	:	ident
 	|	'(' 'seq' pterm ')'
 	|	ident '(' 'seq' pterm ')'
 	|	'choice' '[' pterm ',' pterm ']
@@ -27,20 +26,40 @@ term	:	('(' 'seq' term ')' | ident '(' 'seq' term ')' | 'not' '(' term ')') ('='
 	|	pterm '&&' pterm
 	|	pterm '||' pterm
 	|	'not' '(' pterm ')'
-	|	'new' ident ('[' 'seq' ident ']')? : typeid ';' pterm
+	|	'new' ident ('[' 'seq' ident ']')? ':' typeid ';' pterm //pb
 	|	ident '<-' 'R' typeid ';' pterm
-	;*/
-
-//the same as the last one but without left-recursivity
-pterm	:	(ident | '(' 'seq' pterm ')' | ident '(' 'seq' pterm ')' | 'choice' '[' pterm ',' pterm ']
- | 'not' '(' pterm ')' | 'new' ident ('[' 'seq' ident ']')? : typeid ';' pterm | ident '<-' 'R' typeid ';' pterm) ('=' pterm | '<>' pterm | '&&' pterm | '||' pterm)*
+	|	'if' pterm 'then' pterm ('else' pterm)?
+	|	'let' pattern
+	|	ident (':' typeid)? '<-' pterm ';' pterm
+	|	'let' typedecl 'suchthat' pterm 'in' pterm ('else' pterm)?
+	|	'insert' ident	'(' 'seq' pterm ')' ';' pterm
+	|	'get' ident '(' 'seq' pattern ')' ('suchthat' pterm)? 'in' pterm ('else' pterm)?
+	|	'event' ident ('(' 'seq' pterm ')')? ';' pterm
 	;
 
-pattern	:
+//the same as the last one but without left-recursivity
+/*pterm	:	(ident | '(' 'seq' pterm ')' | ident '(' 'seq' pterm ')' | 'choice' '[' pterm ',' pterm ']
+ | 'not' '(' pterm ')' | 'new' ident ('[' 'seq' ident ']')? ':' typeid ';' pterm | ident '<-' 'R' typeid ';' pterm | 'if' pterm 'then' pterm ('else' pterm)? | 'let' pattern | ident (':' typeid)? '<-' pterm ';' pterm | 'let' typedecl 'suchthat' pterm 'in' pterm ('else' pterm)? | 'insert' ident	'(' 'seq' pterm ')' ';' pterm | 'get' ident '(' 'seq' pattern ')' ('suchthat' pterm)? 'in' pterm ('else' pterm)? | 'event' ident ('(' 'seq' pterm ')')? ';' pterm) ('=' pterm | '<>' pterm | '&&' pterm | '||' pterm)*
+	;*/
+
+pattern	:	ident
+	|	ident ':' typeid
+	|	'(' 'seq' pattern ')'
+	|	ident '(' 'seq' pattern ')'
+	|	'=' pterm
+	;
+
+mayfailterm
+	:	term
+	|	'fail'
 	;
 
 typedecl
-	:
+	:	ident ':' typeid (',' typedecl)?
+	;
+
+failtypedecl
+	:	ident ':' typeid ('or' 'fail')? (',' typedecl)?
 	;
 
 typeid	:
