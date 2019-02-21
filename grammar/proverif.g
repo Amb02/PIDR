@@ -4,20 +4,99 @@ options {
     language=Java;
 }
 
-/*term	:	'(' 'seq' term ')'
+ident
+  :
+  ;
+
+id
+  :
+  ;
+
+typeid
+  :
+  ;
+
+options
+  :
+  ;
+
+programme
+  : declaration* 'process' process
+  ;
+
+declaration
+  : 'type' ident options
+  | 'channel' seq+ ident
+  | 'free' seq+ ident  ':' typeid options
+  | 'const' seq+ ident ':' typeid options
+  | 'fun' ident '(' seq typeid ')' ':' typeid options
+  | 'reduc' reduc options
+  | 'fun' ident '(' seq typeid ')' ':' typeid 'reduc' reducprime options
+  | 'equation' eqlist options
+  | 'pred' ident ( '(' seq typeid ')' )? options
+  | 'table' ident '(' seq typeid ')'
+  | 'let' ident ( '(' (typedecl)? ')')? '=' process
+  | 'set' name '=' value
+  | 'event' ident ( '(' seq typeid ')' )?
+  | 'query' (typedecl ';')? query
+  | 'not' (typedecl ';')? gterm
+  | 'nounif' (typedecl ';')? nounifdecl
+
+reduc
+  : ('forall' typedecl ';')? term '=' term (';' reduc) ?
+  ;
+
+reducprime
+  : ('forall' failtypedecl ';')? ident '(' seq mayfailterm ')' ('otherwise' reducprime)?
+  ;
+
+eqlist
+  : ('forall' typedecl ';') term '=' term (';' eqlist)?
+  ;
+
+process
+  : See Figure A.6
+  ;
+
+name
+  : See Section 6.2.2
+  ;
+
+value
+  : See Section 6.2.2
+  ;
+
+query
+  : See Figure A.3
+  ;
+
+gterm
+  : See Figure A.3
+  ;
+
+nounifdecl
+  : See Figure A.4
+  ;
+
+/*
+term
+  :	'(' 'seq' term ')'
 	|	ident '(' 'seq' term ')'
 	|	term '=' term
 	|	term '<>' term
 	|	term '&&' term
 	|	term '||' term
 	|	'not' '(' term ')'
-	;*/
+	;
+*/
 
 //the same as the last one but without left-recursivity
-term	:	('(' 'seq' term ')' | ident '(' 'seq' term ')' | 'not' '(' term ')') ('=' term | '<>' term | '&&' term | '||' term)*
+term
+  :	('(' 'seq' term ')' | ident '(' 'seq' term ')' | 'not' '(' term ')') ('=' term | '<>' term | '&&' term | '||' term)*
 	;
 
-pterm	:	ident
+pterm
+  :	ident
 	|	'(' 'seq' pterm ')'
 	|	ident '(' 'seq' pterm ')'
 	|	'choice' '[' pterm ',' pterm ']
@@ -38,9 +117,20 @@ pterm	:	ident
 	;
 
 //the same as the last one but without left-recursivity
-/*pterm	:	(ident | '(' 'seq' pterm ')' | ident '(' 'seq' pterm ')' | 'choice' '[' pterm ',' pterm ']
- | 'not' '(' pterm ')' | 'new' ident ('[' 'seq' ident ']')? ':' typeid ';' pterm | ident '<-' 'R' typeid ';' pterm | 'if' pterm 'then' pterm ('else' pterm)? | 'let' pattern | ident (':' typeid)? '<-' pterm ';' pterm | 'let' typedecl 'suchthat' pterm 'in' pterm ('else' pterm)? | 'insert' ident	'(' 'seq' pterm ')' ';' pterm | 'get' ident '(' 'seq' pattern ')' ('suchthat' pterm)? 'in' pterm ('else' pterm)? | 'event' ident ('(' 'seq' pterm ')')? ';' pterm) ('=' pterm | '<>' pterm | '&&' pterm | '||' pterm)*
-	;*/
+/*
+pterm
+  :	(ident | '(' 'seq' pterm ')' | ident '(' 'seq' pterm ')' | 'choice' '[' pterm ',' pterm ']
+  | 'not' '(' pterm ')'
+  | 'new' ident ('[' 'seq' ident ']')? ':' typeid ';' pterm
+  | ident '<-' 'R' typeid ';' pterm
+  | 'if' pterm 'then' pterm ('else' pterm)?
+  | 'let' pattern
+  | ident (':' typeid)? '<-' pterm ';' pterm
+  | 'let' typedecl 'suchthat' pterm 'in' pterm ('else' pterm)?
+  | 'insert' ident	'(' 'seq' pterm ')' ';' pterm
+  | 'get' ident '(' 'seq' pattern ')' ('suchthat' pterm)? 'in' pterm ('else' pterm)? | 'event' ident ('(' 'seq' pterm ')')? ';' pterm) ('=' pterm | '<>' pterm | '&&' pterm | '||' pterm)*
+	;
+  */
 
 pattern	:	ident
 	|	ident ':' typeid
@@ -62,12 +152,6 @@ failtypedecl
 	:	ident ':' typeid ('or' 'fail')? (',' typedecl)?
 	;
 
-typeid	:
-	;
-
-
-
-ident	:	;
 /*
 *This grammar "knows" as lexical items :
 	Identifier
@@ -82,7 +166,6 @@ ident	:	;
 		"\t",
 		"\n",
 		"\r"
-
 */
 
 
@@ -93,29 +176,31 @@ INT :	'0'..'9'+
     ;
 
 FLOAT
-    :   ('0'..'9')+ '.' ('0'..'9')* EXPONENT?
-    |   '.' ('0'..'9')+ EXPONENT?
-    |   ('0'..'9')+ EXPONENT
-    ;
+  :   ('0'..'9')+ '.' ('0'..'9')* EXPONENT?
+  |   '.' ('0'..'9')+ EXPONENT?
+  |   ('0'..'9')+ EXPONENT
+  ;
 
 COMMENT
-    :   '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
-    |   '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;}
-    ;
+  :   '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
+  |   '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;}
+  ;
 
-WS  :   ( ' '
-        | '\t'
-        | '\r'
-        | '\n'
-        ) {$channel=HIDDEN;}
-    ;
+WS
+  :   ( ' '
+  | '\t'
+  | '\r'
+  | '\n'
+  ) {$channel=HIDDEN;}
+  ;
 
 STRING
-    :  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
-    ;
+  :  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
+  ;
 
-CHAR:  '\'' ( ESC_SEQ | ~('\''|'\\') ) '\''
-    ;
+CHAR
+  :  '\'' ( ESC_SEQ | ~('\''|'\\') ) '\''
+  ;
 
 fragment
 EXPONENT : ('e'|'E') ('+'|'-')? ('0'..'9')+ ;
@@ -125,20 +210,19 @@ HEX_DIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;
 
 fragment
 ESC_SEQ
-    :   '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
-    |   UNICODE_ESC
-    |   OCTAL_ESC
-    ;
+  : '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
+  | UNICODE_ESC
+  | OCTAL_ESC
+  ;
 
 fragment
 OCTAL_ESC
-    :   '\\' ('0'..'3') ('0'..'7') ('0'..'7')
-    |   '\\' ('0'..'7') ('0'..'7')
-    |   '\\' ('0'..'7')
-    ;
+  : '\\' ('0'..'3') ('0'..'7') ('0'..'7')
+  | '\\' ('0'..'7') ('0'..'7')
+  | '\\' ('0'..'7')
+  ;
 
 fragment
 UNICODE_ESC
-    :   '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
-    ;
-
+  : '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+  ;
