@@ -41,6 +41,7 @@ declaration
 	| 'query' (typedecl ';')? query
 	| 'not' (typedecl ';')? gterm
 	| 'nounif' (typedecl ';')? nounifdecl
+	;
 
 reduc
 	: ('forall' typedecl ';')? term '=' term (';' reduc) ?
