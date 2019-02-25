@@ -179,11 +179,12 @@ pterm
 	| ident (':' typeid)? '<-' pterm ';' pterm
 	| 'let' typedecl 'suchthat' pterm 'in' pterm ('else' pterm)?
 	| 'insert' ident	'(' ((pterm ',')* pterm)? ')' ';' pterm
-	| 'get' ident '(' ((pattern ',')* pattern)? ')' ('suchthat' pterm)? 'in' pterm ('else' pterm)? | 'event' ident ('(' 'seq' pterm ')')? ';' pterm) ('=' pterm | '<>' pterm | '&&' pterm | '||' pterm)*
+	| 'get' ident '(' ((pattern ',')* pattern)? ')' ('suchthat' pterm)? 'in' pterm ('else' pterm)? | 'event' ident ('(' ((pattern ',')* pattern)? ')')? ';' pterm) ('=' pterm | '<>' pterm | '&&' pterm | '||' pterm)*
 	;
 	*/
 
-pattern	:	ident
+pattern
+  : ident
 	|	ident ':' typeid
 	|	'(' ((pattern ',')* pattern)? ')'
 	|	ident '(' ((pattern ',')* pattern)? ')'
@@ -204,15 +205,16 @@ failtypedecl
 	;
 
 ident
-	:
+	: ID
 	;
 
 id
-	:
+	: ID
 	;
 
 typeid
-	:
+	: ID
+  | 'channel'
 	;
 
 options
@@ -228,11 +230,11 @@ options
 		"//" and
 		"/* [...]*\/" without the last backslash of course
 	String
-	Caracters
+	Characters
 	White space
 		"\t",
 		"\n",
-		"\r"
+		11"\r"
 */
 
 
