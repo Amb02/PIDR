@@ -4,40 +4,24 @@ options {
 		language=Java;
 }
 
-ident
-	:
-	;
-
-id
-	:
-	;
-
-typeid
-	:
-	;
-
-options
-	:
-	;
-
 programme
 	: declaration* 'process' process
 	;
 
 declaration
 	: 'type' ident options
-	| 'channel' seq+ ident
-	| 'free' seq+ ident	':' typeid options
-	| 'const' seq+ ident ':' typeid options
-	| 'fun' ident '(' seq typeid ')' ':' typeid options
+	| 'channel'  (ident ',')* ident
+	| 'free' (ident ',')* ident	':' typeid options
+	| 'const' (ident ',')* ident ':' typeid options
+	| 'fun' ident '(' ((typeid ',')* typeid)? ')' ':' typeid options
 	| 'reduc' reduc options
-	| 'fun' ident '(' seq typeid ')' ':' typeid 'reduc' reducprime options
+	| 'fun' ident '(' ((typeid ',')* typeid)? ')' ':' typeid 'reduc' reducprime options
 	| 'equation' eqlist options
-	| 'pred' ident ( '(' seq typeid ')' )? options
-	| 'table' ident '(' seq typeid ')'
+	| 'pred' ident ( '(' ((typeid ',')* typeid)? ')' )? options
+	| 'table' ident '(' ((typeid ',')* typeid)? ')'
 	| 'let' ident ( '(' (typedecl)? ')')? '=' process
 	| 'set' name '=' value
-	| 'event' ident ( '(' seq typeid ')' )?
+	| 'event' ident ( '(' ((typeid ',')* typeid)? ')' )?
 	| 'query' (typedecl ';')? query
 	| 'not' (typedecl ';')? gterm
 	| 'nounif' (typedecl ';')? nounifdecl
@@ -47,7 +31,7 @@ reduc
 	;
 
 reducprime
-	: ('forall' failtypedecl ';')? ident '(' seq mayfailterm ')' ('otherwise' reducprime)?
+	: ('forall' failtypedecl ';')? ident '(' ((mayfailterm ',')* mayfailterm)? ')' ('otherwise' reducprime)?
 	;
 
 eqlist
@@ -64,51 +48,51 @@ value
 
 query //See Figure A.3
 	:	gterm (';' query)?
-	|	'putbegin' 'event' ':' seq+ ident (';' query)?
-	|	'putbegin' 'inj-event' ':' seq+ ident (';' query)?
+	|	'putbegin' 'event' ':' (ident ',')* ident (';' query)?
+	|	'putbegin' 'inj-event' ':' (ident ',')* ident (';' query)?
 	;
 
 gterm //See Figure A.3
 	:	ident
-	|	ident '(' seq gterm ')' ('phase' int)?
+	|	ident '(' ((gterm ',')* gterm)? ')' ('phase' int)?
 	|	gterm '=' gterm
 	|	gterm '<>' gterm
 	|	gterm '||' gterm
 	|	gterm '&&' gterm
-	|	'event' '(' seq gterm ')'
-	|	'inj-event' '(' seq gterm ')'
+	|	'event' '(' ((gterm ',')* gterm)? gterm ')'
+	|	'inj-event' '(' ((gterm ',')* gterm)? gterm ')'
 	|	gterm '==>' gterm
-	|	'(' seq gterm ')'
+	|	'(' ((gterm ',')* gterm)? gterm ')'
 	|	'new' ident ('[' (gbinding)? ']' )?
 	|	'let' ident '=' gterm 'in' gterm
 	;
 
-gbinding 
+gbinding
  	:	'!' int '=' gterm (';' gbinding)?
  	|	ident '=' gterm (';' gbinding)?
  	;
 
 nounifdecl //See Figure A.4
 	:	'let' ident '=' gformat 'in' nounifdecl
-	|	ident ('(' seq gformat ')' ('phase' int)? )? ('/'int)? 
+	|	ident ('(' ((gformat ',')* gformat)? ')' ('phase' int)? )? ('/'int)?
 	;
 
 gformat
 	:	ident
 	|	*ident
-	|	ident '(' seq gformat ')'
-	|	'not' '(' seq gformat ')'
-	|	'(' seq gformat ')'
+	|	ident '(' ((gformat ',')* gformat)? ')'
+	|	'not' '(' ((gformat ',')* gformat)? ')'
+	|	'(' ((gformat ',')* gformat)? gformat ')'
 	|	'new' ident ( '[' ( fbinding )? ']' )?
-	|	'let' ident '=' gformat 'in' gformat' 
+	|	'let' ident '=' gformat 'in' gformat'
 	;
 
-fbinding 
+fbinding
 	:	'!' int '=' gformat (';' fbinding)?
  	|	ident '=' gformat (';' fbinding)?
  	;
- 
- 
+
+
 clauses
 	:	('forall' failtypedecl ';')? clause (';' clauses )?
 	;
@@ -123,13 +107,13 @@ clause
 process
 	:	'0'
  	|	 'yield'
- 	|	ident ( '(' seq pterm ')')?
+ 	|	ident ( '(' ((pterm ',')* pterm)? ')')?
  	|	 '('process')'
  	|	process '|' process
  	|	'!' process
  	|	'!' ident '<=' ident process
  	|	'foreach' ident '<=' ident 'do' process
- 	|	'new' ident ( '[' seq ident ']' )? ':' typeid (';' process )?
+ 	|	'new' ident ( '[' ((ident ',')* ident)? ']' )? ':' typeid (';' process )?
  	|	ident '<-R' typeid (';' process ')'?
  	|	'if' pterm 'then' process ('else' process )?
  	|	'in' '('pterm ',' pattern ')' (';' process)?
@@ -137,17 +121,17 @@ process
  	|	'let' pattern '=' pterm ('in' process ('else' process)? )?
  	|	ident (':' typeid )? '<-' pterm (';' process)?
  	|	'let' typedecl 'suchthat' pterm ('in' process ('else' process)? )?
- 	|	'insert' ident '(' seq pterm ')' (';' process)?
- 	|	'get' ident(seq pattern) ['suchthat' pterm] ('in' process ('else' process)? )?
- 	|	'event' ident ( '('seq pterm ')' )? (';' process)?
+ 	|	'insert' ident '(' ((pterm ',')* pterm)? ')' (';' process)?
+ 	|	'get' ident(((pattern ',')* pattern)?) ['suchthat' pterm] ('in' process ('else' process)? )?
+ 	|	'event' ident ( '('((pterm ',')* pterm)? ')' )? (';' process)?
  	|	'phase' int (';' process)?
  	|	'sync' int ('[' tag ']')? (';' process)?
  	;
 
 /*
 term
-	:	'(' 'seq' term ')'
-	|	ident '(' 'seq' term ')'
+	:	'(' ((term ',')* term)? ')'
+	|	ident '(' ((term ',')* term)? ')'
 	|	term '=' term
 	|	term '<>' term
 	|	term '&&' term
@@ -158,50 +142,50 @@ term
 
 //the same as the last one but without left-recursivity
 term
-	:	('(' 'seq' term ')' | ident '(' 'seq' term ')' | 'not' '(' term ')') ('=' term | '<>' term | '&&' term | '||' term)*
+	:	('(' ((term ',')* term)? ')' | ident '(' ((term ',')* term)? ')' | 'not' '(' term ')') ('=' term | '<>' term | '&&' term | '||' term)*
 	;
 
 pterm
 	:	ident
-	|	'(' 'seq' pterm ')'
-	|	ident '(' 'seq' pterm ')'
+	|	'(' ((pterm ',')* pterm)? ')'
+	|	ident '(' ((pterm ',')* pterm)? ')'
 	|	'choice' '[' pterm ',' pterm ']
 	|	pterm '=' pterm
 	|	pterm '<>' pterm
 	|	pterm '&&' pterm
 	|	pterm '||' pterm
 	|	'not' '(' pterm ')'
-	|	'new' ident ('[' 'seq' ident ']')? ':' typeid ';' pterm //pb
+	|	'new' ident ('[' ((ident ',')* ident)? ']')? ':' typeid ';' pterm //pb
 	|	ident '<-' 'R' typeid ';' pterm
 	|	'if' pterm 'then' pterm ('else' pterm)?
 	|	'let' pattern
 	|	ident (':' typeid)? '<-' pterm ';' pterm
 	|	'let' typedecl 'suchthat' pterm 'in' pterm ('else' pterm)?
-	|	'insert' ident	'(' 'seq' pterm ')' ';' pterm
-	|	'get' ident '(' 'seq' pattern ')' ('suchthat' pterm)? 'in' pterm ('else' pterm)?
-	|	'event' ident ('(' 'seq' pterm ')')? ';' pterm
+	|	'insert' ident	'(' ((pterm ',')* pterm)? ')' ';' pterm
+	|	'get' ident '(' ((pattern ',')* pattern)? ')' ('suchthat' pterm)? 'in' pterm ('else' pterm)?
+	|	'event' ident ('(' ((pterm ',')* pterm)? ')')? ';' pterm
 	;
 
 //the same as the last one but without left-recursivity
 /*
 pterm
-	:	(ident | '(' 'seq' pterm ')' | ident '(' 'seq' pterm ')' | 'choice' '[' pterm ',' pterm ']
+	:	(ident | '(' ((pterm ',')* pterm)? ')' | ident '(' ((pterm ',')* pterm)? ')' | 'choice' '[' pterm ',' pterm ']
 	| 'not' '(' pterm ')'
-	| 'new' ident ('[' 'seq' ident ']')? ':' typeid ';' pterm
+	| 'new' ident ('[' ((ident ',')* ident)? ']')? ':' typeid ';' pterm
 	| ident '<-' 'R' typeid ';' pterm
 	| 'if' pterm 'then' pterm ('else' pterm)?
 	| 'let' pattern
 	| ident (':' typeid)? '<-' pterm ';' pterm
 	| 'let' typedecl 'suchthat' pterm 'in' pterm ('else' pterm)?
-	| 'insert' ident	'(' 'seq' pterm ')' ';' pterm
-	| 'get' ident '(' 'seq' pattern ')' ('suchthat' pterm)? 'in' pterm ('else' pterm)? | 'event' ident ('(' 'seq' pterm ')')? ';' pterm) ('=' pterm | '<>' pterm | '&&' pterm | '||' pterm)*
+	| 'insert' ident	'(' ((pterm ',')* pterm)? ')' ';' pterm
+	| 'get' ident '(' ((pattern ',')* pattern)? ')' ('suchthat' pterm)? 'in' pterm ('else' pterm)? | 'event' ident ('(' 'seq' pterm ')')? ';' pterm) ('=' pterm | '<>' pterm | '&&' pterm | '||' pterm)*
 	;
 	*/
 
 pattern	:	ident
 	|	ident ':' typeid
-	|	'(' 'seq' pattern ')'
-	|	ident '(' 'seq' pattern ')'
+	|	'(' ((pattern ',')* pattern)? ')'
+	|	ident '(' ((pattern ',')* pattern)? ')'
 	|	'=' pterm
 	;
 
@@ -216,6 +200,22 @@ typedecl
 
 failtypedecl
 	:	ident ':' typeid ('or' 'fail')? (',' typedecl)?
+	;
+
+ident
+	:
+	;
+
+id
+	:
+	;
+
+typeid
+	:
+	;
+
+options
+	:
 	;
 
 /*
