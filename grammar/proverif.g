@@ -2,6 +2,7 @@ grammar proverif;
 
 options {
 		language=Java;
+		backtrack=true;
 }
 
 programme
@@ -9,15 +10,15 @@ programme
 	;
 
 declaration
-	: 'type' ident options
+	: 'type' ident proverifOptions
 	| 'channel'  (ident ',')* ident
-	| 'free' (ident ',')* ident	':' typeid options
-	| 'const' (ident ',')* ident ':' typeid options
-	| 'fun' ident '(' ((typeid ',')* typeid)? ')' ':' typeid options
-	| 'reduc' reduc options
-	| 'fun' ident '(' ((typeid ',')* typeid)? ')' ':' typeid 'reduc' reducprime options
-	| 'equation' eqlist options
-	| 'pred' ident ( '(' ((typeid ',')* typeid)? ')' )? options
+	| 'free' (ident ',')* ident	':' typeid proverifOptions
+	| 'const' (ident ',')* ident ':' typeid proverifOptions
+	| 'fun' ident '(' ((typeid ',')* typeid)? ')' ':' typeid proverifOptions
+	| 'reduc' reduc proverifOptions
+	| 'fun' ident '(' ((typeid ',')* typeid)? ')' ':' typeid 'reduc' reducprime proverifOptions
+	| 'equation' eqlist proverifOptions
+	| 'pred' ident ( '(' ((typeid ',')* typeid)? ')' )? proverifOptions
 	| 'table' ident '(' ((typeid ',')* typeid)? ')'
 	| 'let' ident ( '(' (typedecl)? ')')? '=' process
 	| 'set' name '=' value
@@ -54,18 +55,7 @@ query //See Figure A.3
 	;
 
 gterm //See Figure A.3
-	:	ident
-	|	ident '(' ((gterm ',')* gterm)? ')' ('phase' int)?
-	|	gterm '=' gterm
-	|	gterm '<>' gterm
-	|	gterm '||' gterm
-	|	gterm '&&' gterm
-	|	'event' '(' ((gterm ',')* gterm)? gterm ')'
-	|	'inj-event' '(' ((gterm ',')* gterm)? gterm ')'
-	|	gterm '==>' gterm
-	|	'(' ((gterm ',')* gterm)? gterm ')'
-	|	'new' ident ('[' (gbinding)? ']' )?
-	|	'let' ident '=' gterm 'in' gterm
+	:	(ident | ident '(' ((gterm ',')* gterm)? ')' ('phase' int)? | 'event' '(' ((gterm ',')* gterm)? gterm ')' | 'inj-event' '(' ((gterm ',')* gterm)? gterm ')' | '(' ((gterm ',')* gterm)? gterm ')' | 'new' ident ('[' (gbinding)? ']' )? | 'let' ident '=' gterm 'in' gterm) ('=' gterm | '<>' gterm | '||' gterm | '&&' gterm | '==>' gterm)*
 	;
 
 gbinding
@@ -80,14 +70,14 @@ nounifdecl //See Figure A.4
 
 gformat
 	:	ident
-	|	*ident
 	|	ident '(' ((gformat ',')* gformat)? ')'
 	|	'not' '(' ((gformat ',')* gformat)? ')'
 	|	'(' ((gformat ',')* gformat)? gformat ')'
 	|	'new' ident ( '[' ( fbinding )? ']' )?
-	|	'let' ident '=' gformat 'in' gformat'
+	|	'let' ident '=' gformat 'in' gformat
 	;
-
+	
+	
 fbinding
 	:	'!' int '=' gformat (';' fbinding)?
  	|	ident '=' gformat (';' fbinding)?
@@ -97,7 +87,7 @@ fbinding
 clauses
 	:	('forall' failtypedecl ';')? clause (';' clauses )?
 	;
-
+	
 clause
 	:	term
 	|	term '->' term
@@ -106,68 +96,22 @@ clause
 	;
 
 process
-	:	'0'
- 	|	 'yield'
- 	|	ident ( '(' ((pterm ',')* pterm)? ')')?
- 	|	 '('process')'
- 	|	process '|' process
- 	|	'!' process
- 	|	'!' ident '<=' ident process
- 	|	'foreach' ident '<=' ident 'do' process
- 	|	'new' ident ( '[' ((ident ',')* ident)? ']' )? ':' typeid (';' process )?
- 	|	ident '<-R' typeid (';' process ')'?
- 	|	'if' pterm 'then' process ('else' process )?
- 	|	'in' '('pterm ',' pattern ')' (';' process)?
- 	|	'out' '('pterm,pterm')' (';'process)?
- 	|	'let' pattern '=' pterm ('in' process ('else' process)? )?
- 	|	ident (':' typeid )? '<-' pterm (';' process)?
- 	|	'let' typedecl 'suchthat' pterm ('in' process ('else' process)? )?
- 	|	'insert' ident '(' ((pterm ',')* pterm)? ')' (';' process)?
- 	|	'get' ident(((pattern ',')* pattern)?) ['suchthat' pterm] ('in' process ('else' process)? )?
- 	|	'event' ident ( '('((pterm ',')* pterm)? ')' )? (';' process)?
- 	|	'phase' int (';' process)?
- 	|	'sync' int ('[' tag ']')? (';' process)?
+	:	('0' | 'yield' | ident ( '(' ((pterm ',')* pterm)? ')')? | '(' process ')' | '!' process | '!' ident '<=' ident process | 'foreach' ident '<=' ident 'do' process | 'new' ident ( '[' ((ident ',')* ident)? ']' )? ':' typeid (';' process )? | ident '<-R' typeid (';' process )? | 'if' pterm 'then' process ('else' process )? | 'in' '('pterm ',' pattern ')' (';' process)? | 'out' '('pterm ',' pterm')' (';'process)? | 'let' pattern '=' pterm ('in' process ('else' process)? )? | ident (':' typeid )? '<-' pterm (';' process)? | 'let' typedecl 'suchthat' pterm ('in' process ('else' process)? )? | 'insert' ident '(' ((pterm ',')* pterm)? ')' (';' process)? | 'get' ident '(' ((pattern ',')* pattern)? ')' ('suchthat' pterm)? ('in' process ('else' process)? )? | 'event' ident ( '('((pterm ',')* pterm)? ')' )? (';' process)? | 'phase' int (';' process)?) ('|' process)*
  	;
 
-/*
-term
-	:	'(' ((term ',')* term)? ')'
-	|	ident '(' ((term ',')* term)? ')'
-	|	term '=' term
-	|	term '<>' term
-	|	term '&&' term
-	|	term '||' term
-	|	'not' '(' term ')'
-	;
-*/
 
+pterm
+	:	(ident | '(' ((pterm ',')* pterm)? ')' | ident '(' ((pterm ',')* pterm)? ')' | 'choice' '[' pterm ',' pterm ']' | 'not' '(' pterm ')' | 'new' ident ('[' ((ident ',')* ident)? ']')? ':' typeid ';' pterm | ident '<-R' typeid ';' pterm | 'if' pterm 'then' pterm ('else' pterm)? | 'let' pattern | ident (':' typeid)? '<-' pterm ';' pterm | 'let' typedecl 'suchthat' pterm 'in' pterm ('else' pterm)? | 'insert' ident	'(' ((pterm ',')* pterm)? ')' ';' pterm | 'get' ident '(' ((pattern ',')* pattern)? ')' ('suchthat' pterm)? 'in' pterm ('else' pterm)? | 'event' ident ('(' ((pterm ',')* pterm)? ')')? ';' pterm) ('=' pterm | '<>' pterm | '&&' pterm | '||' pterm)*
+	;
+	
 //the same as the last one but without left-recursivity
 term
 	:	('(' ((term ',')* term)? ')' | ident '(' ((term ',')* term)? ')' | 'not' '(' term ')') ('=' term | '<>' term | '&&' term | '||' term)*
 	;
 
-pterm
-	:	ident
-	|	'(' ((pterm ',')* pterm)? ')'
-	|	ident '(' ((pterm ',')* pterm)? ')'
-	|	'choice' '[' pterm ',' pterm ']
-	|	pterm '=' pterm
-	|	pterm '<>' pterm
-	|	pterm '&&' pterm
-	|	pterm '||' pterm
-	|	'not' '(' pterm ')'
-	|	'new' ident ('[' ((ident ',')* ident)? ']')? ':' typeid ';' pterm //pb
-	|	ident '<-' 'R' typeid ';' pterm
-	|	'if' pterm 'then' pterm ('else' pterm)?
-	|	'let' pattern
-	|	ident (':' typeid)? '<-' pterm ';' pterm
-	|	'let' typedecl 'suchthat' pterm 'in' pterm ('else' pterm)?
-	|	'insert' ident	'(' ((pterm ',')* pterm)? ')' ';' pterm
-	|	'get' ident '(' ((pattern ',')* pattern)? ')' ('suchthat' pterm)? 'in' pterm ('else' pterm)?
-	|	'event' ident ('(' ((pterm ',')* pterm)? ')')? ';' pterm
-	;
 
-//the same as the last one but without left-recursivity
+
+//the same as the last one but without left-recursivity) ('=' pterm | '<>' pterm | '&&' pterm | '||' pterm)*
 /*
 pterm
 	:	(ident | '(' ((pterm ',')* pterm)? ')' | ident '(' ((pterm ',')* pterm)? ')' | 'choice' '[' pterm ',' pterm ']
@@ -204,6 +148,10 @@ failtypedecl
 	:	ident ':' typeid ('or' 'fail')? (',' typedecl)?
 	;
 
+proverifOptions
+	: ((ident ',')* ident)?
+	;
+	
 ident
 	: ID
 	;
@@ -212,15 +160,14 @@ id
 	: ID
 	;
 
+int 
+	: INT
+	;
+
 typeid
 	: ID
-  | 'channel'
 	;
-
-options
-	:
-	;
-
+	
 /*
 *This grammar "knows" as lexical items :
 	Identifier
@@ -252,7 +199,7 @@ FLOAT
 
 COMMENT
 	:	 '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
-	|	 '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;}
+	|	 '(*' ( options {greedy=false;} : . )* '*)' {$channel=HIDDEN;}
 	;
 
 WS
