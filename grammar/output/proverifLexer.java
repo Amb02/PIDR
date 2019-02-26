@@ -1,4 +1,4 @@
-// $ANTLR 3.5.1 D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g 2019-02-26 21:36:31
+// $ANTLR null C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g 2019-02-26 23:23:25
 
 import org.antlr.runtime.*;
 import java.util.Stack;
@@ -92,15 +92,15 @@ public class proverifLexer extends Lexer {
 	public proverifLexer(CharStream input, RecognizerSharedState state) {
 		super(input,state);
 	}
-	@Override public String getGrammarFileName() { return "D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g"; }
+	@Override public String getGrammarFileName() { return "C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g"; }
 
 	// $ANTLR start "T__16"
 	public final void mT__16() throws RecognitionException {
 		try {
 			int _type = T__16;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:7:7: ( '!' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:7:9: '!'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:7:7: ( '!' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:7:9: '!'
 			{
 			match('!'); 
 			}
@@ -119,8 +119,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__17;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:8:7: ( '&&' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:8:9: '&&'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:8:7: ( '&&' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:8:9: '&&'
 			{
 			match("&&"); 
 
@@ -140,8 +140,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__18;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:9:7: ( '(' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:9:9: '('
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:9:7: ( '(' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:9:9: '('
 			{
 			match('('); 
 			}
@@ -160,8 +160,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__19;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:10:7: ( ')' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:10:9: ')'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:10:7: ( ')' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:10:9: ')'
 			{
 			match(')'); 
 			}
@@ -180,8 +180,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__20;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:11:7: ( ',' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:11:9: ','
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:11:7: ( ',' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:11:9: ','
 			{
 			match(','); 
 			}
@@ -200,8 +200,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__21;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:12:7: ( '->' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:12:9: '->'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:12:7: ( '->' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:12:9: '->'
 			{
 			match("->"); 
 
@@ -221,8 +221,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__22;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:13:7: ( '/' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:13:9: '/'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:13:7: ( '/' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:13:9: '/'
 			{
 			match('/'); 
 			}
@@ -241,8 +241,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__23;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:14:7: ( '0' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:14:9: '0'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:14:7: ( '0' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:14:9: '0'
 			{
 			match('0'); 
 			}
@@ -261,8 +261,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__24;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:15:7: ( ':' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:15:9: ':'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:15:7: ( ':' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:15:9: ':'
 			{
 			match(':'); 
 			}
@@ -281,8 +281,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__25;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:16:7: ( ';' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:16:9: ';'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:16:7: ( ';' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:16:9: ';'
 			{
 			match(';'); 
 			}
@@ -301,8 +301,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__26;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:17:7: ( '<-' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:17:9: '<-'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:17:7: ( '<-' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:17:9: '<-'
 			{
 			match("<-"); 
 
@@ -322,8 +322,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__27;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:18:7: ( '<->' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:18:9: '<->'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:18:7: ( '<->' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:18:9: '<->'
 			{
 			match("<->"); 
 
@@ -343,8 +343,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__28;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:19:7: ( '<-R' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:19:9: '<-R'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:19:7: ( '<-R' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:19:9: '<-R'
 			{
 			match("<-R"); 
 
@@ -364,8 +364,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__29;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:20:7: ( '<=' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:20:9: '<='
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:20:7: ( '<=' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:20:9: '<='
 			{
 			match("<="); 
 
@@ -385,8 +385,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__30;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:21:7: ( '<=>' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:21:9: '<=>'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:21:7: ( '<=>' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:21:9: '<=>'
 			{
 			match("<=>"); 
 
@@ -406,8 +406,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__31;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:22:7: ( '<>' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:22:9: '<>'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:22:7: ( '<>' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:22:9: '<>'
 			{
 			match("<>"); 
 
@@ -427,8 +427,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__32;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:23:7: ( '=' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:23:9: '='
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:23:7: ( '=' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:23:9: '='
 			{
 			match('='); 
 			}
@@ -447,8 +447,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__33;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:24:7: ( '==>' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:24:9: '==>'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:24:7: ( '==>' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:24:9: '==>'
 			{
 			match("==>"); 
 
@@ -468,8 +468,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__34;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:25:7: ( '[' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:25:9: '['
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:25:7: ( '[' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:25:9: '['
 			{
 			match('['); 
 			}
@@ -488,8 +488,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__35;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:26:7: ( ']' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:26:9: ']'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:26:7: ( ']' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:26:9: ']'
 			{
 			match(']'); 
 			}
@@ -508,8 +508,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__36;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:27:7: ( 'channel' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:27:9: 'channel'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:27:7: ( 'channel' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:27:9: 'channel'
 			{
 			match("channel"); 
 
@@ -529,8 +529,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__37;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:28:7: ( 'choice' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:28:9: 'choice'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:28:7: ( 'choice' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:28:9: 'choice'
 			{
 			match("choice"); 
 
@@ -550,8 +550,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__38;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:29:7: ( 'const' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:29:9: 'const'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:29:7: ( 'const' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:29:9: 'const'
 			{
 			match("const"); 
 
@@ -571,8 +571,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__39;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:30:7: ( 'do' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:30:9: 'do'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:30:7: ( 'do' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:30:9: 'do'
 			{
 			match("do"); 
 
@@ -592,8 +592,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__40;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:31:7: ( 'else' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:31:9: 'else'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:31:7: ( 'else' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:31:9: 'else'
 			{
 			match("else"); 
 
@@ -613,8 +613,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__41;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:32:7: ( 'equation' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:32:9: 'equation'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:32:7: ( 'equation' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:32:9: 'equation'
 			{
 			match("equation"); 
 
@@ -634,8 +634,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__42;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:33:7: ( 'event' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:33:9: 'event'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:33:7: ( 'event' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:33:9: 'event'
 			{
 			match("event"); 
 
@@ -655,8 +655,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__43;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:34:7: ( 'fail' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:34:9: 'fail'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:34:7: ( 'fail' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:34:9: 'fail'
 			{
 			match("fail"); 
 
@@ -676,8 +676,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__44;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:35:7: ( 'forall' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:35:9: 'forall'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:35:7: ( 'forall' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:35:9: 'forall'
 			{
 			match("forall"); 
 
@@ -697,8 +697,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__45;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:36:7: ( 'foreach' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:36:9: 'foreach'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:36:7: ( 'foreach' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:36:9: 'foreach'
 			{
 			match("foreach"); 
 
@@ -718,8 +718,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__46;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:37:7: ( 'free' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:37:9: 'free'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:37:7: ( 'free' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:37:9: 'free'
 			{
 			match("free"); 
 
@@ -739,8 +739,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__47;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:38:7: ( 'fun' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:38:9: 'fun'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:38:7: ( 'fun' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:38:9: 'fun'
 			{
 			match("fun"); 
 
@@ -760,8 +760,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__48;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:39:7: ( 'get' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:39:9: 'get'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:39:7: ( 'get' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:39:9: 'get'
 			{
 			match("get"); 
 
@@ -781,8 +781,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__49;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:40:7: ( 'if' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:40:9: 'if'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:40:7: ( 'if' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:40:9: 'if'
 			{
 			match("if"); 
 
@@ -802,8 +802,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__50;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:41:7: ( 'in' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:41:9: 'in'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:41:7: ( 'in' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:41:9: 'in'
 			{
 			match("in"); 
 
@@ -823,8 +823,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__51;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:42:7: ( 'inj-event' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:42:9: 'inj-event'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:42:7: ( 'inj-event' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:42:9: 'inj-event'
 			{
 			match("inj-event"); 
 
@@ -844,8 +844,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__52;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:43:7: ( 'insert' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:43:9: 'insert'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:43:7: ( 'insert' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:43:9: 'insert'
 			{
 			match("insert"); 
 
@@ -865,8 +865,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__53;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:44:7: ( 'let' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:44:9: 'let'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:44:7: ( 'let' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:44:9: 'let'
 			{
 			match("let"); 
 
@@ -886,8 +886,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__54;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:45:7: ( 'new' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:45:9: 'new'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:45:7: ( 'new' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:45:9: 'new'
 			{
 			match("new"); 
 
@@ -907,8 +907,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__55;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:46:7: ( 'not' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:46:9: 'not'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:46:7: ( 'not' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:46:9: 'not'
 			{
 			match("not"); 
 
@@ -928,8 +928,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__56;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:47:7: ( 'nounif' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:47:9: 'nounif'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:47:7: ( 'nounif' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:47:9: 'nounif'
 			{
 			match("nounif"); 
 
@@ -949,8 +949,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__57;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:48:7: ( 'or' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:48:9: 'or'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:48:7: ( 'or' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:48:9: 'or'
 			{
 			match("or"); 
 
@@ -970,8 +970,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__58;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:49:7: ( 'otherwise' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:49:9: 'otherwise'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:49:7: ( 'otherwise' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:49:9: 'otherwise'
 			{
 			match("otherwise"); 
 
@@ -991,8 +991,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__59;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:50:7: ( 'out' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:50:9: 'out'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:50:7: ( 'out' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:50:9: 'out'
 			{
 			match("out"); 
 
@@ -1012,8 +1012,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__60;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:51:7: ( 'phase' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:51:9: 'phase'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:51:7: ( 'phase' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:51:9: 'phase'
 			{
 			match("phase"); 
 
@@ -1033,8 +1033,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__61;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:52:7: ( 'pred' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:52:9: 'pred'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:52:7: ( 'pred' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:52:9: 'pred'
 			{
 			match("pred"); 
 
@@ -1054,8 +1054,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__62;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:53:7: ( 'process' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:53:9: 'process'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:53:7: ( 'process' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:53:9: 'process'
 			{
 			match("process"); 
 
@@ -1075,8 +1075,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__63;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:54:7: ( 'putbegin' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:54:9: 'putbegin'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:54:7: ( 'putbegin' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:54:9: 'putbegin'
 			{
 			match("putbegin"); 
 
@@ -1096,8 +1096,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__64;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:55:7: ( 'query' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:55:9: 'query'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:55:7: ( 'query' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:55:9: 'query'
 			{
 			match("query"); 
 
@@ -1117,8 +1117,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__65;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:56:7: ( 'reduc' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:56:9: 'reduc'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:56:7: ( 'reduc' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:56:9: 'reduc'
 			{
 			match("reduc"); 
 
@@ -1138,8 +1138,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__66;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:57:7: ( 'set' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:57:9: 'set'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:57:7: ( 'set' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:57:9: 'set'
 			{
 			match("set"); 
 
@@ -1159,8 +1159,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__67;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:7: ( 'suchthat' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:9: 'suchthat'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:7: ( 'suchthat' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:9: 'suchthat'
 			{
 			match("suchthat"); 
 
@@ -1180,8 +1180,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__68;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:59:7: ( 'table' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:59:9: 'table'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:59:7: ( 'table' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:59:9: 'table'
 			{
 			match("table"); 
 
@@ -1201,8 +1201,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__69;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:60:7: ( 'then' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:60:9: 'then'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:60:7: ( 'then' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:60:9: 'then'
 			{
 			match("then"); 
 
@@ -1222,8 +1222,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__70;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:61:7: ( 'type' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:61:9: 'type'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:61:7: ( 'type' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:61:9: 'type'
 			{
 			match("type"); 
 
@@ -1243,8 +1243,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__71;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:62:7: ( 'yield' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:62:9: 'yield'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:62:7: ( 'yield' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:62:9: 'yield'
 			{
 			match("yield"); 
 
@@ -1264,8 +1264,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__72;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:63:7: ( '|' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:63:9: '|'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:63:7: ( '|' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:63:9: '|'
 			{
 			match('|'); 
 			}
@@ -1284,8 +1284,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = T__73;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:64:7: ( '||' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:64:9: '||'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:64:7: ( '||' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:64:9: '||'
 			{
 			match("||"); 
 
@@ -1305,8 +1305,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = ID;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:188:4: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:188:6: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:189:2: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:189:3: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
 			{
 			if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
 				input.consume();
@@ -1316,7 +1316,7 @@ public class proverifLexer extends Lexer {
 				recover(mse);
 				throw mse;
 			}
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:188:30: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:189:27: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
 			loop1:
 			while (true) {
 				int alt1=2;
@@ -1327,7 +1327,7 @@ public class proverifLexer extends Lexer {
 
 				switch (alt1) {
 				case 1 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:
 					{
 					if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
 						input.consume();
@@ -1361,10 +1361,10 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = INT;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:191:5: ( ( '0' .. '9' )+ )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:191:7: ( '0' .. '9' )+
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:193:2: ( ( '0' .. '9' )+ )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:193:4: ( '0' .. '9' )+
 			{
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:191:7: ( '0' .. '9' )+
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:193:4: ( '0' .. '9' )+
 			int cnt2=0;
 			loop2:
 			while (true) {
@@ -1376,7 +1376,7 @@ public class proverifLexer extends Lexer {
 
 				switch (alt2) {
 				case 1 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:
 					{
 					if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
 						input.consume();
@@ -1413,14 +1413,14 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = FLOAT;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:195:2: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )? | '.' ( '0' .. '9' )+ ( EXPONENT )? | ( '0' .. '9' )+ EXPONENT )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:197:2: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )? | '.' ( '0' .. '9' )+ ( EXPONENT )? | ( '0' .. '9' )+ EXPONENT )
 			int alt9=3;
 			alt9 = dfa9.predict(input);
 			switch (alt9) {
 				case 1 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:195:5: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )?
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:197:4: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )?
 					{
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:195:5: ( '0' .. '9' )+
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:197:4: ( '0' .. '9' )+
 					int cnt3=0;
 					loop3:
 					while (true) {
@@ -1432,7 +1432,7 @@ public class proverifLexer extends Lexer {
 
 						switch (alt3) {
 						case 1 :
-							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:
+							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:
 							{
 							if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
 								input.consume();
@@ -1454,7 +1454,7 @@ public class proverifLexer extends Lexer {
 					}
 
 					match('.'); 
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:195:21: ( '0' .. '9' )*
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:197:20: ( '0' .. '9' )*
 					loop4:
 					while (true) {
 						int alt4=2;
@@ -1465,7 +1465,7 @@ public class proverifLexer extends Lexer {
 
 						switch (alt4) {
 						case 1 :
-							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:
+							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:
 							{
 							if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
 								input.consume();
@@ -1483,7 +1483,7 @@ public class proverifLexer extends Lexer {
 						}
 					}
 
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:195:33: ( EXPONENT )?
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:197:32: ( EXPONENT )?
 					int alt5=2;
 					int LA5_0 = input.LA(1);
 					if ( (LA5_0=='E'||LA5_0=='e') ) {
@@ -1491,7 +1491,7 @@ public class proverifLexer extends Lexer {
 					}
 					switch (alt5) {
 						case 1 :
-							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:195:33: EXPONENT
+							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:197:32: EXPONENT
 							{
 							mEXPONENT(); 
 
@@ -1503,10 +1503,10 @@ public class proverifLexer extends Lexer {
 					}
 					break;
 				case 2 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:196:5: '.' ( '0' .. '9' )+ ( EXPONENT )?
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:198:4: '.' ( '0' .. '9' )+ ( EXPONENT )?
 					{
 					match('.'); 
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:196:9: ( '0' .. '9' )+
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:198:8: ( '0' .. '9' )+
 					int cnt6=0;
 					loop6:
 					while (true) {
@@ -1518,7 +1518,7 @@ public class proverifLexer extends Lexer {
 
 						switch (alt6) {
 						case 1 :
-							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:
+							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:
 							{
 							if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
 								input.consume();
@@ -1539,7 +1539,7 @@ public class proverifLexer extends Lexer {
 						cnt6++;
 					}
 
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:196:21: ( EXPONENT )?
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:198:20: ( EXPONENT )?
 					int alt7=2;
 					int LA7_0 = input.LA(1);
 					if ( (LA7_0=='E'||LA7_0=='e') ) {
@@ -1547,7 +1547,7 @@ public class proverifLexer extends Lexer {
 					}
 					switch (alt7) {
 						case 1 :
-							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:196:21: EXPONENT
+							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:198:20: EXPONENT
 							{
 							mEXPONENT(); 
 
@@ -1559,9 +1559,9 @@ public class proverifLexer extends Lexer {
 					}
 					break;
 				case 3 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:197:5: ( '0' .. '9' )+ EXPONENT
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:199:4: ( '0' .. '9' )+ EXPONENT
 					{
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:197:5: ( '0' .. '9' )+
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:199:4: ( '0' .. '9' )+
 					int cnt8=0;
 					loop8:
 					while (true) {
@@ -1573,7 +1573,7 @@ public class proverifLexer extends Lexer {
 
 						switch (alt8) {
 						case 1 :
-							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:
+							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:
 							{
 							if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
 								input.consume();
@@ -1614,7 +1614,7 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = COMMENT;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:201:2: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' | '(*' ( options {greedy=false; } : . )* '*)' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:203:2: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' | '(*' ( options {greedy=false; } : . )* '*)' )
 			int alt13=2;
 			int LA13_0 = input.LA(1);
 			if ( (LA13_0=='/') ) {
@@ -1632,11 +1632,11 @@ public class proverifLexer extends Lexer {
 
 			switch (alt13) {
 				case 1 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:201:5: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:203:4: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
 					{
 					match("//"); 
 
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:201:10: (~ ( '\\n' | '\\r' ) )*
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:203:9: (~ ( '\\n' | '\\r' ) )*
 					loop10:
 					while (true) {
 						int alt10=2;
@@ -1647,7 +1647,7 @@ public class proverifLexer extends Lexer {
 
 						switch (alt10) {
 						case 1 :
-							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:
+							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:
 							{
 							if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '\t')||(input.LA(1) >= '\u000B' && input.LA(1) <= '\f')||(input.LA(1) >= '\u000E' && input.LA(1) <= '\uFFFF') ) {
 								input.consume();
@@ -1665,7 +1665,7 @@ public class proverifLexer extends Lexer {
 						}
 					}
 
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:201:24: ( '\\r' )?
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:203:23: ( '\\r' )?
 					int alt11=2;
 					int LA11_0 = input.LA(1);
 					if ( (LA11_0=='\r') ) {
@@ -1673,7 +1673,7 @@ public class proverifLexer extends Lexer {
 					}
 					switch (alt11) {
 						case 1 :
-							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:201:24: '\\r'
+							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:203:23: '\\r'
 							{
 							match('\r'); 
 							}
@@ -1686,11 +1686,11 @@ public class proverifLexer extends Lexer {
 					}
 					break;
 				case 2 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:202:5: '(*' ( options {greedy=false; } : . )* '*)'
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:204:4: '(*' ( options {greedy=false; } : . )* '*)'
 					{
 					match("(*"); 
 
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:202:10: ( options {greedy=false; } : . )*
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:204:9: ( options {greedy=false; } : . )*
 					loop12:
 					while (true) {
 						int alt12=2;
@@ -1711,7 +1711,7 @@ public class proverifLexer extends Lexer {
 
 						switch (alt12) {
 						case 1 :
-							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:202:38: .
+							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:204:37: .
 							{
 							matchAny(); 
 							}
@@ -1743,8 +1743,8 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = WS;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:206:2: ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:206:5: ( ' ' | '\\t' | '\\r' | '\\n' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:208:2: ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:208:4: ( ' ' | '\\t' | '\\r' | '\\n' )
 			{
 			if ( (input.LA(1) >= '\t' && input.LA(1) <= '\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
 				input.consume();
@@ -1771,11 +1771,11 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = STRING;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:214:2: ( '\"' ( ESC_SEQ |~ ( '\\\\' | '\"' ) )* '\"' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:214:4: '\"' ( ESC_SEQ |~ ( '\\\\' | '\"' ) )* '\"'
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:216:2: ( '\"' ( ESC_SEQ |~ ( '\\\\' | '\"' ) )* '\"' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:216:4: '\"' ( ESC_SEQ |~ ( '\\\\' | '\"' ) )* '\"'
 			{
 			match('\"'); 
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:214:8: ( ESC_SEQ |~ ( '\\\\' | '\"' ) )*
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:216:8: ( ESC_SEQ |~ ( '\\\\' | '\"' ) )*
 			loop14:
 			while (true) {
 				int alt14=3;
@@ -1789,14 +1789,14 @@ public class proverifLexer extends Lexer {
 
 				switch (alt14) {
 				case 1 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:214:10: ESC_SEQ
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:216:10: ESC_SEQ
 					{
 					mESC_SEQ(); 
 
 					}
 					break;
 				case 2 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:214:20: ~ ( '\\\\' | '\"' )
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:216:20: ~ ( '\\\\' | '\"' )
 					{
 					if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '!')||(input.LA(1) >= '#' && input.LA(1) <= '[')||(input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) {
 						input.consume();
@@ -1831,11 +1831,11 @@ public class proverifLexer extends Lexer {
 		try {
 			int _type = CHAR;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:218:2: ( '\\'' ( ESC_SEQ |~ ( '\\'' | '\\\\' ) ) '\\'' )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:218:4: '\\'' ( ESC_SEQ |~ ( '\\'' | '\\\\' ) ) '\\''
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:220:2: ( '\\'' ( ESC_SEQ |~ ( '\\'' | '\\\\' ) ) '\\'' )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:220:4: '\\'' ( ESC_SEQ |~ ( '\\'' | '\\\\' ) ) '\\''
 			{
 			match('\''); 
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:218:9: ( ESC_SEQ |~ ( '\\'' | '\\\\' ) )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:220:9: ( ESC_SEQ |~ ( '\\'' | '\\\\' ) )
 			int alt15=2;
 			int LA15_0 = input.LA(1);
 			if ( (LA15_0=='\\') ) {
@@ -1853,14 +1853,14 @@ public class proverifLexer extends Lexer {
 
 			switch (alt15) {
 				case 1 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:218:11: ESC_SEQ
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:220:11: ESC_SEQ
 					{
 					mESC_SEQ(); 
 
 					}
 					break;
 				case 2 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:218:21: ~ ( '\\'' | '\\\\' )
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:220:21: ~ ( '\\'' | '\\\\' )
 					{
 					if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '&')||(input.LA(1) >= '(' && input.LA(1) <= '[')||(input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) {
 						input.consume();
@@ -1890,8 +1890,8 @@ public class proverifLexer extends Lexer {
 	// $ANTLR start "EXPONENT"
 	public final void mEXPONENT() throws RecognitionException {
 		try {
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:223:10: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:223:12: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:225:10: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:225:12: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
 			{
 			if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
 				input.consume();
@@ -1901,7 +1901,7 @@ public class proverifLexer extends Lexer {
 				recover(mse);
 				throw mse;
 			}
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:223:22: ( '+' | '-' )?
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:225:22: ( '+' | '-' )?
 			int alt16=2;
 			int LA16_0 = input.LA(1);
 			if ( (LA16_0=='+'||LA16_0=='-') ) {
@@ -1909,7 +1909,7 @@ public class proverifLexer extends Lexer {
 			}
 			switch (alt16) {
 				case 1 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:
 					{
 					if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
 						input.consume();
@@ -1924,7 +1924,7 @@ public class proverifLexer extends Lexer {
 
 			}
 
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:223:33: ( '0' .. '9' )+
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:225:33: ( '0' .. '9' )+
 			int cnt17=0;
 			loop17:
 			while (true) {
@@ -1936,7 +1936,7 @@ public class proverifLexer extends Lexer {
 
 				switch (alt17) {
 				case 1 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:
 					{
 					if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
 						input.consume();
@@ -1969,8 +1969,8 @@ public class proverifLexer extends Lexer {
 	// $ANTLR start "HEX_DIGIT"
 	public final void mHEX_DIGIT() throws RecognitionException {
 		try {
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:226:11: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:228:11: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:
 			{
 			if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'F')||(input.LA(1) >= 'a' && input.LA(1) <= 'f') ) {
 				input.consume();
@@ -1992,7 +1992,7 @@ public class proverifLexer extends Lexer {
 	// $ANTLR start "ESC_SEQ"
 	public final void mESC_SEQ() throws RecognitionException {
 		try {
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:230:2: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' ) | UNICODE_ESC | OCTAL_ESC )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:232:2: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' ) | UNICODE_ESC | OCTAL_ESC )
 			int alt18=3;
 			int LA18_0 = input.LA(1);
 			if ( (LA18_0=='\\') ) {
@@ -2047,7 +2047,7 @@ public class proverifLexer extends Lexer {
 
 			switch (alt18) {
 				case 1 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:230:4: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' )
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:232:4: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' )
 					{
 					match('\\'); 
 					if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
@@ -2061,14 +2061,14 @@ public class proverifLexer extends Lexer {
 					}
 					break;
 				case 2 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:231:4: UNICODE_ESC
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:233:4: UNICODE_ESC
 					{
 					mUNICODE_ESC(); 
 
 					}
 					break;
 				case 3 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:232:4: OCTAL_ESC
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:234:4: OCTAL_ESC
 					{
 					mOCTAL_ESC(); 
 
@@ -2086,7 +2086,7 @@ public class proverifLexer extends Lexer {
 	// $ANTLR start "OCTAL_ESC"
 	public final void mOCTAL_ESC() throws RecognitionException {
 		try {
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:237:2: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:239:2: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
 			int alt19=3;
 			int LA19_0 = input.LA(1);
 			if ( (LA19_0=='\\') ) {
@@ -2144,7 +2144,7 @@ public class proverifLexer extends Lexer {
 
 			switch (alt19) {
 				case 1 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:237:4: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:239:4: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
 					{
 					match('\\'); 
 					if ( (input.LA(1) >= '0' && input.LA(1) <= '3') ) {
@@ -2174,7 +2174,7 @@ public class proverifLexer extends Lexer {
 					}
 					break;
 				case 2 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:238:4: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:240:4: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
 					{
 					match('\\'); 
 					if ( (input.LA(1) >= '0' && input.LA(1) <= '7') ) {
@@ -2196,7 +2196,7 @@ public class proverifLexer extends Lexer {
 					}
 					break;
 				case 3 :
-					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:239:4: '\\\\' ( '0' .. '7' )
+					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:241:4: '\\\\' ( '0' .. '7' )
 					{
 					match('\\'); 
 					if ( (input.LA(1) >= '0' && input.LA(1) <= '7') ) {
@@ -2221,8 +2221,8 @@ public class proverifLexer extends Lexer {
 	// $ANTLR start "UNICODE_ESC"
 	public final void mUNICODE_ESC() throws RecognitionException {
 		try {
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:244:2: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
-			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:244:4: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:246:2: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
+			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:246:4: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
 			{
 			match('\\'); 
 			match('u'); 
@@ -2245,460 +2245,460 @@ public class proverifLexer extends Lexer {
 
 	@Override
 	public void mTokens() throws RecognitionException {
-		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:8: ( T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | T__40 | T__41 | T__42 | T__43 | T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | T__54 | T__55 | T__56 | T__57 | T__58 | T__59 | T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | T__72 | T__73 | ID | INT | FLOAT | COMMENT | WS | STRING | CHAR )
+		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:8: ( T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | T__40 | T__41 | T__42 | T__43 | T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | T__54 | T__55 | T__56 | T__57 | T__58 | T__59 | T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | T__72 | T__73 | ID | INT | FLOAT | COMMENT | WS | STRING | CHAR )
 		int alt20=65;
 		alt20 = dfa20.predict(input);
 		switch (alt20) {
 			case 1 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:10: T__16
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:10: T__16
 				{
 				mT__16(); 
 
 				}
 				break;
 			case 2 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:16: T__17
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:16: T__17
 				{
 				mT__17(); 
 
 				}
 				break;
 			case 3 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:22: T__18
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:22: T__18
 				{
 				mT__18(); 
 
 				}
 				break;
 			case 4 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:28: T__19
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:28: T__19
 				{
 				mT__19(); 
 
 				}
 				break;
 			case 5 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:34: T__20
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:34: T__20
 				{
 				mT__20(); 
 
 				}
 				break;
 			case 6 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:40: T__21
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:40: T__21
 				{
 				mT__21(); 
 
 				}
 				break;
 			case 7 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:46: T__22
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:46: T__22
 				{
 				mT__22(); 
 
 				}
 				break;
 			case 8 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:52: T__23
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:52: T__23
 				{
 				mT__23(); 
 
 				}
 				break;
 			case 9 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:58: T__24
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:58: T__24
 				{
 				mT__24(); 
 
 				}
 				break;
 			case 10 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:64: T__25
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:64: T__25
 				{
 				mT__25(); 
 
 				}
 				break;
 			case 11 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:70: T__26
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:70: T__26
 				{
 				mT__26(); 
 
 				}
 				break;
 			case 12 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:76: T__27
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:76: T__27
 				{
 				mT__27(); 
 
 				}
 				break;
 			case 13 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:82: T__28
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:82: T__28
 				{
 				mT__28(); 
 
 				}
 				break;
 			case 14 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:88: T__29
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:88: T__29
 				{
 				mT__29(); 
 
 				}
 				break;
 			case 15 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:94: T__30
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:94: T__30
 				{
 				mT__30(); 
 
 				}
 				break;
 			case 16 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:100: T__31
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:100: T__31
 				{
 				mT__31(); 
 
 				}
 				break;
 			case 17 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:106: T__32
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:106: T__32
 				{
 				mT__32(); 
 
 				}
 				break;
 			case 18 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:112: T__33
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:112: T__33
 				{
 				mT__33(); 
 
 				}
 				break;
 			case 19 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:118: T__34
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:118: T__34
 				{
 				mT__34(); 
 
 				}
 				break;
 			case 20 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:124: T__35
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:124: T__35
 				{
 				mT__35(); 
 
 				}
 				break;
 			case 21 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:130: T__36
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:130: T__36
 				{
 				mT__36(); 
 
 				}
 				break;
 			case 22 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:136: T__37
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:136: T__37
 				{
 				mT__37(); 
 
 				}
 				break;
 			case 23 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:142: T__38
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:142: T__38
 				{
 				mT__38(); 
 
 				}
 				break;
 			case 24 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:148: T__39
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:148: T__39
 				{
 				mT__39(); 
 
 				}
 				break;
 			case 25 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:154: T__40
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:154: T__40
 				{
 				mT__40(); 
 
 				}
 				break;
 			case 26 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:160: T__41
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:160: T__41
 				{
 				mT__41(); 
 
 				}
 				break;
 			case 27 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:166: T__42
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:166: T__42
 				{
 				mT__42(); 
 
 				}
 				break;
 			case 28 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:172: T__43
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:172: T__43
 				{
 				mT__43(); 
 
 				}
 				break;
 			case 29 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:178: T__44
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:178: T__44
 				{
 				mT__44(); 
 
 				}
 				break;
 			case 30 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:184: T__45
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:184: T__45
 				{
 				mT__45(); 
 
 				}
 				break;
 			case 31 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:190: T__46
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:190: T__46
 				{
 				mT__46(); 
 
 				}
 				break;
 			case 32 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:196: T__47
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:196: T__47
 				{
 				mT__47(); 
 
 				}
 				break;
 			case 33 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:202: T__48
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:202: T__48
 				{
 				mT__48(); 
 
 				}
 				break;
 			case 34 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:208: T__49
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:208: T__49
 				{
 				mT__49(); 
 
 				}
 				break;
 			case 35 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:214: T__50
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:214: T__50
 				{
 				mT__50(); 
 
 				}
 				break;
 			case 36 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:220: T__51
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:220: T__51
 				{
 				mT__51(); 
 
 				}
 				break;
 			case 37 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:226: T__52
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:226: T__52
 				{
 				mT__52(); 
 
 				}
 				break;
 			case 38 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:232: T__53
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:232: T__53
 				{
 				mT__53(); 
 
 				}
 				break;
 			case 39 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:238: T__54
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:238: T__54
 				{
 				mT__54(); 
 
 				}
 				break;
 			case 40 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:244: T__55
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:244: T__55
 				{
 				mT__55(); 
 
 				}
 				break;
 			case 41 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:250: T__56
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:250: T__56
 				{
 				mT__56(); 
 
 				}
 				break;
 			case 42 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:256: T__57
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:256: T__57
 				{
 				mT__57(); 
 
 				}
 				break;
 			case 43 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:262: T__58
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:262: T__58
 				{
 				mT__58(); 
 
 				}
 				break;
 			case 44 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:268: T__59
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:268: T__59
 				{
 				mT__59(); 
 
 				}
 				break;
 			case 45 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:274: T__60
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:274: T__60
 				{
 				mT__60(); 
 
 				}
 				break;
 			case 46 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:280: T__61
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:280: T__61
 				{
 				mT__61(); 
 
 				}
 				break;
 			case 47 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:286: T__62
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:286: T__62
 				{
 				mT__62(); 
 
 				}
 				break;
 			case 48 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:292: T__63
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:292: T__63
 				{
 				mT__63(); 
 
 				}
 				break;
 			case 49 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:298: T__64
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:298: T__64
 				{
 				mT__64(); 
 
 				}
 				break;
 			case 50 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:304: T__65
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:304: T__65
 				{
 				mT__65(); 
 
 				}
 				break;
 			case 51 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:310: T__66
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:310: T__66
 				{
 				mT__66(); 
 
 				}
 				break;
 			case 52 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:316: T__67
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:316: T__67
 				{
 				mT__67(); 
 
 				}
 				break;
 			case 53 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:322: T__68
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:322: T__68
 				{
 				mT__68(); 
 
 				}
 				break;
 			case 54 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:328: T__69
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:328: T__69
 				{
 				mT__69(); 
 
 				}
 				break;
 			case 55 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:334: T__70
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:334: T__70
 				{
 				mT__70(); 
 
 				}
 				break;
 			case 56 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:340: T__71
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:340: T__71
 				{
 				mT__71(); 
 
 				}
 				break;
 			case 57 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:346: T__72
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:346: T__72
 				{
 				mT__72(); 
 
 				}
 				break;
 			case 58 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:352: T__73
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:352: T__73
 				{
 				mT__73(); 
 
 				}
 				break;
 			case 59 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:358: ID
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:358: ID
 				{
 				mID(); 
 
 				}
 				break;
 			case 60 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:361: INT
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:361: INT
 				{
 				mINT(); 
 
 				}
 				break;
 			case 61 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:365: FLOAT
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:365: FLOAT
 				{
 				mFLOAT(); 
 
 				}
 				break;
 			case 62 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:371: COMMENT
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:371: COMMENT
 				{
 				mCOMMENT(); 
 
 				}
 				break;
 			case 63 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:379: WS
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:379: WS
 				{
 				mWS(); 
 
 				}
 				break;
 			case 64 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:382: STRING
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:382: STRING
 				{
 				mSTRING(); 
 
 				}
 				break;
 			case 65 :
-				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:1:389: CHAR
+				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:1:389: CHAR
 				{
 				mCHAR(); 
 
@@ -2762,7 +2762,7 @@ public class proverifLexer extends Lexer {
 		}
 		@Override
 		public String getDescription() {
-			return "194:1: FLOAT : ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )? | '.' ( '0' .. '9' )+ ( EXPONENT )? | ( '0' .. '9' )+ EXPONENT );";
+			return "196:1: FLOAT : ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )? | '.' ( '0' .. '9' )+ ( EXPONENT )? | ( '0' .. '9' )+ EXPONENT );";
 		}
 	}
 
