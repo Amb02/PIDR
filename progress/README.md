@@ -6,9 +6,9 @@
 ###### Modification des fichiers d'exemples
 
 * Nous avons revu les tests de manière à cette fois avoir 6 cas.
- *Ainsi, pour NeedhamSchroeder, si nous avons (a,b) et l'élément c à rajouter, on a ((c,a),b) (c,(a,b)) ((a,c),b) (a,(c,b)) ((a,b),c) (a,(b,c)). Nous avons revu les fichiers pour NeedhamSchroederSK.pv.
- *Ne trouvant (étonnemment) pas d'attaque, nous avons fait de même pour NeedhamSchroederPK.pv, où là encore le résultat est surprenant mais à l'inverse puisque l'attaque subsiste dans tous les cas.
- *Les résultats de ces modifications se trouvent respectivement dans [ce dossier](../examples/NeedhamSchroederSK) ainsi que [celui-ci](../examples/NeedhamSchroederPK). Nous avons aussi répertorié dans un fichier README.md les résultats de l'exécution de ProVerif sur chacun des fichiers.
+  *Ainsi, pour NeedhamSchroeder, si nous avons (a,b) et l'élément c à rajouter, on a ((c,a),b) (c,(a,b)) ((a,c),b) (a,(c,b)) ((a,b),c) (a,(b,c)). Nous avons revu les fichiers pour NeedhamSchroederSK.pv.
+  *Ne trouvant (étonnemment) pas d'attaque, nous avons fait de même pour NeedhamSchroederPK.pv, où là encore le résultat est surprenant mais à l'inverse puisque l'attaque subsiste dans tous les cas.
+  *Les résultats de ces modifications se trouvent respectivement dans [ce dossier](../examples/NeedhamSchroederSK) ainsi que [celui-ci](../examples/NeedhamSchroederPK). Nous avons aussi répertorié dans un fichier README.md les résultats de l'exécution de ProVerif sur chacun des fichiers.
 
 * Problèmes rencontrés :
   * Invariation des résultats en fonction des parenthésages pour ces fichiers alors que c'est censé influer dans le cas de NeedhamSchroeder.
