@@ -1,4 +1,4 @@
-// $ANTLR null C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g 2019-02-26 19:21:01
+// $ANTLR 3.5.1 D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g 2019-02-26 21:36:31
 
 import org.antlr.runtime.*;
 import java.util.Stack;
@@ -110,18 +110,18 @@ public class proverifParser extends Parser {
 	}
 
 	@Override public String[] getTokenNames() { return proverifParser.tokenNames; }
-	@Override public String getGrammarFileName() { return "C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g"; }
+	@Override public String getGrammarFileName() { return "D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g"; }
 
 
 
 	// $ANTLR start "programme"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:8:1: programme : ( declaration )* 'process' process ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:8:1: programme : ( declaration )* 'process' process ;
 	public final void programme() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:9:2: ( ( declaration )* 'process' process )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:9:4: ( declaration )* 'process' process
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:9:2: ( ( declaration )* 'process' process )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:9:4: ( declaration )* 'process' process
 			{
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:9:4: ( declaration )*
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:9:4: ( declaration )*
 			loop1:
 			while (true) {
 				int alt1=2;
@@ -132,7 +132,7 @@ public class proverifParser extends Parser {
 
 				switch (alt1) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:9:4: declaration
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:9:4: declaration
 					{
 					pushFollow(FOLLOW_declaration_in_programme30);
 					declaration();
@@ -167,10 +167,10 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "declaration"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:12:1: declaration : ( 'type' ident proverifOptions | 'channel' ( ident ',' )* ident | 'free' ( ident ',' )* ident ':' typeid proverifOptions | 'const' ( ident ',' )* ident ':' typeid proverifOptions | 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid proverifOptions | 'reduc' reduc proverifOptions | 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid 'reduc' reducprime proverifOptions | 'equation' eqlist proverifOptions | 'pred' ident ( '(' ( ( typeid ',' )* typeid )? ')' )? proverifOptions | 'table' ident '(' ( ( typeid ',' )* typeid )? ')' | 'let' ident ( '(' ( typedecl )? ')' )? '=' process | 'set' name '=' value | 'event' ident ( '(' ( ( typeid ',' )* typeid )? ')' )? | 'query' ( typedecl ';' )? query | 'not' ( typedecl ';' )? gterm | 'nounif' ( typedecl ';' )? nounifdecl );
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:12:1: declaration : ( 'type' ident proverifOptions | 'channel' ( ident ',' )* ident | 'free' ( ident ',' )* ident ':' typeid proverifOptions | 'const' ( ident ',' )* ident ':' typeid proverifOptions | 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid proverifOptions | 'reduc' reduc proverifOptions | 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid 'reduc' reducprime proverifOptions | 'equation' eqlist proverifOptions | 'pred' ident ( '(' ( ( typeid ',' )* typeid )? ')' )? proverifOptions | 'table' ident '(' ( ( typeid ',' )* typeid )? ')' | 'let' ident ( '(' ( typedecl )? ')' )? '=' process | 'set' name '=' value | 'event' ident ( '(' ( ( typeid ',' )* typeid )? ')' )? | 'query' ( typedecl ';' )? query | 'not' ( typedecl ';' )? gterm | 'nounif' ( typedecl ';' )? nounifdecl );
 	public final void declaration() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:13:2: ( 'type' ident proverifOptions | 'channel' ( ident ',' )* ident | 'free' ( ident ',' )* ident ':' typeid proverifOptions | 'const' ( ident ',' )* ident ':' typeid proverifOptions | 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid proverifOptions | 'reduc' reduc proverifOptions | 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid 'reduc' reducprime proverifOptions | 'equation' eqlist proverifOptions | 'pred' ident ( '(' ( ( typeid ',' )* typeid )? ')' )? proverifOptions | 'table' ident '(' ( ( typeid ',' )* typeid )? ')' | 'let' ident ( '(' ( typedecl )? ')' )? '=' process | 'set' name '=' value | 'event' ident ( '(' ( ( typeid ',' )* typeid )? ')' )? | 'query' ( typedecl ';' )? query | 'not' ( typedecl ';' )? gterm | 'nounif' ( typedecl ';' )? nounifdecl )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:13:2: ( 'type' ident proverifOptions | 'channel' ( ident ',' )* ident | 'free' ( ident ',' )* ident ':' typeid proverifOptions | 'const' ( ident ',' )* ident ':' typeid proverifOptions | 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid proverifOptions | 'reduc' reduc proverifOptions | 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid 'reduc' reducprime proverifOptions | 'equation' eqlist proverifOptions | 'pred' ident ( '(' ( ( typeid ',' )* typeid )? ')' )? proverifOptions | 'table' ident '(' ( ( typeid ',' )* typeid )? ')' | 'let' ident ( '(' ( typedecl )? ')' )? '=' process | 'set' name '=' value | 'event' ident ( '(' ( ( typeid ',' )* typeid )? ')' )? | 'query' ( typedecl ';' )? query | 'not' ( typedecl ';' )? gterm | 'nounif' ( typedecl ';' )? nounifdecl )
 			int alt22=16;
 			switch ( input.LA(1) ) {
 			case 70:
@@ -276,7 +276,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt22) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:13:4: 'type' ident proverifOptions
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:13:4: 'type' ident proverifOptions
 					{
 					match(input,70,FOLLOW_70_in_declaration46); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_declaration48);
@@ -290,10 +290,10 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:14:4: 'channel' ( ident ',' )* ident
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:14:4: 'channel' ( ident ',' )* ident
 					{
 					match(input,36,FOLLOW_36_in_declaration55); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:14:15: ( ident ',' )*
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:14:15: ( ident ',' )*
 					loop2:
 					while (true) {
 						int alt2=2;
@@ -308,7 +308,7 @@ public class proverifParser extends Parser {
 
 						switch (alt2) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:14:16: ident ','
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:14:16: ident ','
 							{
 							pushFollow(FOLLOW_ident_in_declaration59);
 							ident();
@@ -330,10 +330,10 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 3 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:15:4: 'free' ( ident ',' )* ident ':' typeid proverifOptions
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:15:4: 'free' ( ident ',' )* ident ':' typeid proverifOptions
 					{
 					match(input,46,FOLLOW_46_in_declaration70); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:15:11: ( ident ',' )*
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:15:11: ( ident ',' )*
 					loop3:
 					while (true) {
 						int alt3=2;
@@ -348,7 +348,7 @@ public class proverifParser extends Parser {
 
 						switch (alt3) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:15:12: ident ','
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:15:12: ident ','
 							{
 							pushFollow(FOLLOW_ident_in_declaration73);
 							ident();
@@ -379,10 +379,10 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 4 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:16:4: 'const' ( ident ',' )* ident ':' typeid proverifOptions
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:16:4: 'const' ( ident ',' )* ident ':' typeid proverifOptions
 					{
 					match(input,38,FOLLOW_38_in_declaration90); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:16:12: ( ident ',' )*
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:16:12: ( ident ',' )*
 					loop4:
 					while (true) {
 						int alt4=2;
@@ -397,7 +397,7 @@ public class proverifParser extends Parser {
 
 						switch (alt4) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:16:13: ident ','
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:16:13: ident ','
 							{
 							pushFollow(FOLLOW_ident_in_declaration93);
 							ident();
@@ -428,7 +428,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 5 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:17:4: 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid proverifOptions
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:17:4: 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid proverifOptions
 					{
 					match(input,47,FOLLOW_47_in_declaration110); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_declaration112);
@@ -436,7 +436,7 @@ public class proverifParser extends Parser {
 					state._fsp--;
 					if (state.failed) return;
 					match(input,18,FOLLOW_18_in_declaration114); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:17:20: ( ( typeid ',' )* typeid )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:17:20: ( ( typeid ',' )* typeid )?
 					int alt6=2;
 					int LA6_0 = input.LA(1);
 					if ( (LA6_0==ID) ) {
@@ -444,9 +444,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt6) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:17:21: ( typeid ',' )* typeid
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:17:21: ( typeid ',' )* typeid
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:17:21: ( typeid ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:17:21: ( typeid ',' )*
 							loop5:
 							while (true) {
 								int alt5=2;
@@ -461,7 +461,7 @@ public class proverifParser extends Parser {
 
 								switch (alt5) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:17:22: typeid ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:17:22: typeid ','
 									{
 									pushFollow(FOLLOW_typeid_in_declaration118);
 									typeid();
@@ -498,7 +498,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 6 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:18:4: 'reduc' reduc proverifOptions
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:18:4: 'reduc' reduc proverifOptions
 					{
 					match(input,65,FOLLOW_65_in_declaration139); if (state.failed) return;
 					pushFollow(FOLLOW_reduc_in_declaration141);
@@ -512,7 +512,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 7 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:19:4: 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid 'reduc' reducprime proverifOptions
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:19:4: 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid 'reduc' reducprime proverifOptions
 					{
 					match(input,47,FOLLOW_47_in_declaration148); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_declaration150);
@@ -520,7 +520,7 @@ public class proverifParser extends Parser {
 					state._fsp--;
 					if (state.failed) return;
 					match(input,18,FOLLOW_18_in_declaration152); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:19:20: ( ( typeid ',' )* typeid )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:19:20: ( ( typeid ',' )* typeid )?
 					int alt8=2;
 					int LA8_0 = input.LA(1);
 					if ( (LA8_0==ID) ) {
@@ -528,9 +528,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt8) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:19:21: ( typeid ',' )* typeid
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:19:21: ( typeid ',' )* typeid
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:19:21: ( typeid ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:19:21: ( typeid ',' )*
 							loop7:
 							while (true) {
 								int alt7=2;
@@ -545,7 +545,7 @@ public class proverifParser extends Parser {
 
 								switch (alt7) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:19:22: typeid ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:19:22: typeid ','
 									{
 									pushFollow(FOLLOW_typeid_in_declaration156);
 									typeid();
@@ -587,7 +587,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 8 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:20:4: 'equation' eqlist proverifOptions
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:20:4: 'equation' eqlist proverifOptions
 					{
 					match(input,41,FOLLOW_41_in_declaration181); if (state.failed) return;
 					pushFollow(FOLLOW_eqlist_in_declaration183);
@@ -601,14 +601,14 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 9 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:21:4: 'pred' ident ( '(' ( ( typeid ',' )* typeid )? ')' )? proverifOptions
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:21:4: 'pred' ident ( '(' ( ( typeid ',' )* typeid )? ')' )? proverifOptions
 					{
 					match(input,61,FOLLOW_61_in_declaration190); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_declaration192);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:21:17: ( '(' ( ( typeid ',' )* typeid )? ')' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:21:17: ( '(' ( ( typeid ',' )* typeid )? ')' )?
 					int alt11=2;
 					int LA11_0 = input.LA(1);
 					if ( (LA11_0==18) ) {
@@ -616,10 +616,10 @@ public class proverifParser extends Parser {
 					}
 					switch (alt11) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:21:19: '(' ( ( typeid ',' )* typeid )? ')'
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:21:19: '(' ( ( typeid ',' )* typeid )? ')'
 							{
 							match(input,18,FOLLOW_18_in_declaration196); if (state.failed) return;
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:21:23: ( ( typeid ',' )* typeid )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:21:23: ( ( typeid ',' )* typeid )?
 							int alt10=2;
 							int LA10_0 = input.LA(1);
 							if ( (LA10_0==ID) ) {
@@ -627,9 +627,9 @@ public class proverifParser extends Parser {
 							}
 							switch (alt10) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:21:24: ( typeid ',' )* typeid
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:21:24: ( typeid ',' )* typeid
 									{
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:21:24: ( typeid ',' )*
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:21:24: ( typeid ',' )*
 									loop9:
 									while (true) {
 										int alt9=2;
@@ -644,7 +644,7 @@ public class proverifParser extends Parser {
 
 										switch (alt9) {
 										case 1 :
-											// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:21:25: typeid ','
+											// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:21:25: typeid ','
 											{
 											pushFollow(FOLLOW_typeid_in_declaration200);
 											typeid();
@@ -681,7 +681,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 10 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:22:4: 'table' ident '(' ( ( typeid ',' )* typeid )? ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:22:4: 'table' ident '(' ( ( typeid ',' )* typeid )? ')'
 					{
 					match(input,68,FOLLOW_68_in_declaration220); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_declaration222);
@@ -689,7 +689,7 @@ public class proverifParser extends Parser {
 					state._fsp--;
 					if (state.failed) return;
 					match(input,18,FOLLOW_18_in_declaration224); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:22:22: ( ( typeid ',' )* typeid )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:22:22: ( ( typeid ',' )* typeid )?
 					int alt13=2;
 					int LA13_0 = input.LA(1);
 					if ( (LA13_0==ID) ) {
@@ -697,9 +697,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt13) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:22:23: ( typeid ',' )* typeid
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:22:23: ( typeid ',' )* typeid
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:22:23: ( typeid ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:22:23: ( typeid ',' )*
 							loop12:
 							while (true) {
 								int alt12=2;
@@ -714,7 +714,7 @@ public class proverifParser extends Parser {
 
 								switch (alt12) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:22:24: typeid ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:22:24: typeid ','
 									{
 									pushFollow(FOLLOW_typeid_in_declaration228);
 									typeid();
@@ -742,14 +742,14 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 11 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:23:4: 'let' ident ( '(' ( typedecl )? ')' )? '=' process
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:23:4: 'let' ident ( '(' ( typedecl )? ')' )? '=' process
 					{
 					match(input,53,FOLLOW_53_in_declaration243); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_declaration245);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:23:16: ( '(' ( typedecl )? ')' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:23:16: ( '(' ( typedecl )? ')' )?
 					int alt15=2;
 					int LA15_0 = input.LA(1);
 					if ( (LA15_0==18) ) {
@@ -757,10 +757,10 @@ public class proverifParser extends Parser {
 					}
 					switch (alt15) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:23:18: '(' ( typedecl )? ')'
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:23:18: '(' ( typedecl )? ')'
 							{
 							match(input,18,FOLLOW_18_in_declaration249); if (state.failed) return;
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:23:22: ( typedecl )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:23:22: ( typedecl )?
 							int alt14=2;
 							int LA14_0 = input.LA(1);
 							if ( (LA14_0==ID) ) {
@@ -768,7 +768,7 @@ public class proverifParser extends Parser {
 							}
 							switch (alt14) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:23:23: typedecl
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:23:23: typedecl
 									{
 									pushFollow(FOLLOW_typedecl_in_declaration252);
 									typedecl();
@@ -793,7 +793,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 12 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:24:4: 'set' name '=' value
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:24:4: 'set' name '=' value
 					{
 					match(input,66,FOLLOW_66_in_declaration267); if (state.failed) return;
 					pushFollow(FOLLOW_name_in_declaration269);
@@ -808,14 +808,14 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 13 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:25:4: 'event' ident ( '(' ( ( typeid ',' )* typeid )? ')' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:25:4: 'event' ident ( '(' ( ( typeid ',' )* typeid )? ')' )?
 					{
 					match(input,42,FOLLOW_42_in_declaration278); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_declaration280);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:25:18: ( '(' ( ( typeid ',' )* typeid )? ')' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:25:18: ( '(' ( ( typeid ',' )* typeid )? ')' )?
 					int alt18=2;
 					int LA18_0 = input.LA(1);
 					if ( (LA18_0==18) ) {
@@ -823,10 +823,10 @@ public class proverifParser extends Parser {
 					}
 					switch (alt18) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:25:20: '(' ( ( typeid ',' )* typeid )? ')'
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:25:20: '(' ( ( typeid ',' )* typeid )? ')'
 							{
 							match(input,18,FOLLOW_18_in_declaration284); if (state.failed) return;
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:25:24: ( ( typeid ',' )* typeid )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:25:24: ( ( typeid ',' )* typeid )?
 							int alt17=2;
 							int LA17_0 = input.LA(1);
 							if ( (LA17_0==ID) ) {
@@ -834,9 +834,9 @@ public class proverifParser extends Parser {
 							}
 							switch (alt17) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:25:25: ( typeid ',' )* typeid
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:25:25: ( typeid ',' )* typeid
 									{
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:25:25: ( typeid ',' )*
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:25:25: ( typeid ',' )*
 									loop16:
 									while (true) {
 										int alt16=2;
@@ -851,7 +851,7 @@ public class proverifParser extends Parser {
 
 										switch (alt16) {
 										case 1 :
-											// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:25:26: typeid ','
+											// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:25:26: typeid ','
 											{
 											pushFollow(FOLLOW_typeid_in_declaration288);
 											typeid();
@@ -884,10 +884,10 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 14 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:26:4: 'query' ( typedecl ';' )? query
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:26:4: 'query' ( typedecl ';' )? query
 					{
 					match(input,64,FOLLOW_64_in_declaration306); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:26:12: ( typedecl ';' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:26:12: ( typedecl ';' )?
 					int alt19=2;
 					int LA19_0 = input.LA(1);
 					if ( (LA19_0==ID) ) {
@@ -898,7 +898,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt19) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:26:13: typedecl ';'
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:26:13: typedecl ';'
 							{
 							pushFollow(FOLLOW_typedecl_in_declaration309);
 							typedecl();
@@ -917,10 +917,10 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 15 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:27:4: 'not' ( typedecl ';' )? gterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:27:4: 'not' ( typedecl ';' )? gterm
 					{
 					match(input,55,FOLLOW_55_in_declaration320); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:27:10: ( typedecl ';' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:27:10: ( typedecl ';' )?
 					int alt20=2;
 					int LA20_0 = input.LA(1);
 					if ( (LA20_0==ID) ) {
@@ -931,7 +931,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt20) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:27:11: typedecl ';'
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:27:11: typedecl ';'
 							{
 							pushFollow(FOLLOW_typedecl_in_declaration323);
 							typedecl();
@@ -950,10 +950,10 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 16 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:28:4: 'nounif' ( typedecl ';' )? nounifdecl
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:28:4: 'nounif' ( typedecl ';' )? nounifdecl
 					{
 					match(input,56,FOLLOW_56_in_declaration334); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:28:13: ( typedecl ';' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:28:13: ( typedecl ';' )?
 					int alt21=2;
 					int LA21_0 = input.LA(1);
 					if ( (LA21_0==ID) ) {
@@ -964,7 +964,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt21) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:28:14: typedecl ';'
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:28:14: typedecl ';'
 							{
 							pushFollow(FOLLOW_typedecl_in_declaration337);
 							typedecl();
@@ -998,13 +998,13 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "reduc"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:31:1: reduc : ( 'forall' typedecl ';' )? term '=' term ( ';' reduc )? ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:31:1: reduc : ( 'forall' typedecl ';' )? term '=' term ( ';' reduc )? ;
 	public final void reduc() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:32:2: ( ( 'forall' typedecl ';' )? term '=' term ( ';' reduc )? )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:32:4: ( 'forall' typedecl ';' )? term '=' term ( ';' reduc )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:32:2: ( ( 'forall' typedecl ';' )? term '=' term ( ';' reduc )? )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:32:4: ( 'forall' typedecl ';' )? term '=' term ( ';' reduc )?
 			{
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:32:4: ( 'forall' typedecl ';' )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:32:4: ( 'forall' typedecl ';' )?
 			int alt23=2;
 			int LA23_0 = input.LA(1);
 			if ( (LA23_0==44) ) {
@@ -1012,7 +1012,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt23) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:32:5: 'forall' typedecl ';'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:32:5: 'forall' typedecl ';'
 					{
 					match(input,44,FOLLOW_44_in_reduc355); if (state.failed) return;
 					pushFollow(FOLLOW_typedecl_in_reduc357);
@@ -1034,7 +1034,7 @@ public class proverifParser extends Parser {
 			term();
 			state._fsp--;
 			if (state.failed) return;
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:32:43: ( ';' reduc )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:32:43: ( ';' reduc )?
 			int alt24=2;
 			int LA24_0 = input.LA(1);
 			if ( (LA24_0==25) ) {
@@ -1042,7 +1042,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt24) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:32:44: ';' reduc
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:32:44: ';' reduc
 					{
 					match(input,25,FOLLOW_25_in_reduc370); if (state.failed) return;
 					pushFollow(FOLLOW_reduc_in_reduc372);
@@ -1070,13 +1070,13 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "reducprime"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:35:1: reducprime : ( 'forall' failtypedecl ';' )? ident '(' ( ( mayfailterm ',' )* mayfailterm )? ')' ( 'otherwise' reducprime )? ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:35:1: reducprime : ( 'forall' failtypedecl ';' )? ident '(' ( ( mayfailterm ',' )* mayfailterm )? ')' ( 'otherwise' reducprime )? ;
 	public final void reducprime() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:36:2: ( ( 'forall' failtypedecl ';' )? ident '(' ( ( mayfailterm ',' )* mayfailterm )? ')' ( 'otherwise' reducprime )? )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:36:4: ( 'forall' failtypedecl ';' )? ident '(' ( ( mayfailterm ',' )* mayfailterm )? ')' ( 'otherwise' reducprime )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:36:2: ( ( 'forall' failtypedecl ';' )? ident '(' ( ( mayfailterm ',' )* mayfailterm )? ')' ( 'otherwise' reducprime )? )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:36:4: ( 'forall' failtypedecl ';' )? ident '(' ( ( mayfailterm ',' )* mayfailterm )? ')' ( 'otherwise' reducprime )?
 			{
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:36:4: ( 'forall' failtypedecl ';' )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:36:4: ( 'forall' failtypedecl ';' )?
 			int alt25=2;
 			int LA25_0 = input.LA(1);
 			if ( (LA25_0==44) ) {
@@ -1084,7 +1084,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt25) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:36:5: 'forall' failtypedecl ';'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:36:5: 'forall' failtypedecl ';'
 					{
 					match(input,44,FOLLOW_44_in_reducprime387); if (state.failed) return;
 					pushFollow(FOLLOW_failtypedecl_in_reducprime389);
@@ -1102,7 +1102,7 @@ public class proverifParser extends Parser {
 			state._fsp--;
 			if (state.failed) return;
 			match(input,18,FOLLOW_18_in_reducprime397); if (state.failed) return;
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:36:43: ( ( mayfailterm ',' )* mayfailterm )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:36:43: ( ( mayfailterm ',' )* mayfailterm )?
 			int alt27=2;
 			int LA27_0 = input.LA(1);
 			if ( (LA27_0==ID||LA27_0==18||LA27_0==43||LA27_0==55) ) {
@@ -1110,9 +1110,9 @@ public class proverifParser extends Parser {
 			}
 			switch (alt27) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:36:44: ( mayfailterm ',' )* mayfailterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:36:44: ( mayfailterm ',' )* mayfailterm
 					{
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:36:44: ( mayfailterm ',' )*
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:36:44: ( mayfailterm ',' )*
 					loop26:
 					while (true) {
 						int alt26=2;
@@ -1156,7 +1156,7 @@ public class proverifParser extends Parser {
 						}
 						switch (alt26) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:36:45: mayfailterm ','
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:36:45: mayfailterm ','
 							{
 							pushFollow(FOLLOW_mayfailterm_in_reducprime401);
 							mayfailterm();
@@ -1181,7 +1181,7 @@ public class proverifParser extends Parser {
 			}
 
 			match(input,19,FOLLOW_19_in_reducprime411); if (state.failed) return;
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:36:81: ( 'otherwise' reducprime )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:36:81: ( 'otherwise' reducprime )?
 			int alt28=2;
 			int LA28_0 = input.LA(1);
 			if ( (LA28_0==58) ) {
@@ -1189,7 +1189,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt28) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:36:82: 'otherwise' reducprime
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:36:82: 'otherwise' reducprime
 					{
 					match(input,58,FOLLOW_58_in_reducprime414); if (state.failed) return;
 					pushFollow(FOLLOW_reducprime_in_reducprime416);
@@ -1217,14 +1217,14 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "eqlist"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:39:1: eqlist : ( 'forall' typedecl ';' ) term '=' term ( ';' eqlist )? ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:39:1: eqlist : ( 'forall' typedecl ';' ) term '=' term ( ';' eqlist )? ;
 	public final void eqlist() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:40:2: ( ( 'forall' typedecl ';' ) term '=' term ( ';' eqlist )? )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:40:4: ( 'forall' typedecl ';' ) term '=' term ( ';' eqlist )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:40:2: ( ( 'forall' typedecl ';' ) term '=' term ( ';' eqlist )? )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:40:4: ( 'forall' typedecl ';' ) term '=' term ( ';' eqlist )?
 			{
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:40:4: ( 'forall' typedecl ';' )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:40:5: 'forall' typedecl ';'
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:40:4: ( 'forall' typedecl ';' )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:40:5: 'forall' typedecl ';'
 			{
 			match(input,44,FOLLOW_44_in_eqlist430); if (state.failed) return;
 			pushFollow(FOLLOW_typedecl_in_eqlist432);
@@ -1243,7 +1243,7 @@ public class proverifParser extends Parser {
 			term();
 			state._fsp--;
 			if (state.failed) return;
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:40:42: ( ';' eqlist )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:40:42: ( ';' eqlist )?
 			int alt29=2;
 			int LA29_0 = input.LA(1);
 			if ( (LA29_0==25) ) {
@@ -1251,7 +1251,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt29) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:40:43: ';' eqlist
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:40:43: ';' eqlist
 					{
 					match(input,25,FOLLOW_25_in_eqlist444); if (state.failed) return;
 					pushFollow(FOLLOW_eqlist_in_eqlist446);
@@ -1279,11 +1279,11 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "name"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:43:1: name : ID ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:43:1: name : ID ;
 	public final void name() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:44:2: ( ID )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:44:4: ID
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:44:2: ( ID )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:44:4: ID
 			{
 			match(input,ID,FOLLOW_ID_in_name459); if (state.failed) return;
 			}
@@ -1302,11 +1302,11 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "value"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:47:1: value : ID ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:47:1: value : ID ;
 	public final void value() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:48:2: ( ID )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:48:4: ID
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:48:2: ( ID )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:48:4: ID
 			{
 			match(input,ID,FOLLOW_ID_in_value470); if (state.failed) return;
 			}
@@ -1325,10 +1325,10 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "query"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:51:1: query : ( gterm ( ';' query )? | 'putbegin' 'event' ':' ( ident ',' )* ident ( ';' query )? | 'putbegin' 'inj-event' ':' ( ident ',' )* ident ( ';' query )? );
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:51:1: query : ( gterm ( ';' query )? | 'putbegin' 'event' ':' ( ident ',' )* ident ( ';' query )? | 'putbegin' 'inj-event' ':' ( ident ',' )* ident ( ';' query )? );
 	public final void query() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:52:2: ( gterm ( ';' query )? | 'putbegin' 'event' ':' ( ident ',' )* ident ( ';' query )? | 'putbegin' 'inj-event' ':' ( ident ',' )* ident ( ';' query )? )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:52:2: ( gterm ( ';' query )? | 'putbegin' 'event' ':' ( ident ',' )* ident ( ';' query )? | 'putbegin' 'inj-event' ':' ( ident ',' )* ident ( ';' query )? )
 			int alt35=3;
 			int LA35_0 = input.LA(1);
 			if ( (LA35_0==ID||LA35_0==18||LA35_0==42||LA35_0==51||(LA35_0 >= 53 && LA35_0 <= 54)) ) {
@@ -1367,13 +1367,13 @@ public class proverifParser extends Parser {
 
 			switch (alt35) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:52:4: gterm ( ';' query )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:52:4: gterm ( ';' query )?
 					{
 					pushFollow(FOLLOW_gterm_in_query482);
 					gterm();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:52:10: ( ';' query )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:52:10: ( ';' query )?
 					int alt30=2;
 					int LA30_0 = input.LA(1);
 					if ( (LA30_0==25) ) {
@@ -1381,7 +1381,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt30) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:52:11: ';' query
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:52:11: ';' query
 							{
 							match(input,25,FOLLOW_25_in_query485); if (state.failed) return;
 							pushFollow(FOLLOW_query_in_query487);
@@ -1396,12 +1396,12 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:53:4: 'putbegin' 'event' ':' ( ident ',' )* ident ( ';' query )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:53:4: 'putbegin' 'event' ':' ( ident ',' )* ident ( ';' query )?
 					{
 					match(input,63,FOLLOW_63_in_query494); if (state.failed) return;
 					match(input,42,FOLLOW_42_in_query496); if (state.failed) return;
 					match(input,24,FOLLOW_24_in_query498); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:53:27: ( ident ',' )*
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:53:27: ( ident ',' )*
 					loop31:
 					while (true) {
 						int alt31=2;
@@ -1416,7 +1416,7 @@ public class proverifParser extends Parser {
 
 						switch (alt31) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:53:28: ident ','
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:53:28: ident ','
 							{
 							pushFollow(FOLLOW_ident_in_query501);
 							ident();
@@ -1435,7 +1435,7 @@ public class proverifParser extends Parser {
 					ident();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:53:46: ( ';' query )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:53:46: ( ';' query )?
 					int alt32=2;
 					int LA32_0 = input.LA(1);
 					if ( (LA32_0==25) ) {
@@ -1443,7 +1443,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt32) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:53:47: ';' query
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:53:47: ';' query
 							{
 							match(input,25,FOLLOW_25_in_query510); if (state.failed) return;
 							pushFollow(FOLLOW_query_in_query512);
@@ -1458,12 +1458,12 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 3 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:54:4: 'putbegin' 'inj-event' ':' ( ident ',' )* ident ( ';' query )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:54:4: 'putbegin' 'inj-event' ':' ( ident ',' )* ident ( ';' query )?
 					{
 					match(input,63,FOLLOW_63_in_query519); if (state.failed) return;
 					match(input,51,FOLLOW_51_in_query521); if (state.failed) return;
 					match(input,24,FOLLOW_24_in_query523); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:54:31: ( ident ',' )*
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:54:31: ( ident ',' )*
 					loop33:
 					while (true) {
 						int alt33=2;
@@ -1478,7 +1478,7 @@ public class proverifParser extends Parser {
 
 						switch (alt33) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:54:32: ident ','
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:54:32: ident ','
 							{
 							pushFollow(FOLLOW_ident_in_query526);
 							ident();
@@ -1497,7 +1497,7 @@ public class proverifParser extends Parser {
 					ident();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:54:50: ( ';' query )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:54:50: ( ';' query )?
 					int alt34=2;
 					int LA34_0 = input.LA(1);
 					if ( (LA34_0==25) ) {
@@ -1505,7 +1505,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt34) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:54:51: ';' query
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:54:51: ';' query
 							{
 							match(input,25,FOLLOW_25_in_query535); if (state.failed) return;
 							pushFollow(FOLLOW_query_in_query537);
@@ -1535,13 +1535,13 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "gterm"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:57:1: gterm : ( ident | ident '(' ( ( gterm ',' )* gterm )? ')' ( 'phase' int )? | 'event' '(' ( ( gterm ',' )* gterm )? gterm ')' | 'inj-event' '(' ( ( gterm ',' )* gterm )? gterm ')' | '(' ( ( gterm ',' )* gterm )? gterm ')' | 'new' ident ( '[' ( gbinding )? ']' )? | 'let' ident '=' gterm 'in' gterm ) ( '=' gterm | '<>' gterm | '||' gterm | '&&' gterm | '==>' gterm )* ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:57:1: gterm : ( ident | ident '(' ( ( gterm ',' )* gterm )? ')' ( 'phase' int )? | 'event' '(' ( ( gterm ',' )* gterm )? gterm ')' | 'inj-event' '(' ( ( gterm ',' )* gterm )? gterm ')' | '(' ( ( gterm ',' )* gterm )? gterm ')' | 'new' ident ( '[' ( gbinding )? ']' )? | 'let' ident '=' gterm 'in' gterm ) ( '=' gterm | '<>' gterm | '||' gterm | '&&' gterm | '==>' gterm )* ;
 	public final void gterm() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:2: ( ( ident | ident '(' ( ( gterm ',' )* gterm )? ')' ( 'phase' int )? | 'event' '(' ( ( gterm ',' )* gterm )? gterm ')' | 'inj-event' '(' ( ( gterm ',' )* gterm )? gterm ')' | '(' ( ( gterm ',' )* gterm )? gterm ')' | 'new' ident ( '[' ( gbinding )? ']' )? | 'let' ident '=' gterm 'in' gterm ) ( '=' gterm | '<>' gterm | '||' gterm | '&&' gterm | '==>' gterm )* )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:4: ( ident | ident '(' ( ( gterm ',' )* gterm )? ')' ( 'phase' int )? | 'event' '(' ( ( gterm ',' )* gterm )? gterm ')' | 'inj-event' '(' ( ( gterm ',' )* gterm )? gterm ')' | '(' ( ( gterm ',' )* gterm )? gterm ')' | 'new' ident ( '[' ( gbinding )? ']' )? | 'let' ident '=' gterm 'in' gterm ) ( '=' gterm | '<>' gterm | '||' gterm | '&&' gterm | '==>' gterm )*
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:2: ( ( ident | ident '(' ( ( gterm ',' )* gterm )? ')' ( 'phase' int )? | 'event' '(' ( ( gterm ',' )* gterm )? gterm ')' | 'inj-event' '(' ( ( gterm ',' )* gterm )? gterm ')' | '(' ( ( gterm ',' )* gterm )? gterm ')' | 'new' ident ( '[' ( gbinding )? ']' )? | 'let' ident '=' gterm 'in' gterm ) ( '=' gterm | '<>' gterm | '||' gterm | '&&' gterm | '==>' gterm )* )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:4: ( ident | ident '(' ( ( gterm ',' )* gterm )? ')' ( 'phase' int )? | 'event' '(' ( ( gterm ',' )* gterm )? gterm ')' | 'inj-event' '(' ( ( gterm ',' )* gterm )? gterm ')' | '(' ( ( gterm ',' )* gterm )? gterm ')' | 'new' ident ( '[' ( gbinding )? ']' )? | 'let' ident '=' gterm 'in' gterm ) ( '=' gterm | '<>' gterm | '||' gterm | '&&' gterm | '==>' gterm )*
 			{
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:4: ( ident | ident '(' ( ( gterm ',' )* gterm )? ')' ( 'phase' int )? | 'event' '(' ( ( gterm ',' )* gterm )? gterm ')' | 'inj-event' '(' ( ( gterm ',' )* gterm )? gterm ')' | '(' ( ( gterm ',' )* gterm )? gterm ')' | 'new' ident ( '[' ( gbinding )? ']' )? | 'let' ident '=' gterm 'in' gterm )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:4: ( ident | ident '(' ( ( gterm ',' )* gterm )? ')' ( 'phase' int )? | 'event' '(' ( ( gterm ',' )* gterm )? gterm ')' | 'inj-event' '(' ( ( gterm ',' )* gterm )? gterm ')' | '(' ( ( gterm ',' )* gterm )? gterm ')' | 'new' ident ( '[' ( gbinding )? ']' )? | 'let' ident '=' gterm 'in' gterm )
 			int alt47=7;
 			switch ( input.LA(1) ) {
 			case ID:
@@ -1602,7 +1602,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt47) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:5: ident
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:5: ident
 					{
 					pushFollow(FOLLOW_ident_in_gterm552);
 					ident();
@@ -1611,14 +1611,14 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:13: ident '(' ( ( gterm ',' )* gterm )? ')' ( 'phase' int )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:13: ident '(' ( ( gterm ',' )* gterm )? ')' ( 'phase' int )?
 					{
 					pushFollow(FOLLOW_ident_in_gterm556);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
 					match(input,18,FOLLOW_18_in_gterm558); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:23: ( ( gterm ',' )* gterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:23: ( ( gterm ',' )* gterm )?
 					int alt37=2;
 					int LA37_0 = input.LA(1);
 					if ( (LA37_0==ID||LA37_0==18||LA37_0==42||LA37_0==51||(LA37_0 >= 53 && LA37_0 <= 54)) ) {
@@ -1626,9 +1626,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt37) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:24: ( gterm ',' )* gterm
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:24: ( gterm ',' )* gterm
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:24: ( gterm ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:24: ( gterm ',' )*
 							loop36:
 							while (true) {
 								int alt36=2;
@@ -1690,7 +1690,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt36) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:25: gterm ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:25: gterm ','
 									{
 									pushFollow(FOLLOW_gterm_in_gterm562);
 									gterm();
@@ -1715,7 +1715,7 @@ public class proverifParser extends Parser {
 					}
 
 					match(input,19,FOLLOW_19_in_gterm572); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:49: ( 'phase' int )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:49: ( 'phase' int )?
 					int alt38=2;
 					int LA38_0 = input.LA(1);
 					if ( (LA38_0==60) ) {
@@ -1723,7 +1723,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt38) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:50: 'phase' int
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:50: 'phase' int
 							{
 							match(input,60,FOLLOW_60_in_gterm575); if (state.failed) return;
 							pushFollow(FOLLOW_int_in_gterm577);
@@ -1738,11 +1738,11 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 3 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:66: 'event' '(' ( ( gterm ',' )* gterm )? gterm ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:66: 'event' '(' ( ( gterm ',' )* gterm )? gterm ')'
 					{
 					match(input,42,FOLLOW_42_in_gterm583); if (state.failed) return;
 					match(input,18,FOLLOW_18_in_gterm585); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:78: ( ( gterm ',' )* gterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:78: ( ( gterm ',' )* gterm )?
 					int alt40=2;
 					switch ( input.LA(1) ) {
 						case ID:
@@ -1796,9 +1796,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt40) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:79: ( gterm ',' )* gterm
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:79: ( gterm ',' )* gterm
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:79: ( gterm ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:79: ( gterm ',' )*
 							loop39:
 							while (true) {
 								int alt39=2;
@@ -1860,7 +1860,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt39) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:80: gterm ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:80: gterm ','
 									{
 									pushFollow(FOLLOW_gterm_in_gterm589);
 									gterm();
@@ -1892,11 +1892,11 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 4 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:112: 'inj-event' '(' ( ( gterm ',' )* gterm )? gterm ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:112: 'inj-event' '(' ( ( gterm ',' )* gterm )? gterm ')'
 					{
 					match(input,51,FOLLOW_51_in_gterm605); if (state.failed) return;
 					match(input,18,FOLLOW_18_in_gterm607); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:128: ( ( gterm ',' )* gterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:128: ( ( gterm ',' )* gterm )?
 					int alt42=2;
 					switch ( input.LA(1) ) {
 						case ID:
@@ -1950,9 +1950,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt42) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:129: ( gterm ',' )* gterm
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:129: ( gterm ',' )* gterm
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:129: ( gterm ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:129: ( gterm ',' )*
 							loop41:
 							while (true) {
 								int alt41=2;
@@ -2014,7 +2014,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt41) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:130: gterm ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:130: gterm ','
 									{
 									pushFollow(FOLLOW_gterm_in_gterm611);
 									gterm();
@@ -2046,10 +2046,10 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 5 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:162: '(' ( ( gterm ',' )* gterm )? gterm ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:162: '(' ( ( gterm ',' )* gterm )? gterm ')'
 					{
 					match(input,18,FOLLOW_18_in_gterm627); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:166: ( ( gterm ',' )* gterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:166: ( ( gterm ',' )* gterm )?
 					int alt44=2;
 					switch ( input.LA(1) ) {
 						case ID:
@@ -2103,9 +2103,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt44) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:167: ( gterm ',' )* gterm
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:167: ( gterm ',' )* gterm
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:167: ( gterm ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:167: ( gterm ',' )*
 							loop43:
 							while (true) {
 								int alt43=2;
@@ -2167,7 +2167,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt43) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:168: gterm ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:168: gterm ','
 									{
 									pushFollow(FOLLOW_gterm_in_gterm631);
 									gterm();
@@ -2199,14 +2199,14 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 6 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:200: 'new' ident ( '[' ( gbinding )? ']' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:200: 'new' ident ( '[' ( gbinding )? ']' )?
 					{
 					match(input,54,FOLLOW_54_in_gterm647); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_gterm649);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:212: ( '[' ( gbinding )? ']' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:212: ( '[' ( gbinding )? ']' )?
 					int alt46=2;
 					int LA46_0 = input.LA(1);
 					if ( (LA46_0==34) ) {
@@ -2214,10 +2214,10 @@ public class proverifParser extends Parser {
 					}
 					switch (alt46) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:213: '[' ( gbinding )? ']'
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:213: '[' ( gbinding )? ']'
 							{
 							match(input,34,FOLLOW_34_in_gterm652); if (state.failed) return;
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:217: ( gbinding )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:217: ( gbinding )?
 							int alt45=2;
 							int LA45_0 = input.LA(1);
 							if ( (LA45_0==ID||LA45_0==16) ) {
@@ -2225,7 +2225,7 @@ public class proverifParser extends Parser {
 							}
 							switch (alt45) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:218: gbinding
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:218: gbinding
 									{
 									pushFollow(FOLLOW_gbinding_in_gterm655);
 									gbinding();
@@ -2245,7 +2245,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 7 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:238: 'let' ident '=' gterm 'in' gterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:238: 'let' ident '=' gterm 'in' gterm
 					{
 					match(input,53,FOLLOW_53_in_gterm666); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_gterm668);
@@ -2267,7 +2267,7 @@ public class proverifParser extends Parser {
 
 			}
 
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:272: ( '=' gterm | '<>' gterm | '||' gterm | '&&' gterm | '==>' gterm )*
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:272: ( '=' gterm | '<>' gterm | '||' gterm | '&&' gterm | '==>' gterm )*
 			loop48:
 			while (true) {
 				int alt48=6;
@@ -2320,7 +2320,7 @@ public class proverifParser extends Parser {
 				}
 				switch (alt48) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:273: '=' gterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:273: '=' gterm
 					{
 					match(input,32,FOLLOW_32_in_gterm680); if (state.failed) return;
 					pushFollow(FOLLOW_gterm_in_gterm682);
@@ -2330,7 +2330,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:285: '<>' gterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:285: '<>' gterm
 					{
 					match(input,31,FOLLOW_31_in_gterm686); if (state.failed) return;
 					pushFollow(FOLLOW_gterm_in_gterm688);
@@ -2340,7 +2340,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 3 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:298: '||' gterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:298: '||' gterm
 					{
 					match(input,73,FOLLOW_73_in_gterm692); if (state.failed) return;
 					pushFollow(FOLLOW_gterm_in_gterm694);
@@ -2350,7 +2350,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 4 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:311: '&&' gterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:311: '&&' gterm
 					{
 					match(input,17,FOLLOW_17_in_gterm698); if (state.failed) return;
 					pushFollow(FOLLOW_gterm_in_gterm700);
@@ -2360,7 +2360,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 5 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:324: '==>' gterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:324: '==>' gterm
 					{
 					match(input,33,FOLLOW_33_in_gterm704); if (state.failed) return;
 					pushFollow(FOLLOW_gterm_in_gterm706);
@@ -2391,10 +2391,10 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "gbinding"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:61:1: gbinding : ( '!' int '=' gterm ( ';' gbinding )? | ident '=' gterm ( ';' gbinding )? );
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:61:1: gbinding : ( '!' int '=' gterm ( ';' gbinding )? | ident '=' gterm ( ';' gbinding )? );
 	public final void gbinding() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:62:3: ( '!' int '=' gterm ( ';' gbinding )? | ident '=' gterm ( ';' gbinding )? )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:62:3: ( '!' int '=' gterm ( ';' gbinding )? | ident '=' gterm ( ';' gbinding )? )
 			int alt51=2;
 			int LA51_0 = input.LA(1);
 			if ( (LA51_0==16) ) {
@@ -2413,7 +2413,7 @@ public class proverifParser extends Parser {
 
 			switch (alt51) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:62:5: '!' int '=' gterm ( ';' gbinding )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:62:5: '!' int '=' gterm ( ';' gbinding )?
 					{
 					match(input,16,FOLLOW_16_in_gbinding720); if (state.failed) return;
 					pushFollow(FOLLOW_int_in_gbinding722);
@@ -2425,7 +2425,7 @@ public class proverifParser extends Parser {
 					gterm();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:62:23: ( ';' gbinding )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:62:23: ( ';' gbinding )?
 					int alt49=2;
 					int LA49_0 = input.LA(1);
 					if ( (LA49_0==25) ) {
@@ -2433,7 +2433,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt49) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:62:24: ';' gbinding
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:62:24: ';' gbinding
 							{
 							match(input,25,FOLLOW_25_in_gbinding729); if (state.failed) return;
 							pushFollow(FOLLOW_gbinding_in_gbinding731);
@@ -2448,7 +2448,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:63:5: ident '=' gterm ( ';' gbinding )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:63:5: ident '=' gterm ( ';' gbinding )?
 					{
 					pushFollow(FOLLOW_ident_in_gbinding739);
 					ident();
@@ -2459,7 +2459,7 @@ public class proverifParser extends Parser {
 					gterm();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:63:21: ( ';' gbinding )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:63:21: ( ';' gbinding )?
 					int alt50=2;
 					int LA50_0 = input.LA(1);
 					if ( (LA50_0==25) ) {
@@ -2467,7 +2467,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt50) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:63:22: ';' gbinding
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:63:22: ';' gbinding
 							{
 							match(input,25,FOLLOW_25_in_gbinding746); if (state.failed) return;
 							pushFollow(FOLLOW_gbinding_in_gbinding748);
@@ -2497,10 +2497,10 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "nounifdecl"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:66:1: nounifdecl : ( 'let' ident '=' gformat 'in' nounifdecl | ident ( '(' ( ( gformat ',' )* gformat )? ')' ( 'phase' int )? )? ( '/' int )? );
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:66:1: nounifdecl : ( 'let' ident '=' gformat 'in' nounifdecl | ident ( '(' ( ( gformat ',' )* gformat )? ')' ( 'phase' int )? )? ( '/' int )? );
 	public final void nounifdecl() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:67:2: ( 'let' ident '=' gformat 'in' nounifdecl | ident ( '(' ( ( gformat ',' )* gformat )? ')' ( 'phase' int )? )? ( '/' int )? )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:67:2: ( 'let' ident '=' gformat 'in' nounifdecl | ident ( '(' ( ( gformat ',' )* gformat )? ')' ( 'phase' int )? )? ( '/' int )? )
 			int alt57=2;
 			int LA57_0 = input.LA(1);
 			if ( (LA57_0==53) ) {
@@ -2519,7 +2519,7 @@ public class proverifParser extends Parser {
 
 			switch (alt57) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:67:4: 'let' ident '=' gformat 'in' nounifdecl
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:67:4: 'let' ident '=' gformat 'in' nounifdecl
 					{
 					match(input,53,FOLLOW_53_in_nounifdecl763); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_nounifdecl765);
@@ -2539,13 +2539,13 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:68:4: ident ( '(' ( ( gformat ',' )* gformat )? ')' ( 'phase' int )? )? ( '/' int )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:68:4: ident ( '(' ( ( gformat ',' )* gformat )? ')' ( 'phase' int )? )? ( '/' int )?
 					{
 					pushFollow(FOLLOW_ident_in_nounifdecl778);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:68:10: ( '(' ( ( gformat ',' )* gformat )? ')' ( 'phase' int )? )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:68:10: ( '(' ( ( gformat ',' )* gformat )? ')' ( 'phase' int )? )?
 					int alt55=2;
 					int LA55_0 = input.LA(1);
 					if ( (LA55_0==18) ) {
@@ -2553,10 +2553,10 @@ public class proverifParser extends Parser {
 					}
 					switch (alt55) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:68:11: '(' ( ( gformat ',' )* gformat )? ')' ( 'phase' int )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:68:11: '(' ( ( gformat ',' )* gformat )? ')' ( 'phase' int )?
 							{
 							match(input,18,FOLLOW_18_in_nounifdecl781); if (state.failed) return;
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:68:15: ( ( gformat ',' )* gformat )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:68:15: ( ( gformat ',' )* gformat )?
 							int alt53=2;
 							int LA53_0 = input.LA(1);
 							if ( (LA53_0==ID||LA53_0==18||(LA53_0 >= 53 && LA53_0 <= 55)) ) {
@@ -2564,9 +2564,9 @@ public class proverifParser extends Parser {
 							}
 							switch (alt53) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:68:16: ( gformat ',' )* gformat
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:68:16: ( gformat ',' )* gformat
 									{
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:68:16: ( gformat ',' )*
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:68:16: ( gformat ',' )*
 									loop52:
 									while (true) {
 										int alt52=2;
@@ -2619,7 +2619,7 @@ public class proverifParser extends Parser {
 										}
 										switch (alt52) {
 										case 1 :
-											// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:68:17: gformat ','
+											// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:68:17: gformat ','
 											{
 											pushFollow(FOLLOW_gformat_in_nounifdecl785);
 											gformat();
@@ -2644,7 +2644,7 @@ public class proverifParser extends Parser {
 							}
 
 							match(input,19,FOLLOW_19_in_nounifdecl795); if (state.failed) return;
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:68:45: ( 'phase' int )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:68:45: ( 'phase' int )?
 							int alt54=2;
 							int LA54_0 = input.LA(1);
 							if ( (LA54_0==60) ) {
@@ -2652,7 +2652,7 @@ public class proverifParser extends Parser {
 							}
 							switch (alt54) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:68:46: 'phase' int
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:68:46: 'phase' int
 									{
 									match(input,60,FOLLOW_60_in_nounifdecl798); if (state.failed) return;
 									pushFollow(FOLLOW_int_in_nounifdecl800);
@@ -2669,7 +2669,7 @@ public class proverifParser extends Parser {
 
 					}
 
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:68:63: ( '/' int )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:68:63: ( '/' int )?
 					int alt56=2;
 					int LA56_0 = input.LA(1);
 					if ( (LA56_0==22) ) {
@@ -2677,7 +2677,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt56) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:68:64: '/' int
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:68:64: '/' int
 							{
 							match(input,22,FOLLOW_22_in_nounifdecl808); if (state.failed) return;
 							pushFollow(FOLLOW_int_in_nounifdecl809);
@@ -2707,10 +2707,10 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "gformat"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:71:1: gformat : ( ident | ident '(' ( ( gformat ',' )* gformat )? ')' | 'not' '(' ( ( gformat ',' )* gformat )? ')' | '(' ( ( gformat ',' )* gformat )? gformat ')' | 'new' ident ( '[' ( fbinding )? ']' )? | 'let' ident '=' gformat 'in' gformat );
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:71:1: gformat : ( ident | ident '(' ( ( gformat ',' )* gformat )? ')' | 'not' '(' ( ( gformat ',' )* gformat )? ')' | '(' ( ( gformat ',' )* gformat )? gformat ')' | 'new' ident ( '[' ( fbinding )? ']' )? | 'let' ident '=' gformat 'in' gformat );
 	public final void gformat() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:72:2: ( ident | ident '(' ( ( gformat ',' )* gformat )? ')' | 'not' '(' ( ( gformat ',' )* gformat )? ')' | '(' ( ( gformat ',' )* gformat )? gformat ')' | 'new' ident ( '[' ( fbinding )? ']' )? | 'let' ident '=' gformat 'in' gformat )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:72:2: ( ident | ident '(' ( ( gformat ',' )* gformat )? ')' | 'not' '(' ( ( gformat ',' )* gformat )? ')' | '(' ( ( gformat ',' )* gformat )? gformat ')' | 'new' ident ( '[' ( fbinding )? ']' )? | 'let' ident '=' gformat 'in' gformat )
 			int alt66=6;
 			switch ( input.LA(1) ) {
 			case ID:
@@ -2766,7 +2766,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt66) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:72:4: ident
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:72:4: ident
 					{
 					pushFollow(FOLLOW_ident_in_gformat822);
 					ident();
@@ -2775,14 +2775,14 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:73:4: ident '(' ( ( gformat ',' )* gformat )? ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:73:4: ident '(' ( ( gformat ',' )* gformat )? ')'
 					{
 					pushFollow(FOLLOW_ident_in_gformat827);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
 					match(input,18,FOLLOW_18_in_gformat829); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:73:14: ( ( gformat ',' )* gformat )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:73:14: ( ( gformat ',' )* gformat )?
 					int alt59=2;
 					int LA59_0 = input.LA(1);
 					if ( (LA59_0==ID||LA59_0==18||(LA59_0 >= 53 && LA59_0 <= 55)) ) {
@@ -2790,9 +2790,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt59) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:73:15: ( gformat ',' )* gformat
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:73:15: ( gformat ',' )* gformat
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:73:15: ( gformat ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:73:15: ( gformat ',' )*
 							loop58:
 							while (true) {
 								int alt58=2;
@@ -2845,7 +2845,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt58) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:73:16: gformat ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:73:16: gformat ','
 									{
 									pushFollow(FOLLOW_gformat_in_gformat833);
 									gformat();
@@ -2873,11 +2873,11 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 3 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:74:4: 'not' '(' ( ( gformat ',' )* gformat )? ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:74:4: 'not' '(' ( ( gformat ',' )* gformat )? ')'
 					{
 					match(input,55,FOLLOW_55_in_gformat848); if (state.failed) return;
 					match(input,18,FOLLOW_18_in_gformat850); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:74:14: ( ( gformat ',' )* gformat )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:74:14: ( ( gformat ',' )* gformat )?
 					int alt61=2;
 					int LA61_0 = input.LA(1);
 					if ( (LA61_0==ID||LA61_0==18||(LA61_0 >= 53 && LA61_0 <= 55)) ) {
@@ -2885,9 +2885,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt61) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:74:15: ( gformat ',' )* gformat
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:74:15: ( gformat ',' )* gformat
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:74:15: ( gformat ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:74:15: ( gformat ',' )*
 							loop60:
 							while (true) {
 								int alt60=2;
@@ -2940,7 +2940,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt60) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:74:16: gformat ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:74:16: gformat ','
 									{
 									pushFollow(FOLLOW_gformat_in_gformat854);
 									gformat();
@@ -2968,10 +2968,10 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 4 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:75:4: '(' ( ( gformat ',' )* gformat )? gformat ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:75:4: '(' ( ( gformat ',' )* gformat )? gformat ')'
 					{
 					match(input,18,FOLLOW_18_in_gformat869); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:75:8: ( ( gformat ',' )* gformat )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:75:8: ( ( gformat ',' )* gformat )?
 					int alt63=2;
 					switch ( input.LA(1) ) {
 						case ID:
@@ -3017,9 +3017,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt63) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:75:9: ( gformat ',' )* gformat
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:75:9: ( gformat ',' )* gformat
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:75:9: ( gformat ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:75:9: ( gformat ',' )*
 							loop62:
 							while (true) {
 								int alt62=2;
@@ -3072,7 +3072,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt62) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:75:10: gformat ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:75:10: gformat ','
 									{
 									pushFollow(FOLLOW_gformat_in_gformat873);
 									gformat();
@@ -3104,14 +3104,14 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 5 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:76:4: 'new' ident ( '[' ( fbinding )? ']' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:76:4: 'new' ident ( '[' ( fbinding )? ']' )?
 					{
 					match(input,54,FOLLOW_54_in_gformat890); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_gformat892);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:76:16: ( '[' ( fbinding )? ']' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:76:16: ( '[' ( fbinding )? ']' )?
 					int alt65=2;
 					int LA65_0 = input.LA(1);
 					if ( (LA65_0==34) ) {
@@ -3119,10 +3119,10 @@ public class proverifParser extends Parser {
 					}
 					switch (alt65) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:76:18: '[' ( fbinding )? ']'
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:76:18: '[' ( fbinding )? ']'
 							{
 							match(input,34,FOLLOW_34_in_gformat896); if (state.failed) return;
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:76:22: ( fbinding )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:76:22: ( fbinding )?
 							int alt64=2;
 							int LA64_0 = input.LA(1);
 							if ( (LA64_0==ID||LA64_0==16) ) {
@@ -3130,7 +3130,7 @@ public class proverifParser extends Parser {
 							}
 							switch (alt64) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:76:24: fbinding
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:76:24: fbinding
 									{
 									pushFollow(FOLLOW_fbinding_in_gformat900);
 									fbinding();
@@ -3150,7 +3150,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 6 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:77:4: 'let' ident '=' gformat 'in' gformat
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:77:4: 'let' ident '=' gformat 'in' gformat
 					{
 					match(input,53,FOLLOW_53_in_gformat913); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_gformat915);
@@ -3185,10 +3185,10 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "fbinding"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:81:1: fbinding : ( '!' int '=' gformat ( ';' fbinding )? | ident '=' gformat ( ';' fbinding )? );
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:81:1: fbinding : ( '!' int '=' gformat ( ';' fbinding )? | ident '=' gformat ( ';' fbinding )? );
 	public final void fbinding() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:82:2: ( '!' int '=' gformat ( ';' fbinding )? | ident '=' gformat ( ';' fbinding )? )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:82:2: ( '!' int '=' gformat ( ';' fbinding )? | ident '=' gformat ( ';' fbinding )? )
 			int alt69=2;
 			int LA69_0 = input.LA(1);
 			if ( (LA69_0==16) ) {
@@ -3207,7 +3207,7 @@ public class proverifParser extends Parser {
 
 			switch (alt69) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:82:4: '!' int '=' gformat ( ';' fbinding )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:82:4: '!' int '=' gformat ( ';' fbinding )?
 					{
 					match(input,16,FOLLOW_16_in_fbinding937); if (state.failed) return;
 					pushFollow(FOLLOW_int_in_fbinding939);
@@ -3219,7 +3219,7 @@ public class proverifParser extends Parser {
 					gformat();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:82:24: ( ';' fbinding )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:82:24: ( ';' fbinding )?
 					int alt67=2;
 					int LA67_0 = input.LA(1);
 					if ( (LA67_0==25) ) {
@@ -3227,7 +3227,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt67) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:82:25: ';' fbinding
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:82:25: ';' fbinding
 							{
 							match(input,25,FOLLOW_25_in_fbinding946); if (state.failed) return;
 							pushFollow(FOLLOW_fbinding_in_fbinding948);
@@ -3242,7 +3242,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:83:5: ident '=' gformat ( ';' fbinding )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:83:5: ident '=' gformat ( ';' fbinding )?
 					{
 					pushFollow(FOLLOW_ident_in_fbinding956);
 					ident();
@@ -3253,7 +3253,7 @@ public class proverifParser extends Parser {
 					gformat();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:83:23: ( ';' fbinding )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:83:23: ( ';' fbinding )?
 					int alt68=2;
 					int LA68_0 = input.LA(1);
 					if ( (LA68_0==25) ) {
@@ -3261,7 +3261,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt68) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:83:24: ';' fbinding
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:83:24: ';' fbinding
 							{
 							match(input,25,FOLLOW_25_in_fbinding963); if (state.failed) return;
 							pushFollow(FOLLOW_fbinding_in_fbinding965);
@@ -3291,13 +3291,13 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "clauses"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:87:1: clauses : ( 'forall' failtypedecl ';' )? clause ( ';' clauses )? ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:87:1: clauses : ( 'forall' failtypedecl ';' )? clause ( ';' clauses )? ;
 	public final void clauses() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:88:2: ( ( 'forall' failtypedecl ';' )? clause ( ';' clauses )? )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:88:4: ( 'forall' failtypedecl ';' )? clause ( ';' clauses )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:88:2: ( ( 'forall' failtypedecl ';' )? clause ( ';' clauses )? )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:88:4: ( 'forall' failtypedecl ';' )? clause ( ';' clauses )?
 			{
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:88:4: ( 'forall' failtypedecl ';' )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:88:4: ( 'forall' failtypedecl ';' )?
 			int alt70=2;
 			int LA70_0 = input.LA(1);
 			if ( (LA70_0==44) ) {
@@ -3305,7 +3305,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt70) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:88:5: 'forall' failtypedecl ';'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:88:5: 'forall' failtypedecl ';'
 					{
 					match(input,44,FOLLOW_44_in_clauses981); if (state.failed) return;
 					pushFollow(FOLLOW_failtypedecl_in_clauses983);
@@ -3322,7 +3322,7 @@ public class proverifParser extends Parser {
 			clause();
 			state._fsp--;
 			if (state.failed) return;
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:88:40: ( ';' clauses )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:88:40: ( ';' clauses )?
 			int alt71=2;
 			int LA71_0 = input.LA(1);
 			if ( (LA71_0==25) ) {
@@ -3330,7 +3330,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt71) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:88:41: ';' clauses
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:88:41: ';' clauses
 					{
 					match(input,25,FOLLOW_25_in_clauses992); if (state.failed) return;
 					pushFollow(FOLLOW_clauses_in_clauses994);
@@ -3358,10 +3358,10 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "clause"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:91:1: clause : ( term | term '->' term | term '<->' term | term '<=>' term );
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:91:1: clause : ( term | term '->' term | term '<->' term | term '<=>' term );
 	public final void clause() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:92:2: ( term | term '->' term | term '<->' term | term '<=>' term )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:92:2: ( term | term '->' term | term '<->' term | term '<=>' term )
 			int alt72=4;
 			switch ( input.LA(1) ) {
 			case 18:
@@ -3426,7 +3426,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt72) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:92:4: term
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:92:4: term
 					{
 					pushFollow(FOLLOW_term_in_clause1009);
 					term();
@@ -3435,7 +3435,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:93:4: term '->' term
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:93:4: term '->' term
 					{
 					pushFollow(FOLLOW_term_in_clause1014);
 					term();
@@ -3449,7 +3449,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 3 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:94:4: term '<->' term
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:94:4: term '<->' term
 					{
 					pushFollow(FOLLOW_term_in_clause1023);
 					term();
@@ -3463,7 +3463,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 4 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:95:4: term '<=>' term
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:95:4: term '<=>' term
 					{
 					pushFollow(FOLLOW_term_in_clause1032);
 					term();
@@ -3492,13 +3492,13 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "process"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:98:1: process : ( '0' | 'yield' | ident ( '(' ( ( pterm ',' )* pterm )? ')' )? | '(' process ')' | '!' process | '!' ident '<=' ident process | 'foreach' ident '<=' ident 'do' process | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ( ';' process )? | ident '<-R' typeid ( ';' process )? | 'if' pterm 'then' process ( 'else' process )? | 'in' '(' pterm ',' pattern ')' ( ';' process )? | 'out' '(' pterm ',' pterm ')' ( ';' process )? | 'let' pattern '=' pterm ( 'in' process ( 'else' process )? )? | ident ( ':' typeid )? '<-' pterm ( ';' process )? | 'let' typedecl 'suchthat' pterm ( 'in' process ( 'else' process )? )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ( ';' process )? | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? ( 'in' process ( 'else' process )? )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ( ';' process )? | 'phase' int ( ';' process )? ) ( '|' process )* ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:98:1: process : ( '0' | 'yield' | ident ( '(' ( ( pterm ',' )* pterm )? ')' )? | '(' process ')' | '!' process | '!' ident '<=' ident process | 'foreach' ident '<=' ident 'do' process | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ( ';' process )? | ident '<-R' typeid ( ';' process )? | 'if' pterm 'then' process ( 'else' process )? | 'in' '(' pterm ',' pattern ')' ( ';' process )? | 'out' '(' pterm ',' pterm ')' ( ';' process )? | 'let' pattern '=' pterm ( 'in' process ( 'else' process )? )? | ident ( ':' typeid )? '<-' pterm ( ';' process )? | 'let' typedecl 'suchthat' pterm ( 'in' process ( 'else' process )? )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ( ';' process )? | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? ( 'in' process ( 'else' process )? )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ( ';' process )? | 'phase' int ( ';' process )? ) ( '|' process )* ;
 	public final void process() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:2: ( ( '0' | 'yield' | ident ( '(' ( ( pterm ',' )* pterm )? ')' )? | '(' process ')' | '!' process | '!' ident '<=' ident process | 'foreach' ident '<=' ident 'do' process | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ( ';' process )? | ident '<-R' typeid ( ';' process )? | 'if' pterm 'then' process ( 'else' process )? | 'in' '(' pterm ',' pattern ')' ( ';' process )? | 'out' '(' pterm ',' pterm ')' ( ';' process )? | 'let' pattern '=' pterm ( 'in' process ( 'else' process )? )? | ident ( ':' typeid )? '<-' pterm ( ';' process )? | 'let' typedecl 'suchthat' pterm ( 'in' process ( 'else' process )? )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ( ';' process )? | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? ( 'in' process ( 'else' process )? )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ( ';' process )? | 'phase' int ( ';' process )? ) ( '|' process )* )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:4: ( '0' | 'yield' | ident ( '(' ( ( pterm ',' )* pterm )? ')' )? | '(' process ')' | '!' process | '!' ident '<=' ident process | 'foreach' ident '<=' ident 'do' process | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ( ';' process )? | ident '<-R' typeid ( ';' process )? | 'if' pterm 'then' process ( 'else' process )? | 'in' '(' pterm ',' pattern ')' ( ';' process )? | 'out' '(' pterm ',' pterm ')' ( ';' process )? | 'let' pattern '=' pterm ( 'in' process ( 'else' process )? )? | ident ( ':' typeid )? '<-' pterm ( ';' process )? | 'let' typedecl 'suchthat' pterm ( 'in' process ( 'else' process )? )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ( ';' process )? | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? ( 'in' process ( 'else' process )? )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ( ';' process )? | 'phase' int ( ';' process )? ) ( '|' process )*
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:2: ( ( '0' | 'yield' | ident ( '(' ( ( pterm ',' )* pterm )? ')' )? | '(' process ')' | '!' process | '!' ident '<=' ident process | 'foreach' ident '<=' ident 'do' process | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ( ';' process )? | ident '<-R' typeid ( ';' process )? | 'if' pterm 'then' process ( 'else' process )? | 'in' '(' pterm ',' pattern ')' ( ';' process )? | 'out' '(' pterm ',' pterm ')' ( ';' process )? | 'let' pattern '=' pterm ( 'in' process ( 'else' process )? )? | ident ( ':' typeid )? '<-' pterm ( ';' process )? | 'let' typedecl 'suchthat' pterm ( 'in' process ( 'else' process )? )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ( ';' process )? | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? ( 'in' process ( 'else' process )? )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ( ';' process )? | 'phase' int ( ';' process )? ) ( '|' process )* )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:4: ( '0' | 'yield' | ident ( '(' ( ( pterm ',' )* pterm )? ')' )? | '(' process ')' | '!' process | '!' ident '<=' ident process | 'foreach' ident '<=' ident 'do' process | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ( ';' process )? | ident '<-R' typeid ( ';' process )? | 'if' pterm 'then' process ( 'else' process )? | 'in' '(' pterm ',' pattern ')' ( ';' process )? | 'out' '(' pterm ',' pterm ')' ( ';' process )? | 'let' pattern '=' pterm ( 'in' process ( 'else' process )? )? | ident ( ':' typeid )? '<-' pterm ( ';' process )? | 'let' typedecl 'suchthat' pterm ( 'in' process ( 'else' process )? )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ( ';' process )? | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? ( 'in' process ( 'else' process )? )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ( ';' process )? | 'phase' int ( ';' process )? ) ( '|' process )*
 			{
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:4: ( '0' | 'yield' | ident ( '(' ( ( pterm ',' )* pterm )? ')' )? | '(' process ')' | '!' process | '!' ident '<=' ident process | 'foreach' ident '<=' ident 'do' process | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ( ';' process )? | ident '<-R' typeid ( ';' process )? | 'if' pterm 'then' process ( 'else' process )? | 'in' '(' pterm ',' pattern ')' ( ';' process )? | 'out' '(' pterm ',' pterm ')' ( ';' process )? | 'let' pattern '=' pterm ( 'in' process ( 'else' process )? )? | ident ( ':' typeid )? '<-' pterm ( ';' process )? | 'let' typedecl 'suchthat' pterm ( 'in' process ( 'else' process )? )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ( ';' process )? | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? ( 'in' process ( 'else' process )? )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ( ';' process )? | 'phase' int ( ';' process )? )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:4: ( '0' | 'yield' | ident ( '(' ( ( pterm ',' )* pterm )? ')' )? | '(' process ')' | '!' process | '!' ident '<=' ident process | 'foreach' ident '<=' ident 'do' process | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ( ';' process )? | ident '<-R' typeid ( ';' process )? | 'if' pterm 'then' process ( 'else' process )? | 'in' '(' pterm ',' pattern ')' ( ';' process )? | 'out' '(' pterm ',' pterm ')' ( ';' process )? | 'let' pattern '=' pterm ( 'in' process ( 'else' process )? )? | ident ( ':' typeid )? '<-' pterm ( ';' process )? | 'let' typedecl 'suchthat' pterm ( 'in' process ( 'else' process )? )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ( ';' process )? | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? ( 'in' process ( 'else' process )? )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ( ';' process )? | 'phase' int ( ';' process )? )
 			int alt103=19;
 			switch ( input.LA(1) ) {
 			case 23:
@@ -3757,25 +3757,25 @@ public class proverifParser extends Parser {
 			}
 			switch (alt103) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:5: '0'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:5: '0'
 					{
 					match(input,23,FOLLOW_23_in_process1048); if (state.failed) return;
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:11: 'yield'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:11: 'yield'
 					{
 					match(input,71,FOLLOW_71_in_process1052); if (state.failed) return;
 					}
 					break;
 				case 3 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:21: ident ( '(' ( ( pterm ',' )* pterm )? ')' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:21: ident ( '(' ( ( pterm ',' )* pterm )? ')' )?
 					{
 					pushFollow(FOLLOW_ident_in_process1056);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:27: ( '(' ( ( pterm ',' )* pterm )? ')' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:27: ( '(' ( ( pterm ',' )* pterm )? ')' )?
 					int alt75=2;
 					int LA75_0 = input.LA(1);
 					if ( (LA75_0==18) ) {
@@ -3783,10 +3783,10 @@ public class proverifParser extends Parser {
 					}
 					switch (alt75) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:29: '(' ( ( pterm ',' )* pterm )? ')'
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:29: '(' ( ( pterm ',' )* pterm )? ')'
 							{
 							match(input,18,FOLLOW_18_in_process1060); if (state.failed) return;
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:33: ( ( pterm ',' )* pterm )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:33: ( ( pterm ',' )* pterm )?
 							int alt74=2;
 							int LA74_0 = input.LA(1);
 							if ( (LA74_0==ID||LA74_0==18||LA74_0==37||LA74_0==42||(LA74_0 >= 48 && LA74_0 <= 49)||(LA74_0 >= 52 && LA74_0 <= 55)) ) {
@@ -3794,9 +3794,9 @@ public class proverifParser extends Parser {
 							}
 							switch (alt74) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:34: ( pterm ',' )* pterm
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:34: ( pterm ',' )* pterm
 									{
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:34: ( pterm ',' )*
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:34: ( pterm ',' )*
 									loop73:
 									while (true) {
 										int alt73=2;
@@ -3894,7 +3894,7 @@ public class proverifParser extends Parser {
 										}
 										switch (alt73) {
 										case 1 :
-											// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:35: pterm ','
+											// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:35: pterm ','
 											{
 											pushFollow(FOLLOW_pterm_in_process1064);
 											pterm();
@@ -3927,7 +3927,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 4 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:63: '(' process ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:63: '(' process ')'
 					{
 					match(input,18,FOLLOW_18_in_process1080); if (state.failed) return;
 					pushFollow(FOLLOW_process_in_process1082);
@@ -3938,7 +3938,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 5 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:81: '!' process
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:81: '!' process
 					{
 					match(input,16,FOLLOW_16_in_process1088); if (state.failed) return;
 					pushFollow(FOLLOW_process_in_process1090);
@@ -3948,7 +3948,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 6 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:95: '!' ident '<=' ident process
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:95: '!' ident '<=' ident process
 					{
 					match(input,16,FOLLOW_16_in_process1094); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_process1096);
@@ -3967,7 +3967,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 7 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:126: 'foreach' ident '<=' ident 'do' process
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:126: 'foreach' ident '<=' ident 'do' process
 					{
 					match(input,45,FOLLOW_45_in_process1106); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_process1108);
@@ -3987,14 +3987,14 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 8 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:168: 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:168: 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ( ';' process )?
 					{
 					match(input,54,FOLLOW_54_in_process1120); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_process1122);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:180: ( '[' ( ( ident ',' )* ident )? ']' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:180: ( '[' ( ( ident ',' )* ident )? ']' )?
 					int alt78=2;
 					int LA78_0 = input.LA(1);
 					if ( (LA78_0==34) ) {
@@ -4002,10 +4002,10 @@ public class proverifParser extends Parser {
 					}
 					switch (alt78) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:182: '[' ( ( ident ',' )* ident )? ']'
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:182: '[' ( ( ident ',' )* ident )? ']'
 							{
 							match(input,34,FOLLOW_34_in_process1126); if (state.failed) return;
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:186: ( ( ident ',' )* ident )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:186: ( ( ident ',' )* ident )?
 							int alt77=2;
 							int LA77_0 = input.LA(1);
 							if ( (LA77_0==ID) ) {
@@ -4013,9 +4013,9 @@ public class proverifParser extends Parser {
 							}
 							switch (alt77) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:187: ( ident ',' )* ident
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:187: ( ident ',' )* ident
 									{
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:187: ( ident ',' )*
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:187: ( ident ',' )*
 									loop76:
 									while (true) {
 										int alt76=2;
@@ -4030,7 +4030,7 @@ public class proverifParser extends Parser {
 
 										switch (alt76) {
 										case 1 :
-											// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:188: ident ','
+											// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:188: ident ','
 											{
 											pushFollow(FOLLOW_ident_in_process1130);
 											ident();
@@ -4065,7 +4065,7 @@ public class proverifParser extends Parser {
 					typeid();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:226: ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:226: ( ';' process )?
 					int alt79=2;
 					int LA79_0 = input.LA(1);
 					if ( (LA79_0==25) ) {
@@ -4073,7 +4073,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt79) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:227: ';' process
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:227: ';' process
 							{
 							match(input,25,FOLLOW_25_in_process1150); if (state.failed) return;
 							pushFollow(FOLLOW_process_in_process1152);
@@ -4088,7 +4088,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 9 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:244: ident '<-R' typeid ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:244: ident '<-R' typeid ( ';' process )?
 					{
 					pushFollow(FOLLOW_ident_in_process1159);
 					ident();
@@ -4099,7 +4099,7 @@ public class proverifParser extends Parser {
 					typeid();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:263: ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:263: ( ';' process )?
 					int alt80=2;
 					int LA80_0 = input.LA(1);
 					if ( (LA80_0==25) ) {
@@ -4107,7 +4107,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt80) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:264: ';' process
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:264: ';' process
 							{
 							match(input,25,FOLLOW_25_in_process1166); if (state.failed) return;
 							pushFollow(FOLLOW_process_in_process1168);
@@ -4122,7 +4122,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 10 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:281: 'if' pterm 'then' process ( 'else' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:281: 'if' pterm 'then' process ( 'else' process )?
 					{
 					match(input,49,FOLLOW_49_in_process1175); if (state.failed) return;
 					pushFollow(FOLLOW_pterm_in_process1177);
@@ -4134,7 +4134,7 @@ public class proverifParser extends Parser {
 					process();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:307: ( 'else' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:307: ( 'else' process )?
 					int alt81=2;
 					int LA81_0 = input.LA(1);
 					if ( (LA81_0==40) ) {
@@ -4145,7 +4145,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt81) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:308: 'else' process
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:308: 'else' process
 							{
 							match(input,40,FOLLOW_40_in_process1184); if (state.failed) return;
 							pushFollow(FOLLOW_process_in_process1186);
@@ -4160,7 +4160,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 11 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:328: 'in' '(' pterm ',' pattern ')' ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:328: 'in' '(' pterm ',' pattern ')' ( ';' process )?
 					{
 					match(input,50,FOLLOW_50_in_process1193); if (state.failed) return;
 					match(input,18,FOLLOW_18_in_process1195); if (state.failed) return;
@@ -4174,7 +4174,7 @@ public class proverifParser extends Parser {
 					state._fsp--;
 					if (state.failed) return;
 					match(input,19,FOLLOW_19_in_process1202); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:358: ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:358: ( ';' process )?
 					int alt82=2;
 					int LA82_0 = input.LA(1);
 					if ( (LA82_0==25) ) {
@@ -4182,7 +4182,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt82) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:359: ';' process
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:359: ';' process
 							{
 							match(input,25,FOLLOW_25_in_process1205); if (state.failed) return;
 							pushFollow(FOLLOW_process_in_process1207);
@@ -4197,7 +4197,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 12 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:375: 'out' '(' pterm ',' pterm ')' ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:375: 'out' '(' pterm ',' pterm ')' ( ';' process )?
 					{
 					match(input,59,FOLLOW_59_in_process1213); if (state.failed) return;
 					match(input,18,FOLLOW_18_in_process1215); if (state.failed) return;
@@ -4211,7 +4211,7 @@ public class proverifParser extends Parser {
 					state._fsp--;
 					if (state.failed) return;
 					match(input,19,FOLLOW_19_in_process1221); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:403: ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:403: ( ';' process )?
 					int alt83=2;
 					int LA83_0 = input.LA(1);
 					if ( (LA83_0==25) ) {
@@ -4219,7 +4219,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt83) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:404: ';' process
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:404: ';' process
 							{
 							match(input,25,FOLLOW_25_in_process1224); if (state.failed) return;
 							pushFollow(FOLLOW_process_in_process1225);
@@ -4234,7 +4234,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 13 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:419: 'let' pattern '=' pterm ( 'in' process ( 'else' process )? )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:419: 'let' pattern '=' pterm ( 'in' process ( 'else' process )? )?
 					{
 					match(input,53,FOLLOW_53_in_process1231); if (state.failed) return;
 					pushFollow(FOLLOW_pattern_in_process1233);
@@ -4246,7 +4246,7 @@ public class proverifParser extends Parser {
 					pterm();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:443: ( 'in' process ( 'else' process )? )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:443: ( 'in' process ( 'else' process )? )?
 					int alt85=2;
 					int LA85_0 = input.LA(1);
 					if ( (LA85_0==50) ) {
@@ -4254,14 +4254,14 @@ public class proverifParser extends Parser {
 					}
 					switch (alt85) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:444: 'in' process ( 'else' process )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:444: 'in' process ( 'else' process )?
 							{
 							match(input,50,FOLLOW_50_in_process1240); if (state.failed) return;
 							pushFollow(FOLLOW_process_in_process1242);
 							process();
 							state._fsp--;
 							if (state.failed) return;
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:457: ( 'else' process )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:457: ( 'else' process )?
 							int alt84=2;
 							int LA84_0 = input.LA(1);
 							if ( (LA84_0==40) ) {
@@ -4272,7 +4272,7 @@ public class proverifParser extends Parser {
 							}
 							switch (alt84) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:458: 'else' process
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:458: 'else' process
 									{
 									match(input,40,FOLLOW_40_in_process1245); if (state.failed) return;
 									pushFollow(FOLLOW_process_in_process1247);
@@ -4292,13 +4292,13 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 14 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:480: ident ( ':' typeid )? '<-' pterm ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:480: ident ( ':' typeid )? '<-' pterm ( ';' process )?
 					{
 					pushFollow(FOLLOW_ident_in_process1256);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:486: ( ':' typeid )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:486: ( ':' typeid )?
 					int alt86=2;
 					int LA86_0 = input.LA(1);
 					if ( (LA86_0==24) ) {
@@ -4306,7 +4306,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt86) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:487: ':' typeid
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:487: ':' typeid
 							{
 							match(input,24,FOLLOW_24_in_process1259); if (state.failed) return;
 							pushFollow(FOLLOW_typeid_in_process1261);
@@ -4323,7 +4323,7 @@ public class proverifParser extends Parser {
 					pterm();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:512: ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:512: ( ';' process )?
 					int alt87=2;
 					int LA87_0 = input.LA(1);
 					if ( (LA87_0==25) ) {
@@ -4331,7 +4331,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt87) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:513: ';' process
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:513: ';' process
 							{
 							match(input,25,FOLLOW_25_in_process1271); if (state.failed) return;
 							pushFollow(FOLLOW_process_in_process1273);
@@ -4346,7 +4346,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 15 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:529: 'let' typedecl 'suchthat' pterm ( 'in' process ( 'else' process )? )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:529: 'let' typedecl 'suchthat' pterm ( 'in' process ( 'else' process )? )?
 					{
 					match(input,53,FOLLOW_53_in_process1279); if (state.failed) return;
 					pushFollow(FOLLOW_typedecl_in_process1281);
@@ -4358,7 +4358,7 @@ public class proverifParser extends Parser {
 					pterm();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:561: ( 'in' process ( 'else' process )? )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:561: ( 'in' process ( 'else' process )? )?
 					int alt89=2;
 					int LA89_0 = input.LA(1);
 					if ( (LA89_0==50) ) {
@@ -4366,14 +4366,14 @@ public class proverifParser extends Parser {
 					}
 					switch (alt89) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:562: 'in' process ( 'else' process )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:562: 'in' process ( 'else' process )?
 							{
 							match(input,50,FOLLOW_50_in_process1288); if (state.failed) return;
 							pushFollow(FOLLOW_process_in_process1290);
 							process();
 							state._fsp--;
 							if (state.failed) return;
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:575: ( 'else' process )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:575: ( 'else' process )?
 							int alt88=2;
 							int LA88_0 = input.LA(1);
 							if ( (LA88_0==40) ) {
@@ -4384,7 +4384,7 @@ public class proverifParser extends Parser {
 							}
 							switch (alt88) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:576: 'else' process
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:576: 'else' process
 									{
 									match(input,40,FOLLOW_40_in_process1293); if (state.failed) return;
 									pushFollow(FOLLOW_process_in_process1295);
@@ -4404,7 +4404,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 16 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:598: 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:598: 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ( ';' process )?
 					{
 					match(input,52,FOLLOW_52_in_process1304); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_process1306);
@@ -4412,7 +4412,7 @@ public class proverifParser extends Parser {
 					state._fsp--;
 					if (state.failed) return;
 					match(input,18,FOLLOW_18_in_process1308); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:617: ( ( pterm ',' )* pterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:617: ( ( pterm ',' )* pterm )?
 					int alt91=2;
 					int LA91_0 = input.LA(1);
 					if ( (LA91_0==ID||LA91_0==18||LA91_0==37||LA91_0==42||(LA91_0 >= 48 && LA91_0 <= 49)||(LA91_0 >= 52 && LA91_0 <= 55)) ) {
@@ -4420,9 +4420,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt91) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:618: ( pterm ',' )* pterm
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:618: ( pterm ',' )* pterm
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:618: ( pterm ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:618: ( pterm ',' )*
 							loop90:
 							while (true) {
 								int alt90=2;
@@ -4520,7 +4520,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt90) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:619: pterm ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:619: pterm ','
 									{
 									pushFollow(FOLLOW_pterm_in_process1312);
 									pterm();
@@ -4545,7 +4545,7 @@ public class proverifParser extends Parser {
 					}
 
 					match(input,19,FOLLOW_19_in_process1322); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:643: ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:643: ( ';' process )?
 					int alt92=2;
 					int LA92_0 = input.LA(1);
 					if ( (LA92_0==25) ) {
@@ -4553,7 +4553,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt92) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:644: ';' process
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:644: ';' process
 							{
 							match(input,25,FOLLOW_25_in_process1325); if (state.failed) return;
 							pushFollow(FOLLOW_process_in_process1327);
@@ -4568,7 +4568,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 17 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:660: 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? ( 'in' process ( 'else' process )? )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:660: 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? ( 'in' process ( 'else' process )? )?
 					{
 					match(input,48,FOLLOW_48_in_process1333); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_process1335);
@@ -4576,7 +4576,7 @@ public class proverifParser extends Parser {
 					state._fsp--;
 					if (state.failed) return;
 					match(input,18,FOLLOW_18_in_process1337); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:676: ( ( pattern ',' )* pattern )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:676: ( ( pattern ',' )* pattern )?
 					int alt94=2;
 					int LA94_0 = input.LA(1);
 					if ( (LA94_0==ID||LA94_0==18||LA94_0==32) ) {
@@ -4584,9 +4584,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt94) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:677: ( pattern ',' )* pattern
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:677: ( pattern ',' )* pattern
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:677: ( pattern ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:677: ( pattern ',' )*
 							loop93:
 							while (true) {
 								int alt93=2;
@@ -4621,7 +4621,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt93) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:678: pattern ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:678: pattern ','
 									{
 									pushFollow(FOLLOW_pattern_in_process1341);
 									pattern();
@@ -4646,7 +4646,7 @@ public class proverifParser extends Parser {
 					}
 
 					match(input,19,FOLLOW_19_in_process1351); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:706: ( 'suchthat' pterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:706: ( 'suchthat' pterm )?
 					int alt95=2;
 					int LA95_0 = input.LA(1);
 					if ( (LA95_0==67) ) {
@@ -4654,7 +4654,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt95) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:707: 'suchthat' pterm
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:707: 'suchthat' pterm
 							{
 							match(input,67,FOLLOW_67_in_process1354); if (state.failed) return;
 							pushFollow(FOLLOW_pterm_in_process1356);
@@ -4666,7 +4666,7 @@ public class proverifParser extends Parser {
 
 					}
 
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:726: ( 'in' process ( 'else' process )? )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:726: ( 'in' process ( 'else' process )? )?
 					int alt97=2;
 					int LA97_0 = input.LA(1);
 					if ( (LA97_0==50) ) {
@@ -4674,14 +4674,14 @@ public class proverifParser extends Parser {
 					}
 					switch (alt97) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:727: 'in' process ( 'else' process )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:727: 'in' process ( 'else' process )?
 							{
 							match(input,50,FOLLOW_50_in_process1361); if (state.failed) return;
 							pushFollow(FOLLOW_process_in_process1363);
 							process();
 							state._fsp--;
 							if (state.failed) return;
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:740: ( 'else' process )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:740: ( 'else' process )?
 							int alt96=2;
 							int LA96_0 = input.LA(1);
 							if ( (LA96_0==40) ) {
@@ -4692,7 +4692,7 @@ public class proverifParser extends Parser {
 							}
 							switch (alt96) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:741: 'else' process
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:741: 'else' process
 									{
 									match(input,40,FOLLOW_40_in_process1366); if (state.failed) return;
 									pushFollow(FOLLOW_process_in_process1368);
@@ -4712,14 +4712,14 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 18 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:763: 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:763: 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ( ';' process )?
 					{
 					match(input,42,FOLLOW_42_in_process1377); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_process1379);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:777: ( '(' ( ( pterm ',' )* pterm )? ')' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:777: ( '(' ( ( pterm ',' )* pterm )? ')' )?
 					int alt100=2;
 					int LA100_0 = input.LA(1);
 					if ( (LA100_0==18) ) {
@@ -4727,10 +4727,10 @@ public class proverifParser extends Parser {
 					}
 					switch (alt100) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:779: '(' ( ( pterm ',' )* pterm )? ')'
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:779: '(' ( ( pterm ',' )* pterm )? ')'
 							{
 							match(input,18,FOLLOW_18_in_process1383); if (state.failed) return;
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:782: ( ( pterm ',' )* pterm )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:782: ( ( pterm ',' )* pterm )?
 							int alt99=2;
 							int LA99_0 = input.LA(1);
 							if ( (LA99_0==ID||LA99_0==18||LA99_0==37||LA99_0==42||(LA99_0 >= 48 && LA99_0 <= 49)||(LA99_0 >= 52 && LA99_0 <= 55)) ) {
@@ -4738,9 +4738,9 @@ public class proverifParser extends Parser {
 							}
 							switch (alt99) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:783: ( pterm ',' )* pterm
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:783: ( pterm ',' )* pterm
 									{
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:783: ( pterm ',' )*
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:783: ( pterm ',' )*
 									loop98:
 									while (true) {
 										int alt98=2;
@@ -4838,7 +4838,7 @@ public class proverifParser extends Parser {
 										}
 										switch (alt98) {
 										case 1 :
-											// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:784: pterm ','
+											// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:784: pterm ','
 											{
 											pushFollow(FOLLOW_pterm_in_process1386);
 											pterm();
@@ -4868,7 +4868,7 @@ public class proverifParser extends Parser {
 
 					}
 
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:811: ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:811: ( ';' process )?
 					int alt101=2;
 					int LA101_0 = input.LA(1);
 					if ( (LA101_0==25) ) {
@@ -4876,7 +4876,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt101) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:812: ';' process
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:812: ';' process
 							{
 							match(input,25,FOLLOW_25_in_process1402); if (state.failed) return;
 							pushFollow(FOLLOW_process_in_process1404);
@@ -4891,14 +4891,14 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 19 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:828: 'phase' int ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:828: 'phase' int ( ';' process )?
 					{
 					match(input,60,FOLLOW_60_in_process1410); if (state.failed) return;
 					pushFollow(FOLLOW_int_in_process1412);
 					int();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:840: ( ';' process )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:840: ( ';' process )?
 					int alt102=2;
 					int LA102_0 = input.LA(1);
 					if ( (LA102_0==25) ) {
@@ -4906,7 +4906,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt102) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:841: ';' process
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:841: ';' process
 							{
 							match(input,25,FOLLOW_25_in_process1415); if (state.failed) return;
 							pushFollow(FOLLOW_process_in_process1417);
@@ -4923,7 +4923,7 @@ public class proverifParser extends Parser {
 
 			}
 
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:856: ( '|' process )*
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:856: ( '|' process )*
 			loop104:
 			while (true) {
 				int alt104=2;
@@ -4938,7 +4938,7 @@ public class proverifParser extends Parser {
 
 				switch (alt104) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:857: '|' process
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:857: '|' process
 					{
 					match(input,72,FOLLOW_72_in_process1423); if (state.failed) return;
 					pushFollow(FOLLOW_process_in_process1425);
@@ -4969,13 +4969,13 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "pterm"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:103:1: pterm : ( ident | '(' ( ( pterm ',' )* pterm )? ')' | ident '(' ( ( pterm ',' )* pterm )? ')' | 'choice' '[' pterm ',' pterm ']' | 'not' '(' pterm ')' | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ';' pterm | ident '<-R' typeid ';' pterm | 'if' pterm 'then' pterm ( 'else' pterm )? | 'let' pattern | ident ( ':' typeid )? '<-' pterm ';' pterm | 'let' typedecl 'suchthat' pterm 'in' pterm ( 'else' pterm )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ';' pterm | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? 'in' pterm ( 'else' pterm )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ';' pterm ) ( '=' pterm | '<>' pterm | '&&' pterm | '||' pterm )* ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:103:1: pterm : ( ident | '(' ( ( pterm ',' )* pterm )? ')' | ident '(' ( ( pterm ',' )* pterm )? ')' | 'choice' '[' pterm ',' pterm ']' | 'not' '(' pterm ')' | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ';' pterm | ident '<-R' typeid ';' pterm | 'if' pterm 'then' pterm ( 'else' pterm )? | 'let' pattern | ident ( ':' typeid )? '<-' pterm ';' pterm | 'let' typedecl 'suchthat' pterm 'in' pterm ( 'else' pterm )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ';' pterm | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? 'in' pterm ( 'else' pterm )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ';' pterm ) ( '=' pterm | '<>' pterm | '&&' pterm | '||' pterm )* ;
 	public final void pterm() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:2: ( ( ident | '(' ( ( pterm ',' )* pterm )? ')' | ident '(' ( ( pterm ',' )* pterm )? ')' | 'choice' '[' pterm ',' pterm ']' | 'not' '(' pterm ')' | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ';' pterm | ident '<-R' typeid ';' pterm | 'if' pterm 'then' pterm ( 'else' pterm )? | 'let' pattern | ident ( ':' typeid )? '<-' pterm ';' pterm | 'let' typedecl 'suchthat' pterm 'in' pterm ( 'else' pterm )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ';' pterm | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? 'in' pterm ( 'else' pterm )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ';' pterm ) ( '=' pterm | '<>' pterm | '&&' pterm | '||' pterm )* )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:4: ( ident | '(' ( ( pterm ',' )* pterm )? ')' | ident '(' ( ( pterm ',' )* pterm )? ')' | 'choice' '[' pterm ',' pterm ']' | 'not' '(' pterm ')' | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ';' pterm | ident '<-R' typeid ';' pterm | 'if' pterm 'then' pterm ( 'else' pterm )? | 'let' pattern | ident ( ':' typeid )? '<-' pterm ';' pterm | 'let' typedecl 'suchthat' pterm 'in' pterm ( 'else' pterm )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ';' pterm | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? 'in' pterm ( 'else' pterm )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ';' pterm ) ( '=' pterm | '<>' pterm | '&&' pterm | '||' pterm )*
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:2: ( ( ident | '(' ( ( pterm ',' )* pterm )? ')' | ident '(' ( ( pterm ',' )* pterm )? ')' | 'choice' '[' pterm ',' pterm ']' | 'not' '(' pterm ')' | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ';' pterm | ident '<-R' typeid ';' pterm | 'if' pterm 'then' pterm ( 'else' pterm )? | 'let' pattern | ident ( ':' typeid )? '<-' pterm ';' pterm | 'let' typedecl 'suchthat' pterm 'in' pterm ( 'else' pterm )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ';' pterm | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? 'in' pterm ( 'else' pterm )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ';' pterm ) ( '=' pterm | '<>' pterm | '&&' pterm | '||' pterm )* )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:4: ( ident | '(' ( ( pterm ',' )* pterm )? ')' | ident '(' ( ( pterm ',' )* pterm )? ')' | 'choice' '[' pterm ',' pterm ']' | 'not' '(' pterm ')' | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ';' pterm | ident '<-R' typeid ';' pterm | 'if' pterm 'then' pterm ( 'else' pterm )? | 'let' pattern | ident ( ':' typeid )? '<-' pterm ';' pterm | 'let' typedecl 'suchthat' pterm 'in' pterm ( 'else' pterm )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ';' pterm | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? 'in' pterm ( 'else' pterm )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ';' pterm ) ( '=' pterm | '<>' pterm | '&&' pterm | '||' pterm )*
 			{
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:4: ( ident | '(' ( ( pterm ',' )* pterm )? ')' | ident '(' ( ( pterm ',' )* pterm )? ')' | 'choice' '[' pterm ',' pterm ']' | 'not' '(' pterm ')' | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ';' pterm | ident '<-R' typeid ';' pterm | 'if' pterm 'then' pterm ( 'else' pterm )? | 'let' pattern | ident ( ':' typeid )? '<-' pterm ';' pterm | 'let' typedecl 'suchthat' pterm 'in' pterm ( 'else' pterm )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ';' pterm | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? 'in' pterm ( 'else' pterm )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ';' pterm )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:4: ( ident | '(' ( ( pterm ',' )* pterm )? ')' | ident '(' ( ( pterm ',' )* pterm )? ')' | 'choice' '[' pterm ',' pterm ']' | 'not' '(' pterm ')' | 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ';' pterm | ident '<-R' typeid ';' pterm | 'if' pterm 'then' pterm ( 'else' pterm )? | 'let' pattern | ident ( ':' typeid )? '<-' pterm ';' pterm | 'let' typedecl 'suchthat' pterm 'in' pterm ( 'else' pterm )? | 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ';' pterm | 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? 'in' pterm ( 'else' pterm )? | 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ';' pterm )
 			int alt124=14;
 			switch ( input.LA(1) ) {
 			case ID:
@@ -5609,7 +5609,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt124) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:5: ident
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:5: ident
 					{
 					pushFollow(FOLLOW_ident_in_pterm1441);
 					ident();
@@ -5618,10 +5618,10 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:13: '(' ( ( pterm ',' )* pterm )? ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:13: '(' ( ( pterm ',' )* pterm )? ')'
 					{
 					match(input,18,FOLLOW_18_in_pterm1445); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:17: ( ( pterm ',' )* pterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:17: ( ( pterm ',' )* pterm )?
 					int alt106=2;
 					int LA106_0 = input.LA(1);
 					if ( (LA106_0==ID||LA106_0==18||LA106_0==37||LA106_0==42||(LA106_0 >= 48 && LA106_0 <= 49)||(LA106_0 >= 52 && LA106_0 <= 55)) ) {
@@ -5629,9 +5629,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt106) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:18: ( pterm ',' )* pterm
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:18: ( pterm ',' )* pterm
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:18: ( pterm ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:18: ( pterm ',' )*
 							loop105:
 							while (true) {
 								int alt105=2;
@@ -5729,7 +5729,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt105) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:19: pterm ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:19: pterm ','
 									{
 									pushFollow(FOLLOW_pterm_in_pterm1449);
 									pterm();
@@ -5757,14 +5757,14 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 3 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:45: ident '(' ( ( pterm ',' )* pterm )? ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:45: ident '(' ( ( pterm ',' )* pterm )? ')'
 					{
 					pushFollow(FOLLOW_ident_in_pterm1463);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
 					match(input,18,FOLLOW_18_in_pterm1465); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:55: ( ( pterm ',' )* pterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:55: ( ( pterm ',' )* pterm )?
 					int alt108=2;
 					int LA108_0 = input.LA(1);
 					if ( (LA108_0==ID||LA108_0==18||LA108_0==37||LA108_0==42||(LA108_0 >= 48 && LA108_0 <= 49)||(LA108_0 >= 52 && LA108_0 <= 55)) ) {
@@ -5772,9 +5772,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt108) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:56: ( pterm ',' )* pterm
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:56: ( pterm ',' )* pterm
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:56: ( pterm ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:56: ( pterm ',' )*
 							loop107:
 							while (true) {
 								int alt107=2;
@@ -5872,7 +5872,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt107) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:57: pterm ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:57: pterm ','
 									{
 									pushFollow(FOLLOW_pterm_in_pterm1469);
 									pterm();
@@ -5900,7 +5900,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 4 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:83: 'choice' '[' pterm ',' pterm ']'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:83: 'choice' '[' pterm ',' pterm ']'
 					{
 					match(input,37,FOLLOW_37_in_pterm1483); if (state.failed) return;
 					match(input,34,FOLLOW_34_in_pterm1485); if (state.failed) return;
@@ -5917,7 +5917,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 5 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:118: 'not' '(' pterm ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:118: 'not' '(' pterm ')'
 					{
 					match(input,55,FOLLOW_55_in_pterm1497); if (state.failed) return;
 					match(input,18,FOLLOW_18_in_pterm1499); if (state.failed) return;
@@ -5929,14 +5929,14 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 6 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:140: 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ';' pterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:140: 'new' ident ( '[' ( ( ident ',' )* ident )? ']' )? ':' typeid ';' pterm
 					{
 					match(input,54,FOLLOW_54_in_pterm1507); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_pterm1509);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:152: ( '[' ( ( ident ',' )* ident )? ']' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:152: ( '[' ( ( ident ',' )* ident )? ']' )?
 					int alt111=2;
 					int LA111_0 = input.LA(1);
 					if ( (LA111_0==34) ) {
@@ -5944,10 +5944,10 @@ public class proverifParser extends Parser {
 					}
 					switch (alt111) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:153: '[' ( ( ident ',' )* ident )? ']'
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:153: '[' ( ( ident ',' )* ident )? ']'
 							{
 							match(input,34,FOLLOW_34_in_pterm1512); if (state.failed) return;
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:157: ( ( ident ',' )* ident )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:157: ( ( ident ',' )* ident )?
 							int alt110=2;
 							int LA110_0 = input.LA(1);
 							if ( (LA110_0==ID) ) {
@@ -5955,9 +5955,9 @@ public class proverifParser extends Parser {
 							}
 							switch (alt110) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:158: ( ident ',' )* ident
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:158: ( ident ',' )* ident
 									{
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:158: ( ident ',' )*
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:158: ( ident ',' )*
 									loop109:
 									while (true) {
 										int alt109=2;
@@ -5972,7 +5972,7 @@ public class proverifParser extends Parser {
 
 										switch (alt109) {
 										case 1 :
-											// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:159: ident ','
+											// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:159: ident ','
 											{
 											pushFollow(FOLLOW_ident_in_pterm1516);
 											ident();
@@ -6015,7 +6015,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 7 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:208: ident '<-R' typeid ';' pterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:208: ident '<-R' typeid ';' pterm
 					{
 					pushFollow(FOLLOW_ident_in_pterm1540);
 					ident();
@@ -6034,7 +6034,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 8 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:239: 'if' pterm 'then' pterm ( 'else' pterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:239: 'if' pterm 'then' pterm ( 'else' pterm )?
 					{
 					match(input,49,FOLLOW_49_in_pterm1552); if (state.failed) return;
 					pushFollow(FOLLOW_pterm_in_pterm1554);
@@ -6046,7 +6046,7 @@ public class proverifParser extends Parser {
 					pterm();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:263: ( 'else' pterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:263: ( 'else' pterm )?
 					int alt112=2;
 					int LA112_0 = input.LA(1);
 					if ( (LA112_0==40) ) {
@@ -6057,7 +6057,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt112) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:264: 'else' pterm
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:264: 'else' pterm
 							{
 							match(input,40,FOLLOW_40_in_pterm1561); if (state.failed) return;
 							pushFollow(FOLLOW_pterm_in_pterm1563);
@@ -6072,7 +6072,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 9 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:281: 'let' pattern
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:281: 'let' pattern
 					{
 					match(input,53,FOLLOW_53_in_pterm1569); if (state.failed) return;
 					pushFollow(FOLLOW_pattern_in_pterm1571);
@@ -6082,13 +6082,13 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 10 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:297: ident ( ':' typeid )? '<-' pterm ';' pterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:297: ident ( ':' typeid )? '<-' pterm ';' pterm
 					{
 					pushFollow(FOLLOW_ident_in_pterm1575);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:303: ( ':' typeid )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:303: ( ':' typeid )?
 					int alt113=2;
 					int LA113_0 = input.LA(1);
 					if ( (LA113_0==24) ) {
@@ -6096,7 +6096,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt113) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:304: ':' typeid
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:304: ':' typeid
 							{
 							match(input,24,FOLLOW_24_in_pterm1578); if (state.failed) return;
 							pushFollow(FOLLOW_typeid_in_pterm1580);
@@ -6121,7 +6121,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 11 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:340: 'let' typedecl 'suchthat' pterm 'in' pterm ( 'else' pterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:340: 'let' typedecl 'suchthat' pterm 'in' pterm ( 'else' pterm )?
 					{
 					match(input,53,FOLLOW_53_in_pterm1594); if (state.failed) return;
 					pushFollow(FOLLOW_typedecl_in_pterm1596);
@@ -6138,7 +6138,7 @@ public class proverifParser extends Parser {
 					pterm();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:383: ( 'else' pterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:383: ( 'else' pterm )?
 					int alt114=2;
 					int LA114_0 = input.LA(1);
 					if ( (LA114_0==40) ) {
@@ -6149,7 +6149,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt114) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:384: 'else' pterm
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:384: 'else' pterm
 							{
 							match(input,40,FOLLOW_40_in_pterm1607); if (state.failed) return;
 							pushFollow(FOLLOW_pterm_in_pterm1609);
@@ -6164,7 +6164,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 12 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:401: 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ';' pterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:401: 'insert' ident '(' ( ( pterm ',' )* pterm )? ')' ';' pterm
 					{
 					match(input,52,FOLLOW_52_in_pterm1615); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_pterm1617);
@@ -6172,7 +6172,7 @@ public class proverifParser extends Parser {
 					state._fsp--;
 					if (state.failed) return;
 					match(input,18,FOLLOW_18_in_pterm1619); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:420: ( ( pterm ',' )* pterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:420: ( ( pterm ',' )* pterm )?
 					int alt116=2;
 					int LA116_0 = input.LA(1);
 					if ( (LA116_0==ID||LA116_0==18||LA116_0==37||LA116_0==42||(LA116_0 >= 48 && LA116_0 <= 49)||(LA116_0 >= 52 && LA116_0 <= 55)) ) {
@@ -6180,9 +6180,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt116) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:421: ( pterm ',' )* pterm
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:421: ( pterm ',' )* pterm
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:421: ( pterm ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:421: ( pterm ',' )*
 							loop115:
 							while (true) {
 								int alt115=2;
@@ -6280,7 +6280,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt115) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:422: pterm ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:422: pterm ','
 									{
 									pushFollow(FOLLOW_pterm_in_pterm1623);
 									pterm();
@@ -6313,7 +6313,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 13 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:458: 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? 'in' pterm ( 'else' pterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:458: 'get' ident '(' ( ( pattern ',' )* pattern )? ')' ( 'suchthat' pterm )? 'in' pterm ( 'else' pterm )?
 					{
 					match(input,48,FOLLOW_48_in_pterm1641); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_pterm1643);
@@ -6321,7 +6321,7 @@ public class proverifParser extends Parser {
 					state._fsp--;
 					if (state.failed) return;
 					match(input,18,FOLLOW_18_in_pterm1645); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:474: ( ( pattern ',' )* pattern )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:474: ( ( pattern ',' )* pattern )?
 					int alt118=2;
 					int LA118_0 = input.LA(1);
 					if ( (LA118_0==ID||LA118_0==18||LA118_0==32) ) {
@@ -6329,9 +6329,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt118) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:475: ( pattern ',' )* pattern
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:475: ( pattern ',' )* pattern
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:475: ( pattern ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:475: ( pattern ',' )*
 							loop117:
 							while (true) {
 								int alt117=2;
@@ -6366,7 +6366,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt117) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:476: pattern ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:476: pattern ','
 									{
 									pushFollow(FOLLOW_pattern_in_pterm1649);
 									pattern();
@@ -6391,7 +6391,7 @@ public class proverifParser extends Parser {
 					}
 
 					match(input,19,FOLLOW_19_in_pterm1659); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:504: ( 'suchthat' pterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:504: ( 'suchthat' pterm )?
 					int alt119=2;
 					int LA119_0 = input.LA(1);
 					if ( (LA119_0==67) ) {
@@ -6399,7 +6399,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt119) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:505: 'suchthat' pterm
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:505: 'suchthat' pterm
 							{
 							match(input,67,FOLLOW_67_in_pterm1662); if (state.failed) return;
 							pushFollow(FOLLOW_pterm_in_pterm1664);
@@ -6416,7 +6416,7 @@ public class proverifParser extends Parser {
 					pterm();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:535: ( 'else' pterm )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:535: ( 'else' pterm )?
 					int alt120=2;
 					int LA120_0 = input.LA(1);
 					if ( (LA120_0==40) ) {
@@ -6427,7 +6427,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt120) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:536: 'else' pterm
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:536: 'else' pterm
 							{
 							match(input,40,FOLLOW_40_in_pterm1673); if (state.failed) return;
 							pushFollow(FOLLOW_pterm_in_pterm1675);
@@ -6442,14 +6442,14 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 14 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:553: 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ';' pterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:553: 'event' ident ( '(' ( ( pterm ',' )* pterm )? ')' )? ';' pterm
 					{
 					match(input,42,FOLLOW_42_in_pterm1681); if (state.failed) return;
 					pushFollow(FOLLOW_ident_in_pterm1683);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:567: ( '(' ( ( pterm ',' )* pterm )? ')' )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:567: ( '(' ( ( pterm ',' )* pterm )? ')' )?
 					int alt123=2;
 					int LA123_0 = input.LA(1);
 					if ( (LA123_0==18) ) {
@@ -6457,10 +6457,10 @@ public class proverifParser extends Parser {
 					}
 					switch (alt123) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:568: '(' ( ( pterm ',' )* pterm )? ')'
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:568: '(' ( ( pterm ',' )* pterm )? ')'
 							{
 							match(input,18,FOLLOW_18_in_pterm1686); if (state.failed) return;
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:572: ( ( pterm ',' )* pterm )?
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:572: ( ( pterm ',' )* pterm )?
 							int alt122=2;
 							int LA122_0 = input.LA(1);
 							if ( (LA122_0==ID||LA122_0==18||LA122_0==37||LA122_0==42||(LA122_0 >= 48 && LA122_0 <= 49)||(LA122_0 >= 52 && LA122_0 <= 55)) ) {
@@ -6468,9 +6468,9 @@ public class proverifParser extends Parser {
 							}
 							switch (alt122) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:573: ( pterm ',' )* pterm
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:573: ( pterm ',' )* pterm
 									{
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:573: ( pterm ',' )*
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:573: ( pterm ',' )*
 									loop121:
 									while (true) {
 										int alt121=2;
@@ -6568,7 +6568,7 @@ public class proverifParser extends Parser {
 										}
 										switch (alt121) {
 										case 1 :
-											// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:574: pterm ','
+											// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:574: pterm ','
 											{
 											pushFollow(FOLLOW_pterm_in_pterm1690);
 											pterm();
@@ -6608,7 +6608,7 @@ public class proverifParser extends Parser {
 
 			}
 
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:611: ( '=' pterm | '<>' pterm | '&&' pterm | '||' pterm )*
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:611: ( '=' pterm | '<>' pterm | '&&' pterm | '||' pterm )*
 			loop125:
 			while (true) {
 				int alt125=5;
@@ -6652,7 +6652,7 @@ public class proverifParser extends Parser {
 				}
 				switch (alt125) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:612: '=' pterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:612: '=' pterm
 					{
 					match(input,32,FOLLOW_32_in_pterm1710); if (state.failed) return;
 					pushFollow(FOLLOW_pterm_in_pterm1712);
@@ -6662,7 +6662,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:624: '<>' pterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:624: '<>' pterm
 					{
 					match(input,31,FOLLOW_31_in_pterm1716); if (state.failed) return;
 					pushFollow(FOLLOW_pterm_in_pterm1718);
@@ -6672,7 +6672,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 3 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:637: '&&' pterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:637: '&&' pterm
 					{
 					match(input,17,FOLLOW_17_in_pterm1722); if (state.failed) return;
 					pushFollow(FOLLOW_pterm_in_pterm1724);
@@ -6682,7 +6682,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 4 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:650: '||' pterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:650: '||' pterm
 					{
 					match(input,73,FOLLOW_73_in_pterm1728); if (state.failed) return;
 					pushFollow(FOLLOW_pterm_in_pterm1730);
@@ -6713,13 +6713,13 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "term"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:108:1: term : ( '(' ( ( term ',' )* term )? ')' | ident '(' ( ( term ',' )* term )? ')' | 'not' '(' term ')' ) ( '=' term | '<>' term | '&&' term | '||' term )* ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:108:1: term : ( '(' ( ( term ',' )* term )? ')' | ident '(' ( ( term ',' )* term )? ')' | 'not' '(' term ')' ) ( '=' term | '<>' term | '&&' term | '||' term )* ;
 	public final void term() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:2: ( ( '(' ( ( term ',' )* term )? ')' | ident '(' ( ( term ',' )* term )? ')' | 'not' '(' term ')' ) ( '=' term | '<>' term | '&&' term | '||' term )* )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:4: ( '(' ( ( term ',' )* term )? ')' | ident '(' ( ( term ',' )* term )? ')' | 'not' '(' term ')' ) ( '=' term | '<>' term | '&&' term | '||' term )*
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:2: ( ( '(' ( ( term ',' )* term )? ')' | ident '(' ( ( term ',' )* term )? ')' | 'not' '(' term ')' ) ( '=' term | '<>' term | '&&' term | '||' term )* )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:4: ( '(' ( ( term ',' )* term )? ')' | ident '(' ( ( term ',' )* term )? ')' | 'not' '(' term ')' ) ( '=' term | '<>' term | '&&' term | '||' term )*
 			{
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:4: ( '(' ( ( term ',' )* term )? ')' | ident '(' ( ( term ',' )* term )? ')' | 'not' '(' term ')' )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:4: ( '(' ( ( term ',' )* term )? ')' | ident '(' ( ( term ',' )* term )? ')' | 'not' '(' term ')' )
 			int alt130=3;
 			switch ( input.LA(1) ) {
 			case 18:
@@ -6745,10 +6745,10 @@ public class proverifParser extends Parser {
 			}
 			switch (alt130) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:5: '(' ( ( term ',' )* term )? ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:5: '(' ( ( term ',' )* term )? ')'
 					{
 					match(input,18,FOLLOW_18_in_term1746); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:9: ( ( term ',' )* term )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:9: ( ( term ',' )* term )?
 					int alt127=2;
 					int LA127_0 = input.LA(1);
 					if ( (LA127_0==ID||LA127_0==18||LA127_0==55) ) {
@@ -6756,9 +6756,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt127) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:10: ( term ',' )* term
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:10: ( term ',' )* term
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:10: ( term ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:10: ( term ',' )*
 							loop126:
 							while (true) {
 								int alt126=2;
@@ -6793,7 +6793,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt126) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:11: term ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:11: term ','
 									{
 									pushFollow(FOLLOW_term_in_term1750);
 									term();
@@ -6821,14 +6821,14 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:35: ident '(' ( ( term ',' )* term )? ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:35: ident '(' ( ( term ',' )* term )? ')'
 					{
 					pushFollow(FOLLOW_ident_in_term1764);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
 					match(input,18,FOLLOW_18_in_term1766); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:45: ( ( term ',' )* term )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:45: ( ( term ',' )* term )?
 					int alt129=2;
 					int LA129_0 = input.LA(1);
 					if ( (LA129_0==ID||LA129_0==18||LA129_0==55) ) {
@@ -6836,9 +6836,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt129) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:46: ( term ',' )* term
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:46: ( term ',' )* term
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:46: ( term ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:46: ( term ',' )*
 							loop128:
 							while (true) {
 								int alt128=2;
@@ -6873,7 +6873,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt128) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:47: term ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:47: term ','
 									{
 									pushFollow(FOLLOW_term_in_term1770);
 									term();
@@ -6901,7 +6901,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 3 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:71: 'not' '(' term ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:71: 'not' '(' term ')'
 					{
 					match(input,55,FOLLOW_55_in_term1784); if (state.failed) return;
 					match(input,18,FOLLOW_18_in_term1786); if (state.failed) return;
@@ -6915,7 +6915,7 @@ public class proverifParser extends Parser {
 
 			}
 
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:91: ( '=' term | '<>' term | '&&' term | '||' term )*
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:91: ( '=' term | '<>' term | '&&' term | '||' term )*
 			loop131:
 			while (true) {
 				int alt131=5;
@@ -6959,7 +6959,7 @@ public class proverifParser extends Parser {
 				}
 				switch (alt131) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:92: '=' term
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:92: '=' term
 					{
 					match(input,32,FOLLOW_32_in_term1794); if (state.failed) return;
 					pushFollow(FOLLOW_term_in_term1796);
@@ -6969,7 +6969,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:103: '<>' term
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:103: '<>' term
 					{
 					match(input,31,FOLLOW_31_in_term1800); if (state.failed) return;
 					pushFollow(FOLLOW_term_in_term1802);
@@ -6979,7 +6979,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 3 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:115: '&&' term
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:115: '&&' term
 					{
 					match(input,17,FOLLOW_17_in_term1806); if (state.failed) return;
 					pushFollow(FOLLOW_term_in_term1808);
@@ -6989,7 +6989,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 4 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:127: '||' term
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:127: '||' term
 					{
 					match(input,73,FOLLOW_73_in_term1812); if (state.failed) return;
 					pushFollow(FOLLOW_term_in_term1814);
@@ -7020,10 +7020,10 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "pattern"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:130:1: pattern : ( ident | ident ':' typeid | '(' ( ( pattern ',' )* pattern )? ')' | ident '(' ( ( pattern ',' )* pattern )? ')' | '=' pterm );
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:130:1: pattern : ( ident | ident ':' typeid | '(' ( ( pattern ',' )* pattern )? ')' | ident '(' ( ( pattern ',' )* pattern )? ')' | '=' pterm );
 	public final void pattern() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:131:3: ( ident | ident ':' typeid | '(' ( ( pattern ',' )* pattern )? ')' | ident '(' ( ( pattern ',' )* pattern )? ')' | '=' pterm )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:131:3: ( ident | ident ':' typeid | '(' ( ( pattern ',' )* pattern )? ')' | ident '(' ( ( pattern ',' )* pattern )? ')' | '=' pterm )
 			int alt136=5;
 			switch ( input.LA(1) ) {
 			case ID:
@@ -7104,7 +7104,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt136) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:131:5: ident
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:131:5: ident
 					{
 					pushFollow(FOLLOW_ident_in_pattern1834);
 					ident();
@@ -7113,7 +7113,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:132:4: ident ':' typeid
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:132:4: ident ':' typeid
 					{
 					pushFollow(FOLLOW_ident_in_pattern1839);
 					ident();
@@ -7127,10 +7127,10 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 3 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:133:4: '(' ( ( pattern ',' )* pattern )? ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:133:4: '(' ( ( pattern ',' )* pattern )? ')'
 					{
 					match(input,18,FOLLOW_18_in_pattern1848); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:133:8: ( ( pattern ',' )* pattern )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:133:8: ( ( pattern ',' )* pattern )?
 					int alt133=2;
 					int LA133_0 = input.LA(1);
 					if ( (LA133_0==ID||LA133_0==18||LA133_0==32) ) {
@@ -7138,9 +7138,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt133) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:133:9: ( pattern ',' )* pattern
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:133:9: ( pattern ',' )* pattern
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:133:9: ( pattern ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:133:9: ( pattern ',' )*
 							loop132:
 							while (true) {
 								int alt132=2;
@@ -7175,7 +7175,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt132) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:133:10: pattern ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:133:10: pattern ','
 									{
 									pushFollow(FOLLOW_pattern_in_pattern1852);
 									pattern();
@@ -7203,14 +7203,14 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 4 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:134:4: ident '(' ( ( pattern ',' )* pattern )? ')'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:134:4: ident '(' ( ( pattern ',' )* pattern )? ')'
 					{
 					pushFollow(FOLLOW_ident_in_pattern1867);
 					ident();
 					state._fsp--;
 					if (state.failed) return;
 					match(input,18,FOLLOW_18_in_pattern1869); if (state.failed) return;
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:134:14: ( ( pattern ',' )* pattern )?
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:134:14: ( ( pattern ',' )* pattern )?
 					int alt135=2;
 					int LA135_0 = input.LA(1);
 					if ( (LA135_0==ID||LA135_0==18||LA135_0==32) ) {
@@ -7218,9 +7218,9 @@ public class proverifParser extends Parser {
 					}
 					switch (alt135) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:134:15: ( pattern ',' )* pattern
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:134:15: ( pattern ',' )* pattern
 							{
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:134:15: ( pattern ',' )*
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:134:15: ( pattern ',' )*
 							loop134:
 							while (true) {
 								int alt134=2;
@@ -7255,7 +7255,7 @@ public class proverifParser extends Parser {
 								}
 								switch (alt134) {
 								case 1 :
-									// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:134:16: pattern ','
+									// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:134:16: pattern ','
 									{
 									pushFollow(FOLLOW_pattern_in_pattern1873);
 									pattern();
@@ -7283,7 +7283,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 5 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:135:4: '=' pterm
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:135:4: '=' pterm
 					{
 					match(input,32,FOLLOW_32_in_pattern1888); if (state.failed) return;
 					pushFollow(FOLLOW_pterm_in_pattern1890);
@@ -7308,10 +7308,10 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "mayfailterm"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:138:1: mayfailterm : ( term | 'fail' );
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:138:1: mayfailterm : ( term | 'fail' );
 	public final void mayfailterm() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:139:2: ( term | 'fail' )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:139:2: ( term | 'fail' )
 			int alt137=2;
 			int LA137_0 = input.LA(1);
 			if ( (LA137_0==ID||LA137_0==18||LA137_0==55) ) {
@@ -7330,7 +7330,7 @@ public class proverifParser extends Parser {
 
 			switch (alt137) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:139:4: term
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:139:4: term
 					{
 					pushFollow(FOLLOW_term_in_mayfailterm1901);
 					term();
@@ -7339,7 +7339,7 @@ public class proverifParser extends Parser {
 					}
 					break;
 				case 2 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:140:4: 'fail'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:140:4: 'fail'
 					{
 					match(input,43,FOLLOW_43_in_mayfailterm1906); if (state.failed) return;
 					}
@@ -7360,11 +7360,11 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "typedecl"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:143:1: typedecl : ident ':' typeid ( ',' typedecl )? ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:143:1: typedecl : ident ':' typeid ( ',' typedecl )? ;
 	public final void typedecl() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:144:2: ( ident ':' typeid ( ',' typedecl )? )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:144:4: ident ':' typeid ( ',' typedecl )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:144:2: ( ident ':' typeid ( ',' typedecl )? )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:144:4: ident ':' typeid ( ',' typedecl )?
 			{
 			pushFollow(FOLLOW_ident_in_typedecl1917);
 			ident();
@@ -7375,7 +7375,7 @@ public class proverifParser extends Parser {
 			typeid();
 			state._fsp--;
 			if (state.failed) return;
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:144:21: ( ',' typedecl )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:144:21: ( ',' typedecl )?
 			int alt138=2;
 			int LA138_0 = input.LA(1);
 			if ( (LA138_0==20) ) {
@@ -7383,7 +7383,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt138) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:144:22: ',' typedecl
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:144:22: ',' typedecl
 					{
 					match(input,20,FOLLOW_20_in_typedecl1924); if (state.failed) return;
 					pushFollow(FOLLOW_typedecl_in_typedecl1926);
@@ -7411,11 +7411,11 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "failtypedecl"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:147:1: failtypedecl : ident ':' typeid ( 'or' 'fail' )? ( ',' typedecl )? ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:147:1: failtypedecl : ident ':' typeid ( 'or' 'fail' )? ( ',' typedecl )? ;
 	public final void failtypedecl() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:148:2: ( ident ':' typeid ( 'or' 'fail' )? ( ',' typedecl )? )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:148:4: ident ':' typeid ( 'or' 'fail' )? ( ',' typedecl )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:148:2: ( ident ':' typeid ( 'or' 'fail' )? ( ',' typedecl )? )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:148:4: ident ':' typeid ( 'or' 'fail' )? ( ',' typedecl )?
 			{
 			pushFollow(FOLLOW_ident_in_failtypedecl1939);
 			ident();
@@ -7426,7 +7426,7 @@ public class proverifParser extends Parser {
 			typeid();
 			state._fsp--;
 			if (state.failed) return;
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:148:21: ( 'or' 'fail' )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:148:21: ( 'or' 'fail' )?
 			int alt139=2;
 			int LA139_0 = input.LA(1);
 			if ( (LA139_0==57) ) {
@@ -7434,7 +7434,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt139) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:148:22: 'or' 'fail'
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:148:22: 'or' 'fail'
 					{
 					match(input,57,FOLLOW_57_in_failtypedecl1946); if (state.failed) return;
 					match(input,43,FOLLOW_43_in_failtypedecl1948); if (state.failed) return;
@@ -7443,7 +7443,7 @@ public class proverifParser extends Parser {
 
 			}
 
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:148:36: ( ',' typedecl )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:148:36: ( ',' typedecl )?
 			int alt140=2;
 			int LA140_0 = input.LA(1);
 			if ( (LA140_0==20) ) {
@@ -7451,7 +7451,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt140) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:148:37: ',' typedecl
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:148:37: ',' typedecl
 					{
 					match(input,20,FOLLOW_20_in_failtypedecl1953); if (state.failed) return;
 					pushFollow(FOLLOW_typedecl_in_failtypedecl1955);
@@ -7479,13 +7479,13 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "proverifOptions"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:151:1: proverifOptions : ( ( ident ',' )* ident )? ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:151:1: proverifOptions : ( ( ident ',' )* ident )? ;
 	public final void proverifOptions() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:152:2: ( ( ( ident ',' )* ident )? )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:152:4: ( ( ident ',' )* ident )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:152:2: ( ( ( ident ',' )* ident )? )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:152:4: ( ( ident ',' )* ident )?
 			{
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:152:4: ( ( ident ',' )* ident )?
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:152:4: ( ( ident ',' )* ident )?
 			int alt142=2;
 			int LA142_0 = input.LA(1);
 			if ( (LA142_0==ID) ) {
@@ -7493,9 +7493,9 @@ public class proverifParser extends Parser {
 			}
 			switch (alt142) {
 				case 1 :
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:152:5: ( ident ',' )* ident
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:152:5: ( ident ',' )* ident
 					{
-					// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:152:5: ( ident ',' )*
+					// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:152:5: ( ident ',' )*
 					loop141:
 					while (true) {
 						int alt141=2;
@@ -7510,7 +7510,7 @@ public class proverifParser extends Parser {
 
 						switch (alt141) {
 						case 1 :
-							// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:152:6: ident ','
+							// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:152:6: ident ','
 							{
 							pushFollow(FOLLOW_ident_in_proverifOptions1970);
 							ident();
@@ -7550,11 +7550,11 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "ident"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:155:1: ident : ID ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:155:1: ident : ID ;
 	public final void ident() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:156:2: ( ID )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:156:4: ID
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:156:2: ( ID )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:156:4: ID
 			{
 			match(input,ID,FOLLOW_ID_in_ident1990); if (state.failed) return;
 			}
@@ -7573,11 +7573,11 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "id"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:159:1: id : ID ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:159:1: id : ID ;
 	public final void id() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:160:2: ( ID )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:160:4: ID
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:160:2: ( ID )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:160:4: ID
 			{
 			match(input,ID,FOLLOW_ID_in_id2001); if (state.failed) return;
 			}
@@ -7596,11 +7596,11 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "int"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:163:1: int : INT ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:163:1: int : INT ;
 	public final void int() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:164:2: ( INT )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:164:4: INT
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:164:2: ( INT )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:164:4: INT
 			{
 			match(input,INT,FOLLOW_INT_in_int2013); if (state.failed) return;
 			}
@@ -7619,11 +7619,11 @@ public class proverifParser extends Parser {
 
 
 	// $ANTLR start "typeid"
-	// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:167:1: typeid : ID ;
+	// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:167:1: typeid : ID ;
 	public final void typeid() throws RecognitionException {
 		try {
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:168:2: ( ID )
-			// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:168:4: ID
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:168:2: ( ID )
+			// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:168:4: ID
 			{
 			match(input,ID,FOLLOW_ID_in_typeid2024); if (state.failed) return;
 			}
@@ -7641,8 +7641,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred11_proverif
 	public final void synpred11_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:17:4: ( 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid proverifOptions )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:17:4: 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid proverifOptions
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:17:4: ( 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid proverifOptions )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:17:4: 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid proverifOptions
 		{
 		match(input,47,FOLLOW_47_in_synpred11_proverif110); if (state.failed) return;
 		pushFollow(FOLLOW_ident_in_synpred11_proverif112);
@@ -7650,7 +7650,7 @@ public class proverifParser extends Parser {
 		state._fsp--;
 		if (state.failed) return;
 		match(input,18,FOLLOW_18_in_synpred11_proverif114); if (state.failed) return;
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:17:20: ( ( typeid ',' )* typeid )?
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:17:20: ( ( typeid ',' )* typeid )?
 		int alt148=2;
 		int LA148_0 = input.LA(1);
 		if ( (LA148_0==ID) ) {
@@ -7658,9 +7658,9 @@ public class proverifParser extends Parser {
 		}
 		switch (alt148) {
 			case 1 :
-				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:17:21: ( typeid ',' )* typeid
+				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:17:21: ( typeid ',' )* typeid
 				{
-				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:17:21: ( typeid ',' )*
+				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:17:21: ( typeid ',' )*
 				loop147:
 				while (true) {
 					int alt147=2;
@@ -7675,7 +7675,7 @@ public class proverifParser extends Parser {
 
 					switch (alt147) {
 					case 1 :
-						// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:17:22: typeid ','
+						// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:17:22: typeid ','
 						{
 						pushFollow(FOLLOW_typeid_in_synpred11_proverif118);
 						typeid();
@@ -7716,8 +7716,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred15_proverif
 	public final void synpred15_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:19:4: ( 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid 'reduc' reducprime proverifOptions )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:19:4: 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid 'reduc' reducprime proverifOptions
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:19:4: ( 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid 'reduc' reducprime proverifOptions )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:19:4: 'fun' ident '(' ( ( typeid ',' )* typeid )? ')' ':' typeid 'reduc' reducprime proverifOptions
 		{
 		match(input,47,FOLLOW_47_in_synpred15_proverif148); if (state.failed) return;
 		pushFollow(FOLLOW_ident_in_synpred15_proverif150);
@@ -7725,7 +7725,7 @@ public class proverifParser extends Parser {
 		state._fsp--;
 		if (state.failed) return;
 		match(input,18,FOLLOW_18_in_synpred15_proverif152); if (state.failed) return;
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:19:20: ( ( typeid ',' )* typeid )?
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:19:20: ( ( typeid ',' )* typeid )?
 		int alt151=2;
 		int LA151_0 = input.LA(1);
 		if ( (LA151_0==ID) ) {
@@ -7733,9 +7733,9 @@ public class proverifParser extends Parser {
 		}
 		switch (alt151) {
 			case 1 :
-				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:19:21: ( typeid ',' )* typeid
+				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:19:21: ( typeid ',' )* typeid
 				{
-				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:19:21: ( typeid ',' )*
+				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:19:21: ( typeid ',' )*
 				loop150:
 				while (true) {
 					int alt150=2;
@@ -7750,7 +7750,7 @@ public class proverifParser extends Parser {
 
 					switch (alt150) {
 					case 1 :
-						// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:19:22: typeid ','
+						// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:19:22: typeid ','
 						{
 						pushFollow(FOLLOW_typeid_in_synpred15_proverif156);
 						typeid();
@@ -7796,8 +7796,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred40_proverif
 	public final void synpred40_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:36:45: ( mayfailterm ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:36:45: mayfailterm ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:36:45: ( mayfailterm ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:36:45: mayfailterm ','
 		{
 		pushFollow(FOLLOW_mayfailterm_in_synpred40_proverif401);
 		mayfailterm();
@@ -7811,8 +7811,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred51_proverif
 	public final void synpred51_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:5: ( ident )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:5: ident
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:5: ( ident )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:5: ident
 		{
 		pushFollow(FOLLOW_ident_in_synpred51_proverif552);
 		ident();
@@ -7825,8 +7825,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred52_proverif
 	public final void synpred52_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:25: ( gterm ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:25: gterm ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:25: ( gterm ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:25: gterm ','
 		{
 		pushFollow(FOLLOW_gterm_in_synpred52_proverif562);
 		gterm();
@@ -7840,15 +7840,15 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred55_proverif
 	public final void synpred55_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:13: ( ident '(' ( ( gterm ',' )* gterm )? ')' ( 'phase' int )? )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:13: ident '(' ( ( gterm ',' )* gterm )? ')' ( 'phase' int )?
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:13: ( ident '(' ( ( gterm ',' )* gterm )? ')' ( 'phase' int )? )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:13: ident '(' ( ( gterm ',' )* gterm )? ')' ( 'phase' int )?
 		{
 		pushFollow(FOLLOW_ident_in_synpred55_proverif556);
 		ident();
 		state._fsp--;
 		if (state.failed) return;
 		match(input,18,FOLLOW_18_in_synpred55_proverif558); if (state.failed) return;
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:23: ( ( gterm ',' )* gterm )?
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:23: ( ( gterm ',' )* gterm )?
 		int alt178=2;
 		int LA178_0 = input.LA(1);
 		if ( (LA178_0==ID||LA178_0==18||LA178_0==42||LA178_0==51||(LA178_0 >= 53 && LA178_0 <= 54)) ) {
@@ -7856,9 +7856,9 @@ public class proverifParser extends Parser {
 		}
 		switch (alt178) {
 			case 1 :
-				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:24: ( gterm ',' )* gterm
+				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:24: ( gterm ',' )* gterm
 				{
-				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:24: ( gterm ',' )*
+				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:24: ( gterm ',' )*
 				loop177:
 				while (true) {
 					int alt177=2;
@@ -7920,7 +7920,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt177) {
 					case 1 :
-						// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:25: gterm ','
+						// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:25: gterm ','
 						{
 						pushFollow(FOLLOW_gterm_in_synpred55_proverif562);
 						gterm();
@@ -7945,7 +7945,7 @@ public class proverifParser extends Parser {
 		}
 
 		match(input,19,FOLLOW_19_in_synpred55_proverif572); if (state.failed) return;
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:49: ( 'phase' int )?
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:49: ( 'phase' int )?
 		int alt179=2;
 		int LA179_0 = input.LA(1);
 		if ( (LA179_0==60) ) {
@@ -7953,7 +7953,7 @@ public class proverifParser extends Parser {
 		}
 		switch (alt179) {
 			case 1 :
-				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:50: 'phase' int
+				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:50: 'phase' int
 				{
 				match(input,60,FOLLOW_60_in_synpred55_proverif575); if (state.failed) return;
 				pushFollow(FOLLOW_int_in_synpred55_proverif577);
@@ -7972,8 +7972,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred56_proverif
 	public final void synpred56_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:80: ( gterm ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:80: gterm ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:80: ( gterm ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:80: gterm ','
 		{
 		pushFollow(FOLLOW_gterm_in_synpred56_proverif589);
 		gterm();
@@ -7987,10 +7987,10 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred57_proverif
 	public final void synpred57_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:79: ( ( gterm ',' )* gterm )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:79: ( gterm ',' )* gterm
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:79: ( ( gterm ',' )* gterm )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:79: ( gterm ',' )* gterm
 		{
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:79: ( gterm ',' )*
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:79: ( gterm ',' )*
 		loop180:
 		while (true) {
 			int alt180=2;
@@ -8052,7 +8052,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt180) {
 			case 1 :
-				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:80: gterm ','
+				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:80: gterm ','
 				{
 				pushFollow(FOLLOW_gterm_in_synpred57_proverif589);
 				gterm();
@@ -8078,8 +8078,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred59_proverif
 	public final void synpred59_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:130: ( gterm ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:130: gterm ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:130: ( gterm ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:130: gterm ','
 		{
 		pushFollow(FOLLOW_gterm_in_synpred59_proverif611);
 		gterm();
@@ -8093,10 +8093,10 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred60_proverif
 	public final void synpred60_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:129: ( ( gterm ',' )* gterm )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:129: ( gterm ',' )* gterm
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:129: ( ( gterm ',' )* gterm )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:129: ( gterm ',' )* gterm
 		{
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:129: ( gterm ',' )*
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:129: ( gterm ',' )*
 		loop183:
 		while (true) {
 			int alt183=2;
@@ -8158,7 +8158,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt183) {
 			case 1 :
-				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:130: gterm ','
+				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:130: gterm ','
 				{
 				pushFollow(FOLLOW_gterm_in_synpred60_proverif611);
 				gterm();
@@ -8184,8 +8184,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred62_proverif
 	public final void synpred62_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:168: ( gterm ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:168: gterm ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:168: ( gterm ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:168: gterm ','
 		{
 		pushFollow(FOLLOW_gterm_in_synpred62_proverif631);
 		gterm();
@@ -8199,10 +8199,10 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred63_proverif
 	public final void synpred63_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:167: ( ( gterm ',' )* gterm )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:167: ( gterm ',' )* gterm
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:167: ( ( gterm ',' )* gterm )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:167: ( gterm ',' )* gterm
 		{
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:167: ( gterm ',' )*
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:167: ( gterm ',' )*
 		loop186:
 		while (true) {
 			int alt186=2;
@@ -8264,7 +8264,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt186) {
 			case 1 :
-				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:168: gterm ','
+				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:168: gterm ','
 				{
 				pushFollow(FOLLOW_gterm_in_synpred63_proverif631);
 				gterm();
@@ -8290,8 +8290,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred68_proverif
 	public final void synpred68_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:273: ( '=' gterm )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:273: '=' gterm
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:273: ( '=' gterm )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:273: '=' gterm
 		{
 		match(input,32,FOLLOW_32_in_synpred68_proverif680); if (state.failed) return;
 		pushFollow(FOLLOW_gterm_in_synpred68_proverif682);
@@ -8305,8 +8305,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred69_proverif
 	public final void synpred69_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:285: ( '<>' gterm )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:285: '<>' gterm
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:285: ( '<>' gterm )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:285: '<>' gterm
 		{
 		match(input,31,FOLLOW_31_in_synpred69_proverif686); if (state.failed) return;
 		pushFollow(FOLLOW_gterm_in_synpred69_proverif688);
@@ -8320,8 +8320,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred70_proverif
 	public final void synpred70_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:298: ( '||' gterm )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:298: '||' gterm
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:298: ( '||' gterm )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:298: '||' gterm
 		{
 		match(input,73,FOLLOW_73_in_synpred70_proverif692); if (state.failed) return;
 		pushFollow(FOLLOW_gterm_in_synpred70_proverif694);
@@ -8335,8 +8335,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred71_proverif
 	public final void synpred71_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:311: ( '&&' gterm )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:311: '&&' gterm
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:311: ( '&&' gterm )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:311: '&&' gterm
 		{
 		match(input,17,FOLLOW_17_in_synpred71_proverif698); if (state.failed) return;
 		pushFollow(FOLLOW_gterm_in_synpred71_proverif700);
@@ -8350,8 +8350,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred72_proverif
 	public final void synpred72_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:324: ( '==>' gterm )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:58:324: '==>' gterm
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:324: ( '==>' gterm )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:58:324: '==>' gterm
 		{
 		match(input,33,FOLLOW_33_in_synpred72_proverif704); if (state.failed) return;
 		pushFollow(FOLLOW_gterm_in_synpred72_proverif706);
@@ -8365,8 +8365,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred77_proverif
 	public final void synpred77_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:68:17: ( gformat ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:68:17: gformat ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:68:17: ( gformat ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:68:17: gformat ','
 		{
 		pushFollow(FOLLOW_gformat_in_synpred77_proverif785);
 		gformat();
@@ -8380,8 +8380,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred82_proverif
 	public final void synpred82_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:72:4: ( ident )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:72:4: ident
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:72:4: ( ident )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:72:4: ident
 		{
 		pushFollow(FOLLOW_ident_in_synpred82_proverif822);
 		ident();
@@ -8394,8 +8394,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred83_proverif
 	public final void synpred83_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:73:16: ( gformat ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:73:16: gformat ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:73:16: ( gformat ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:73:16: gformat ','
 		{
 		pushFollow(FOLLOW_gformat_in_synpred83_proverif833);
 		gformat();
@@ -8409,15 +8409,15 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred85_proverif
 	public final void synpred85_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:73:4: ( ident '(' ( ( gformat ',' )* gformat )? ')' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:73:4: ident '(' ( ( gformat ',' )* gformat )? ')'
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:73:4: ( ident '(' ( ( gformat ',' )* gformat )? ')' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:73:4: ident '(' ( ( gformat ',' )* gformat )? ')'
 		{
 		pushFollow(FOLLOW_ident_in_synpred85_proverif827);
 		ident();
 		state._fsp--;
 		if (state.failed) return;
 		match(input,18,FOLLOW_18_in_synpred85_proverif829); if (state.failed) return;
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:73:14: ( ( gformat ',' )* gformat )?
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:73:14: ( ( gformat ',' )* gformat )?
 		int alt199=2;
 		int LA199_0 = input.LA(1);
 		if ( (LA199_0==ID||LA199_0==18||(LA199_0 >= 53 && LA199_0 <= 55)) ) {
@@ -8425,9 +8425,9 @@ public class proverifParser extends Parser {
 		}
 		switch (alt199) {
 			case 1 :
-				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:73:15: ( gformat ',' )* gformat
+				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:73:15: ( gformat ',' )* gformat
 				{
-				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:73:15: ( gformat ',' )*
+				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:73:15: ( gformat ',' )*
 				loop198:
 				while (true) {
 					int alt198=2;
@@ -8480,7 +8480,7 @@ public class proverifParser extends Parser {
 					}
 					switch (alt198) {
 					case 1 :
-						// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:73:16: gformat ','
+						// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:73:16: gformat ','
 						{
 						pushFollow(FOLLOW_gformat_in_synpred85_proverif833);
 						gformat();
@@ -8512,8 +8512,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred86_proverif
 	public final void synpred86_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:74:16: ( gformat ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:74:16: gformat ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:74:16: ( gformat ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:74:16: gformat ','
 		{
 		pushFollow(FOLLOW_gformat_in_synpred86_proverif854);
 		gformat();
@@ -8527,8 +8527,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred89_proverif
 	public final void synpred89_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:75:10: ( gformat ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:75:10: gformat ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:75:10: ( gformat ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:75:10: gformat ','
 		{
 		pushFollow(FOLLOW_gformat_in_synpred89_proverif873);
 		gformat();
@@ -8542,10 +8542,10 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred90_proverif
 	public final void synpred90_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:75:9: ( ( gformat ',' )* gformat )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:75:9: ( gformat ',' )* gformat
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:75:9: ( ( gformat ',' )* gformat )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:75:9: ( gformat ',' )* gformat
 		{
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:75:9: ( gformat ',' )*
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:75:9: ( gformat ',' )*
 		loop203:
 		while (true) {
 			int alt203=2;
@@ -8598,7 +8598,7 @@ public class proverifParser extends Parser {
 			}
 			switch (alt203) {
 			case 1 :
-				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:75:10: gformat ','
+				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:75:10: gformat ','
 				{
 				pushFollow(FOLLOW_gformat_in_synpred90_proverif873);
 				gformat();
@@ -8624,8 +8624,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred100_proverif
 	public final void synpred100_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:92:4: ( term )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:92:4: term
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:92:4: ( term )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:92:4: term
 		{
 		pushFollow(FOLLOW_term_in_synpred100_proverif1009);
 		term();
@@ -8638,8 +8638,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred101_proverif
 	public final void synpred101_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:93:4: ( term '->' term )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:93:4: term '->' term
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:93:4: ( term '->' term )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:93:4: term '->' term
 		{
 		pushFollow(FOLLOW_term_in_synpred101_proverif1014);
 		term();
@@ -8657,8 +8657,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred102_proverif
 	public final void synpred102_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:94:4: ( term '<->' term )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:94:4: term '<->' term
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:94:4: ( term '<->' term )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:94:4: term '<->' term
 		{
 		pushFollow(FOLLOW_term_in_synpred102_proverif1023);
 		term();
@@ -8676,8 +8676,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred105_proverif
 	public final void synpred105_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:35: ( pterm ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:35: pterm ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:35: ( pterm ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:35: pterm ','
 		{
 		pushFollow(FOLLOW_pterm_in_synpred105_proverif1064);
 		pterm();
@@ -8691,8 +8691,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred120_proverif
 	public final void synpred120_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:308: ( 'else' process )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:308: 'else' process
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:308: ( 'else' process )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:308: 'else' process
 		{
 		match(input,40,FOLLOW_40_in_synpred120_proverif1184); if (state.failed) return;
 		pushFollow(FOLLOW_process_in_synpred120_proverif1186);
@@ -8706,8 +8706,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred126_proverif
 	public final void synpred126_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:458: ( 'else' process )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:458: 'else' process
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:458: ( 'else' process )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:458: 'else' process
 		{
 		match(input,40,FOLLOW_40_in_synpred126_proverif1245); if (state.failed) return;
 		pushFollow(FOLLOW_process_in_synpred126_proverif1247);
@@ -8721,8 +8721,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred132_proverif
 	public final void synpred132_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:576: ( 'else' process )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:576: 'else' process
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:576: ( 'else' process )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:576: 'else' process
 		{
 		match(input,40,FOLLOW_40_in_synpred132_proverif1293); if (state.failed) return;
 		pushFollow(FOLLOW_process_in_synpred132_proverif1295);
@@ -8736,8 +8736,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred135_proverif
 	public final void synpred135_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:619: ( pterm ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:619: pterm ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:619: ( pterm ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:619: pterm ','
 		{
 		pushFollow(FOLLOW_pterm_in_synpred135_proverif1312);
 		pterm();
@@ -8751,8 +8751,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred139_proverif
 	public final void synpred139_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:678: ( pattern ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:678: pattern ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:678: ( pattern ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:678: pattern ','
 		{
 		pushFollow(FOLLOW_pattern_in_synpred139_proverif1341);
 		pattern();
@@ -8766,8 +8766,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred142_proverif
 	public final void synpred142_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:741: ( 'else' process )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:741: 'else' process
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:741: ( 'else' process )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:741: 'else' process
 		{
 		match(input,40,FOLLOW_40_in_synpred142_proverif1366); if (state.failed) return;
 		pushFollow(FOLLOW_process_in_synpred142_proverif1368);
@@ -8781,8 +8781,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred145_proverif
 	public final void synpred145_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:784: ( pterm ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:784: pterm ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:784: ( pterm ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:784: pterm ','
 		{
 		pushFollow(FOLLOW_pterm_in_synpred145_proverif1386);
 		pterm();
@@ -8796,8 +8796,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred151_proverif
 	public final void synpred151_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:857: ( '|' process )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:99:857: '|' process
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:857: ( '|' process )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:99:857: '|' process
 		{
 		match(input,72,FOLLOW_72_in_synpred151_proverif1423); if (state.failed) return;
 		pushFollow(FOLLOW_process_in_synpred151_proverif1425);
@@ -8811,8 +8811,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred153_proverif
 	public final void synpred153_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:19: ( pterm ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:19: pterm ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:19: ( pterm ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:19: pterm ','
 		{
 		pushFollow(FOLLOW_pterm_in_synpred153_proverif1449);
 		pterm();
@@ -8826,8 +8826,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred156_proverif
 	public final void synpred156_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:57: ( pterm ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:57: pterm ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:57: ( pterm ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:57: pterm ','
 		{
 		pushFollow(FOLLOW_pterm_in_synpred156_proverif1469);
 		pterm();
@@ -8841,8 +8841,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred166_proverif
 	public final void synpred166_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:264: ( 'else' pterm )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:264: 'else' pterm
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:264: ( 'else' pterm )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:264: 'else' pterm
 		{
 		match(input,40,FOLLOW_40_in_synpred166_proverif1561); if (state.failed) return;
 		pushFollow(FOLLOW_pterm_in_synpred166_proverif1563);
@@ -8856,8 +8856,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred168_proverif
 	public final void synpred168_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:281: ( 'let' pattern )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:281: 'let' pattern
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:281: ( 'let' pattern )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:281: 'let' pattern
 		{
 		match(input,53,FOLLOW_53_in_synpred168_proverif1569); if (state.failed) return;
 		pushFollow(FOLLOW_pattern_in_synpred168_proverif1571);
@@ -8871,8 +8871,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred171_proverif
 	public final void synpred171_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:384: ( 'else' pterm )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:384: 'else' pterm
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:384: ( 'else' pterm )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:384: 'else' pterm
 		{
 		match(input,40,FOLLOW_40_in_synpred171_proverif1607); if (state.failed) return;
 		pushFollow(FOLLOW_pterm_in_synpred171_proverif1609);
@@ -8886,8 +8886,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred172_proverif
 	public final void synpred172_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:340: ( 'let' typedecl 'suchthat' pterm 'in' pterm ( 'else' pterm )? )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:340: 'let' typedecl 'suchthat' pterm 'in' pterm ( 'else' pterm )?
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:340: ( 'let' typedecl 'suchthat' pterm 'in' pterm ( 'else' pterm )? )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:340: 'let' typedecl 'suchthat' pterm 'in' pterm ( 'else' pterm )?
 		{
 		match(input,53,FOLLOW_53_in_synpred172_proverif1594); if (state.failed) return;
 		pushFollow(FOLLOW_typedecl_in_synpred172_proverif1596);
@@ -8904,7 +8904,7 @@ public class proverifParser extends Parser {
 		pterm();
 		state._fsp--;
 		if (state.failed) return;
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:383: ( 'else' pterm )?
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:383: ( 'else' pterm )?
 		int alt267=2;
 		int LA267_0 = input.LA(1);
 		if ( (LA267_0==40) ) {
@@ -8912,7 +8912,7 @@ public class proverifParser extends Parser {
 		}
 		switch (alt267) {
 			case 1 :
-				// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:384: 'else' pterm
+				// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:384: 'else' pterm
 				{
 				match(input,40,FOLLOW_40_in_synpred172_proverif1607); if (state.failed) return;
 				pushFollow(FOLLOW_pterm_in_synpred172_proverif1609);
@@ -8931,8 +8931,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred173_proverif
 	public final void synpred173_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:422: ( pterm ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:422: pterm ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:422: ( pterm ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:422: pterm ','
 		{
 		pushFollow(FOLLOW_pterm_in_synpred173_proverif1623);
 		pterm();
@@ -8946,8 +8946,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred176_proverif
 	public final void synpred176_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:476: ( pattern ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:476: pattern ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:476: ( pattern ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:476: pattern ','
 		{
 		pushFollow(FOLLOW_pattern_in_synpred176_proverif1649);
 		pattern();
@@ -8961,8 +8961,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred179_proverif
 	public final void synpred179_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:536: ( 'else' pterm )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:536: 'else' pterm
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:536: ( 'else' pterm )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:536: 'else' pterm
 		{
 		match(input,40,FOLLOW_40_in_synpred179_proverif1673); if (state.failed) return;
 		pushFollow(FOLLOW_pterm_in_synpred179_proverif1675);
@@ -8976,8 +8976,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred181_proverif
 	public final void synpred181_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:574: ( pterm ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:574: pterm ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:574: ( pterm ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:574: pterm ','
 		{
 		pushFollow(FOLLOW_pterm_in_synpred181_proverif1690);
 		pterm();
@@ -8991,8 +8991,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred184_proverif
 	public final void synpred184_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:612: ( '=' pterm )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:612: '=' pterm
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:612: ( '=' pterm )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:612: '=' pterm
 		{
 		match(input,32,FOLLOW_32_in_synpred184_proverif1710); if (state.failed) return;
 		pushFollow(FOLLOW_pterm_in_synpred184_proverif1712);
@@ -9006,8 +9006,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred185_proverif
 	public final void synpred185_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:624: ( '<>' pterm )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:624: '<>' pterm
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:624: ( '<>' pterm )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:624: '<>' pterm
 		{
 		match(input,31,FOLLOW_31_in_synpred185_proverif1716); if (state.failed) return;
 		pushFollow(FOLLOW_pterm_in_synpred185_proverif1718);
@@ -9021,8 +9021,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred186_proverif
 	public final void synpred186_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:637: ( '&&' pterm )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:637: '&&' pterm
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:637: ( '&&' pterm )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:637: '&&' pterm
 		{
 		match(input,17,FOLLOW_17_in_synpred186_proverif1722); if (state.failed) return;
 		pushFollow(FOLLOW_pterm_in_synpred186_proverif1724);
@@ -9036,8 +9036,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred187_proverif
 	public final void synpred187_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:650: ( '||' pterm )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:104:650: '||' pterm
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:650: ( '||' pterm )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:104:650: '||' pterm
 		{
 		match(input,73,FOLLOW_73_in_synpred187_proverif1728); if (state.failed) return;
 		pushFollow(FOLLOW_pterm_in_synpred187_proverif1730);
@@ -9051,8 +9051,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred188_proverif
 	public final void synpred188_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:11: ( term ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:11: term ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:11: ( term ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:11: term ','
 		{
 		pushFollow(FOLLOW_term_in_synpred188_proverif1750);
 		term();
@@ -9066,8 +9066,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred191_proverif
 	public final void synpred191_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:47: ( term ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:47: term ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:47: ( term ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:47: term ','
 		{
 		pushFollow(FOLLOW_term_in_synpred191_proverif1770);
 		term();
@@ -9081,8 +9081,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred194_proverif
 	public final void synpred194_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:92: ( '=' term )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:92: '=' term
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:92: ( '=' term )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:92: '=' term
 		{
 		match(input,32,FOLLOW_32_in_synpred194_proverif1794); if (state.failed) return;
 		pushFollow(FOLLOW_term_in_synpred194_proverif1796);
@@ -9096,8 +9096,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred195_proverif
 	public final void synpred195_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:103: ( '<>' term )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:103: '<>' term
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:103: ( '<>' term )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:103: '<>' term
 		{
 		match(input,31,FOLLOW_31_in_synpred195_proverif1800); if (state.failed) return;
 		pushFollow(FOLLOW_term_in_synpred195_proverif1802);
@@ -9111,8 +9111,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred196_proverif
 	public final void synpred196_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:115: ( '&&' term )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:115: '&&' term
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:115: ( '&&' term )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:115: '&&' term
 		{
 		match(input,17,FOLLOW_17_in_synpred196_proverif1806); if (state.failed) return;
 		pushFollow(FOLLOW_term_in_synpred196_proverif1808);
@@ -9126,8 +9126,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred197_proverif
 	public final void synpred197_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:127: ( '||' term )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:109:127: '||' term
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:127: ( '||' term )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:109:127: '||' term
 		{
 		match(input,73,FOLLOW_73_in_synpred197_proverif1812); if (state.failed) return;
 		pushFollow(FOLLOW_term_in_synpred197_proverif1814);
@@ -9141,8 +9141,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred200_proverif
 	public final void synpred200_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:133:10: ( pattern ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:133:10: pattern ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:133:10: ( pattern ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:133:10: pattern ','
 		{
 		pushFollow(FOLLOW_pattern_in_synpred200_proverif1852);
 		pattern();
@@ -9156,8 +9156,8 @@ public class proverifParser extends Parser {
 
 	// $ANTLR start synpred203_proverif
 	public final void synpred203_proverif_fragment() throws RecognitionException {
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:134:16: ( pattern ',' )
-		// C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g:134:16: pattern ','
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:134:16: ( pattern ',' )
+		// D:\\TriSelectif\\Etudes\\2018-2019\\PIDR\\grammar\\proverif.g:134:16: pattern ','
 		{
 		pushFollow(FOLLOW_pattern_in_synpred203_proverif1873);
 		pattern();

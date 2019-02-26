@@ -55,17 +55,17 @@ query //See Figure A.3
 	;
 
 gterm //See Figure A.3
-	:	(ident | ident '(' ((gterm ',')* gterm)? ')' ('phase' int)? | 'event' '(' ((gterm ',')* gterm)? gterm ')' | 'inj-event' '(' ((gterm ',')* gterm)? gterm ')' | '(' ((gterm ',')* gterm)? gterm ')' | 'new' ident ('[' (gbinding)? ']' )? | 'let' ident '=' gterm 'in' gterm) ('=' gterm | '<>' gterm | '||' gterm | '&&' gterm | '==>' gterm)*
+	:	(ident | ident '(' ((gterm ',')* gterm)? ')' ('phase' integer)? | 'event' '(' ((gterm ',')* gterm)? gterm ')' | 'inj-event' '(' ((gterm ',')* gterm)? gterm ')' | '(' ((gterm ',')* gterm)? gterm ')' | 'new' ident ('[' (gbinding)? ']' )? | 'let' ident '=' gterm 'in' gterm) ('=' gterm | '<>' gterm | '||' gterm | '&&' gterm | '==>' gterm)*
 	;
 
 gbinding
- 	:	'!' int '=' gterm (';' gbinding)?
+ 	:	'!' integer '=' gterm (';' gbinding)?
  	|	ident '=' gterm (';' gbinding)?
  	;
 
 nounifdecl //See Figure A.4
 	:	'let' ident '=' gformat 'in' nounifdecl
-	|	ident ('(' ((gformat ',')* gformat)? ')' ('phase' int)? )? ('/'int)?
+	|	ident ('(' ((gformat ',')* gformat)? ')' ('phase' integer)? )? ('/'integer)?
 	;
 
 gformat
@@ -79,7 +79,7 @@ gformat
 	
 	
 fbinding
-	:	'!' int '=' gformat (';' fbinding)?
+	:	'!' integer '=' gformat (';' fbinding)?
  	|	ident '=' gformat (';' fbinding)?
  	;
 
@@ -96,7 +96,7 @@ clause
 	;
 
 process
-	:	('0' | 'yield' | ident ( '(' ((pterm ',')* pterm)? ')')? | '(' process ')' | '!' process | '!' ident '<=' ident process | 'foreach' ident '<=' ident 'do' process | 'new' ident ( '[' ((ident ',')* ident)? ']' )? ':' typeid (';' process )? | ident '<-R' typeid (';' process )? | 'if' pterm 'then' process ('else' process )? | 'in' '('pterm ',' pattern ')' (';' process)? | 'out' '('pterm ',' pterm')' (';'process)? | 'let' pattern '=' pterm ('in' process ('else' process)? )? | ident (':' typeid )? '<-' pterm (';' process)? | 'let' typedecl 'suchthat' pterm ('in' process ('else' process)? )? | 'insert' ident '(' ((pterm ',')* pterm)? ')' (';' process)? | 'get' ident '(' ((pattern ',')* pattern)? ')' ('suchthat' pterm)? ('in' process ('else' process)? )? | 'event' ident ( '('((pterm ',')* pterm)? ')' )? (';' process)? | 'phase' int (';' process)?) ('|' process)*
+	:	('0' | 'yield' | ident ( '(' ((pterm ',')* pterm)? ')')? | '(' process ')' | '!' process | '!' ident '<=' ident process | 'foreach' ident '<=' ident 'do' process | 'new' ident ( '[' ((ident ',')* ident)? ']' )? ':' typeid (';' process )? | ident '<-R' typeid (';' process )? | 'if' pterm 'then' process ('else' process )? | 'in' '('pterm ',' pattern ')' (';' process)? | 'out' '('pterm ',' pterm')' (';'process)? | 'let' pattern '=' pterm ('in' process ('else' process)? )? | ident (':' typeid )? '<-' pterm (';' process)? | 'let' typedecl 'suchthat' pterm ('in' process ('else' process)? )? | 'insert' ident '(' ((pterm ',')* pterm)? ')' (';' process)? | 'get' ident '(' ((pattern ',')* pattern)? ')' ('suchthat' pterm)? ('in' process ('else' process)? )? | 'event' ident ( '('((pterm ',')* pterm)? ')' )? (';' process)? | 'phase' integer (';' process)?) ('|' process)*
  	;
 
 
@@ -160,7 +160,7 @@ id
 	: ID
 	;
 
-int 
+integer
 	: INT
 	;
 
@@ -171,7 +171,7 @@ typeid
 /*
 *This grammar "knows" as lexical items :
 	Identifier
-	Integers
+	integeregers
 	Float
 	Comments--------------------------------------------------------> [TO DO] delete // and replace /*...*\/ by (*....*) ?
 		"//" and
@@ -185,25 +185,27 @@ typeid
 */
 
 
-ID	:	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
-		;
+ID	
+	:('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
+	;
 
-INT :	'0'..'9'+
-		;
+INT
+	: '0'..'9'+
+	;
 
 FLOAT
-	:	 ('0'..'9')+ '.' ('0'..'9')* EXPONENT?
-	|	 '.' ('0'..'9')+ EXPONENT?
-	|	 ('0'..'9')+ EXPONENT
+	: ('0'..'9')+ '.' ('0'..'9')* EXPONENT?
+	| '.' ('0'..'9')+ EXPONENT?
+	| ('0'..'9')+ EXPONENT
 	;
 
 COMMENT
-	:	 '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
-	|	 '(*' ( options {greedy=false;} : . )* '*)' {$channel=HIDDEN;}
+	: '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
+	| '(*' ( options {greedy=false;} : . )* '*)' {$channel=HIDDEN;}
 	;
 
 WS
-	:	 ( ' '
+	: ( ' '
 	| '\t'
 	| '\r'
 	| '\n'
@@ -211,11 +213,11 @@ WS
 	;
 
 STRING
-	:	'"' ( ESC_SEQ | ~('\\'|'"') )* '"'
+	: '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
 	;
 
 CHAR
-	:	'\'' ( ESC_SEQ | ~('\''|'\\') ) '\''
+	: '\'' ( ESC_SEQ | ~('\''|'\\') ) '\''
 	;
 
 fragment
