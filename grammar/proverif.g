@@ -41,11 +41,11 @@ eqlist
 	;
 
 name
-	: //See Section 6.2.2
+	: ID//See Section 6.2.2
 	;
 
 value
-	: //See Section 6.2.2
+	: ID//See Section 6.2.2
 	;
 
 query //See Figure A.3
