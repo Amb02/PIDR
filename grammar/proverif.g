@@ -2,7 +2,6 @@ grammar proverif;
 
 options {
 		language=Java;
-		backtrack=true;
 }
 
 programme
@@ -41,11 +40,11 @@ eqlist
 	;
 
 name
-	: id//See Section 6.2.2
+	: id
 	;
 
 value
-	: id//See Section 6.2.2
+	: id
 	;
 
 query //See Figure A.3
@@ -168,12 +167,12 @@ FLOAT
 	;
 
 COMMENT
-	: '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
-	| '(*' ( options {greedy=false;} : . )* '*)' {$channel=HIDDEN;}
+	: '//' ~('\n'|'\r')* '\r'? '\n'
+	| '(*' ()*? '*)'
 	;
 
 WS
-	: (' ' | '\t' | '\r' | '\n')+ {$channel=HIDDEN;}
+	: (' ' | '\t' | '\r' | '\n')+
 	;
 
 STRING
@@ -192,7 +191,7 @@ HEX_DIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;
 
 fragment
 ESC_SEQ
-	: '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
+	: '\\' ('b'|'t'|'n'|'f'|'r')
 	| UNICODE_ESC
 	| OCTAL_ESC
 	;
