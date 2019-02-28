@@ -2,6 +2,7 @@ grammar proverif;
 
 options {
 		language=Java;
+		backtrack=true;
 }
 
 programme
@@ -40,11 +41,11 @@ eqlist
 	;
 
 name
-	: id
+	: id//See Section 6.2.2
 	;
 
 value
-	: id
+	: id//See Section 6.2.2
 	;
 
 query //See Figure A.3
@@ -75,8 +76,8 @@ gformat
 	|	'new' ident ( '[' ( fbinding )? ']' )?
 	|	'let' ident '=' gformat 'in' gformat
 	;
-	
-	
+
+
 fbinding
 	:	'!' integer '=' gformat (';' fbinding)?
  	|	ident '=' gformat (';' fbinding)?
@@ -86,7 +87,7 @@ fbinding
 clauses
 	:	('forall' failtypedecl ';')? clause (';' clauses )?
 	;
-	
+
 clause
 	:	term
 	|	term '->' term
@@ -102,7 +103,7 @@ process
 pterm
 	:	(ident | '(' ((pterm ',')* pterm)? ')' | ident '(' ((pterm ',')* pterm)? ')' | 'choice' '[' pterm ',' pterm ']' | 'not' '(' pterm ')' | 'new' ident ('[' ((ident ',')* ident)? ']')? ':' typeid ';' pterm | ident '<-R' typeid ';' pterm | 'if' pterm 'then' pterm ('else' pterm)? | 'let' pattern | ident (':' typeid)? '<-' pterm ';' pterm | 'let' typedecl 'suchthat' pterm 'in' pterm ('else' pterm)? | 'insert' ident	'(' ((pterm ',')* pterm)? ')' ';' pterm | 'get' ident '(' ((pattern ',')* pattern)? ')' ('suchthat' pterm)? 'in' pterm ('else' pterm)? | 'event' ident ('(' ((pterm ',')* pterm)? ')')? ';' pterm) ('=' pterm | '<>' pterm | '&&' pterm | '||' pterm)*
 	;
-	
+
 term
 	:	(ident | '(' ((term ',')* term)? ')' | ident '(' ((term ',')* term)? ')' | 'not' '(' term ')') ('=' term | '<>' term | '&&' term | '||' term)*
 	;
@@ -152,7 +153,7 @@ typeid
 	: 'channel' | ID
 	;
 
-ID	
+ID
 	: ('a'..'z'|'A'..'Z'|'_')('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
 	;
 
@@ -167,12 +168,12 @@ FLOAT
 	;
 
 COMMENT
-	: '//' ~('\n'|'\r')* '\r'? '\n'
-	| '(*' ()*? '*)'
+	: '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
+	| '(*' ( options {greedy=false;} : . )* '*)' {$channel=HIDDEN;}
 	;
 
 WS
-	: (' ' | '\t' | '\r' | '\n')+
+	: (' ' | '\t' | '\r' | '\n')+ {$channel=HIDDEN;}
 	;
 
 STRING
@@ -191,7 +192,7 @@ HEX_DIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;
 
 fragment
 ESC_SEQ
-	: '\\' ('b'|'t'|'n'|'f'|'r')
+	: '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
 	| UNICODE_ESC
 	| OCTAL_ESC
 	;
