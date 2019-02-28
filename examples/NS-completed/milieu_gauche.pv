@@ -29,13 +29,13 @@ query attacker (nb).
 let clientA(A:host, B:host,pkA:pkey,skA:skey,pkB:pkey,n:bitstring) = 
     out(c,aenc((A,n),pkB));
     in(c,x:bitstring);
-    let ((=n,=B),nn: bitstring) = adec(x,skA) in
+    let ((=n, =B), nn: bitstring) = adec(x,skA) in
     out(c, aenc(nn,pkB)).
 
 let clientB(B:host,A:host,pkB:pkey,skB:skey,pkA:pkey,n:bitstring) = 
     in(c,x:bitstring); 
     let (=A,na: bitstring) = adec(x,skB) in
-    out(c, aenc(((na,B), n),pkA)); 
+    out(c, aenc(((na, B), n),pkA)); 
     in(c,y:bitstring);
     if n = adec(y,skB) then 0.
 

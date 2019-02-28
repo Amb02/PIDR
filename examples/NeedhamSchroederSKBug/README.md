@@ -5,9 +5,9 @@
 
 | Position  | Parenthésage  |     Résultat                   |
 |:---------:|:-------------:|:------------------------------:|
-| Gauche    | Gauche        | Pas d'attaque                  |
-| Gauche    | Droite        | Inf                            |
-| Milieu    | Gauche        | Pas d'attaque                  |
-| Milieu    | Droite        | Attaque                        |
-| Droite    | Gauche        | Pas d'attaque                  |
+| Gauche    | Gauche        | Attaque                        |
+| Droite    | Gauche        | Attaque                        |
+| Gauche    | Droite        | Attaque                        |
 | Droite    | Droite        | Attaque                        |
+| Milieu    | Gauche        | Attaque                        |
+| Milieu    | Droite        | Attaque                        |
