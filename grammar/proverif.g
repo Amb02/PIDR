@@ -10,26 +10,26 @@ programme
 	;
 
 declaration
-	: 'type' ident proverifOptions
-	| 'channel'  (ident ',')* ident
-	| 'free' (ident ',')* ident	':' typeid proverifOptions
-	| 'const' (ident ',')* ident ':' typeid proverifOptions
-	| 'fun' ident '(' ((typeid ',')* typeid)? ')' ':' typeid proverifOptions
-	| 'reduc' reduc proverifOptions
-	| 'fun' ident '(' ((typeid ',')* typeid)? ')' ':' typeid 'reduc' reducprime proverifOptions
-	| 'equation' eqlist proverifOptions
-	| 'pred' ident ( '(' ((typeid ',')* typeid)? ')' )? proverifOptions
-	| 'table' ident '(' ((typeid ',')* typeid)? ')'
-	| 'let' ident ( '(' (typedecl)? ')')? '=' process
-	| 'set' name '=' value
-	| 'event' ident ( '(' ((typeid ',')* typeid)? ')' )?
-	| 'query' (typedecl ';')? query
-	| 'not' (typedecl ';')? gterm
-	| 'nounif' (typedecl ';')? nounifdecl
+	: 'type' ident proverifOptions '.'
+	| 'channel'  (ident ',')* ident '.'
+	| 'free' (ident ',')* ident	':' typeid proverifOptions '.'
+	| 'const' (ident ',')* ident ':' typeid proverifOptions '.'
+	| 'fun' ident '(' ((typeid ',')* typeid)? ')' ':' typeid proverifOptions '.'
+	| 'reduc' reduc proverifOptions '.'
+	| 'fun' ident '(' ((typeid ',')* typeid)? ')' ':' typeid 'reduc' reducprime proverifOptions '.'
+	| 'equation' eqlist proverifOptions '.'
+	| 'pred' ident ( '(' ((typeid ',')* typeid)? ')' )? proverifOptions '.'
+	| 'table' ident '(' ((typeid ',')* typeid)? ')' '.'
+	| 'let' ident ( '(' (typedecl)? ')')? '=' process '.'
+	| 'set' name '=' value '.'
+	| 'event' ident ( '(' ((typeid ',')* typeid)? ')' )? '.'
+	| 'query' (typedecl ';')? query '.'
+	| 'not' (typedecl ';')? gterm '.'
+	| 'nounif' (typedecl ';')? nounifdecl '.'
 	;
 
 reduc
-	: ('forall' typedecl ';')? term '=' term (';' reduc) ?
+	: ('forall' typedecl ';')? term '=' term (';' reduc)?
 	;
 
 reducprime
@@ -41,11 +41,11 @@ eqlist
 	;
 
 name
-	: ID//See Section 6.2.2
+	: id//See Section 6.2.2
 	;
 
 value
-	: ID//See Section 6.2.2
+	: id//See Section 6.2.2
 	;
 
 query //See Figure A.3
@@ -104,31 +104,12 @@ pterm
 	:	(ident | '(' ((pterm ',')* pterm)? ')' | ident '(' ((pterm ',')* pterm)? ')' | 'choice' '[' pterm ',' pterm ']' | 'not' '(' pterm ')' | 'new' ident ('[' ((ident ',')* ident)? ']')? ':' typeid ';' pterm | ident '<-R' typeid ';' pterm | 'if' pterm 'then' pterm ('else' pterm)? | 'let' pattern | ident (':' typeid)? '<-' pterm ';' pterm | 'let' typedecl 'suchthat' pterm 'in' pterm ('else' pterm)? | 'insert' ident	'(' ((pterm ',')* pterm)? ')' ';' pterm | 'get' ident '(' ((pattern ',')* pattern)? ')' ('suchthat' pterm)? 'in' pterm ('else' pterm)? | 'event' ident ('(' ((pterm ',')* pterm)? ')')? ';' pterm) ('=' pterm | '<>' pterm | '&&' pterm | '||' pterm)*
 	;
 	
-//the same as the last one but without left-recursivity
 term
-	:	('(' ((term ',')* term)? ')' | ident '(' ((term ',')* term)? ')' | 'not' '(' term ')') ('=' term | '<>' term | '&&' term | '||' term)*
+	:	(ident | '(' ((term ',')* term)? ')' | ident '(' ((term ',')* term)? ')' | 'not' '(' term ')') ('=' term | '<>' term | '&&' term | '||' term)*
 	;
-
-
-
-//the same as the last one but without left-recursivity) ('=' pterm | '<>' pterm | '&&' pterm | '||' pterm)*
-/*
-pterm
-	:	(ident | '(' ((pterm ',')* pterm)? ')' | ident '(' ((pterm ',')* pterm)? ')' | 'choice' '[' pterm ',' pterm ']
-	| 'not' '(' pterm ')'
-	| 'new' ident ('[' ((ident ',')* ident)? ']')? ':' typeid ';' pterm
-	| ident '<-' 'R' typeid ';' pterm
-	| 'if' pterm 'then' pterm ('else' pterm)?
-	| 'let' pattern
-	| ident (':' typeid)? '<-' pterm ';' pterm
-	| 'let' typedecl 'suchthat' pterm 'in' pterm ('else' pterm)?
-	| 'insert' ident	'(' ((pterm ',')* pterm)? ')' ';' pterm
-	| 'get' ident '(' ((pattern ',')* pattern)? ')' ('suchthat' pterm)? 'in' pterm ('else' pterm)? | 'event' ident ('(' ((pattern ',')* pattern)? ')')? ';' pterm) ('=' pterm | '<>' pterm | '&&' pterm | '||' pterm)*
-	;
-	*/
 
 pattern
-  : ident
+    : ident
 	|	ident ':' typeid
 	|	'(' ((pattern ',')* pattern)? ')'
 	|	ident '(' ((pattern ',')* pattern)? ')'
@@ -149,11 +130,15 @@ failtypedecl
 	;
 
 proverifOptions
-	: ((ident ',')* ident)?
+	: ('[' (optionChoice ',')* optionChoice ']' )?
 	;
-	
+
+optionChoice
+    : 'data' | 'private' | 'typeConverter' | 'memberOptim' | 'block'
+    ;
+
 ident
-	: ID
+	: id
 	;
 
 id
@@ -165,28 +150,11 @@ integer
 	;
 
 typeid
-	: ID
+	: 'channel' | ID
 	;
-	
-/*
-*This grammar "knows" as lexical items :
-	Identifier
-	integeregers
-	Float
-	Comments--------------------------------------------------------> [TO DO] delete // and replace /*...*\/ by (*....*) ?
-		"//" and
-		"/* [...]*\/" without the last backslash of course
-	String
-	Characters
-	White space
-		"\t",
-		"\n",
-		11"\r"
-*/
-
 
 ID	
-	:('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
+	: ('a'..'z'|'A'..'Z'|'_')('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
 	;
 
 INT
@@ -205,11 +173,7 @@ COMMENT
 	;
 
 WS
-	: ( ' '
-	| '\t'
-	| '\r'
-	| '\n'
-	) {$channel=HIDDEN;}
+	: (' ' | '\t' | '\r' | '\n')+ {$channel=HIDDEN;}
 	;
 
 STRING
