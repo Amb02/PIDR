@@ -1,4 +1,4 @@
-// $ANTLR null C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g 2019-02-26 23:23:25
+// $ANTLR null C:\\Users\\ambro\\Documents\\Studies 2018-2019\\TNCY\\PIDR\\PIDR\\grammar\\proverif.g 2019-02-27 08:18:05
 
 import org.antlr.runtime.*;
 import java.util.Stack;

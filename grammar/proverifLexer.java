@@ -1,4 +1,4 @@
-// $ANTLR 3.5.2 proverif.g 2019-02-26 21:06:33
+// $ANTLR 3.5.2 proverif.g 2019-02-27 07:07:45
 
 import org.antlr.runtime.*;
 import java.util.Stack;
