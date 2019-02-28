@@ -123,7 +123,7 @@ let processResponder =
 	event beginAparam(h, xB);
 	event beginAkey(h, xB, k);
 	new Nb: nonce;
-	out(c, encrypt(((c0, h), Nb), k));
+	out(c, encrypt(((c0, xB), Nb), k));
 	in(c,m5: bitstring);
 	let (=c1, =Nb) = decrypt(m5,k) in
 	if h = A || h = B then
