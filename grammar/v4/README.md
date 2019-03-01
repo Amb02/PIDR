@@ -7,10 +7,14 @@ https://tomassetti.me/antlr-mega-tutorial/
 ##### Setup antlr and your environment : 
 
 1. Download the jar [here](http://www.antlr.org/download/antlr-4.7.1-complete.jar) and save it in a [folder].
+
 2. Add at the end of the bashrc :
-	`export CLASSPATH = ".:/usr/local/lib/antlr-4.7.1-complete.jar:$CLASSPATH"` 
-	`alias antlr4='java -Xmx500M -cp "[folder]/antlr-4.7.1-complete.jar:$CLASSPATH" org.antlr.v4.Tool'`
-	`alias grun='java org.antlr.v4.gui.TestRig'`
+	```
+	export CLASSPATH = ".:/usr/local/lib/antlr-4.7.1-complete.jar:$CLASSPATH"
+	alias antlr4='java -Xmx500M -cp "[folder]/antlr-4.7.1-complete.jar:$CLASSPATH" org.antlr.v4.Tool'
+	alias grun='java org.antlr.v4.gui.TestRig'
+	```
+
 3. Restart your shell.
 
 ##### Use Antlr
