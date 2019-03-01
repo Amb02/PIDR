@@ -1,6 +1,6 @@
 build:
 	java -jar antlr-4.7.1-complete.jar Proverif.g4
-	javac Proverif*.java
+	javac *.java
 
 run:
 	java Test $$path
