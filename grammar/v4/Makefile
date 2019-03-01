@@ -3,7 +3,7 @@ build:
 	javac Proverif*.java
 
 run:
-	java org.antlr.v4.gui.TestRig Proverif proverif $$path
+	java Test $$path
 
 clean:
 	rm *.class
@@ -13,5 +13,3 @@ clean:
 	rm ProverifParser*
 	rm ProverifBase*
 	rm ProverifListener*
-	
-	
