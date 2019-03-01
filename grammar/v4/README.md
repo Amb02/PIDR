@@ -23,7 +23,7 @@ Move to the folder which contains the grammar ("Proverif.g4").
 
 ```
 $ antlr4 Proverif.g4
-$ javac Proverif.java
+$ javac Proverif*.java
 ```
 
 ###### Test a programm
