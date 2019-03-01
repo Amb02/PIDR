@@ -1,5 +1,3 @@
-https://tomassetti.me/antlr-mega-tutorial/
-
 ### Compilation avec ANTLR4
 
 #### Sous Linux :
@@ -48,3 +46,6 @@ $ grun Proverif proverif -tokens
 >
 // CTRL+D on Linux (CTRL+Z on Windows)
 ```
+##### Further informations
+
+Cf. [here](https://tomassetti.me/antlr-mega-tutorial/)
