@@ -1,4 +1,4 @@
-### Compilation avec ANTLR4
+### Compilation with ANTLR4
 
 #### Sous Linux :
 
