@@ -48,8 +48,20 @@ public class Test {
       lexer = new ProverifLexer(fileStream);
     }
 
-    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    ommonTokenStream tokens = new CommonTokenStream(lexer);
     ProverifParser parser = new ProverifParser(tokens);
+	
+	
+	/*JavaLexer lexer = new JavaLexer(input);
+	CommonTokenStream tokens = new CommonTokenStream(lexer);
+	JavaParser parser = new JavaParser(tokens);
+	JavaParser.CompilationUnitContext tree = parser.compilationUnit(); // parse a compilationUnit
+
+	ProverifBaseListener extractor = new ProverifBaseListener(parser);
+	ParseTreeWalker.DEFAULT.walk(extractor, tree); // initiate walk of tree with listener in use of default walker*/
+
+
+	
 
     //lexer.removeErrorListeners();
     //lexer.addErrorListener(listener);
