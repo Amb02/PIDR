@@ -4,87 +4,6 @@ options {
 		language=Java;
 }
 
-// LEXER
-
-ZERO : '0';
-POINT : '.';
-COMMA : ',';
-SEMICOLON : ';';
-RIGHTPARENTHESIS : ')';
-LEFTPARENTHESIS : '(';
-COLON : ':';
-EQUAL : '=';
-LEFTBRACKET : '[';
-RIGHTBRACKET : ']';
-IN : 'in';
-DIFF : '<>';
-OR : '||';
-AND : '&&';
-IMPLICATES : '==>';
-SLASH : '/';
-EXCLAMATION : '!';
-ARROW : '->';
-REVERSEARROW : '<-';
-REVERSEARROWR : '<-R';
-ARROWR : '->R';
-DOUBLEARROW : '<->';
-EQUIVALENT : '<=>';
-REVERSEIMPLICATES : '<=';
-PIPE : '|';
-
-PROCESS : 'process';
-CHANNEL : 'channel';
-FREE : 'free';
-REDUC : 'reduc';
-FUN : 'fun';
-CONST : 'const';
-EQUATION : 'equation';
-TABLE : 'table';
-PRED : 'pred';
-LET : 'let';
-SET : 'set';
-EVENT : 'event';
-QUERY : 'query';
-NOT : 'not';
-NOUNIF : 'nounif';
-FORALL : 'forall';
-OTHERWISE: 'otherwise';
-PUTBEGIN : 'putbegin';
-INJEVENT : 'inj-event';
-PHASE : 'phase';
-NEW : 'new';
-YIELD : 'yield';
-DO : 'do';
-OUT : 'out';
-ELSE : 'else';
-SUCHTHAT : 'suchthat';
-INSERT : 'insert';
-IF : 'if';
-THEN : 'then';
-GET : 'get';
-FAIL : 'fail';
-ORWORD : 'or';
-FOREACH : 'foreach';
-CHOICE : 'choice';
-TYPE : 'type';
-
-OPTIONCHOICE : 'data' | 'private' | 'typeConverter' | 'memberOptim' | 'block';
-
-ID : ('a'..'z'|'A'..'Z'|'_')('a'..'z'|'A'..'Z'|'0'..'9'|'_')*;
-
-INT : '0'..'9'+;
-
-FLOAT
-	: ('0'..'9')+ '.' ('0'..'9')*
-	| '.' ('0'..'9')+
-	| ('0'..'9')+
-	;
-
-COMMENTS : SINGLELINECOMMENT | MULTIPLELINESCOMMENT;
-SINGLELINECOMMENT : '//' ~('\n'|'\r')* '\r'? '\n' -> channel(HIDDEN);
-MULTIPLELINESCOMMENT : '(*' .*? '*)' -> channel(HIDDEN);
-WS : [ \r\t\n]+ -> channel(HIDDEN);
-
 // PARSER
 
 programme
@@ -97,6 +16,7 @@ declaration
 	| FREE (ident COMMA)* ident	COLON typeid proverifOptions POINT
 	| CONST (ident COMMA)* ident COLON typeid proverifOptions POINT
 	| FUN ident LEFTPARENTHESIS ((typeid COMMA)* typeid)? RIGHTPARENTHESIS COLON typeid proverifOptions POINT
+	| LETFUN ident ( LEFTPARENTHESIS (typedecl)? RIGHTPARENTHESIS)? EQUAL pterm POINT
 	| REDUC reduc proverifOptions POINT
 	| FUN ident LEFTPARENTHESIS ((typeid COMMA)* typeid)? RIGHTPARENTHESIS COLON typeid REDUC reducprime proverifOptions POINT
 	| EQUATION eqlist proverifOptions POINT
@@ -130,14 +50,14 @@ value
 	: id
 	;
 
-query //See Figure A.3
+query
 	:	gterm (SEMICOLON query)?
 	|	PUTBEGIN EVENT COLON (ident COMMA)* ident (SEMICOLON query)?
 	|	PUTBEGIN INJEVENT COLON (ident COMMA)* ident (SEMICOLON query)?
 	;
 
-gterm //See Figure A.3
-	:	(ident | ident LEFTPARENTHESIS ((gterm COMMA)* gterm)? RIGHTPARENTHESIS (PHASE integer)? | EVENT LEFTPARENTHESIS ((gterm COMMA)* gterm)? gterm RIGHTPARENTHESIS | INJEVENT LEFTPARENTHESIS ((gterm COMMA)* gterm)? gterm RIGHTPARENTHESIS | LEFTPARENTHESIS ((gterm COMMA)* gterm)? gterm RIGHTPARENTHESIS | NEW ident (LEFTBRACKET (gbinding)? RIGHTBRACKET )? | LET ident EQUAL gterm IN gterm) (EQUAL gterm | DIFF gterm | OR gterm | AND gterm | IMPLICATES gterm)*
+gterm
+	:	(ident | ident LEFTPARENTHESIS ((gterm COMMA)* gterm)? RIGHTPARENTHESIS (PHASE integer)? | EVENT LEFTPARENTHESIS ((gterm COMMA)* gterm)? RIGHTPARENTHESIS | INJEVENT LEFTPARENTHESIS ((gterm COMMA)* gterm)? RIGHTPARENTHESIS | LEFTPARENTHESIS ((gterm COMMA)* gterm)? RIGHTPARENTHESIS | NEW ident (LEFTBRACKET (gbinding)? RIGHTBRACKET )? | LET ident EQUAL gterm IN gterm) (EQUAL gterm | DIFF gterm | OR gterm | AND gterm | IMPLICATES gterm)*
 	;
 
 gbinding
@@ -145,7 +65,7 @@ gbinding
  	|	ident EQUAL gterm (SEMICOLON gbinding)?
  	;
 
-nounifdecl //See Figure A.4
+nounifdecl
 	:	LET ident EQUAL gformat IN nounifdecl
 	|	ident (LEFTPARENTHESIS ((gformat COMMA)* gformat)? RIGHTPARENTHESIS (PHASE integer)? )? (SLASH integer)?
 	;
@@ -218,3 +138,85 @@ id : ID;
 
 integer : INT ;
 typeid : CHANNEL | ID;
+
+// LEXER
+
+ZERO : '0';
+POINT : '.';
+COMMA : ',';
+SEMICOLON : ';';
+RIGHTPARENTHESIS : ')';
+LEFTPARENTHESIS : '(';
+COLON : ':';
+EQUAL : '=';
+LEFTBRACKET : '[';
+RIGHTBRACKET : ']';
+IN : 'in';
+DIFF : '<>';
+OR : '||';
+AND : '&&';
+IMPLICATES : '==>';
+SLASH : '/';
+EXCLAMATION : '!';
+ARROW : '->';
+REVERSEARROW : '<-';
+REVERSEARROWR : '<-R';
+ARROWR : '->R';
+DOUBLEARROW : '<->';
+EQUIVALENT : '<=>';
+REVERSEIMPLICATES : '<=';
+PIPE : '|';
+
+PROCESS : 'process';
+CHANNEL : 'channel';
+FREE : 'free';
+REDUC : 'reduc';
+FUN : 'fun';
+CONST : 'const';
+EQUATION : 'equation';
+TABLE : 'table';
+PRED : 'pred';
+LET : 'let';
+SET : 'set';
+EVENT : 'event';
+QUERY : 'query';
+NOT : 'not';
+NOUNIF : 'nounif';
+FORALL : 'forall';
+OTHERWISE: 'otherwise';
+PUTBEGIN : 'putbegin';
+INJEVENT : 'inj-event';
+PHASE : 'phase';
+NEW : 'new';
+YIELD : 'yield';
+DO : 'do';
+OUT : 'out';
+ELSE : 'else';
+SUCHTHAT : 'suchthat';
+INSERT : 'insert';
+IF : 'if';
+THEN : 'then';
+GET : 'get';
+FAIL : 'fail';
+ORWORD : 'or';
+FOREACH : 'foreach';
+CHOICE : 'choice';
+TYPE : 'type';
+LETFUN : 'letfun';
+
+OPTIONCHOICE : 'data' | 'private' | 'typeConverter' | 'memberOptim' | 'block';
+
+ID : ('a'..'z'|'A'..'Z'|'_')('a'..'z'|'A'..'Z'|'0'..'9'|'_')*;
+
+INT : '0'..'9'+;
+
+FLOAT
+	: ('0'..'9')+ '.' ('0'..'9')+
+	| '.' ('0'..'9')+
+	| ('0'..'9')+
+	;
+
+SINGLELINECOMMENT : '//' ~[\r\n]* -> channel(HIDDEN);
+MULTIPLELINESCOMMENT : '(*' .*? '*)' -> channel(HIDDEN);
+
+WS : [ \r\t\n]+ -> channel(HIDDEN);
