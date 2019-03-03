@@ -13,3 +13,4 @@ clean:
 	rm ProverifParser*
 	rm ProverifBase*
 	rm ProverifListener*
+	rm ProverifVisitor.java
