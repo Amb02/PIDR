@@ -3,7 +3,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Test {
-  public static void compile (String path) throws RecognitionException, IOException {
+  public static void parse (String path) throws RecognitionException, IOException {
     proverifLexer lexer;
 
     if (path == null) {
@@ -19,7 +19,7 @@ public class Test {
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     proverifParser parser = new proverifParser(tokens);
 
-    parser.programme();
+    gparser.programme();
   }
 
   public static void displayNoPathMessage () {

@@ -218,5 +218,4 @@ FLOAT
 
 SINGLELINECOMMENT : '//' ~[\r\n]* -> channel(HIDDEN);
 MULTIPLELINESCOMMENT : '(*' .*? '*)' -> channel(HIDDEN);
-
 WS : [ \r\t\n]+ -> channel(HIDDEN);

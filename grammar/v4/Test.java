@@ -1,13 +1,20 @@
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.FilenameFilter;
+import java.io.FileOutputStream;
 
 
 public class Test {
 
-  public static void compileFromDirectory (String directoryPath, int level) throws IOException {
+  public static File logFile = new File("temp.log");
+  public static FileOutputStream logFileWriter;
+
+  public static boolean parseOnly = false;
+
+  public static void parseFromDirectory (String directoryPath, int level) throws IOException {
     for (int i = 0; i < level; i ++) System.out.print("\t");
     System.out.println("Directory" + directoryPath);
 
@@ -16,25 +23,25 @@ public class Test {
 
     for (File file : files) {
       if (file.isDirectory()) {
-        compileFromDirectory(file.getPath(), level + 1);
+        parseFromDirectory(file.getPath(), level + 1);
       } else if (file.getName().endsWith(".pv")) {
         for (int i = 0; i < level + 1; i ++) System.out.print("\t");
         System.out.print("[" + file.getName() + "] : ");
-        compile(file.getPath());
+        parse(file.getPath());
       }
     }
   }
 
-  public static void compile (String path) throws IOException {
+  public static void parse (String path) throws IOException {
     File file = new File(path);
     if (file.isDirectory()) {
-      compileFromDirectory(path, 0);
+      parseFromDirectory(path, 0);
     } else {
-      compileFile(path);
+      parseFile(path);
     }
   }
 
-  private static void compileFile (String path) throws IOException {
+  private static void parseFile (String path) throws IOException {
     ProverifErrorListener listener = new ProverifErrorListener();
 
     ProverifLexer lexer;
@@ -50,9 +57,6 @@ public class Test {
 
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     ProverifParser parser = new ProverifParser(tokens);
-
-    //lexer.removeErrorListeners();
-    //lexer.addErrorListener(listener);
     parser.removeErrorListeners();
     parser.addErrorListener(listener);
 
@@ -63,6 +67,23 @@ public class Test {
     } else {
       displayParsingErrorMessage();
     }
+
+    if (!parseOnly) {
+      // Listener approach
+      /*
+      ParseTreeWalker walker = new ParseTreeWalker();
+      ProverifListenerImpl parseListener = new ProverifListenerImpl(tokens);
+      walker.walk(parseListener, programmeContext);
+      */
+
+      // Visitor approach
+      copyFile(programmeContext, tokens, path);
+    }
+  }
+
+  public static void copyFile(ProverifParser.ProgrammeContext programmeContext, BufferedTokenStream tokens, String path) {
+    ProverifVisitorImpl visitor = new ProverifVisitorImpl(tokens);
+    visitor.visit(programmeContext);
   }
 
   public static void displayNoPathMessage () {
@@ -79,16 +100,38 @@ public class Test {
     System.out.println("\u001B[41m  \u001B[0m");
   }
 
+  public static void log (String message) {
+    try {
+      logFileWriter.write(message.getBytes());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
   public static void main (String [] args) {
+    try {
+      logFileWriter = new FileOutputStream(logFile);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
     try {
       String path = null;
       if (args.length != 0) {
         path = args[0];
       }
 
-      compile(path);
+      parse(path);
     } catch (IOException e) {
       System.err.println("The file : " + args[0] + " does not exist");
     }
+
+    try {
+      logFileWriter.flush();
+      logFileWriter.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
   }
 }
