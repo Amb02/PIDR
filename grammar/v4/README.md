@@ -5,8 +5,8 @@
 Before using these following commands, you have to have set up your environment (please cf. "*Setup antlr and your environment*")
 
 ```bash
-Make build
-Make run path=[path+name_of_the_file.pv]
+make build
+make run path=[path+name_of_the_file.pv]
 ```
 
 ### Manual compilation
