@@ -4,7 +4,38 @@
 
 ###### Analyseur lexical
 
+* Nous avons terminé l'analyseur simple du langage après avoir bataillé avec ANTLR, nous avons dû changer de version et passer à la version 4 (pour voir comment mettre en place l'environnement d'ANTLR vous pouvez vous rendre [ici](../grammar/sources)).
+
+* Nous avons testé notre analyseur sur tous les fichiers de tests en notre possession (une pastille verte signifie que le fichier est correctement parsé) :
+
+![parsing examples](parsing_examples.png)
+
+* Nous avons aussi réussi à creer une copie au moment de l'analyse. Les copies sont stockées pour le moment dans le dossier logs :
+
+![copies_examples](copies_examples.png)
+
+Ci-dessous, un exemple avec le fichier NS-completed.pv.log :
+
+![copy_example](copy_example.png)
+
+* Nous avons réussi à extraire les règles de séquence qui nous intéressent pour la suite de notre travail. Ci-dessous, un exemple avec le fichier NS-completed.pv :
+
+![rules](sequence_example.png)
+
+* Problèmes :
+
+On voit bien avec l'exemple ci-dessus que les règles ne concernent pas uniquement les séquences qui nous intéressent. Il nous faut donc un moyen de trier parmi ces résultats ceux que l'on doit modifier ou non.
+
 ###### Analyse de trace
+
+* L'analyse de la trace a été pour nous plus difficile, nous avons toujours du mal à comprendre précisement. Evidemment nous arrivons, en nous basons sur le protocole, à retrouver certaines choses dans la globalité. Mais dès qu'il s'agit de regarder dans le détail, alors nous sommes très rapidement perdus avec ce qui sont probablement des détails mais qui nous bloquent.
+
+  Ci-dessous une liste des sequences qui nous posent problème :
+  * in copy a_x (à la fin de la plupart des lignes)
+  * les noms des variables qui apparaissent parfois pour ne plus jamais apparaitre, et pour d'autres qui arrivent sans avoir été définis
+  * les appels aux fonctions event
+  * l'interet exact des fonctions sign, get keys, insert keys
+  * les fonctions in (nous avons du mal à comprendre quelle machine recoit bel et bien le message dans la fonction in)
 
 ##### Avancement au 26/02/2019
 ---
