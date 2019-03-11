@@ -28,9 +28,9 @@ On voit bien avec l'exemple ci-dessus que les règles ne concernent pas uniqueme
 
 ###### Analyse de trace
 
-* L'analyse de la trace a été pour nous plus difficile, nous avons toujours du mal à comprendre précisement. Evidemment nous arrivons, en nous basons sur le protocole, à retrouver certaines choses dans la globalité. Mais dès qu'il s'agit de regarder dans le détail, alors nous sommes très rapidement perdus avec ce qui sont probablement des détails mais qui nous bloquent.
+* L'analyse de la trace a été pour nous plus difficile, nous avons toujours du mal à comprendre. Evidemment nous arrivons, en nous basant sur le protocole, à retrouver certaines choses dans la globalité. Mais dès qu'il s'agit de regarder dans le détail, alors nous sommes très rapidement perdus avec des détails qui nous bloquent.
 
-  Ci-dessous une liste des sequences qui nous posent problème :
+  Ci-dessous, une liste de ces dits problèmes :
   * in copy a_x (à la fin de la plupart des lignes)
   * les noms des variables qui apparaissent parfois pour ne plus jamais apparaitre, et pour d'autres qui arrivent sans avoir été définis
   * les appels aux fonctions event
