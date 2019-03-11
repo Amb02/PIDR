@@ -14,6 +14,10 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
     this.tokens = tokens;
   }
 
+  private int getRealChildCounts (int count) {
+    return ((count - 2) / 2) + 1;
+  }
+
   public void logAll (List<Token> tokens) {
     if (tokens != null) {
       for (Token t : tokens) {
@@ -24,14 +28,14 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
 
   @Override
   public String visitPatternSequence (ProverifParser.PatternSequenceContext ctx) {
-    System.out.println("On arrive dans la sequence Pattern : " + ctx.getText() + " taille : " + ctx.getChildCount());
+    System.out.println("Sequence Pattern : " + ctx.getText() + " taille : " + getRealChildCounts(ctx.getChildCount()));
 
     return null;
   }
 
   @Override
   public String visitPtermSequence (ProverifParser.PtermSequenceContext ctx) {
-    System.out.println("On arrive dans la sequence Pterm : " + ctx.getText() + " taille : " + ctx.getChildCount());
+    System.out.println("Sequence Pterm : " + ctx.getText() + " taille : " + getRealChildCounts(ctx.getChildCount()));
 
     return null;
   }

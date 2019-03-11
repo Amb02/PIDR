@@ -6,24 +6,21 @@ import java.io.IOException;
 import java.io.FilenameFilter;
 import java.io.FileOutputStream;
 
-
 public class Test {
-
-  public static File logFile = new File("temp.log");
+  public static File logFile;
   public static FileOutputStream logFileWriter;
 
   public static boolean parseOnly = false;
 
-  public static void parseFromDirectory (String directoryPath, int level) throws IOException {
+  public static void parseFromDirectory (File directoryPath, int level) throws IOException {
     for (int i = 0; i < level; i ++) System.out.print("\t");
-    System.out.println("Directory" + directoryPath);
+    System.out.println("Directory : " + directoryPath.getName());
 
-    File directory = new File(directoryPath);
-    File files[] = directory.listFiles();
+    File files[] = directoryPath.listFiles();
 
     for (File file : files) {
       if (file.isDirectory()) {
-        parseFromDirectory(file.getPath(), level + 1);
+        parseFromDirectory(file, level + 1);
       } else if (file.getName().endsWith(".pv")) {
         for (int i = 0; i < level + 1; i ++) System.out.print("\t");
         System.out.print("[" + file.getName() + "] : ");
@@ -35,13 +32,20 @@ public class Test {
   public static void parse (String path) throws IOException {
     File file = new File(path);
     if (file.isDirectory()) {
-      parseFromDirectory(path, 0);
+      parseFromDirectory(file, 0);
     } else {
-      parseFile(path);
+      parseFile(file);
     }
   }
 
-  private static void parseFile (String path) throws IOException {
+  private static void parseFile (File path) throws IOException {
+    logFile = new File("logs/" + path.getName() + ".log");
+    try {
+      logFileWriter = new FileOutputStream(logFile);
+    } catch (Exception e) {
+      System.err.println("There was an issue when creating the FileWriter object to log the file");
+    }
+
     ProverifErrorListener listener = new ProverifErrorListener();
 
     ProverifLexer lexer;
@@ -51,7 +55,7 @@ public class Test {
       ANTLRInputStream inputStream = new ANTLRInputStream(System.in);
       lexer = new ProverifLexer(inputStream);
     } else  {
-      ANTLRFileStream fileStream = new ANTLRFileStream(path);
+      ANTLRFileStream fileStream = new ANTLRFileStream(path.getPath());
       lexer = new ProverifLexer(fileStream);
     }
 
@@ -70,18 +74,30 @@ public class Test {
 
     if (!parseOnly) {
       // Listener approach
-      /*
-      ParseTreeWalker walker = new ParseTreeWalker();
-      ProverifListenerImpl parseListener = new ProverifListenerImpl(tokens);
-      walker.walk(parseListener, programmeContext);
-      */
+      //listenerApproach(programmeContext, tokens);
 
       // Visitor approach
-      copyFile(programmeContext, tokens, path);
+      copyFile(programmeContext, tokens);
+
+      try {
+        logFileWriter.flush();
+        logFileWriter.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
   }
 
-  public static void copyFile(ProverifParser.ProgrammeContext programmeContext, BufferedTokenStream tokens, String path) {
+  public static void listenerApproch(ProverifParser.ProgrammeContext programmeContext, BufferedTokenStream tokens) {
+    // need to implement the ProverifListenerImpl
+    /*
+    ParseTreeWalker walker = new ParseTreeWalker();
+    ProverifListenerImpl parseListener = new ProverifListenerImpl(tokens);
+    walker.walk(parseListener, programmeContext);
+    */
+  }
+
+  public static void copyFile(ProverifParser.ProgrammeContext programmeContext, BufferedTokenStream tokens) {
     ProverifVisitorImpl visitor = new ProverifVisitorImpl(tokens);
     visitor.visit(programmeContext);
   }
@@ -108,12 +124,17 @@ public class Test {
     }
   }
 
-  public static void main (String [] args) {
-    try {
-      logFileWriter = new FileOutputStream(logFile);
-    } catch (Exception e) {
-      e.printStackTrace();
+  public static void cleanDirectory (String path) {
+    File directory = new File(path);
+
+    for (File file : directory.listFiles()) {
+      if (!file.isDirectory()) {
+        file.delete();
+      }
     }
+  }
+  public static void main (String [] args) {
+    cleanDirectory("logs");
 
     try {
       String path = null;
@@ -125,13 +146,5 @@ public class Test {
     } catch (IOException e) {
       System.err.println("The file : " + args[0] + " does not exist");
     }
-
-    try {
-      logFileWriter.flush();
-      logFileWriter.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
   }
 }

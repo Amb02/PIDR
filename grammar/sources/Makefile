@@ -14,3 +14,4 @@ clean:
 	rm ProverifBase*
 	rm ProverifListener*
 	rm ProverifVisitor.java
+	rm logs/*

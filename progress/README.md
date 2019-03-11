@@ -1,4 +1,10 @@
 ## Etat d'avancement
+##### Avancement au 11/03/2019
+---
+
+###### Analyseur lexical
+
+###### Analyse de trace
 
 ##### Avancement au 26/02/2019
 ---
