@@ -10,7 +10,7 @@
 
 ![parsing examples](parsing_examples.png)
 
-* Nous avons aussi réussi à creer une copie au moment de l'analyse. Les copies sont stockées pour le moment dans le dossier logs :
+* Nous avons aussi réussi à créer une copie au moment de l'analyse. Les copies sont stockées pour le moment dans le dossier logs :
 
 ![copies_examples](copies_examples.png)
 
@@ -30,11 +30,11 @@ On voit bien avec l'exemple ci-dessus que les règles ne concernent pas uniqueme
 
 * L'analyse de la trace a été pour nous plus difficile, nous avons toujours du mal à comprendre. Evidemment nous arrivons, en nous basant sur le protocole, à retrouver certaines choses dans la globalité. Mais dès qu'il s'agit de regarder dans le détail, alors nous sommes très rapidement perdus avec des détails qui nous bloquent.
 
-  Ci-dessous, une liste de ces dits problèmes :
+  Ci-dessous, une liste desdits problèmes :
   * in copy a_x (à la fin de la plupart des lignes)
-  * les noms des variables qui apparaissent parfois pour ne plus jamais apparaitre, et pour d'autres qui arrivent sans avoir été définis
+  * les noms des variables qui apparaissent parfois pour ne plus jamais apparaître, et pour d'autres qui arrivent sans avoir été définis
   * les appels aux fonctions event
-  * l'interet exact des fonctions sign, get keys, insert keys
+  * l'intérêt exact des fonctions sign, get keys, insert keys
   * les fonctions in (nous avons du mal à comprendre quelle machine recoit bel et bien le message dans la fonction in)
 
 ##### Avancement au 26/02/2019
