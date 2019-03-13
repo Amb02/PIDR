@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 public class Test {
   public static File logFile;
   public static FileOutputStream logFileWriter;
+  public static StringBuilder fileContent;
 
   public static boolean parseOnly = false;
 
@@ -42,6 +43,7 @@ public class Test {
     logFile = new File("logs/" + path.getName() + ".log");
     try {
       logFileWriter = new FileOutputStream(logFile);
+      fileContent = new StringBuilder();
     } catch (Exception e) {
       System.err.println("There was an issue when creating the FileWriter object to log the file");
     }
@@ -49,7 +51,7 @@ public class Test {
     ProverifErrorListener listener = new ProverifErrorListener();
 
     ProverifLexer lexer;
-    if (path == null) {
+    if (path.getName().equals("default")) {
       displayNoPathMessage();
 
       ANTLRInputStream inputStream = new ANTLRInputStream(System.in);
@@ -77,9 +79,10 @@ public class Test {
       //listenerApproach(programmeContext, tokens);
 
       // Visitor approach
-      copyFile(programmeContext, tokens);
+      visit(programmeContext, tokens, parser);
 
       try {
+        logFileWriter.write(fileContent.toString().getBytes());
         logFileWriter.flush();
         logFileWriter.close();
       } catch (IOException e) {
@@ -97,8 +100,8 @@ public class Test {
     */
   }
 
-  public static void copyFile(ProverifParser.ProgrammeContext programmeContext, BufferedTokenStream tokens) {
-    ProverifVisitorImpl visitor = new ProverifVisitorImpl(tokens);
+  public static void visit(ProverifParser.ProgrammeContext programmeContext, BufferedTokenStream tokens, ProverifParser parser) {
+    ProverifVisitorImpl visitor = new ProverifVisitorImpl(tokens, parser);
     visitor.visit(programmeContext);
   }
 
@@ -117,11 +120,7 @@ public class Test {
   }
 
   public static void log (String message) {
-    try {
-      logFileWriter.write(message.getBytes());
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    fileContent.append(message);
   }
 
   public static void cleanDirectory (String path) {
@@ -133,18 +132,18 @@ public class Test {
       }
     }
   }
+
   public static void main (String [] args) {
     cleanDirectory("logs");
-
+    String path = "default";
     try {
-      String path = null;
       if (args.length != 0) {
         path = args[0];
       }
 
       parse(path);
     } catch (IOException e) {
-      System.err.println("The file : " + args[0] + " does not exist");
+      System.err.println("The file : " + path + " does not exist");
     }
   }
 }

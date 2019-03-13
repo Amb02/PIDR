@@ -8,13 +8,17 @@ import java.io.OutputStream;
 
 public class ProverifVisitorImpl extends ProverifBaseVisitor {
   private BufferedTokenStream tokens;
+  private ProverifParser parser;
 
-  public ProverifVisitorImpl (BufferedTokenStream tokens) {
+  private static final int MAX_RULE_SIZE = 7;
+
+  public ProverifVisitorImpl (BufferedTokenStream tokens, ProverifParser parser) {
     super();
+    this.parser = parser;
     this.tokens = tokens;
   }
 
-  private int getRealChildCounts (int count) {
+  private int getRealChildCount (int count) {
     return ((count - 2) / 2) + 1;
   }
 
@@ -26,25 +30,59 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
     }
   }
 
+  private void displayRuleFound (String ruleName, ParserRuleContext ctx) {
+    int line = ctx.getStart().getLine();
+    String spacing = getSpacing(ruleName);
+    int childCount = getRealChildCount(ctx.getChildCount());
+
+    System.out.println(lineDisplayString(line) + " "
+                       + ruleName + spacing + " Sequence" + " : " + ctx.getText()
+                       + " " + childrenCountDisplayString(childCount)
+                       );
+  }
+
+  private String getSpacing (String ruleName) {
+    int ruleNameSize = ruleName.length();
+    int differenceWithMax = MAX_RULE_SIZE - ruleNameSize;
+    StringBuilder spacing = new StringBuilder();
+
+    for (int i = 0; i < differenceWithMax; i ++) {
+      spacing.append(" ");
+    }
+
+    return spacing.toString();
+  }
+
+  private String childrenCountDisplayString (int count) {
+    return "(size : " + count + ")";
+  }
+
+  private String lineDisplayString (int line) {
+    return "[LINE : " + line + "]";
+  }
+
   @Override
   public String visitPatternSequence (ProverifParser.PatternSequenceContext ctx) {
-    System.out.println("Sequence Pattern : " + ctx.getText() + " taille : " + getRealChildCounts(ctx.getChildCount()));
+    displayRuleFound("Pattern", ctx);
+    
+    return null;
+  }
 
+  @Override
+  public String visitGtermSequence (ProverifParser.GtermSequenceContext ctx) {
+    displayRuleFound("Gterm", ctx);
     return null;
   }
 
   @Override
   public String visitPtermSequence (ProverifParser.PtermSequenceContext ctx) {
-    System.out.println("Sequence Pterm : " + ctx.getText() + " taille : " + getRealChildCounts(ctx.getChildCount()));
-
+    displayRuleFound("Pterm", ctx);
     return null;
   }
 
   @Override
   public String visitProgramme (ProverifParser.ProgrammeContext ctx) {
-    for (int i = 0; i < ctx.getChildCount(); i ++) {
-      this.visit(ctx.getChild(i));
-    }
+    visitChildren(ctx);
 
     Token start = ctx.getStart();
     Token end = ctx.getStop();

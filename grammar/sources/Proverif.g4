@@ -57,7 +57,11 @@ query
 	;
 
 gterm
-	:	(ident | ident LEFTPARENTHESIS ((gterm COMMA)* gterm)? RIGHTPARENTHESIS (PHASE integer)? | EVENT LEFTPARENTHESIS ((gterm COMMA)* gterm)? RIGHTPARENTHESIS | INJEVENT LEFTPARENTHESIS ((gterm COMMA)* gterm)? RIGHTPARENTHESIS | LEFTPARENTHESIS ((gterm COMMA)* gterm)? RIGHTPARENTHESIS | NEW ident (LEFTBRACKET (gbinding)? RIGHTBRACKET )? | LET ident EQUAL gterm IN gterm) (EQUAL gterm | DIFF gterm | OR gterm | AND gterm | IMPLICATES gterm)*
+	:	(ident | ident LEFTPARENTHESIS ((gterm COMMA)* gterm)? RIGHTPARENTHESIS (PHASE integer)? | EVENT LEFTPARENTHESIS ((gterm COMMA)* gterm)? RIGHTPARENTHESIS | INJEVENT LEFTPARENTHESIS ((gterm COMMA)* gterm)? RIGHTPARENTHESIS | gtermSequence | NEW ident (LEFTBRACKET (gbinding)? RIGHTBRACKET )? | LET ident EQUAL gterm IN gterm) (EQUAL gterm | DIFF gterm | OR gterm | AND gterm | IMPLICATES gterm)*
+	;
+
+gtermSequence
+	: LEFTPARENTHESIS ((gterm COMMA)* gterm)? RIGHTPARENTHESIS
 	;
 
 gbinding
@@ -101,11 +105,11 @@ process
 
 
 pterm
-	:	(ident | ptermSequence | ident ptermSequence | CHOICE LEFTBRACKET pterm COMMA pterm RIGHTBRACKET | NOT LEFTPARENTHESIS pterm RIGHTPARENTHESIS | NEW ident (LEFTBRACKET ((ident COMMA)* ident)? RIGHTBRACKET)? COLON typeid SEMICOLON pterm | ident REVERSEARROWR typeid SEMICOLON pterm | IF pterm THEN pterm (ELSE pterm)? | LET pattern | ident (COLON typeid)? REVERSEARROW pterm SEMICOLON pterm | LET typedecl SUCHTHAT pterm IN pterm (ELSE pterm)? |  INSERT ident	LEFTPARENTHESIS ((pterm COMMA)* pterm)? RIGHTPARENTHESIS SEMICOLON pterm | GET ident LEFTPARENTHESIS ((pattern COMMA)* pattern)? RIGHTPARENTHESIS (SUCHTHAT pterm)? IN pterm (ELSE pterm)? | EVENT ident (LEFTPARENTHESIS ((pterm COMMA)* pterm)? RIGHTPARENTHESIS)? SEMICOLON pterm) (EQUAL pterm | DIFF pterm | AND pterm | OR pterm)*
+	:	(ident | ptermSequence | ident LEFTPARENTHESIS ((gterm COMMA)* gterm)? RIGHTPARENTHESIS | CHOICE LEFTBRACKET pterm COMMA pterm RIGHTBRACKET | NOT LEFTPARENTHESIS pterm RIGHTPARENTHESIS | NEW ident (LEFTBRACKET ((ident COMMA)* ident)? RIGHTBRACKET)? COLON typeid SEMICOLON pterm | ident REVERSEARROWR typeid SEMICOLON pterm | IF pterm THEN pterm (ELSE pterm)? | LET pattern | ident (COLON typeid)? REVERSEARROW pterm SEMICOLON pterm | LET typedecl SUCHTHAT pterm IN pterm (ELSE pterm)? |  INSERT ident	LEFTPARENTHESIS ((pterm COMMA)* pterm)? RIGHTPARENTHESIS SEMICOLON pterm | GET ident LEFTPARENTHESIS ((pattern COMMA)* pattern)? RIGHTPARENTHESIS (SUCHTHAT pterm)? IN pterm (ELSE pterm)? | EVENT ident (LEFTPARENTHESIS ((pterm COMMA)* pterm)? RIGHTPARENTHESIS)? SEMICOLON pterm) (EQUAL pterm | DIFF pterm | AND pterm | OR pterm)*
 	;
 
 ptermSequence
-	:	LEFTPARENTHESIS ((gterm COMMA)* gterm)? RIGHTPARENTHESIS
+	:	LEFTPARENTHESIS ((pterm COMMA)* pterm)? RIGHTPARENTHESIS
 	;
 
 term
@@ -116,7 +120,7 @@ pattern
   : ident
 	|	ident COLON typeid
 	|	patternSequence
-	|	ident patternSequence
+	|	ident LEFTPARENTHESIS ((pattern COMMA)* pattern)? RIGHTPARENTHESIS
 	|	EQUAL pterm
 	;
 
