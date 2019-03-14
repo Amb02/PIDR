@@ -7,6 +7,7 @@ run:
 
 clean:
 	find . -name "*.class" -exec rm {} \;
+	find . -name "*.interp" -exec rm {} \;
 	find . -name "*.tokens" -exec rm {} \;
 	find . -name "ProverifLexer*" -exec rm {} \;
 	find . -name "ProverifParser*" -exec rm {} \;
