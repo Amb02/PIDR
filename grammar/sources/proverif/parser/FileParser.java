@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.tree.*;
 import java.io.File;
 import java.io.IOException;
 
-import proverif.*;
+import proverif.file.*;
 
 public class FileParser {
     public static boolean parseOnly = false;
@@ -65,7 +65,7 @@ public class FileParser {
     }
 
     private void preParsingOperations () throws IOException {
-	Main.newLogFile(currentFile.getName());
+	FileGenerator.newLogFile(currentFile.getName());
 	
 	setInputStream();
 	lexer = new ProverifLexer(inputStream);
@@ -104,7 +104,7 @@ public class FileParser {
 	ProverifVisitorImpl visitor = new ProverifVisitorImpl(tokens);
 	visitor.visit(programmeContext);
 
-	Main.flush();
+	FileGenerator.flush();
     }
 
     private void displayParsingSuccessfulMessage() {

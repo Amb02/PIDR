@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.tree.*;
 import java.util.List;
 import java.io.OutputStream;
 
-import proverif.*;
+import proverif.file.*;
 
 public class ProverifVisitorImpl extends ProverifBaseVisitor {
   private BufferedTokenStream tokens;
@@ -25,7 +25,7 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
   public void logAll (List<Token> tokens) {
     if (tokens != null) {
       for (Token t : tokens) {
-        Main.log(t.getText());
+        FileGenerator.log(t.getText());
       }
     }
   }
