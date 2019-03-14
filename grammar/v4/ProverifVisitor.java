@@ -64,12 +64,6 @@ public interface ProverifVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitGterm(ProverifParser.GtermContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ProverifParser#gtermSequence}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitGtermSequence(ProverifParser.GtermSequenceContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link ProverifParser#gbinding}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

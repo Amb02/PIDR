@@ -123,18 +123,6 @@ public class ProverifBaseListener implements ProverifListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterGtermSequence(ProverifParser.GtermSequenceContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitGtermSequence(ProverifParser.GtermSequenceContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterGbinding(ProverifParser.GbindingContext ctx) { }
 	/**
 	 * {@inheritDoc}

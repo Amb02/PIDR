@@ -4,6 +4,10 @@ options {
 		language=Java;
 }
 
+@header {
+	package proverif.parser;
+}
+
 // PARSER
 
 programme
@@ -125,7 +129,7 @@ pattern
 	;
 
 patternSequence
-	: LEFTPARENTHESIS ((pattern COMMA)* pattern)? RIGHTPARENTHESIS
+	: LEFTPARENTHESIS ((pattern {} COMMA)* pattern)? RIGHTPARENTHESIS
 	;
 
 mayfailterm

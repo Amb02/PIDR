@@ -1,23 +1,23 @@
+package proverif.parser;
+
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
 
 import java.util.List;
-
 import java.io.OutputStream;
+
+import proverif.*;
 
 public class ProverifVisitorImpl extends ProverifBaseVisitor {
   private BufferedTokenStream tokens;
-  private ProverifParser parser;
-
+    
   private static final int MAX_RULE_SIZE = 7;
 
-  public ProverifVisitorImpl (BufferedTokenStream tokens, ProverifParser parser) {
-    super();
-    this.parser = parser;
+  public ProverifVisitorImpl (BufferedTokenStream tokens) {
     this.tokens = tokens;
   }
-
+    
   private int getRealChildCount (int count) {
     return ((count - 2) / 2) + 1;
   }
@@ -25,7 +25,7 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
   public void logAll (List<Token> tokens) {
     if (tokens != null) {
       for (Token t : tokens) {
-        Test.log(t.getText());
+        Main.log(t.getText());
       }
     }
   }

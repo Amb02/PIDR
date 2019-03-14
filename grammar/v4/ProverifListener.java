@@ -97,16 +97,6 @@ public interface ProverifListener extends ParseTreeListener {
 	 */
 	void exitGterm(ProverifParser.GtermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ProverifParser#gtermSequence}.
-	 * @param ctx the parse tree
-	 */
-	void enterGtermSequence(ProverifParser.GtermSequenceContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ProverifParser#gtermSequence}.
-	 * @param ctx the parse tree
-	 */
-	void exitGtermSequence(ProverifParser.GtermSequenceContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link ProverifParser#gbinding}.
 	 * @param ctx the parse tree
 	 */

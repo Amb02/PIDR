@@ -1,17 +1,16 @@
 build:
-	java -jar antlr-4.7.1-complete.jar Proverif.g4 -visitor
-	javac *.java
+	java -jar antlr-4.7.1-complete.jar proverif/parser/Proverif.g4 -visitor
+	javac proverif/*.java
 
 run:
-	java Test $$path
+	java proverif.Main $$path
 
 clean:
-	rm *.class
-	rm *.tokens
-	rm *.interp
-	rm ProverifLexer*
-	rm ProverifParser*
-	rm ProverifBase*
-	rm ProverifListener*
-	rm ProverifVisitor.java
+	find . -name "*.class" -exec rm {} \;
+	find . -name "*.tokens" -exec rm {} \;
+	find . -name "ProverifLexer*" -exec rm {} \;
+	find . -name "ProverifParser*" -exec rm {} \;
+	find . -name "ProverifBase*" -exec rm {} \;
+	find . -name "ProverifListener*" -exec rm {} \;
+	find . -name "ProverifVisitor.java" -exec rm {} \;
 	rm logs/*
