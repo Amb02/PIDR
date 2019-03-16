@@ -18,7 +18,7 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
   private BufferedTokenStream tokens;
     
   private static final int MAX_RULE_SIZE = 7;
-  private Tuples tuples;
+  public static Tuples tuples;
 
   public ProverifVisitorImpl (BufferedTokenStream tokens) {
     this.tokens = tokens;
@@ -66,7 +66,7 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
 
     ArrayList<ParseTree> list = handle_creation_tuple(ctx);
     Tuple tuple   = new Tuple(tuples, list);
-    System.out.println(tuples);
+    //System.out.println(tuples);
 
     int line = ctx.getStart().getLine();
     String spacing = getSpacing(ruleName);

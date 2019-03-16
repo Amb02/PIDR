@@ -17,6 +17,8 @@ public class Main {
 
 	    FileParser parser = new FileParser(path);
 	    parser.parse();
+	    System.out.println("\nTuples found :"+ProverifVisitorImpl.tuples);
+	    
 	} catch (IOException e) {
 	    System.err.println("The file : " + path + " does not exist");
 	}
