@@ -7,15 +7,22 @@ import org.antlr.v4.runtime.tree.*;
 import java.util.List;
 import java.io.OutputStream;
 
+import proverif.parser.Tuples;
+import proverif.parser.Tuple;
+
+import java.util.ArrayList;
+
 import proverif.file.*;
 
 public class ProverifVisitorImpl extends ProverifBaseVisitor {
   private BufferedTokenStream tokens;
     
   private static final int MAX_RULE_SIZE = 7;
+  private Tuples tuples;
 
   public ProverifVisitorImpl (BufferedTokenStream tokens) {
     this.tokens = tokens;
+    this.tuples = new Tuples(); 
   }
     
   private int getRealChildCount (int count) {
@@ -30,7 +37,37 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
     }
   }
 
+  private ArrayList<ParseTree> handle_creation_tuple(ParserRuleContext ctx){
+    String state = "begin";
+    ArrayList<ParseTree> list = new ArrayList();
+
+    for (int i = 0 ; i < ctx.getChildCount() ; i++){
+
+      String txt = ctx.getChild(i).getText();
+
+      if ( (txt.equals("(")) && (state.equals("begin")) ){
+        state="ident";
+      } else if ( (!txt.equals(",")) && (state.equals("ident")) ){
+        list.add(ctx.getChild(i));
+        state=",";
+      } else if ( (txt.equals(",")) && (state.equals(",")) ){
+        state="ident";
+      } else if ( (txt.equals(")")) && (state.equals(",")) ){
+        state="end";
+      } else {
+        System.out.println("error creating tuple "+state+" , "+txt);
+      }
+
+    }
+    return list;
+  }
+
   private void displayRuleFound (String ruleName, ParserRuleContext ctx) {
+
+    ArrayList<ParseTree> list = handle_creation_tuple(ctx);
+    Tuple tuple   = new Tuple(tuples, list);
+    System.out.println(tuples);
+
     int line = ctx.getStart().getLine();
     String spacing = getSpacing(ruleName);
     int childCount = getRealChildCount(ctx.getChildCount());
@@ -64,7 +101,9 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
   @Override
   public String visitPatternSequence (ProverifParser.PatternSequenceContext ctx) {
     displayRuleFound("Pattern", ctx);
-    
+
+
+
     return null;
   }
 
