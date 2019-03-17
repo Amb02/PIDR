@@ -55,7 +55,7 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
       } else if ( (txt.equals(")")) && (state.equals(",")) ){
         state="end";
       } else {
-        System.out.println("error creating tuple "+state+" , "+txt);
+        System.err.println("Error creating object tuple "+state+" , "+txt);
       }
 
     }
@@ -66,7 +66,7 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
 
     ArrayList<ParseTree> list = handle_creation_tuple(ctx);
     Tuple tuple   = new Tuple(tuples, list);
-    //System.out.println(tuples);
+    //System.out.println(tuples); //tuples actualized with the new tuple added
 
     int line = ctx.getStart().getLine();
     String spacing = getSpacing(ruleName);

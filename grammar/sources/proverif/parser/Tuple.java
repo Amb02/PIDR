@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.antlr.v4.runtime.tree.*;
 
+
 public class Tuple extends ArrayList<ParseTree>{
 
 	Tuples tuples;
@@ -18,7 +19,7 @@ public class Tuple extends ArrayList<ParseTree>{
 
 	}
 
-
+	//should not be called exect by right_parenthesis
 	private String right_parenthesis(ArrayList<String> list, int i){
 		if (i==list.size()-1){
 			return list.get(i);
@@ -31,6 +32,7 @@ public class Tuple extends ArrayList<ParseTree>{
 	private String right_parenthesis(ArrayList<String> list){return right_parenthesis(list,0);}
 
 
+	//should not be called exect by left_parenthesis
 	private String left_parenthesis(ArrayList<String> list, int i){
 		if (i==0){
 			return list.get(i);
@@ -55,6 +57,8 @@ public class Tuple extends ArrayList<ParseTree>{
 
 		return permutations;
 	}
+
+
 
 	@Override
 	public String toString(){
