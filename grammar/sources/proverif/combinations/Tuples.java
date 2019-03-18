@@ -1,4 +1,4 @@
-package proverif.parser;
+package proverif.combinations;
 
 import java.util.ArrayList;
 
