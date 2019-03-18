@@ -10,7 +10,7 @@ import org.antlr.v4.runtime.*;
 public class Tuple extends ArrayList<ParseTree>{
 
     private boolean isElement (String text) {
-	return !text.equals('(') && !text.equals(',') && !text.equals(')');
+	return !(text.equals("(") || text.equals(",") || text.equals(")"));
     }
     
     public Tuple (ParserRuleContext ctx) {
@@ -27,6 +27,7 @@ public class Tuple extends ArrayList<ParseTree>{
 	    }
 	}
     }
+    
     public Tuple(ArrayList<ParseTree> list){
 	for (ParseTree child : list){
 	    this.add(child);
