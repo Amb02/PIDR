@@ -113,7 +113,7 @@ pterm
 	;
 
 ptermSequence
-	:	LEFTPARENTHESIS ((pterm COMMA)* pterm)? RIGHTPARENTHESIS
+	:	LEFTPARENTHESIS ((pterm  COMMA)* pterm)? RIGHTPARENTHESIS
 	;
 
 term

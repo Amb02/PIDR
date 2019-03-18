@@ -16,17 +16,17 @@ import proverif.file.*;
 
 public class ProverifVisitorImpl extends ProverifBaseVisitor {
   private BufferedTokenStream tokens;
-    
+
   private static final int MAX_RULE_SIZE = 7;
   public static Tuples tuples;
 
   public ProverifVisitorImpl (BufferedTokenStream tokens) {
     this.tokens = tokens;
-    this.tuples = new Tuples(); 
+    this.tuples = new Tuples();
   }
-    
+
   private int getRealChildCount (int count) {
-    return ((count - 2) / 2) + 1;
+    return ((count-2) / 2) + 1;
   }
 
   public void logAll (List<Token> tokens) {
@@ -37,7 +37,7 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
     }
   }
 
-  private ArrayList<ParseTree> handle_creation_tuple(ParserRuleContext ctx){
+  private ArrayList<ParseTree> createTupleList(ParserRuleContext ctx){
     String state = "begin";
     ArrayList<ParseTree> list = new ArrayList();
 
@@ -57,25 +57,24 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
       } else {
         System.err.println("Error creating object tuple "+state+" , "+txt);
       }
-
     }
     return list;
   }
 
   private void displayRuleFound (String ruleName, ParserRuleContext ctx) {
-
-    ArrayList<ParseTree> list = handle_creation_tuple(ctx);
-    Tuple tuple   = new Tuple(tuples, list);
-    //System.out.println(tuples); //tuples actualized with the new tuple added
-
     int line = ctx.getStart().getLine();
     String spacing = getSpacing(ruleName);
     int childCount = getRealChildCount(ctx.getChildCount());
-
+    
     System.out.println(lineDisplayString(line) + " "
                        + ruleName + spacing + " Sequence" + " : " + ctx.getText()
                        + " " + childrenCountDisplayString(childCount)
                        );
+  }
+
+  private void tupleCreation (ParserRuleContext ctx) {
+    ArrayList<ParseTree> list = createTupleList(ctx);
+    Tuple tuple  = new Tuple(tuples, list);
   }
 
   private String getSpacing (String ruleName) {
@@ -101,8 +100,7 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
   @Override
   public String visitPatternSequence (ProverifParser.PatternSequenceContext ctx) {
     displayRuleFound("Pattern", ctx);
-
-
+    tupleCreation(ctx);
 
     return null;
   }
@@ -110,12 +108,16 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
   @Override
   public String visitGtermSequence (ProverifParser.GtermSequenceContext ctx) {
     displayRuleFound("Gterm", ctx);
+    tupleCreation(ctx);
+
     return null;
   }
 
   @Override
   public String visitPtermSequence (ProverifParser.PtermSequenceContext ctx) {
     displayRuleFound("Pterm", ctx);
+    tupleCreation(ctx);
+
     return null;
   }
 

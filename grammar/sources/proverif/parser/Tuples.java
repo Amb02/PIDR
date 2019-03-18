@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class Tuples extends ArrayList<Tuple>{
 
-
 	@Override
 	public String toString(){
 		String str = "\n<<\n";

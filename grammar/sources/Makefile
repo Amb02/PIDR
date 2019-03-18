@@ -1,7 +1,6 @@
 build:
 	java -jar antlr-4.7.1-complete.jar proverif/parser/Proverif.g4 -visitor
 	javac proverif/*.java
-	javac proverif/parser/*.java
 
 run:
 	java proverif.Main $$path
