@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import org.antlr.v4.runtime.tree.*;
 import org.antlr.v4.runtime.*;
 
+import java.util.Comparator;
 
 
-public class Tuple extends ArrayList<ParseTree>{
+public class Tuple extends ArrayList<ParseTree> implements Comparable<Tuple>{
 
     private boolean isElement (String text) {
 	return !(text.equals("(") || text.equals(",") || text.equals(")"));
@@ -83,6 +84,14 @@ public class Tuple extends ArrayList<ParseTree>{
 	    i++;
 	}
 	return str+" >";
+    }
+
+
+    @Override
+    public int compareTo(Tuple tuple) {
+//    	return (this.size().compareTo(tuple.size()));
+//    	return ( this.size().compare(tuple.size()) );
+    	return ( this.size()-tuple.size() );
     }
 	
 }
