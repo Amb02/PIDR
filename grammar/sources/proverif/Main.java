@@ -33,6 +33,10 @@ public class Main {
         }
       });
 
+      System.out.println("\nSame tuples list sorted :" + ProverifVisitorImpl.tuples.toShortString());
+      System.out.println(ProverifVisitorImpl.tuples.numberOfFiles()+" files should be created");
+
+
     } catch (IOException e) {
       System.err.println("The file : " + path + " does not exist");
     }

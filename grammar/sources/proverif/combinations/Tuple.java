@@ -98,6 +98,19 @@ public class Tuple extends ArrayList<String> implements Comparable<Tuple>{
     this.combinations = possibilities;
   }
 
+  public String toShortString (){
+    StringBuilder string = new StringBuilder("");
+    if (originalForm != null) {
+      string.append(originalForm);
+    } else {
+      string.append(stringList());
+    }
+
+    string.append("\n");
+
+    return string.toString();
+  }
+
   @Override
   public String toString (){
     StringBuilder string = new StringBuilder(". Tuple : \n");
