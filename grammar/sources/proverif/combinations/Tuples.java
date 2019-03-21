@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 public class Tuples extends ArrayList<Tuple>{
 
+	
+
 	@Override
 	public String toString(){
 		String str = "\n<<\n\n";
@@ -24,23 +26,5 @@ public class Tuples extends ArrayList<Tuple>{
 		}
 		return str+"\n>>";
 	}
-
-	public void generateAllCombinations () {
-		for (Tuple t : this) {
-			t.generateCombinations();
-		}
-	}
-
-	public	int numberOfFiles(){
-		ArrayList<Integer> sizes = new ArrayList();
-		int numberOfFiles = 1;
-		for (Tuple tuple : this){
-			int currentSize = tuple.size();
-			if (!sizes.contains(currentSize)){
-				sizes.add(currentSize);
-				numberOfFiles = numberOfFiles * tuple.size();
-			}
-		}
-		return numberOfFiles;
-	}
+	
 }
