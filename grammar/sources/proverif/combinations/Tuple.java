@@ -8,90 +8,170 @@ import org.antlr.v4.runtime.*;
 import java.util.Comparator;
 
 
-public class Tuple extends ArrayList<ParseTree> implements Comparable<Tuple>{
+public class Tuple extends ArrayList<String> implements Comparable<Tuple>{
+  private String originalForm = null;
+  private ArrayList<String> combinations;
 
-    private boolean isElement (String text) {
-	return !(text.equals("(") || text.equals(",") || text.equals(")"));
+  private boolean isElement (String text) {
+    return !(text.equals("(") || text.equals(",") || text.equals(")"));
+  }
+
+  public Tuple () {
+    super();
+  }
+
+  public Tuple (ParserRuleContext ctx) {
+    combinations = new ArrayList<>();
+
+    originalForm = ctx.getText();
+    ArrayList<ParseTree> list = new ArrayList();
+
+    for (int i = 0 ; i < ctx.getChildCount() ; i++){
+
+      ParseTree child = ctx.getChild(i);
+      String txt = child.getText();
+
+      if (isElement(txt)) {
+        this.add(child.getText());
+      }
     }
-    
-    public Tuple (ParserRuleContext ctx) {
-	String state = "begin";
-	ArrayList<ParseTree> list = new ArrayList();
+  }
 
-	for (int i = 0 ; i < ctx.getChildCount() ; i++){
-
-	    ParseTree child = ctx.getChild(i);
-	    String txt = child.getText();
-
-	    if (isElement(txt)) {
-		this.add(child);
-	    }
-	}
+  public Tuple(ArrayList<ParseTree> list){
+    for (ParseTree child : list){
+      this.add(child.getText());
     }
-    
-    public Tuple(ArrayList<ParseTree> list){
-	for (ParseTree child : list){
-	    this.add(child);
-	}
-    }
+  }
 
-    //should not be called exect by right_parenthesis
-    private String right_parenthesis(ArrayList<String> list, int i){
-	if (i==list.size()-1){
-	    return list.get(i);
-	}
-	else{
-    	    return '('+list.get(i)+','+right_parenthesis(list,i+1)+')';
-    	}
-    }
+  private ArrayList<String> multiElementTupleCombination (Tuple t) {
+    ArrayList<String> possibilite = new ArrayList<>();
 
-    private String right_parenthesis(ArrayList<String> list){return right_parenthesis(list,0);}
+    for (int i = 1; i < t.size(); i ++) {
+      ArrayList<String> gauche = generate(t.beforeIndex(i));
+      ArrayList<String> droite = generate(t.afterIndex(i));
 
+      String membreGauche = "";
+      String membreDroite = "";
 
-    //should not be called exect by left_parenthesis
-    private String left_parenthesis(ArrayList<String> list, int i){
-	if (i==0){
-	    return list.get(i);
-	}
-	else{
-    	    return '('+left_parenthesis(list,i-1)+','+list.get(i)+')';
-    	}
-    }
+      for (String gaucheString : gauche) {
+        for (String droiteString : droite) {
+          membreGauche = gaucheString;
 
-    private String left_parenthesis(ArrayList<String> list){return left_parenthesis(list,list.size()-1);}
+          if (gaucheString.length() != 1){
+            membreGauche = "(" + membreGauche + ")";
+          }
 
+          membreDroite = droiteString;
+          if (droiteString.length() != 1) {
+            membreDroite = "(" + membreDroite + ")";
+          }
 
-    public ArrayList<String> getPermutations(){
-	ArrayList<String> elements = new ArrayList();
-	for (ParseTree leaf : this){
-	    elements.add(leaf.getText());
-	}
-		
-	ArrayList<String> permutations = new ArrayList();
-	permutations.add(left_parenthesis(elements));
-	permutations.add(right_parenthesis(elements));
-
-	return permutations;
+          possibilite.add(membreGauche + ", " + membreDroite);
+        }
+      }
     }
 
-    @Override
-    public String toString(){
-	int i=0;
-	String str = "< ";
-	for (ParseTree leaf : this){
-	    str=str+leaf.getText();
-	    if (i!=size()-1){str=str+" , ";}
-	    i++;
-	}
-	return str+" >";
+    return possibilite;
+  }
+
+  private ArrayList<String> generate (Tuple t) {
+    ArrayList<String> possibilite = new ArrayList<>();
+
+    if (t.size() == 1) {
+      possibilite.add(t.get(0));
+    } else if (t.size() == 2) {
+      possibilite.add(t.get(0) + ", " + t.get(1));
+    } else if (t.size() != 0) {
+      possibilite = this.multiElementTupleCombination(t);
     }
 
+    return possibilite;
+  }
 
-    @Override
-    public int compareTo(Tuple tuple) {
-//    	return (this.size().compareTo(tuple.size()));
-//    	return ( this.size().compare(tuple.size()) );
-    	return ( this.size()-tuple.size() );
+  public void generateCombinations () {
+    ArrayList<String> possibilities = this.generate(this);
+    for (int i = 0; i < possibilities.size(); i ++) {
+      String element = possibilities.get(i);
+      possibilities.set(i, "(" + element + ")");
     }
-	
+
+    this.combinations = possibilities;
+  }
+
+  @Override
+  public String toString (){
+    StringBuilder string = new StringBuilder(". Tuple : \n");
+    if (originalForm != null) {
+      string.append(originalForm);
+    } else {
+      string.append(stringList());
+    }
+
+    if (combinations.size() != 0) {
+      string.append("\nPossible combinations :\n");
+
+      for (String s : combinations) {
+        string.append(s + " | ");
+      }
+
+    } else {
+      string.append("\nCombinations not yet computed.\n");
+    }
+
+    string.append("\n");
+
+    return string.toString();
+  }
+
+
+  @Override
+  public int compareTo(Tuple tuple) {
+    //    	return (this.size().compareTo(tuple.size()));
+    //    	return ( this.size().compare(tuple.size()) );
+    return ( this.size()-tuple.size() );
+  }
+
+  public ArrayList<String> getCombinations () {
+    return this.combinations;
+  }
+
+  public String getOriginalForm () {
+    return this.originalForm;
+  }
+
+  public Tuple beforeIndex (int index) {
+    Tuple t = new Tuple();
+
+    if (index < this.size()) {
+      for (int i = 0; i < index; i ++) {
+        t.add(this.get(i));
+      }
+    }
+
+    return t;
+  }
+
+  public Tuple afterIndex (int index) {
+    Tuple t = new Tuple();
+
+    if (index >= 0) {
+      for (int i = index; i < this.size(); i ++) {
+        t.add(this.get(i));
+      }
+    }
+
+    return t;
+  }
+
+  public String stringList () {
+    String string = new String("list : ");
+
+    for (String object : this) {
+      string += "" + object.toString() + " | ";
+    }
+
+    string += "\n";
+    return string;
+  }
+
 }
