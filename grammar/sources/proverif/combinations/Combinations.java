@@ -1,13 +1,15 @@
 package proverif.combinations;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public final class Combinations{
 
 	private final Tuples tuples;
 
-	private ArrayList<Integer> sizes = new ArrayList();
-	private int numberOfFiles = -1;
+	private ArrayList<Integer> 			sizes 					= new ArrayList();
+	private int 						numberOfFiles 			= -1;
+	public 	HashMap<Integer,Integer>	numberOfCombinations	= new HashMap();
 
 
 	public Combinations(Tuples tuples){
@@ -30,16 +32,19 @@ public final class Combinations{
 	*/
 	public void checkFiles(){
 		int numberOfFiles			= 1;
-		ArrayList<Integer> sizes	= new ArrayList();
 		for (Tuple tuple : tuples){
 			int currentSize = tuple.size();
 			if (!sizes.contains(currentSize)){
 				sizes.add(currentSize);
-				numberOfFiles = numberOfFiles * tuple.size();
+				this.numberOfCombinations.put(currentSize,tuple.getCombinations().size());
+				numberOfFiles = numberOfFiles * tuple.getCombinations().size(); //nombre de combinaisons possibles
+
+
 			}
 		}
+		//System.out.println("sizes : "+sizes);
+		//System.out.println("numberOfCombinations : "+numberOfCombinations);
 		this.numberOfFiles	= numberOfFiles;
-		this.sizes			= sizes;
 	}
 
 	public int					getnumberOfFiles()	{ return this.numberOfFiles;}

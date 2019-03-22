@@ -56,7 +56,7 @@ public class CombinationsHandler{
 
 		while ( (index==-1) || (i<numberOfFiles)) {
 			indexOfCombinations.set(i,indexOfCombinations.get(i)+1);
-			if (indexOfCombinations.get(i)==sizes.get(i)){
+			if (indexOfCombinations.get(i)==combinaisons.numberOfCombinations.get(sizes.get(i))){ 
 				indexOfCombinations.set(i,0);
 				i++; //recommence à 0 et incrémente la valeur un rang au-dessus
 			} else {
