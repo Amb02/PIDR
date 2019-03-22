@@ -17,7 +17,7 @@ public class CombinationsHandler{
 	public CombinationsHandler(Combinations combinations){
 		this.combinations	= combinations;
 		this.tuples			= combinations.getTuples();
-		//ParseCombinations();
+		ParseCombinations();
 		
 	}
 
@@ -35,9 +35,11 @@ public class CombinationsHandler{
 		*/
 		ArrayList<Integer> 	sizes				= combinations.getSizes();
 		ArrayList<Integer> 	indexOfCombinations	= new ArrayList(sizes.size());
+		for (int i : sizes){indexOfCombinations.add(0);}
 		int 				numberOfFiles		= combinations.getnumberOfFiles();
 		for (int fileIndex = 0 ; fileIndex < numberOfFiles ; fileIndex++){
-			updateIndexOfCombinations(indexOfCombinations,sizes,numberOfFiles);
+			
+			String strTemp="\nFile n°"+fileIndex+" :\n< ";
 			for (Tuple tuple : tuples){
 				int indexOfSize = sizes.indexOf(tuple.size());
 				/**
@@ -45,18 +47,24 @@ public class CombinationsHandler{
 				* liste_des_combinaisons = tuple.getcombinations()
 				*/
 				//replace(tuple,tuple.getcombinations().get(indexOfCombinations.get(indexOfSize)));
+				strTemp=strTemp+"//"+tuple.getCombinations().get(indexOfCombinations.get(indexOfSize))+"\\\\ , ";
 			}
+			strTemp=strTemp+" >";
+			System.out.println(strTemp);
+
+			if(fileIndex != numberOfFiles-1) updateIndexOfCombinations(indexOfCombinations,sizes,numberOfFiles);
 		}
+
 	}
 
 
 	private void updateIndexOfCombinations(ArrayList<Integer> indexOfCombinations,ArrayList<Integer> sizes, int numberOfFiles){
 		int index=-1;
 		int i=0;
-
-		while ( (index==-1) || (i<numberOfFiles)) {
+		
+		while ( (index==-1) && (i<numberOfFiles)) {
 			indexOfCombinations.set(i,indexOfCombinations.get(i)+1);
-			if (indexOfCombinations.get(i)==combinaisons.numberOfCombinations.get(sizes.get(i))){ 
+			if (indexOfCombinations.get(i)==combinations.numberOfCombinations.get(sizes.get(i))){ 
 				indexOfCombinations.set(i,0);
 				i++; //recommence à 0 et incrémente la valeur un rang au-dessus
 			} else {
@@ -68,6 +76,7 @@ public class CombinationsHandler{
 			System.err.println("Searching Index Of Combinations : OutOfBoundsException");
 			System.exit(1);
 		}
+		
 	}
 
 }
