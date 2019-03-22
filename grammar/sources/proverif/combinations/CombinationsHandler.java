@@ -35,7 +35,7 @@ public class CombinationsHandler{
 		*/
 		ArrayList<Integer> 	sizes				= combinations.getSizes();
 		ArrayList<Integer> 	indexOfCombinations	= new ArrayList(sizes.size());
-		for (int i : sizes){indexOfCombinations.add(0);}
+		for (int i : sizes){indexOfCombinations.add(0);} //initialisation
 		int 				numberOfFiles		= combinations.getnumberOfFiles();
 		for (int fileIndex = 0 ; fileIndex < numberOfFiles ; fileIndex++){
 			
@@ -46,7 +46,7 @@ public class CombinationsHandler{
 				* Le tuple 'tuple' doit être remplacé par liste_des_combinaisons.get(indexOfCombinations.get(indexOfSize))
 				* liste_des_combinaisons = tuple.getcombinations()
 				*/
-				//replace(tuple,tuple.getcombinations().get(indexOfCombinations.get(indexOfSize)));
+				//replace(tuple#.toString#,tuple.getcombinations().get(indexOfCombinations.get(indexOfSize)));
 				strTemp=strTemp+"//"+tuple.getCombinations().get(indexOfCombinations.get(indexOfSize))+"\\\\ , ";
 			}
 			strTemp=strTemp+" >";
@@ -58,7 +58,7 @@ public class CombinationsHandler{
 	}
 
 
-	private void updateIndexOfCombinations(ArrayList<Integer> indexOfCombinations,ArrayList<Integer> sizes, int numberOfFiles){
+	private void updateIndexOfCombinations(ArrayList<Integer> indexOfCombinations, ArrayList<Integer> sizes, int numberOfFiles){
 		int index=-1;
 		int i=0;
 		
