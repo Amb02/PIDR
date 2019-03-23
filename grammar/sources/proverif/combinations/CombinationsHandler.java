@@ -5,17 +5,32 @@ package proverif.combinations;
 
 //java imports
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.lang.*;
+
+import java.io.FilenameFilter;
+import java.io.*;
+
+import java.io.IOException;	
+import static java.nio.file.StandardCopyOption.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 public class CombinationsHandler{
 
 	Combinations combinations;
 	Tuples tuples;
+	File originalFile;
+	HashMap<Integer,Tuple> referenceLines = new HashMap();
 
-	public CombinationsHandler(Combinations combinations){
+	public CombinationsHandler(Combinations combinations, HashMap<Integer,Tuple> referenceLines){
 		this.combinations	= combinations;
 		this.tuples			= combinations.getTuples();
+		this.referenceLines	= referenceLines;
+		findOriginalFile();
+		//System.out.println("Original File founed : "+originalFile.getName());
 		ParseCombinations();
 		
 	}
@@ -29,16 +44,26 @@ public class CombinationsHandler{
 		for (int i : sizes){indexOfCombinations.add(0);} //initialisation
 		
 		for (int fileIndex = 0 ; fileIndex < numberOfFiles ; fileIndex++){
+
+			//copyFile(originalFile.getName(), fileIndex);
+			File file = new File("./logs"+(fileIndex+1)+".pv.log"); //mettre file en retour de copy
+			System.out.println(file.getName()+" created");	
+			HashMap<Tuple,String> correspondanceMap = new HashMap();
+
 			StringBuilder listOfNewTuples = new StringBuilder("\nFile n°"+fileIndex+" :\n< ");
 			
 			for (Tuple tuple : tuples){
 				int indexOfSize = sizes.indexOf(tuple.size());
-				listOfNewTuples.append("//"+tuple.getCombinations().get(indexOfCombinations.get(indexOfSize))+"\\\\ , ");}
+				listOfNewTuples.append("//"+tuple.getCombinations().get(indexOfCombinations.get(indexOfSize))+"\\\\ , ");
+				correspondanceMap.put(tuple,tuple.getCombinations().get(indexOfCombinations.get(indexOfSize)));
+			}
 
 			if(fileIndex != numberOfFiles-1) updateIndexOfCombinations(indexOfCombinations,sizes,numberOfFiles);
 
 			listOfNewTuples.append(" >");
 			System.out.println(listOfNewTuples);
+
+			replaceTuple(file,correspondanceMap);
 
 		}
 
@@ -64,6 +89,87 @@ public class CombinationsHandler{
 			System.exit(1);
 		}
 		
+	}
+
+	private void replaceTuple(File file, HashMap<Tuple,String> correspondanceMap){
+		int line = 0;
+
+        try {
+            BufferedReader readingBuffer = new BufferedReader(new FileReader(originalFile));
+            String readLine = "";
+
+			BufferedWriter writtingBuffer = new BufferedWriter(new FileWriter(file, true));
+
+			System.out.println("writing on "+file.getName());
+
+			
+            while ((readLine = readingBuffer.readLine()) != null) {
+            	String newLine = readLine;
+            	if (referenceLines.containsKey(line)){
+            		System.out.println("Line key");
+            		Tuple tuple 	= referenceLines.get(line);
+            		newLine 		= replaceLine(readLine,tuple.getOriginalForm(),correspondanceMap.get(tuple));
+            		//write new line
+            		System.out.println("new line : "+newLine+"\n");
+            	}
+            	writtingBuffer.write(newLine);
+				writtingBuffer.newLine();
+                line++;
+            }
+            readingBuffer.close();
+            writtingBuffer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+
+	private String replaceLine(String txt, String fromStr, String toStr){
+
+		System.out.println("replace "+fromStr+" by "+toStr);
+
+		CharSequence from 	= fromStr;
+		CharSequence to 	= toStr;
+
+		return txt.replace(from,to);
+	}
+
+
+
+	private void findOriginalFile(){
+		int result	= 0;
+		File file	= null;
+
+		FilenameFilter filter = new FilenameFilter(){
+			public boolean accept( File dir, String name ) {return name.contains("0_(original_file)_") && name.endsWith(".pv.log");}
+		};
+
+		for( File f : new File("./logs").listFiles(filter)){
+			result++;
+			file = f;
+		}
+		if (result != 1){
+			String error="";
+			if (result==0){
+				error = "Original File not";
+			} else if (result > 1){
+				error = "Several Original Files";
+			}
+			System.err.println(error+" founded");
+			System.exit(1);
+		}
+		this.originalFile = file;
+	}
+
+	private void copyFile(String srcName, int number){
+		Path from	= Paths.get("./logs/"+srcName);
+	    Path to		=  Paths.get("./logs/"+(number+1)+".pv.log");
+	    try{
+	    	System.out.println("no error");
+		    Files.copy(from, to, REPLACE_EXISTING);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

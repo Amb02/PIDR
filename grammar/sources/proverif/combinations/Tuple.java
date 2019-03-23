@@ -9,182 +9,184 @@ import java.util.Comparator;
 
 
 public class Tuple extends ArrayList<String> implements Comparable<Tuple>{
-  private String originalForm = null;
-  private ArrayList<String> combinations;
+	private String originalForm = null;
+	private ArrayList<String> combinations;
 
-  private boolean isElement (String text) {
-    return !(text.equals("(") || text.equals(",") || text.equals(")"));
-  }
+	private boolean isElement (String text) {
+		return !(text.equals("(") || text.equals(",") || text.equals(")"));
+	}
 
-  public Tuple () {
-    super();
-  }
+	public Tuple () {
+		super();
+	}
 
-  public Tuple (ParserRuleContext ctx) {
-    combinations = new ArrayList<>();
+	public Tuple (ParserRuleContext ctx) {
 
-    originalForm = ctx.getText();
-    ArrayList<ParseTree> list = new ArrayList();
+		this.combinations	= new ArrayList<>();
 
-    for (int i = 0 ; i < ctx.getChildCount() ; i++){
+		originalForm = ctx.getText();
+		ArrayList<ParseTree> list = new ArrayList();
 
-      ParseTree child = ctx.getChild(i);
-      String txt = child.getText();
+		for (int i = 0 ; i < ctx.getChildCount() ; i++){
 
-      if (isElement(txt)) {
-        this.add(child.getText());
-      }
-    }
-  }
+			ParseTree child = ctx.getChild(i);
+			String txt = child.getText();
 
-  public Tuple(ArrayList<ParseTree> list){
-    for (ParseTree child : list){
-      this.add(child.getText());
-    }
-  }
+			if (isElement(txt)) {
+				this.add(child.getText());
+			}
+		}
+	}
 
-  private ArrayList<String> multiElementTupleCombination (Tuple t) {
-    ArrayList<String> possibilite = new ArrayList<>();
+	public Tuple(ArrayList<ParseTree> list){
+		for (ParseTree child : list){
+			this.add(child.getText());
+		}
+	}
 
-    for (int i = 1; i < t.size(); i ++) {
-      ArrayList<String> gauche = generate(t.beforeIndex(i));
-      ArrayList<String> droite = generate(t.afterIndex(i));
+	private ArrayList<String> multiElementTupleCombination (Tuple t) {
+		ArrayList<String> possibilite = new ArrayList<>();
 
-      String membreGauche = "";
-      String membreDroite = "";
+		for (int i = 1; i < t.size(); i ++) {
+			ArrayList<String> gauche = generate(t.beforeIndex(i));
+			ArrayList<String> droite = generate(t.afterIndex(i));
 
-      for (String gaucheString : gauche) {
-        for (String droiteString : droite) {
-          membreGauche = gaucheString;
+			String membreGauche = "";
+			String membreDroite = "";
 
-          if (gaucheString.length() != 1){
-            membreGauche = "(" + membreGauche + ")";
-          }
+			for (String gaucheString : gauche) {
+				for (String droiteString : droite) {
+					membreGauche = gaucheString;
 
-          membreDroite = droiteString;
-          if (droiteString.length() != 1) {
-            membreDroite = "(" + membreDroite + ")";
-          }
+					if (gaucheString.length() != 1){
+						membreGauche = "(" + membreGauche + ")";
+					}
 
-          possibilite.add(membreGauche + ", " + membreDroite);
-        }
-      }
-    }
+					membreDroite = droiteString;
+					if (droiteString.length() != 1) {
+						membreDroite = "(" + membreDroite + ")";
+					}
 
-    return possibilite;
-  }
+					possibilite.add(membreGauche + ", " + membreDroite);
+				}
+			}
+		}
 
-  private ArrayList<String> generate (Tuple t) {
-    ArrayList<String> possibilite = new ArrayList<>();
+		return possibilite;
+	}
 
-    if (t.size() == 1) {
-      possibilite.add(t.get(0));
-    } else if (t.size() == 2) {
-      possibilite.add(t.get(0) + ", " + t.get(1));
-    } else if (t.size() != 0) {
-      possibilite = this.multiElementTupleCombination(t);
-    }
+	private ArrayList<String> generate (Tuple t) {
+		ArrayList<String> possibilite = new ArrayList<>();
 
-    return possibilite;
-  }
+		if (t.size() == 1) {
+			possibilite.add(t.get(0));
+		} else if (t.size() == 2) {
+			possibilite.add(t.get(0) + ", " + t.get(1));
+		} else if (t.size() != 0) {
+			possibilite = this.multiElementTupleCombination(t);
+		}
 
-  public void generateCombinations () {
-    ArrayList<String> possibilities = this.generate(this);
-    for (int i = 0; i < possibilities.size(); i ++) {
-      String element = possibilities.get(i);
-      possibilities.set(i, "(" + element + ")");
-    }
+		return possibilite;
+	}
 
-    this.combinations = possibilities;
-  }
+	public void generateCombinations () {
+		ArrayList<String> possibilities = this.generate(this);
+		for (int i = 0; i < possibilities.size(); i ++) {
+			String element = possibilities.get(i);
+			possibilities.set(i, "(" + element + ")");
+		}
 
-  public String toShortString (){
-    StringBuilder string = new StringBuilder("");
-    if (originalForm != null) {
-      string.append(originalForm);
-    } else {
-      string.append(stringList());
-    }
+		this.combinations = possibilities;
+	}
 
-    string.append("\n");
+	public String toShortString (){
+		StringBuilder string = new StringBuilder("");
+		if (originalForm != null) {
+			string.append(originalForm);
+		} else {
+			string.append(stringList());
+		}
 
-    return string.toString();
-  }
+		string.append("\n");
 
-  @Override
-  public String toString (){
-    StringBuilder string = new StringBuilder(". Tuple : \n");
-    if (originalForm != null) {
-      string.append(originalForm);
-    } else {
-      string.append(stringList());
-    }
+		return string.toString();
+	}
 
-    if (combinations.size() != 0) {
-      string.append("\nPossible combinations :\n");
+	@Override
+	public String toString (){
+		StringBuilder string = new StringBuilder(". Tuple : \n");
+		if (originalForm != null) {
+			string.append(originalForm);
+		} else {
+			string.append(stringList());
+		}
 
-      for (String s : combinations) {
-        string.append(s + " | ");
-      }
+		if (combinations.size() != 0) {
+			string.append("\nPossible combinations :\n");
 
-    } else {
-      string.append("\nCombinations not yet computed.\n");
-    }
+			for (String s : combinations) {
+				string.append(s + " | ");
+			}
 
-    string.append("\n");
+		} else {
+			string.append("\nCombinations not yet computed.\n");
+		}
 
-    return string.toString();
-  }
+		string.append("\n");
+
+		return string.toString();
+	}
 
 
-  @Override
-  public int compareTo(Tuple tuple) {
-    //    	return (this.size().compareTo(tuple.size()));
-    //    	return ( this.size().compare(tuple.size()) );
-    return ( this.size()-tuple.size() );
-  }
+	@Override
+	public int compareTo(Tuple tuple) {
+		//    	return (this.size().compareTo(tuple.size()));
+		//    	return ( this.size().compare(tuple.size()) );
+		return ( this.size()-tuple.size() );
+	}
 
-  public ArrayList<String> getCombinations () {
-    return this.combinations;
-  }
+	public ArrayList<String> getCombinations () {
+		return this.combinations;
+	}
 
-  public String getOriginalForm () {
-    return this.originalForm;
-  }
+	public String getOriginalForm () {
+		return this.originalForm;
+	}
 
-  public Tuple beforeIndex (int index) {
-    Tuple t = new Tuple();
+	public Tuple beforeIndex (int index) {
+		Tuple t = new Tuple();
 
-    if (index < this.size()) {
-      for (int i = 0; i < index; i ++) {
-        t.add(this.get(i));
-      }
-    }
+		if (index < this.size()) {
+			for (int i = 0; i < index; i ++) {
+				t.add(this.get(i));
+			}
+		}
 
-    return t;
-  }
+		return t;
+	}
 
-  public Tuple afterIndex (int index) {
-    Tuple t = new Tuple();
+	public Tuple afterIndex (int index) {
+		Tuple t = new Tuple();
 
-    if (index >= 0) {
-      for (int i = index; i < this.size(); i ++) {
-        t.add(this.get(i));
-      }
-    }
+		if (index >= 0) {
+			for (int i = index; i < this.size(); i ++) {
+				t.add(this.get(i));
+			}
+		}
 
-    return t;
-  }
+		return t;
+	}
 
-  public String stringList () {
-    String string = new String("list : ");
+	public String stringList () {
+		String string = new String("list : ");
 
-    for (String object : this) {
-      string += "" + object.toString() + " | ";
-    }
+		for (String object : this) {
+			string += "" + object.toString() + " | ";
+		}
 
-    string += "\n";
-    return string;
-  }
+		string += "\n";
+		return string;
+	}
+
 
 }

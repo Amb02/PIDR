@@ -11,6 +11,7 @@ import proverif.combinations.Tuples;
 import proverif.combinations.Tuple;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import proverif.file.*;
 
@@ -19,6 +20,7 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
 
   private static final int MAX_RULE_SIZE = 7;
   public static Tuples tuples;
+  public static HashMap<Integer,Tuple> referenceLines = new HashMap(); //sould be replace by a 2D-List<int line, List<Tuples>>
 
   public ProverifVisitorImpl (BufferedTokenStream tokens) {
     this.tokens = tokens;
@@ -51,6 +53,7 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
   private void tupleCreation (ParserRuleContext ctx) {
     Tuple tuple  = new Tuple(ctx);
     tuples.add(tuple);
+    referenceLines.put(ctx.getStart().getLine(),tuple);
   }
 
   private String getSpacing (String ruleName) {

@@ -4,12 +4,12 @@ import java.io.IOException;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 import proverif.combinations.*;
-
-
 import proverif.parser.*;
 import proverif.file.*;
+
 
 public class Main {
 
@@ -26,13 +26,15 @@ public class Main {
 			FileParser parser = new FileParser(path);
 			parser.parse();
 
-			Tuples tuples = ProverifVisitorImpl.tuples;
+			Tuples tuples 							= ProverifVisitorImpl.tuples;
+			HashMap<Integer,Tuple> referenceLines 	= ProverifVisitorImpl.referenceLines;
 			Combinations combinations = new Combinations(tuples);
 			System.out.println("\nTuples found :" + tuples);
 
 			System.out.println(""+combinations.getnumberOfFiles()+" files should be created");
 
-			CombinationsHandler combinationsHandler = new CombinationsHandler(combinations);
+			CombinationsHandler combinationsHandler = new CombinationsHandler(combinations,referenceLines);
+
 
 		} catch (IOException e) {
 			System.err.println("The file : " + path + " does not exist");
