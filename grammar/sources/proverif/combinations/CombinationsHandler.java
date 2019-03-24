@@ -135,9 +135,6 @@ public class CombinationsHandler{
 	}
 
 	private String replaceLine(String txt, String fromStr, String toStr){
-		System.out.println("1." + txt);
-		System.out.println("2." + fromStr);
-		System.out.println("3. " + toStr);
 		CharSequence from 	= fromStr;
 		CharSequence to 	= toStr;
 
