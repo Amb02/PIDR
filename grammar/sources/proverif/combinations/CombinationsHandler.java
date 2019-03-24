@@ -23,9 +23,9 @@ public class CombinationsHandler{
 	Combinations combinations;
 	Tuples tuples;
 	File originalFile;
-	HashMap<Integer,Tuple> referenceLines = new HashMap();
+	HashMap<Integer, ArrayList<Tuple> > referenceLines = new HashMap();
 
-	public CombinationsHandler(Combinations combinations, HashMap<Integer,Tuple> referenceLines){
+	public CombinationsHandler(Combinations combinations, HashMap<Integer, ArrayList<Tuple> > referenceLines){
 		this.combinations	= combinations;
 		this.tuples			= combinations.getTuples();
 		this.referenceLines	= referenceLines;
@@ -47,7 +47,7 @@ public class CombinationsHandler{
 		for (int fileIndex = 0 ; fileIndex < numberOfFiles ; fileIndex++){
 
 			//copyFile(originalFile.getName(), fileIndex);
-			File file = new File("./logs"+(fileIndex+1)+".pv.log");
+			File file = new File("./logs/"+(fileIndex+1)+".pv.log");
 			// fichier vide qui sera le nouveau fichier n° fileIndex
 			System.out.println(file.getName()+" created");
 			HashMap<Tuple,String> correspondanceMap = new HashMap();
@@ -64,7 +64,7 @@ public class CombinationsHandler{
 			if(fileIndex != numberOfFiles-1) updateIndexOfCombinations(indexOfCombinations,sizes,numberOfFiles);
 
 			listOfNewTuples.append(" >");
-			System.out.println(listOfNewTuples);
+			//System.out.println(listOfNewTuples);
 
 			replaceTuple(file,correspondanceMap);
 			//on remplace dans le fichier tous les tuples par leur combinaison respective
@@ -96,7 +96,7 @@ public class CombinationsHandler{
 	}
 
 	private void replaceTuple(File file, HashMap<Tuple,String> correspondanceMap){
-		int line = 0;
+		int line = 1;
 
         try {
             BufferedReader readingBuffer = new BufferedReader(new FileReader(originalFile));
@@ -111,10 +111,15 @@ public class CombinationsHandler{
             while ((readLine = readingBuffer.readLine()) != null) {
             	String newLine = readLine;
             	//parcours ligne par ligne
+            	//System.out.println("l."+line+" : >"+readLine);
             	if (referenceLines.containsKey(line)){ //si la ligne contient un tuple
-            		System.out.println("Line key");
-            		Tuple tuple 	= referenceLines.get(line);
-            		newLine 		= replaceLine(readLine,tuple.getOriginalForm(),correspondanceMap.get(tuple)); //on modifie la ligne (CTRL+F tuple original / combinaison)
+            		System.out.println("Line key : "+line);
+//            		System.out.println("Line key : "+line+"\nThe line key is : --\""+readLine+"\"--");
+            		ArrayList<Tuple> listOfTupleInThisLine 	= referenceLines.get(line);
+            		newLine = readLine;
+            		for (Tuple tuple : listOfTupleInThisLine){
+            			newLine = replaceLine(newLine,tuple.getOriginalForm(),correspondanceMap.get(tuple));  //on modifie la ligne (CTRL+F tuple original / combinaison)
+            		}
             		System.out.println("new line : "+newLine+"\n");
             	}
             	writtingBuffer.write(newLine);

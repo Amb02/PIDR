@@ -20,7 +20,7 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
 
   private static final int MAX_RULE_SIZE = 7;
   public static Tuples tuples;
-  public static HashMap<Integer,Tuple> referenceLines = new HashMap(); //sould be replace by a 2D-List<int line, List<Tuples>>
+  public static HashMap<Integer, ArrayList<Tuple> > referenceLines = new HashMap();
 
   public ProverifVisitorImpl (BufferedTokenStream tokens) {
     this.tokens = tokens;
@@ -53,7 +53,16 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
   private void tupleCreation (ParserRuleContext ctx) {
     Tuple tuple  = new Tuple(ctx);
     tuples.add(tuple);
-    referenceLines.put(ctx.getStart().getLine(),tuple);
+    
+    int line = ctx.getStart().getLine();
+    if (referenceLines.containsKey(line)){
+      referenceLines.get(line).add(tuple);
+    } else {
+      ArrayList<Tuple> tempListOfTule = new ArrayList();
+      tempListOfTule.add(tuple);
+      referenceLines.put(ctx.getStart().getLine(),tempListOfTule);
+    }
+    
   }
 
   private String getSpacing (String ruleName) {
@@ -79,6 +88,7 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
   private void operationOnSequence (String sequenceName, ParserRuleContext ctx) {
     //displayRuleFound(sequenceName, ctx);
     tupleCreation(ctx);
+    System.out.println("tuple créé l."+ctx.getStart().getLine());
 
     visitChildren(ctx);
   }
