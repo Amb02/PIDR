@@ -11,12 +11,13 @@ import java.lang.*;
 import java.io.FilenameFilter;
 import java.io.*;
 
-import java.io.IOException;	
+import java.io.IOException;
 import static java.nio.file.StandardCopyOption.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import proverif.file.*;
 
 public class CombinationsHandler{
 
@@ -33,7 +34,7 @@ public class CombinationsHandler{
 		//System.out.println("Original File founed : "+originalFile.getName());
 		// Le fichier original est stocké dans /logs, avec une syntaxe particulière
 		ParseCombinations();
-		
+
 	}
 
 	private void ParseCombinations(){
@@ -41,19 +42,22 @@ public class CombinationsHandler{
 		ArrayList<Integer> 			sizes					= combinations.getSizes();
 		ArrayList<Integer>			indexOfCombinations		= new ArrayList(sizes.size());
 		int 						numberOfFiles			= combinations.getnumberOfFiles();
-		
-		for (int i : sizes){indexOfCombinations.add(0);} //initialisation
-		
-		for (int fileIndex = 0 ; fileIndex < numberOfFiles ; fileIndex++){
 
-			//copyFile(originalFile.getName(), fileIndex);
-			File file = new File("./logs/"+(fileIndex+1)+".pv.log");
+		for (int i : sizes){indexOfCombinations.add(0);} //initialisation
+
+		String originalFileName = FileGenerator.getOriginalName();
+		String directoryName = "logs/" + originalFileName;
+		System.out.println("Creation du dossier " + directoryName);
+		new File(directoryName).mkdirs();
+
+		for (int fileIndex = 0 ; fileIndex < numberOfFiles ; fileIndex++){
+			File file = new File(directoryName + "/" + originalFileName + "_" +(fileIndex+1)+".pv.log");
 			// fichier vide qui sera le nouveau fichier n° fileIndex
 			System.out.println(file.getName()+" created");
 			HashMap<Tuple,String> correspondanceMap = new HashMap();
 
 			StringBuilder listOfNewTuples = new StringBuilder("\nFile n°"+fileIndex+" :\n< ");
-			
+
 			for (Tuple tuple : tuples){
 				int indexOfSize = sizes.indexOf(tuple.size());
 				listOfNewTuples.append("//"+tuple.getCombinations().get(indexOfCombinations.get(indexOfSize))+"\\\\ , ");
@@ -77,10 +81,10 @@ public class CombinationsHandler{
 	private void updateIndexOfCombinations(ArrayList<Integer> indexOfCombinations, ArrayList<Integer> sizes, int numberOfFiles){
 		int index=-1;
 		int i=0;
-		
+
 		while ( (index==-1) && (i<sizes.size())) {
 			indexOfCombinations.set(i,indexOfCombinations.get(i)+1);
-			if (indexOfCombinations.get(i)==combinations.numberOfCombinations.get(sizes.get(i))){ 
+			if (indexOfCombinations.get(i)==combinations.numberOfCombinations.get(sizes.get(i))){
 				indexOfCombinations.set(i,0);
 				i++; //recommence à 0 et incrémente la valeur un rang au-dessus
 			} else {
@@ -92,52 +96,48 @@ public class CombinationsHandler{
 			System.err.println("Searching Index Of Combinations : OutOfBoundsException");
 			System.exit(1);
 		}
-		
+
 	}
 
 	private void replaceTuple(File file, HashMap<Tuple,String> correspondanceMap){
 		int line = 1;
-
-        try {
-            BufferedReader readingBuffer = new BufferedReader(new FileReader(originalFile));
-            String readLine = "";
+		try {
+			BufferedReader readingBuffer = new BufferedReader(new FileReader(originalFile));
+			String readLine = "";
 
 			BufferedWriter writtingBuffer = new BufferedWriter(new FileWriter(file, true));
 
-			System.out.println("writing on "+file.getName());
 
 			//ouverture du fichier vide qui sera le fichier créé
 
-            while ((readLine = readingBuffer.readLine()) != null) {
-            	String newLine = readLine;
-            	//parcours ligne par ligne
-            	//System.out.println("l."+line+" : >"+readLine);
-            	if (referenceLines.containsKey(line)){ //si la ligne contient un tuple
-            		System.out.println("Line key : "+line);
-//            		System.out.println("Line key : "+line+"\nThe line key is : --\""+readLine+"\"--");
-            		ArrayList<Tuple> listOfTupleInThisLine 	= referenceLines.get(line);
-            		newLine = readLine;
-            		for (Tuple tuple : listOfTupleInThisLine){
-            			newLine = replaceLine(newLine,tuple.getOriginalForm(),correspondanceMap.get(tuple));  //on modifie la ligne (CTRL+F tuple original / combinaison)
-            		}
-            		System.out.println("new line : "+newLine+"\n");
-            	}
-            	writtingBuffer.write(newLine);
+			while ((readLine = readingBuffer.readLine()) != null) {
+				String newLine = readLine;
+				//parcours ligne par ligne
+				//System.out.println("l."+line+" : >"+readLine);
+				if (referenceLines.containsKey(line)){ //si la ligne contient un tuple
+					//            		System.out.println("Line key : "+line+"\nThe line key is : --\""+readLine+"\"--");
+					ArrayList<Tuple> listOfTupleInThisLine 	= referenceLines.get(line);
+					newLine = readLine;
+					for (Tuple tuple : listOfTupleInThisLine){
+						newLine = replaceLine(newLine,tuple.getOriginalForm(),correspondanceMap.get(tuple));  //on modifie la ligne (CTRL+F tuple original / combinaison)
+					}
+				}
+				writtingBuffer.write(newLine);
 				writtingBuffer.newLine();
-                line++;
-            }
-            readingBuffer.close();
-            writtingBuffer.close();
+				line++;
+			}
+			readingBuffer.close();
+			writtingBuffer.close();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private String replaceLine(String txt, String fromStr, String toStr){
-
-		System.out.println("replace "+fromStr+" by "+toStr);
-
+		System.out.println("1." + txt);
+		System.out.println("2." + fromStr);
+		System.out.println("3. " + toStr);
 		CharSequence from 	= fromStr;
 		CharSequence to 	= toStr;
 
@@ -147,39 +147,6 @@ public class CombinationsHandler{
 
 
 	private void findOriginalFile(){
-		int result	= 0;
-		File file	= null;
-
-		FilenameFilter filter = new FilenameFilter(){
-			public boolean accept( File dir, String name ) {return name.contains("0_(original_file)_") && name.endsWith(".pv.log");}
-		};
-
-		for( File f : new File("./logs").listFiles(filter)){
-			result++;
-			file = f;
-		}
-		if (result != 1){
-			String error="";
-			if (result==0){
-				error = "Original File not";
-			} else if (result > 1){
-				error = "Several Original Files";
-			}
-			System.err.println(error+" founded");
-			System.exit(1);
-		}
-		this.originalFile = file;
+		originalFile = FileGenerator.getOriginalFile();
 	}
-
-	private void copyFile(String srcName, int number){
-		Path from	= Paths.get("./logs/"+srcName);
-	    Path to		=  Paths.get("./logs/"+(number+1)+".pv.log");
-	    try{
-	    	System.out.println("no error");
-		    Files.copy(from, to, REPLACE_EXISTING);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 }

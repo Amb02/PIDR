@@ -14,4 +14,4 @@ clean:
 	find . -name "ProverifBase*" -exec rm {} \;
 	find . -name "ProverifListener*" -exec rm {} \;
 	find . -name "ProverifVisitor.java" -exec rm {} \;
-	rm logs/*
+	rm -r logs/*

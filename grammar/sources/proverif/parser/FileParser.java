@@ -4,13 +4,18 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 import proverif.file.*;
+import proverif.combinations.*;
 
 public class FileParser {
 	public static boolean parseOnly = false;
-	
+
 	private String path;
 	private File currentFile;
 
@@ -25,30 +30,30 @@ public class FileParser {
 	}
 
 	private void parseFromDirectory (int level) throws IOException {
-	for (int i = 0; i < level; i ++) System.out.print("\t");
-	System.out.println("Directory : " + currentFile.getName());
+		for (int i = 0; i < level; i ++) System.out.print("\t");
+		System.out.println("Directory : " + currentFile.getName());
 
-	File files[] = currentFile.listFiles();
+		File files[] = currentFile.listFiles();
 
-	for (File file : files) {
-		if (file.isDirectory()) {
-		currentFile = file;
-		parseFromDirectory(level + 1);
-		} else if (file.getName().endsWith(".pv")) {
-		for (int i = 0; i < level + 1; i ++) System.out.print("\t");
-		System.out.print("[" + file.getName() + "] : ");
-		parse(file.getPath());
+		for (File file : files) {
+			if (file.isDirectory()) {
+				currentFile = file;
+				parseFromDirectory(level + 1);
+			} else if (file.getName().endsWith(".pv")) {
+				for (int i = 0; i < level + 1; i ++) System.out.print("\t");
+				System.out.print("[" + file.getName() + "] : ");
+				parse(file.getPath());
+			}
 		}
-	}
 	}
 
 	public void parse () throws IOException {
-	currentFile = new File(path);
-	if (currentFile.isDirectory()) {
-		parseFromDirectory(0);
-	} else {
-		parseFile();
-	}
+		currentFile = new File(path);
+		if (currentFile.isDirectory()) {
+			parseFromDirectory(0);
+		} else {
+			parseFile();
+		}
 	}
 
 	public void parse (String path) throws IOException {
@@ -58,27 +63,27 @@ public class FileParser {
 
 	private void parseFile () throws IOException {
 		preParsingOperations();
-		
+
 		ProverifParser.ProgrammeContext programmeContext = parser.programme();
 
 		postParsingOperations(programmeContext);
 	}
 
 	private void preParsingOperations () throws IOException {
-		FileGenerator.newLogFile("0_(original_file)_"+currentFile.getName());
-		
+		FileGenerator.newLogFile(currentFile.getName(), path);
+
 		setInputStream();
 		lexer = new ProverifLexer(inputStream);
 
 		tokens = new CommonTokenStream(lexer);
 		parser = new ProverifParser(tokens);
-		
+
 		parser.removeErrorListeners();
 		listener = new ProverifErrorListener();
 		parser.addErrorListener(listener);
 	}
-	
-	private void setInputStream () throws IOException {	
+
+	private void setInputStream () throws IOException {
 		if (currentFile.getName().equals("default")) {
 			displayNoPathMessage();
 
@@ -96,15 +101,52 @@ public class FileParser {
 		}
 
 		if (!parseOnly) {
+			copyFile();
+
 			visit(context, tokens);
-		}	
+
+			fileReplacement();
+		}
 	}
-   
+
+	private void fileReplacement () {
+		Tuples tuples 										= ProverifVisitorImpl.tuples;
+		HashMap<Integer, ArrayList<Tuple> > referenceLines 	= ProverifVisitorImpl.referenceLines;
+		//references lines contient < les lignes qui doivent subir une modif (ie : contiennent un tuple) , ce tuple >
+		Combinations combinations = new Combinations(tuples);
+		System.out.println("\nTuples found :" + tuples);
+
+		System.out.println(""+combinations.getnumberOfFiles()+" files should be created");
+
+		CombinationsHandler combinationsHandler = new CombinationsHandler(combinations,referenceLines);
+	}
+
+	private void copyFile () {
+		FileReader file = null;
+		BufferedReader reader = null;
+		try {
+			file = new FileReader(path);
+			reader = new BufferedReader(file);
+
+			String line;
+			while ((line = reader.readLine()) != null) {
+				FileGenerator.log(line + "\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (reader != null) reader.close();
+				if (file != null) file.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+
 	private void visit(ProverifParser.ProgrammeContext programmeContext, BufferedTokenStream tokens) {
 		ProverifVisitorImpl visitor = new ProverifVisitorImpl(tokens);
 		visitor.visit(programmeContext);
-
-		FileGenerator.flush();
 	}
 
 	private void displayParsingSuccessfulMessage() {

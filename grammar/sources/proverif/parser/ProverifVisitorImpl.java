@@ -20,23 +20,16 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
 
   private static final int MAX_RULE_SIZE = 7;
   public static Tuples tuples;
-  public static HashMap<Integer, ArrayList<Tuple> > referenceLines = new HashMap();
+  public static HashMap<Integer, ArrayList<Tuple> > referenceLines;
 
   public ProverifVisitorImpl (BufferedTokenStream tokens) {
     this.tokens = tokens;
     this.tuples = new Tuples();
+    referenceLines = new HashMap();
   }
 
   private int getRealChildCount (int count) {
     return ((count-2) / 2) + 1;
-  }
-
-  public void logAll (List<Token> tokens) {
-    if (tokens != null) {
-      for (Token t : tokens) {
-        FileGenerator.log(t.getText());
-      }
-    }
   }
 
   private void displayRuleFound (String ruleName, ParserRuleContext ctx) {
@@ -53,7 +46,7 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
   private void tupleCreation (ParserRuleContext ctx) {
     Tuple tuple  = new Tuple(ctx);
     tuples.add(tuple);
-    
+
     int line = ctx.getStart().getLine();
     if (referenceLines.containsKey(line)){
       referenceLines.get(line).add(tuple);
@@ -62,7 +55,7 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
       tempListOfTule.add(tuple);
       referenceLines.put(ctx.getStart().getLine(),tempListOfTule);
     }
-    
+
   }
 
   private String getSpacing (String ruleName) {
@@ -117,16 +110,6 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
   @Override
   public String visitProgramme (ProverifParser.ProgrammeContext ctx) {
     visitChildren(ctx);
-
-    Token start = ctx.getStart();
-    Token end = ctx.getStop();
-    int tokPos = start.getTokenIndex();
-    int tokenPosEnd = end.getTokenIndex();
-
-    List<Token> refDefaultChannel = tokens.getTokens(tokPos, tokenPosEnd);
-
-    logAll(refDefaultChannel);
-
     return null;
   }
 
