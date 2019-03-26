@@ -1,5 +1,68 @@
 ## Etat d'avancement
-##### Avancement au 11/03/2019
+
+
+### Avancement au 26/03/2019
+---
+
+Après de multiples étapes et choix de stratégies, nous sommes en mesure de générer tous les fichiers fils correspondant à un fichier.
+
+#### Fichiers générés
+
+##### Nature des fichiers
+
+La première étape consiste à concevoir toutes les combinaisons d'ensemble de parenthésage.
+
+* D'une part, il est nécessaire de conserver la cohérence des échanges : des émissions / réceptions (par exemple si l'émission est parenthésée `(a,(b,c),d)`, le récepteur recevrait logiquement au même format ces données, il faut donc conserver cette cohérence).
+* D'autre part, on peut très bien imaginer un échange `(a,(b,c))` au début du protocle, puis d'autres interlocuteurs qui échangent `((c,d),e)`.
+
+Nous avons donc fait le choix d'adopter la même stratégie de parenthésage pour tous les tuples de même longueur.
+
+_**Exemple :** un fichier qui ne contient 3 tuples de taille 3 et 10 tuples de taille 4 génèreront `(nombre de possibilités pour un tuple de taille 3) * (nombre de possibilités pour un tuple de taille 4)` _(1)_ ._
+
+##### Génération de fichiers
+
+Chaque fichier créé correspond à une combinaison d'ensemble de parenthésage, la politique de parenthésage étant la même pour chaque tuple de taille similaire (stratégie détaillée plus haut).
+
+Nous avons donc longuement réfléchi sur l'algorithme et son implantation pratique en Java pour la génération de combinaison d'un tuple : pour une liste donnée, générer toutes les listes contenant les mêmes éléments dans le même ordre de telle sorte à ce que chaque liste ne contienne que 2 éléments.
+
+_**Exemple :** un fichier qui ne contient que des tuples de taille 2 ne génère pas de fichier supplémentaires._
+
+_**Exemple :** un fichier qui contient 1 tuple de taille 2, 1 tuple de taille 4, et 2 tuple de taille 5, génère 980 fichiers._
+
+Les fichiers générés sont dans le dossier qui porte le nom du protocole, lui-même situé dans le dossier logs (qui est situé [ici](https://github.com/Amb02/PIDR/tree/master/grammar/sources), après compilation et exécution).
+
+#### Implantation
+
+Voici ci-dessous une brève synthèse de la manière dont nous procédons.
+```
+* Parsing du fichier original
+    * Si un Tuple est recontré :
+        * On crée un objet `Tuple tuple` contenant ce dernier
+            * On génère en attribut de cet objet toutes les combinaisons possibles de ce dernier
+        * On ajoute `tuple` à la `Tuples tuples`, la liste de tous les tuples du fichier.
+        * On indique dans une HashMap que la ligne subit une modification en lui notifiant que `tuple` est lié à cette ligne
+* On calcule le nombre de fichier à générer
+* On boucle sur ce nombre de fichier. Pour un fichier n°i :
+    * On crée le fichier n°i
+    * On trouve alors le bon ensemble de combinaisons. Pour trouver la bonne combiaison pour chaque tuple à partir du numéro de fichier i, on procède comme un compteur à base différente pour chaque digit, où chaque digit représente une taille, et contient la k-ième combinaison pour les tuples de cette taille. A noter la cohérence avec la formule (i) qui correspond au maximum du compteur. (2)
+        * On parcourt donc chaque tuple l'on stocke sa combinaison pour ce fichier i
+    * On remplit le fichier i en lisant le fichier original ligne par ligne
+        * Si la ligne i doit subit une modification :
+            * Pour chaque tuple lié à la ligne, on remplace celui-ci par la combinaison correspondant au fichier i
+            * On imprime la nouvelle ligne
+        * Sinon, on imprime la ligne lue
+```
+
+Plusieurs aspects peuvent sembler d'un premier abord pouvoir ne pas être optimaux (remplacement du tuple en temps réel, gestion des combinaisons, ...) mais l'implantation pratique nous a conduit à poser ces choix, dont la justification serait trop longue pour avoir sa place dans un aperçu qui se veut par nature succinct.
+De plus, ceci est un pseudo-code simplifié et approximatif, il y a en réalité bien d'autres détails qui complexifient le travail.
+
+(2) : _**Exemple :** un fichier qui contient 1 tuple de taille 2, 1 tuple de taille 4, et 2 tuple de taille 5, on a [0,0,0] qui contiendra la i-ème combinaison de chaque tuple indexé par sa taille. La 2ème case du tableau indique que tous les tuples de taille 4 subissent le 0-ième parenthésage. Le contenu de la 2ème case variera de 0 à 4._
+
+#### Résultats
+
+Les résultats sont positifs de manière certaine pour NS-Completed.pv, NeedhamSchroederPK.pv, certains fichiers tests, quant aux fichiers générés (au nombre de 10, ce qui est correct) pour NeedhamSchroederSK ils sont en cours de vérification mais sont également justes avec une probabilité supérieure à 90%, toutes les estimations de ces résultats étant sous réserve que nous ayions bien cerné les enjeux du problème étudié.
+
+### Avancement au 11/03/2019
 ---
 
 ###### Analyseur lexical
@@ -37,7 +100,7 @@ On voit bien avec l'exemple ci-dessus que les règles ne concernent pas uniqueme
   * l'intérêt exact des fonctions sign, get keys, insert keys
   * les fonctions in (nous avons du mal à comprendre quelle machine recoit bel et bien le message dans la fonction in)
 
-##### Avancement au 26/02/2019
+### Avancement au 26/02/2019
 ---
 
 ###### Modification des fichiers d'exemples
@@ -55,7 +118,7 @@ On voit bien avec l'exemple ci-dessus que les règles ne concernent pas uniqueme
 * Nous avons repris la grammaire modifée du langage, que nous avons écrite dans [AntlrWorks](https://www.antlr3.org/works/), afin d'exploiter [ANTLR](https://doc.lagout.org/programmation/Pragmatic%20Programmers/The%20Definitive%20ANTLR%20Reference.pdf). Après la résolution de quelques problèmes (récursivité, cycles, ...) nous obtenons une première version d'un parseur. Nous devons encore affiner nos tests car nous n'avons pas eu le temps de vérifier le bon fonctionnement du parseur sur une batterie de tests suffisemment importante.
 
 
-##### Avancement au 11/02/2019
+### Avancement au 11/02/2019
 ---
 
 ###### Modification des fichiers d'exemples
