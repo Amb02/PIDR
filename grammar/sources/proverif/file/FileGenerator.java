@@ -9,6 +9,8 @@ public class FileGenerator {
 	public static File logFile;
 	public static String name;
 
+	public static final String EXTENSION = ".pv";
+
 	public static final String LOG_DIRECTORY_PATH = "logs/";
 
 	public static void newLogFile (String name_, String path) {

@@ -7,8 +7,8 @@ public final class Combinations{
 
 	private final Tuples tuples;
 
-	private ArrayList<Integer> 			sizes 					= new ArrayList();
-	private int 						numberOfFiles 			= -1;
+	private ArrayList<Integer> sizes = new ArrayList();
+	private int numberOfFiles = -1;
 	public 	HashMap<Integer,Integer>	numberOfCombinations	= new HashMap();
 
 

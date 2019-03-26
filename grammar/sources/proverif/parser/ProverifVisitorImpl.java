@@ -44,7 +44,19 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
   }
 
   private void tupleCreation (ParserRuleContext ctx) {
-    Tuple tuple  = new Tuple(ctx);
+    Token start = ctx.getStart();
+    Token end = ctx.getStop();
+    int tokPos = start.getTokenIndex();
+    int tokenPosEnd = end.getTokenIndex();
+
+    List<Token> refDefaultChannel = tokens.getTokens(tokPos, tokenPosEnd);
+
+    StringBuilder originalString = new StringBuilder();
+    for (Token t : refDefaultChannel) {
+      originalString.append(t.getText());
+    }
+
+    Tuple tuple  = new Tuple(ctx, originalString.toString());
     tuples.add(tuple);
 
     int line = ctx.getStart().getLine();

@@ -9,7 +9,7 @@ import java.util.Comparator;
 
 
 public class Tuple extends ArrayList<String> implements Comparable<Tuple>{
-	private String originalForm = null;
+	private String originalForm;
 	private ArrayList<String> combinations;
 
 	private boolean isElement (String text) {
@@ -20,10 +20,10 @@ public class Tuple extends ArrayList<String> implements Comparable<Tuple>{
 		super();
 	}
 
-	public Tuple (ParserRuleContext ctx) {
+	public Tuple (ParserRuleContext ctx, String originalString) {
 
 		this.combinations	= new ArrayList<>();
-		originalForm = ctx.getText();
+		originalForm = originalString;
 		ArrayList<ParseTree> list = new ArrayList();
 
 		for (int i = 0 ; i < ctx.getChildCount() ; i++){

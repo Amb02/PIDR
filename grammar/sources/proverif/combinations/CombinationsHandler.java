@@ -51,12 +51,12 @@ public class CombinationsHandler{
 		new File(directoryName).mkdirs();
 
 		for (int fileIndex = 0 ; fileIndex < numberOfFiles ; fileIndex++){
-			File file = new File(directoryName + "/" + originalFileName + "_" +(fileIndex+1)+".pv.log");
+			File file = new File(directoryName + "/" + originalFileName + "_" +(fileIndex+1) + FileGenerator.EXTENSION);
 			// fichier vide qui sera le nouveau fichier n° fileIndex
-			System.out.println(file.getName()+" created");
+			System.out.println(file.getName() + " created");
 			HashMap<Tuple,String> correspondanceMap = new HashMap();
 
-			StringBuilder listOfNewTuples = new StringBuilder("\nFile n°"+fileIndex+" :\n< ");
+			StringBuilder listOfNewTuples = new StringBuilder("\nFile n°" + fileIndex + " :\n< ");
 
 			for (Tuple tuple : tuples){
 				int indexOfSize = sizes.indexOf(tuple.size());
@@ -119,14 +119,13 @@ public class CombinationsHandler{
 					ArrayList<Tuple> listOfTupleInThisLine 	= referenceLines.get(line);
 					newLine = readLine;
 					for (Tuple tuple : listOfTupleInThisLine){
-						newLine = newLine.replaceAll("\\s+","");
 						String originalString = tuple.getOriginalForm();
 						String newString = correspondanceMap.get(tuple);
 
-						if (!originalString.equals(newString.replaceAll("\\s+", ""))) {
-							//System.out.println("complete string to replace from : " + newLine + " pattern to look for : " + originalString + " replaced with :" + newString);
+						if (!originalString.replaceAll("\\s+", "").equals(newString.replaceAll("\\s+", ""))) {
+							System.out.println("complete string to replace from : " + newLine + " pattern to look for : " + originalString + " replaced with :" + newString);
 							newLine = replaceLine(newLine, originalString, newString);  //on modifie la ligne (CTRL+F tuple original / combinaison)
-							//System.out.println("giving :  " + newLine );
+							System.out.println("giving :  " + newLine );
 						}
 					}
 				}
