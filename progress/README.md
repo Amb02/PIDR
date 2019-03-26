@@ -17,7 +17,7 @@ La première étape consiste à concevoir toutes les combinaisons d'ensemble de 
 
 Nous avons donc fait le choix d'adopter la même stratégie de parenthésage pour tous les tuples de même longueur.
 
-_**Exemple :** un fichier qui ne contient 3 tuples de taille 3 et 10 tuples de taille 4 génèreront `(nombre de possibilités pour un tuple de taille 3) * (nombre de possibilités pour un tuple de taille 4)` _(1)_ ._
+_**Exemple :** un fichier qui contient 3 tuples de taille 3 et 10 tuples de taille 4 génèreront `(nombre de possibilités pour un tuple de taille 3) * (nombre de possibilités pour un tuple de taille 4)` _(1)_ ._
 
 ##### Génération de fichiers
 
@@ -39,7 +39,7 @@ Voici ci-dessous une brève synthèse de la manière dont nous procédons.
     * Si un Tuple est recontré :
         * On crée un objet `Tuple tuple` contenant ce dernier
             * On génère en attribut de cet objet toutes les combinaisons possibles de ce dernier
-        * On ajoute `tuple` à la `Tuples tuples`, la liste de tous les tuples du fichier.
+        * On ajoute `tuple` à la liste `Tuples tuples`, la liste de tous les tuples du fichier.
         * On indique dans une HashMap que la ligne subit une modification en lui notifiant que `tuple` est lié à cette ligne
 * On calcule le nombre de fichier à générer
 * On boucle sur ce nombre de fichier. Pour un fichier n°i :
@@ -48,7 +48,7 @@ Voici ci-dessous une brève synthèse de la manière dont nous procédons.
     _**Exemple :** un fichier qui contient 1 tuple de taille 2, 1 tuple de taille 4, et 2 tuple de taille 5, on a [0,0,0] qui contiendra la i-ème combinaison de chaque tuple indexé par sa taille. La 2ème case du tableau indique que tous les tuples de taille 4 subissent le 0-ième parenthésage. Le contenu de la 2ème case variera de 0 à 4._
         * On parcourt donc chaque tuple l'on stocke sa combinaison pour ce fichier i
     * On remplit le fichier i en lisant le fichier original ligne par ligne
-        * Si la ligne i doit subit une modification :
+        * Si la ligne i doit subir une modification :
             * Pour chaque tuple lié à la ligne, on remplace celui-ci par la combinaison correspondant au fichier i
             * On imprime la nouvelle ligne
         * Sinon, on imprime la ligne lue
