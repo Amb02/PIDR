@@ -45,8 +45,7 @@ Voici ci-dessous une brève synthèse de la manière dont nous procédons.
 * On boucle sur ce nombre de fichier. Pour un fichier n°i :
     * On crée le fichier n°i
     * On trouve alors le bon ensemble de combinaisons. Pour trouver la bonne combiaison pour chaque tuple à partir du numéro de fichier i, on procède comme un compteur à base différente pour chaque digit, où chaque digit représente une taille, et contient la k-ième combinaison pour les tuples de cette taille. A noter la cohérence avec la formule (i) qui correspond au maximum du compteur.
-      _**Exemple :** un fichier qui contient 1 tuple de taille 2, 1 tuple de taille 4, et 2 tuple de taille 5, on a [0,0,0] qui contiendra la i-ème combinaison de chaque tuple indexé par sa taille. La 2ème case du tableau indique que tous les tuples de taille 4 subissent le 0-ième parenthésage. Le contenu de la 2ème case variera de 0 à 4._
-
+    _**Exemple :** un fichier qui contient 1 tuple de taille 2, 1 tuple de taille 4, et 2 tuple de taille 5, on a [0,0,0] qui contiendra la i-ème combinaison de chaque tuple indexé par sa taille. La 2ème case du tableau indique que tous les tuples de taille 4 subissent le 0-ième parenthésage. Le contenu de la 2ème case variera de 0 à 4._
         * On parcourt donc chaque tuple l'on stocke sa combinaison pour ce fichier i
     * On remplit le fichier i en lisant le fichier original ligne par ligne
         * Si la ligne i doit subit une modification :
