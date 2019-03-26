@@ -48,8 +48,8 @@ not attacker(new Kbs).
 
 free A, B: host.
 
-(* the table host names/keys 
-   The key table consists of pairs 
+(* the table host names/keys
+   The key table consists of pairs
    (host, key shared between the host and the server) *)
 table keys(host, key).
 
@@ -107,7 +107,7 @@ let processInitiator =
 	out(c, encrypt(secretA, k)).
 
 (* Role of the responder with identity xB and key kbs shared with S *)
-                         
+
 let processResponder =
 	(* Session secret *)
 	new secretB: bitstring;
@@ -154,7 +154,7 @@ process
 	insert keys(B, Kbs);
 	(
           (* Launch an unbounded number of sessions of the initiator *)
-          (!processInitiator) | 
+          (!processInitiator) |
           (* Launch an unbounded number of sessions of the responder *)
           (!processResponder) |
           (* Launch an unbounded number of sessions of the server *)
@@ -162,4 +162,3 @@ process
           (* Key registration process *)
 	  (!processK)
         )
-

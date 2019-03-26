@@ -26,7 +26,7 @@ public final class Combinations{
 
 	/**
 	* The aim of this function is
-	* 	- to avoid mutiple creations (and parsing) of the array "sizes"
+	* - to avoid mutiple creations (and parsing) of the array "sizes"
 	*	- to avoid mutiple caclulating of numberOfFiles (replace the old numberOfFiles-function)
 	*	- to full the sizes-attribute of the class with the array "sizes"
 	*/
@@ -38,8 +38,6 @@ public final class Combinations{
 				sizes.add(currentSize);
 				this.numberOfCombinations.put(currentSize,tuple.getCombinations().size());
 				numberOfFiles = numberOfFiles * tuple.getCombinations().size(); //nombre de combinaisons possibles
-
-
 			}
 		}
 		//System.out.println("sizes : "+sizes);
@@ -47,8 +45,8 @@ public final class Combinations{
 		this.numberOfFiles	= numberOfFiles;
 	}
 
-	public int					getnumberOfFiles()	{ return this.numberOfFiles;}
-	public ArrayList<Integer>	getSizes()			{ return this.sizes;		}
-	public Tuples				getTuples()			{ return this.tuples;		}
+	public int getnumberOfFiles() { return this.numberOfFiles;}
+	public ArrayList<Integer>	getSizes() { return this.sizes;		}
+	public Tuples getTuples()			{ return this.tuples;		}
 
 }

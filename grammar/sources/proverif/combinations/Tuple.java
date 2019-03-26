@@ -23,12 +23,10 @@ public class Tuple extends ArrayList<String> implements Comparable<Tuple>{
 	public Tuple (ParserRuleContext ctx) {
 
 		this.combinations	= new ArrayList<>();
-
 		originalForm = ctx.getText();
 		ArrayList<ParseTree> list = new ArrayList();
 
 		for (int i = 0 ; i < ctx.getChildCount() ; i++){
-
 			ParseTree child = ctx.getChild(i);
 			String txt = child.getText();
 

@@ -119,7 +119,15 @@ public class CombinationsHandler{
 					ArrayList<Tuple> listOfTupleInThisLine 	= referenceLines.get(line);
 					newLine = readLine;
 					for (Tuple tuple : listOfTupleInThisLine){
-						newLine = replaceLine(newLine,tuple.getOriginalForm(),correspondanceMap.get(tuple));  //on modifie la ligne (CTRL+F tuple original / combinaison)
+						newLine = newLine.replaceAll("\\s+","");
+						String originalString = tuple.getOriginalForm();
+						String newString = correspondanceMap.get(tuple);
+
+						if (!originalString.equals(newString.replaceAll("\\s+", ""))) {
+							//System.out.println("complete string to replace from : " + newLine + " pattern to look for : " + originalString + " replaced with :" + newString);
+							newLine = replaceLine(newLine, originalString, newString);  //on modifie la ligne (CTRL+F tuple original / combinaison)
+							//System.out.println("giving :  " + newLine );
+						}
 					}
 				}
 				writtingBuffer.write(newLine);
@@ -137,7 +145,6 @@ public class CombinationsHandler{
 	private String replaceLine(String txt, String fromStr, String toStr){
 		CharSequence from 	= fromStr;
 		CharSequence to 	= toStr;
-
 		return txt.replace(from,to);
 	}
 
