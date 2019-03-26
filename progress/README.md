@@ -25,7 +25,7 @@ Chaque fichier créé correspond à une combinaison d'ensemble de parenthésage,
 
 Nous avons donc longuement réfléchi sur l'algorithme et son implantation pratique en Java pour la génération de combinaison d'un tuple : pour une liste donnée, générer toutes les listes contenant les mêmes éléments dans le même ordre de telle sorte à ce que chaque liste ne contienne que 2 éléments.
 
-_**Exemple :** un fichier qui ne contient que des tuples de taille 2 ne génère pas de fichier supplémentaires._
+_**Exemple :** un fichier qui ne contient que des tuples de taille 2 ne génère pas de fichier supplémentaire._
 
 _**Exemple :** un fichier qui contient 1 tuple de taille 2, 1 tuple de taille 4, et 2 tuple de taille 5, génère 980 fichiers._
 
