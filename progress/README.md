@@ -27,7 +27,7 @@ Nous avons donc longuement réfléchi sur l'algorithme et son implantation prati
 
 _**Exemple :** un fichier qui ne contient que des tuples de taille 2 ne génère pas de fichier supplémentaire._
 
-_**Exemple :** un fichier qui contient 1 tuple de taille 2, 1 tuple de taille 4, et 2 tuple de taille 5, génère 980 fichiers._
+_**Exemple :** un fichier qui contient 1 tuple de taille 2, 1 tuple de taille 4, et 2 tuple de taille 5, génère 70 fichiers._
 
 Les fichiers générés sont dans le dossier qui porte le nom du protocole, lui-même situé dans le dossier logs (qui est situé [ici](https://github.com/Amb02/PIDR/tree/master/grammar/sources), après compilation et exécution).
 
