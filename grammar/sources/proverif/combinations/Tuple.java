@@ -56,12 +56,12 @@ public class Tuple extends ArrayList<String> implements Comparable<Tuple>{
 				for (String droiteString : droite) {
 					membreGauche = gaucheString;
 
-					if (gaucheString.length() != 1){
+					if (gaucheString.contains(",")){
 						membreGauche = "(" + membreGauche + ")";
 					}
 
 					membreDroite = droiteString;
-					if (droiteString.length() != 1) {
+					if (droiteString.contains(",")) {
 						membreDroite = "(" + membreDroite + ")";
 					}
 
