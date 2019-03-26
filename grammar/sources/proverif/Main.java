@@ -15,7 +15,6 @@ public class Main {
 
 	public static void main (String [] args) {
 
-		FileGenerator.cleanDirectory(FileGenerator.LOG_DIRECTORY_PATH);
 		String path = "default";
 
 		try {

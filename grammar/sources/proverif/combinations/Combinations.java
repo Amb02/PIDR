@@ -40,8 +40,7 @@ public final class Combinations{
 				numberOfFiles = numberOfFiles * tuple.getCombinations().size(); //nombre de combinaisons possibles
 			}
 		}
-		//System.out.println("sizes : "+sizes);
-		//System.out.println("numberOfCombinations : "+numberOfCombinations);
+
 		this.numberOfFiles	= numberOfFiles;
 	}
 

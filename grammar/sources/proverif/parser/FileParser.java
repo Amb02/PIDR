@@ -114,9 +114,6 @@ public class FileParser {
 		HashMap<Integer, ArrayList<Tuple> > referenceLines 	= ProverifVisitorImpl.referenceLines;
 		//references lines contient < les lignes qui doivent subir une modif (ie : contiennent un tuple) , ce tuple >
 		Combinations combinations = new Combinations(tuples);
-		System.out.println("\nTuples found :" + tuples);
-
-		System.out.println(""+combinations.getnumberOfFiles()+" files should be created");
 
 		CombinationsHandler combinationsHandler = new CombinationsHandler(combinations,referenceLines);
 	}

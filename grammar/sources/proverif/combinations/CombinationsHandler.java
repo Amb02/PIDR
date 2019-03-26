@@ -31,7 +31,7 @@ public class CombinationsHandler{
 		this.tuples			= combinations.getTuples();
 		this.referenceLines	= referenceLines;
 		findOriginalFile();
-		//System.out.println("Original File founed : "+originalFile.getName());
+		//System.out.println("Original File found : "+originalFile.getName());
 		// Le fichier original est stocké dans /logs, avec une syntaxe particulière
 		ParseCombinations();
 
@@ -48,6 +48,7 @@ public class CombinationsHandler{
 		String originalFileName = FileGenerator.getOriginalName();
 		String directoryName = "logs/" + originalFileName;
 		System.out.println("Creation du dossier " + directoryName);
+		FileGenerator.cleanDirectory(directoryName);
 		new File(directoryName).mkdirs();
 
 		for (int fileIndex = 0 ; fileIndex < numberOfFiles ; fileIndex++){
@@ -123,9 +124,9 @@ public class CombinationsHandler{
 						String newString = correspondanceMap.get(tuple);
 
 						if (!originalString.replaceAll("\\s+", "").equals(newString.replaceAll("\\s+", ""))) {
-							System.out.println("complete string to replace from : " + newLine + " pattern to look for : " + originalString + " replaced with :" + newString);
+							//System.out.println("complete string to replace from : " + newLine + " pattern to look for : " + originalString + " replaced with :" + newString);
 							newLine = replaceLine(newLine, originalString, newString);  //on modifie la ligne (CTRL+F tuple original / combinaison)
-							System.out.println("giving :  " + newLine );
+							//System.out.println("giving :  " + newLine );
 						}
 					}
 				}

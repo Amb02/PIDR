@@ -93,7 +93,6 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
   private void operationOnSequence (String sequenceName, ParserRuleContext ctx) {
     //displayRuleFound(sequenceName, ctx);
     tupleCreation(ctx);
-    System.out.println("tuple créé l."+ctx.getStart().getLine());
 
     visitChildren(ctx);
   }
@@ -101,6 +100,7 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
   @Override
   public String visitPatternSequence (ProverifParser.PatternSequenceContext ctx) {
     operationOnSequence("Pattern", ctx);
+    
     return null;
   }
 
