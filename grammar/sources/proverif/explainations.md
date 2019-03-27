@@ -5,9 +5,12 @@
 ### But
 
 Ce document vise à expliquer brièvement la manière dont nous procédons pour générer l'ensemble des fichiers correspondant à un fichier donné sur lequel on effectue la transformation suivante : pour tous les tuples correspondant à un échange de données dans le protocole de n éléments, on s'intéresse à la générations de toutes ses combinaisons définie ainsi :
-E={xi}i dans [|0,n|], n dans N, xi dans <String>
-f : E -> F / qqesoit i dans [|0,n|] xi dans E <=> xi dans F et qqesoit (i,j) dans [|0,n|]², i<"j", E.indexOf(xi)<E.indexOf(xj) <=> F.indexOf(xi)<F.indexOf(xj)
-F={yj}j dans [|0,m|], m dans N, yj dans FUE.
+
+&forall; n &isin; N, E<sub>n</sub>={x<sub>i</sub>}<sub>i &isin; [|0,n|]</sub>, x<sub>i</sub> dans {String}
+
+f : E -> F / &forall; i &isin; [|0,n|] x<sub>i</sub> &isin; E => x<sub>i</sub> &isin; F et &forall; (i,j) &isin; [|0,n|]², i<"j", E.indexOf(x<sub>i</sub>)<E.indexOf(x<sub>j</sub>) <=> F.indexOf(x<sub>i</sub>)<F.indexOf(x<sub>j</sub>)
+
+F={y<sub>j</sub>}<sub>j dans [|0,m|]</sub>, m &isin; N, y<sub>j</sub> &isin; FUE.
 
 ### Vocabulaire
 
