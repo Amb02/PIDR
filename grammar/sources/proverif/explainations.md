@@ -1,6 +1,24 @@
 # Explications des choix de conceptions
 
-//introduction-plan
+## Introduction
+
+### But
+
+Ce document vise à expliquer brièvement la manière dont nous procédons pour générer l'ensemble des fichiers correspondant à un fichier donné sur lequel on effectue la transformation suivante : pour tous les tuples correspondant à un échange de données dans le protocole de n éléments, on s'intéresse à la générations de toutes ses combinaisons définie ainsi :
+E={xi}i dans [|0,n|], n dans N, xi dans <String>
+f : E -> F / qqesoit i dans [|0,n|] xi dans E <=> xi dans F et qqesoit (i,j) dans [|0,n|]², i<"j", E.indexOf(xi)<E.indexOf(xj) <=> F.indexOf(xi)<F.indexOf(xj)
+F={yj}j dans [|0,m|], m dans N, yj dans FUE.
+
+### Vocabulaire
+
+On appelle fichier original un fichier à étudier.
+On appelle fichier fils un fichier original après transformation telle que définie ci-dessus.
+On appelle tuple un tuple correspondant à un échange de données dans le protocole.
+Sauf mention contraire, le vocabulaire utilisé pour décrire nos choix (tels que ceux des structures de données, par exemple) correspond à celui du langage Java.
+
+### Document
+
+Ce docuement présentera succintement les classes que nous créons, puis ce qu'il se passe lors de l'exécution du code, et enfin quelques précisions sur les choix que nous avons dû poser.
 
 ## But des classes
 
