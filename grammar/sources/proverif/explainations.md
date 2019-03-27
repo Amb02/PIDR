@@ -32,7 +32,37 @@ Ce docuement présentera succintement les classes que nous créons, puis ce qu'i
 
 ## Chronologie des événements
 
-//pseudo-code du readme plus détaillé
+
+
+
+* Parsing du fichier original
+    * Si un Tuple est recontré :
+        * On crée un objet `Tuple tuple` contenant ce dernier
+            * On génère en attribut de cet objet toutes les combinaisons possibles de ce dernier
+        * On ajoute `tuple` à la liste `Tuples tuples`, la liste de tous les tuples du fichier.
+        * On indique dans une HashMap que la ligne subit une modification en lui notifiant que `tuple` est lié à cette ligne
+* On calcule le nombre de fichier à générer
+
+**Implantation 	:** `sizes` est la liste des tailles de tuples existantes dans le fichier original.
+
+_**Exemple 		:** `sizes={3,6,7}` veut dire que le fichier contient et ne contient que des tuples de taille 3, 6, et 7._
+* On boucle sur ce nombre de fichier. Pour un fichier n°i :
+    * On crée le fichier n°i
+    * On trouve alors le bon ensemble de combinaisons. Pour trouver la bonne combiaison pour chaque tuple à partir du numéro de fichier i, on procède comme un compteur à base différente pour chaque digit, où chaque digit représente une taille, et contient la k-ième combinaison pour les tuples de cette taille. A noter la cohérence avec la formule (i) qui correspond au maximum du compteur.
+    
+    **Implantation 	:** `indexOfCombinations` renseigne pour chaque taille quelle combinaison doit être utilisée. `indexOfCombinations` est donc de taille ` sizes.size()`. De plus, `indexOfCombinations.get(k)`, renseigne sur la combinaisons des tuples de taille k correspondant à une taille ` indexOfCombinations.get(k)`. En pratique, on aura besoin de remonter la chaîne d'informations dans l'autre sens. A partir d'un tuple, on veut accéder à sa combinaison. On veut donc obtenir son indice dans `indexOfCombinations`, ce qui nous est donné, pour un tuple donné `tuple` par ` sizes.indexOf(tuple.size())`. Enfin, il est à noter que pour un tuple de taille k, sa case correspondante dans `indexOfCombinations` varie entre 0 et le nombre de combinaisons possibles pour un tuple de taille k.
+    
+    _**Exemple 		:** En reprenant l'exemple précédent, pour `indexOfCombinations={1,3,0}`, tous les tuples de taille 3 seront parenthésés selon le 2ème parenthésage (n°1), ceux de taille 6 avec le 4ème, et ceux de taille 7 avec le 1er._
+        * On parcourt donc chaque tuple dont l'on stocke la combinaison pour ce fichier i
+    * On remplit le fichier i en lisant le fichier original ligne par ligne
+        * Si la ligne i doit subir une modification :
+            * Pour chaque tuple lié à la ligne, on remplace celui-ci par la combinaison correspondant au fichier i
+            * On imprime la nouvelle ligne
+        * Sinon, on imprime la ligne lue
+
+
+
+
 
 ## Choix posés
 
