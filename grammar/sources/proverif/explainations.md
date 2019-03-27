@@ -10,7 +10,7 @@ Ce document vise à expliquer brièvement la manière dont nous procédons pour 
 
 f : E -> F / &forall; i &isin; [|0,n|] x<sub>i</sub> &isin; E => x<sub>i</sub> &isin; F et &forall; (i,j) &isin; [|0,n|]², i<"j", E.indexOf(x<sub>i</sub>)<E.indexOf(x<sub>j</sub>) <=> F.indexOf(x<sub>i</sub>)<F.indexOf(x<sub>j</sub>)
 
-F={y<sub>j</sub>}<sub>j dans [|0,m|]</sub>, m &isin; N, y<sub>j</sub> &isin; FUE.
+F={y<sub>j</sub>}<sub>j &isin; [|0,m|]</sub>, m &isin; N, y<sub>j</sub> &isin; FUE et &forall; j &isin; [|0,m|], si y<sub>j</sub> &isin;F, taille (y<sub>j</sub>) = 2
 
 ### Vocabulaire
 
