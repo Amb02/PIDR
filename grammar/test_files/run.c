@@ -12,15 +12,9 @@ void usageError(){
 }
 
 int runFile(char* file){
-	char * fileCmd = malloc((strlen(file)+10)*sizeof(char));
-//	strcpy(fileCmd,"proverif ");
-	strcpy(fileCmd,"echo ");
-	strcat(fileCmd, file);
 	char *command[] = {
-//		"/mnt/c/Users/ambro/Documents/Installateurs/ProVerif/proverif2.00.tar/proverif2.00/",
-		"/bin/bash",
-		"-c",
-		fileCmd,
+		"../../proverif2.00/proverif",
+		file,
 		NULL
 	};
 	execvp(command[0], command);
