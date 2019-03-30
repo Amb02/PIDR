@@ -42,8 +42,6 @@ public class FileGenerator {
 			for (File file : directory.listFiles()) {
 				file.delete();
 			}
-		} else {
-			System.err.println("The directory : " + path + " that you are trying to clean does not exist");
 		}
 	}
 

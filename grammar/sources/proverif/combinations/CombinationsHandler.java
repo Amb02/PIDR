@@ -53,6 +53,13 @@ public class CombinationsHandler{
 
 		for (int fileIndex = 0 ; fileIndex < numberOfFiles ; fileIndex++){
 			File file = new File(directoryName + "/" + originalFileName + "_" +(fileIndex+1) + FileGenerator.EXTENSION);
+			
+			try {
+				Files.deleteIfExists(file.toPath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 			// fichier vide qui sera le nouveau fichier n° fileIndex
 			System.out.println(file.getName() + " created");
 			HashMap<Tuple,String> correspondanceMap = new HashMap();
