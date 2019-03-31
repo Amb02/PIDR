@@ -1,37 +1,85 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <string.h>
+#include <dirent.h>
+#include <unistd.h>
 
 #include "checkFile.h"
 
-void usageError(){
+#define PARENT_DIRECTORY ".."
+#define CURRENT_DIRECTORY "."
+
+#define STRING_BUFFER_SIZE 1024
+
+
+void usageError() {
 	fprintf(stderr, "Use \"run\" like this :\n$ ./run [fileName.pv]\nexit...\n");
 	exit(3);
 }
 
+int isDirectory (struct dirent * file) {
+	return file->d_type == DT_DIR;
+}
+
+int is_parent (struct dirent *file) {
+	const char * name = file->d_name;
+
+	return strcmp(name, PARENT_DIRECTORY) == 0;
+}
+
+int is_current (struct dirent * file) {
+	const char * name = file->d_name;
+
+	return strcmp(name, CURRENT_DIRECTORY) == 0;
+}
+
+void validate_directory (DIR * directory) {
+	if (directory == NULL) {
+		fprintf(stderr, "Impossible to open the directory\n");
+		exit(EXIT_FAILURE);
+	}
+}
+
+void browse_directory (char * file_name) {
+	char * path = (char *) malloc(STRING_BUFFER_SIZE * sizeof(char));
+	struct dirent * file_reader;
+	DIR * directory;
+
+	directory = opendir(file_name);
+
+	validate_directory(directory);
+
+	while ((file_reader = readdir(directory)) != NULL) {
+		if (isDirectory(file_reader)) {
+			if (!is_parent(file_reader) && !is_current(file_reader)) {
+				strcpy(path, file_name);
+				strcat(path, "/");
+				strcat(path, file_reader->d_name);
+
+				browse_directory(path);
+			}
+		} else {
+			char * name = file_reader->d_name;
+			strcpy(path, file_name);
+			strcat(path, name);
+
+			fprintf(stdout, "File being investigated : %s\n", name);
+
+			runFile(path);
+		}
+	}
+
+	free(path);
+	closedir(directory);
+}
+
 int main(int argc, char *argv[]){
-	char* filename;
+	char* file_name;
 	if (argc!=2){usageError();}
-	else {filename = argv[1];}
+	else {file_name = argv[1];}
 
-	/*pid_t parent = getpid();
-	pid_t pid = fork();
+	browse_directory(file_name);
 
-	if (pid == -1){
-		fprintf(stderr, "Fork error\n" );
-		exit(1);
-	} 
-	else if (pid > 0){
-		//printf("Father : continue\n");
-		int status;
-		waitpid(pid, &status, 0);
-	} else {
-		//printf("Child : exec\n");
-		runFile(filename);
-		fprintf(stderr, "after exec\n" );
-		exit(2);
-	}*/
-
-	runFile(filename);
 	return 0;
 }

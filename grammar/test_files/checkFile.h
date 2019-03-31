@@ -10,7 +10,11 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <time.h>
 
+#define TIME_BEFORE_ALARM 30
+
+pid_t pid;
 
 int		sizeOfFile		(FILE* file);
 void	executeProverif	(char* file);
