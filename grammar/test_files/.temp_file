@@ -1,0 +1,100 @@
+File "../../examples/NS-completed/gauche_droite.pv", line 51, character 7:
+Warning: identifier n rebound.
+File "../../examples/NS-completed/gauche_droite.pv", line 52, character 7:
+Warning: identifier n rebound.
+File "../../examples/NS-completed/gauche_droite.pv", line 53, character 7:
+Warning: identifier n rebound.
+File "../../examples/NS-completed/gauche_droite.pv", line 55, character 7:
+Warning: identifier n rebound.
+File "../../examples/NS-completed/gauche_droite.pv", line 56, character 7:
+Warning: identifier n rebound.
+File "../../examples/NS-completed/gauche_droite.pv", line 57, character 7:
+Warning: identifier n rebound.
+Process:
+{1}new skA: skey;
+{2}new skB: skey;
+{3}new skC: skey;
+{4}let pkA: pkey = pk(skA) in
+{5}out(c, pkA);
+{6}let pkB: pkey = pk(skB) in
+{7}out(c, pkB);
+{8}let pkC: pkey = pk(skC) in
+{9}out(c, skC);
+{10}!
+{11}new n: bitstring;
+(
+    {12}out(c, aenc((A,n),pkB));
+    {13}in(c, x_16: bitstring);
+    {14}let (=B,(=n,nn: bitstring)) = adec(x_16,skA) in
+    {15}out(c, aenc(nn,pkB))
+) | (
+    {16}!
+    {17}new n_17: bitstring;
+    (
+        {18}out(c, aenc((A,n_17),pkC));
+        {19}in(c, x_18: bitstring);
+        {20}let (=C,(=n_17,nn_19: bitstring)) = adec(x_18,skA) in
+        {21}out(c, aenc(nn_19,pkC))
+    ) | (
+        {22}!
+        {23}new n_20: bitstring;
+        (
+            {24}out(c, aenc((B,n_20),pkA));
+            {25}in(c, x_21: bitstring);
+            {26}let (=A,(=n_20,nn_22: bitstring)) = adec(x_21,skB) in
+            {27}out(c, aenc(nn_22,pkA))
+        ) | (
+            {28}!
+            {29}new n_23: bitstring;
+            (
+                {30}out(c, aenc((B,n_23),pkC));
+                {31}in(c, x_24: bitstring);
+                {32}let (=C,(=n_23,nn_25: bitstring)) = adec(x_24,skB) in
+                {33}out(c, aenc(nn_25,pkC))
+            ) | (
+                {34}!
+                {35}in(c, x_26: bitstring);
+                {36}let (=A,na: bitstring) = adec(x_26,skB) in
+                {37}out(c, aenc((B,(na,nb)),pkA));
+                {38}in(c, y_27: bitstring);
+                {39}if (nb = adec(y_27,skB)) then
+                0
+            ) | (
+                {40}!
+                {41}new n_28: bitstring;
+                (
+                    {42}in(c, x_29: bitstring);
+                    {43}let (=C,na_30: bitstring) = adec(x_29,skB) in
+                    {44}out(c, aenc((B,(na_30,n_28)),pkC));
+                    {45}in(c, y_31: bitstring);
+                    {46}if (n_28 = adec(y_31,skB)) then
+                    0
+                ) | (
+                    {47}!
+                    {48}new n_32: bitstring;
+                    (
+                        {49}in(c, x_33: bitstring);
+                        {50}let (=C,na_34: bitstring) = adec(x_33,skA) in
+                        {51}out(c, aenc((A,(na_34,n_32)),pkC));
+                        {52}in(c, y_35: bitstring);
+                        {53}if (n_32 = adec(y_35,skA)) then
+                        0
+                    ) | (
+                        {54}!
+                        {55}new n_36: bitstring;
+                        {56}in(c, x_37: bitstring);
+                        {57}let (=B,na_38: bitstring) = adec(x_37,skA) in
+                        {58}out(c, aenc((A,(na_38,n_36)),pkB));
+                        {59}in(c, y_39: bitstring);
+                        {60}if (n_36 = adec(y_39,skA)) then
+                        0
+                    )
+                )
+            )
+        )
+    )
+)
+
+-- Query not attacker(nb[])
+Completing...
+200 rules inserted. The rule base contains 178 rules. 4 rules in the queue.

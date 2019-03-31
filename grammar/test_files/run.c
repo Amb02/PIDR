@@ -19,7 +19,7 @@ void usageError() {
 }
 
 int isDirectory (struct dirent * file) {
-	return file->d_type == DT_DIR;
+	return file != NULL && file->d_type == DT_DIR;
 }
 
 int is_parent (struct dirent *file) {
@@ -43,14 +43,12 @@ void validate_directory (DIR * directory) {
 
 void browse_directory (char * file_name) {
 	char * path = (char *) malloc(STRING_BUFFER_SIZE * sizeof(char));
-	struct dirent * file_reader;
+	struct dirent * file_reader = NULL;
 	DIR * directory;
 
 	directory = opendir(file_name);
 
-	validate_directory(directory);
-
-	while ((file_reader = readdir(directory)) != NULL) {
+	while (directory == NULL || (file_reader = readdir(directory)) != NULL) {
 		if (isDirectory(file_reader)) {
 			if (!is_parent(file_reader) && !is_current(file_reader)) {
 				strcpy(path, file_name);
@@ -79,7 +77,15 @@ int main(int argc, char *argv[]){
 	if (argc!=2){usageError();}
 	else {file_name = argv[1];}
 
-	browse_directory(file_name);
+	DIR * directory;
+	directory = opendir(file_name);
+	if (directory == NULL) {
+		runFile(file_name);
+	} else {
+		browse_directory(file_name);
+	}
+
+	closedir(directory);
 
 	return 0;
 }
