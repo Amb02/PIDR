@@ -42,34 +42,39 @@ void validate_directory (DIR * directory) {
 }
 
 void browse_directory (char * file_name) {
-	char * path = (char *) malloc(STRING_BUFFER_SIZE * sizeof(char));
+	char * path;
 	struct dirent * file_reader = NULL;
 	DIR * directory;
 
 	directory = opendir(file_name);
+	if (directory == NULL) {
+		runFile(file_name);
+	} else {
+		path = (char *) malloc(STRING_BUFFER_SIZE * sizeof(char));
 
-	while (directory == NULL || (file_reader = readdir(directory)) != NULL) {
-		if (isDirectory(file_reader)) {
-			if (!is_parent(file_reader) && !is_current(file_reader)) {
+		while ((file_reader = readdir(directory)) != NULL) {
+			if (isDirectory(file_reader)) {
+				if (!is_parent(file_reader) && !is_current(file_reader)) {
+					strcpy(path, file_name);
+					strcat(path, "/");
+					strcat(path, file_reader->d_name);
+
+					browse_directory(path);
+				}
+			} else {
+				char * name = file_reader->d_name;
 				strcpy(path, file_name);
-				strcat(path, "/");
-				strcat(path, file_reader->d_name);
+				strcat(path, name);
 
-				browse_directory(path);
+				fprintf(stdout, "File being investigated : %s\n", name);
+
+				runFile(path);
 			}
-		} else {
-			char * name = file_reader->d_name;
-			strcpy(path, file_name);
-			strcat(path, name);
-
-			fprintf(stdout, "File being investigated : %s\n", name);
-
-			runFile(path);
 		}
-	}
 
-	free(path);
-	closedir(directory);
+		free(path);
+		closedir(directory);
+	}
 }
 
 int main(int argc, char *argv[]){
@@ -77,15 +82,7 @@ int main(int argc, char *argv[]){
 	if (argc!=2){usageError();}
 	else {file_name = argv[1];}
 
-	DIR * directory;
-	directory = opendir(file_name);
-	if (directory == NULL) {
-		runFile(file_name);
-	} else {
-		browse_directory(file_name);
-	}
-
-	closedir(directory);
+	browse_directory(file_name);
 
 	return 0;
 }
