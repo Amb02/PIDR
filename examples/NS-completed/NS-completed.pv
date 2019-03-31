@@ -34,7 +34,7 @@ let clientA(A:host, B:host,pkA:pkey,skA:skey,pkB:pkey,n:bitstring) =
 
 let clientB(B:host,A:host,pkB:pkey,skB:skey,pkA:pkey,n:bitstring) =
     in(c,x:bitstring);
-    let ((a,b,c),na: bitstring) = adec(x,skB) in
+    let (na: bitstring) = adec(x,skB) in
     out(c, aenc((na, n),pkA));
     in(c,y:bitstring);
     if n = adec(y,skB) then 0.
