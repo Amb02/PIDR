@@ -51,6 +51,9 @@ public class CombinationsHandler{
 		FileGenerator.cleanDirectory(directoryName);
 		new File(directoryName).mkdirs();
 
+		
+		copyOriginalFile(directoryName, originalFileName);
+
 		if (numberOfFiles>1){
 
 			for (int fileIndex = 0 ; fileIndex < numberOfFiles ; fileIndex++){
@@ -163,4 +166,15 @@ public class CombinationsHandler{
 	private void findOriginalFile(){
 		originalFile = FileGenerator.getOriginalFile();
 	}
+
+	private void copyOriginalFile(String directoryName, String originalFileName){
+		Path from	= originalFile.toPath();
+	    Path to		= Paths.get(directoryName + "/" + originalFileName + "_0" +FileGenerator.EXTENSION);
+	    try{
+		    Files.copy(from, to, REPLACE_EXISTING);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 }
