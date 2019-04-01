@@ -3,9 +3,45 @@
 int alarm_flag;
 
 void handle_alarm (int sig) {
-	fprintf(stdout, "The proverif execution took more than 30 seconds...\n");
 	alarm_flag = 1;
+	fprintf(stderr, "Took more than %d seconds to finish\n", TIME_BEFORE_ALARM);
+	char * message = (char *) malloc (SMALL_BUFFER_SIZE * sizeof(char));
+	sprintf(message, "%s\n", current_file);
+	fwrite(message, strlen(message), 1, unfinished);
+
+	free(message);
 	kill(pid, SIGKILL);
+}
+
+void open_logs () {
+	current_file = (char *) malloc(SMALL_BUFFER_SIZE * sizeof(char));
+	unfinished = fopen("unfinished.txt", "w");
+	different  = fopen("different.txt", "w");
+
+	if (unfinished == NULL || different == NULL) {
+		fprintf(stderr, "Impossible to create log files\n");
+		exit(3);
+	}
+
+	add_header_to_logs();
+}
+
+void add_header_to_logs () {
+	char * message_unfinished = (char *) malloc(STRING_BUFFER_SIZE * sizeof(char));
+	sprintf(message_unfinished, "The following files did not end under %d seconds :\n", TIME_BEFORE_ALARM);
+	fwrite(message_unfinished, strlen(message_unfinished), 1, unfinished);
+	free(message_unfinished);
+
+	char * message_different = (char *) malloc(STRING_BUFFER_SIZE * sizeof(char));
+	sprintf(message_different, "The following files did not match the results of their parent file : \n");
+	fwrite(message_different, strlen(message_different), 1, different);
+	free(message_different);
+}
+
+void close_logs () {
+	fclose(unfinished);
+	fclose(different);
+	free(current_file);
 }
 
 int sizeOfFile(FILE* file){
@@ -74,6 +110,8 @@ int isSecure(char* file){
 
 
 void runFile(char* file){
+	strcpy(current_file, file);
+
 	executeProverif(file);
 	if (!alarm_flag) {
 		fprintf(stderr, "Exec done\n" );

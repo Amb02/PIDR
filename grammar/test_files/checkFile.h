@@ -14,8 +14,20 @@
 
 #define TIME_BEFORE_ALARM 30
 
+#define STRING_BUFFER_SIZE 1024
+#define SMALL_BUFFER_SIZE 128
+
 pid_t pid;
 
+FILE * unfinished;
+FILE * different;
+
+char * current_file;
+
+void  handle_alarm  (int);
+void  open_logs     ();
+void  close_logs    ();
+void  add_header_to_logs ();
 int		sizeOfFile		(FILE* file);
 void	executeProverif	(char* file);
 int		isSecure		(char* file);

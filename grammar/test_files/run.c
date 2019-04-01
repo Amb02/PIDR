@@ -10,9 +10,6 @@
 #define PARENT_DIRECTORY ".."
 #define CURRENT_DIRECTORY "."
 
-#define STRING_BUFFER_SIZE 1024
-
-
 void usageError() {
 	fprintf(stderr, "Use \"run\" like this :\n$ ./run [fileName.pv]\nexit...\n");
 	exit(3);
@@ -77,12 +74,14 @@ void browse_directory (char * file_name) {
 	}
 }
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
 	char* file_name;
 	if (argc!=2){usageError();}
 	else {file_name = argv[1];}
 
+	open_logs();
 	browse_directory(file_name);
+	close_logs();
 
 	return 0;
 }
