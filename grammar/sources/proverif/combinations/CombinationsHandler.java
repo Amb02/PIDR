@@ -51,37 +51,43 @@ public class CombinationsHandler{
 		FileGenerator.cleanDirectory(directoryName);
 		new File(directoryName).mkdirs();
 
-		for (int fileIndex = 0 ; fileIndex < numberOfFiles ; fileIndex++){
-			File file = new File(directoryName + "/" + originalFileName + "_" +(fileIndex+1) + FileGenerator.EXTENSION);
-			
-			try {
-				Files.deleteIfExists(file.toPath());
-			} catch (IOException e) {
-				e.printStackTrace();
+		
+		copyOriginalFile(directoryName, originalFileName);
+
+		if (numberOfFiles>1){
+
+			for (int fileIndex = 0 ; fileIndex < numberOfFiles ; fileIndex++){
+				File file = new File(directoryName + "/" + originalFileName + "_" +(fileIndex+1) + FileGenerator.EXTENSION);
+				
+				try {
+					Files.deleteIfExists(file.toPath());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				// fichier vide qui sera le nouveau fichier n° fileIndex
+				System.out.println(file.getName() + " created");
+				HashMap<Tuple,String> correspondanceMap = new HashMap();
+
+				StringBuilder listOfNewTuples = new StringBuilder("\nFile n°" + fileIndex + " :\n< ");
+
+				for (Tuple tuple : tuples){
+					int indexOfSize = sizes.indexOf(tuple.size());
+					listOfNewTuples.append("//"+tuple.getCombinations().get(indexOfCombinations.get(indexOfSize))+"\\\\ , ");
+					correspondanceMap.put(tuple,tuple.getCombinations().get(indexOfCombinations.get(indexOfSize)));
+					//correspondance Map contient < le tuple , la combinaison par laquelle il doit être remplacé dans ce fichier >
+				}
+
+				if(fileIndex != numberOfFiles-1) updateIndexOfCombinations(indexOfCombinations,sizes,numberOfFiles);
+
+				listOfNewTuples.append(" >");
+				//System.out.println(listOfNewTuples);
+
+				replaceTuple(file,correspondanceMap);
+				//on remplace dans le fichier tous les tuples par leur combinaison respective
+
 			}
-
-			// fichier vide qui sera le nouveau fichier n° fileIndex
-			System.out.println(file.getName() + " created");
-			HashMap<Tuple,String> correspondanceMap = new HashMap();
-
-			StringBuilder listOfNewTuples = new StringBuilder("\nFile n°" + fileIndex + " :\n< ");
-
-			for (Tuple tuple : tuples){
-				int indexOfSize = sizes.indexOf(tuple.size());
-				listOfNewTuples.append("//"+tuple.getCombinations().get(indexOfCombinations.get(indexOfSize))+"\\\\ , ");
-				correspondanceMap.put(tuple,tuple.getCombinations().get(indexOfCombinations.get(indexOfSize)));
-				//correspondance Map contient < le tuple , la combinaison par laquelle il doit être remplacé dans ce fichier >
-			}
-
-			if(fileIndex != numberOfFiles-1) updateIndexOfCombinations(indexOfCombinations,sizes,numberOfFiles);
-
-			listOfNewTuples.append(" >");
-			//System.out.println(listOfNewTuples);
-
-			replaceTuple(file,correspondanceMap);
-			//on remplace dans le fichier tous les tuples par leur combinaison respective
-
-		}
+		} else System.out.println("No change from the original file");
 
 	}
 
@@ -160,4 +166,15 @@ public class CombinationsHandler{
 	private void findOriginalFile(){
 		originalFile = FileGenerator.getOriginalFile();
 	}
+
+	private void copyOriginalFile(String directoryName, String originalFileName){
+		Path from	= originalFile.toPath();
+	    Path to		= Paths.get(directoryName + "/" + originalFileName + "_0" +FileGenerator.EXTENSION);
+	    try{
+		    Files.copy(from, to, REPLACE_EXISTING);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 }
