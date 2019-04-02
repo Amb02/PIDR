@@ -4,17 +4,23 @@ int alarm_flag;
 
 void handle_alarm (int sig) {
 	alarm_flag = 1;
-	fprintf(stderr, "Took more than %d seconds to finish\n", TIME_BEFORE_ALARM);
-	char * message = (char *) malloc (SMALL_BUFFER_SIZE * sizeof(char));
-	sprintf(message, "%s\n", current_file);
-	fwrite(message, strlen(message), 1, unfinished);
+	fprintf(stderr, "Took more than %d seconds to finish\nLogging in.\n", TIME_BEFORE_ALARM);
+	write_file(unfinished);
 
-	free(message);
 	kill(pid, SIGKILL);
 }
 
+void write_file (FILE * file) {
+	char * message = (char *) malloc (SMALL_BUFFER_SIZE * sizeof(char));
+	sprintf(message, "%s\n", current_file);
+	fwrite(message, strlen(message), 1, file);
+
+	free(message);
+}
 void open_logs () {
 	current_file = (char *) malloc(SMALL_BUFFER_SIZE * sizeof(char));
+	check_parent();
+
 	unfinished = fopen("unfinished.txt", "w");
 	different  = fopen("different.txt", "w");
 
@@ -94,7 +100,7 @@ void executeProverif(char* file){
 
 int isSecure(char* file){
 	FILE* resultsFile = fopen(".temp_file","r");
-	if (resultsFile==NULL){printf("error openning the results\n");}
+	if (resultsFile==NULL){printf("error openning the results\n"); exit(3);}
 
 	int size = sizeOfFile(resultsFile);
 	char * inFile= malloc(size*sizeof(char));
@@ -103,20 +109,42 @@ int isSecure(char* file){
 
 	fclose(resultsFile);
 
-	int secure = (strstr(inFile,"A trace has been found")!=NULL);
+	int secure = (strstr(inFile,"A trace has been found") == NULL);
 	free(inFile);
+
 	return secure;
 }
 
+void check_parent () {
+	check_for_parent = 1;
+}
 
 void runFile(char* file){
+	int secured = 0;
 	strcpy(current_file, file);
 
 	executeProverif(file);
 	if (!alarm_flag) {
-		fprintf(stderr, "Exec done\n" );
-		if (isSecure(file)){printf("trace found\n");} else {printf("no trace\n");}
+		secured = isSecure(file);
+
+		if (check_for_parent) {
+			is_parent_safe = secured;
+			check_for_parent = 0;
+			fprintf(stdout, "Parent file analysed");
+			fprintf(stdout, "\n%s\n", (secured) ? "Secured" : "Not secured");
+		} else {
+			if (secured == is_parent_safe) {
+				fprintf(stdout, "File matching parent results\n");
+			} else {
+				fprintf(stdout, "File not matching parent results\nLogging in");
+
+				write_file(different);
+			}
+		}
+
 	}
+
+	fprintf(stdout, "\n");
 
 	if (remove(".temp_file")!=0) fprintf(stderr, "Error removing temp_file\n");
 }

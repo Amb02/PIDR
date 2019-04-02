@@ -55,7 +55,7 @@ void browse_directory (char * file_name) {
 					strcpy(path, file_name);
 					strcat(path, "/");
 					strcat(path, file_reader->d_name);
-
+					check_parent();
 					browse_directory(path);
 				}
 			} else {
