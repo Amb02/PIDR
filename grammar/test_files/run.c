@@ -53,7 +53,7 @@ void browse_directory (char * file_name) {
 			if (isDirectory(file_reader)) {
 				if (!is_parent(file_reader) && !is_current(file_reader)) {
 					strcpy(path, file_name);
-					strcat(path, "/");
+					if(path[strlen(path) - 1] != '/') strcat(path, "/");
 					strcat(path, file_reader->d_name);
 					check_parent();
 					browse_directory(path);
@@ -61,6 +61,7 @@ void browse_directory (char * file_name) {
 			} else {
 				char * name = file_reader->d_name;
 				strcpy(path, file_name);
+				if(path[strlen(path) - 1] != '/') strcat(path, "/");
 				strcat(path, name);
 
 				fprintf(stdout, "File being investigated : %s\n", name);

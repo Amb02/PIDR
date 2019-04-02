@@ -89,18 +89,21 @@ void executeProverif(char* file){
 
 			fprintf(stdout, "Execution time : %lf\n", time);
 		}
-
 	} else {
 		dup2(fileOutput,1);
 		execvp(command[0], command);
-		fprintf(stderr, "Just after exec\n" );
 		exit(2);
 	}
+
+	close(fileOutput);
 }
 
 int isSecure(char* file){
 	FILE* resultsFile = fopen(".temp_file","r");
-	if (resultsFile==NULL){printf("error openning the results\n"); exit(3);}
+	if (resultsFile==NULL){
+		perror("Error ");
+		exit(3);
+	}
 
 	int size = sizeOfFile(resultsFile);
 	char * inFile= malloc(size*sizeof(char));

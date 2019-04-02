@@ -27,13 +27,13 @@ enum {
   PRINT, //--print
   FILE_NAME_REGEX, // -ename STRING
   FILE_CONTAINING_REGEX, // -T STRING
-  PROVERIF, // --proverif
+  VERIFICATION = 100, // --proverif
   DIRECTORY,
   DEBUG,
 };
 
 #define ARGUMENTS_NUMBER 13
-  
+
 /**
  * option structure contains a flag and an argument
  */

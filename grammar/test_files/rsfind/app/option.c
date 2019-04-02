@@ -78,7 +78,7 @@ int set_argument (option_t * arguments [ARGUMENTS_NUMBER], int index, char * arg
     error = TRUE;
   } else {
     set_option_flag(arguments[index], TRUE);
-    set_option_argument(arguments[index], argument); 
+    set_option_argument(arguments[index], argument);
   }
 
   return error;
@@ -90,7 +90,7 @@ int set_argument (option_t * arguments [ARGUMENTS_NUMBER], int index, char * arg
 void print_option_state (option_t * option) {
   puts(" __________________________________________");
   puts("|               OPTION                     |");
-  
+
   printf("\tstate    : %s \n", is_set(option) ? "activated" : "not activated");
   printf("\targument : %s\n", has_argument(option) ? option_arg(option) : "no argument");
 
@@ -113,7 +113,7 @@ void free_option (option_t * option) {
 void initialise_arguments_array (option_t * arguments [ARGUMENTS_NUMBER]) {
   int i = 0;
   int j = 0;
-  
+
   for (i = 0; i < ARGUMENTS_NUMBER; i ++) {
     arguments[i] = new_option();
 
@@ -142,7 +142,7 @@ void print_all_options_states (option_t * arguments [ARGUMENTS_NUMBER]) {
 
   puts("LONG LISTING ALIGNED (--laligned) option");
   print_option_state(arguments[LONG_LISTING_ALIGNED]);
-  
+
   puts("FILE_CONTAINING_STRING (-t) option");
   print_option_state(arguments[FILE_CONTAINING_STRING]);
 
@@ -164,12 +164,12 @@ void print_all_options_states (option_t * arguments [ARGUMENTS_NUMBER]) {
   puts("FILE_CONTAINING_REGEX (-T) option");
   print_option_state(arguments[FILE_CONTAINING_REGEX]);
 
-  puts("PROVERIF (--proverif) option");
-  print_option_state(arguments[PROVERIF]);
+  puts("VERIFICATION (--proverif) option");
+  print_option_state(arguments[VERIFICATION]);
 
   puts("DIRECTORY (-d) option");
   print_option_state(arguments[DIRECTORY]);
-  
+
   puts("DEBUG option");
   print_option_state(arguments[DEBUG]);
 }
@@ -208,18 +208,18 @@ void option_handler (int argc, char ** argv, option_t * arguments [ARGUMENTS_NUM
     {"debug"                  , no_argument      , NULL, 'D'},
     {0, 0, 0, 0}
   };
-  
+
   puts_options_flags(argc, argv, long_options, arguments, &error);
   verify_options_settings(error, arguments);
 
   int remaining_arguments = optind - argc;
-  handle_remaining_arguments(argc, argv, remaining_arguments, arguments); 
+  handle_remaining_arguments(argc, argv, remaining_arguments, arguments);
 }
 
 void puts_options_flags (int argc, char ** argv, struct option long_options [ARGUMENTS_NUMBER], option_t * arguments [ARGUMENTS_NUMBER], int * error) {
   int result = 0;
   int option_index = 0;
-  
+
   while ((result = getopt_long_only(argc, argv, "lt:ie:n:pT:E:DdP", long_options, &option_index)) != -1 && no_error(*error)) {
     switch (result) {
     case 'l' :
@@ -256,7 +256,7 @@ void puts_options_flags (int argc, char ** argv, struct option long_options [ARG
       set_option_flag(arguments[DIRECTORY], TRUE);
       break;
     case 'P' :
-      set_option_flag(arguments[PROVERIF], TRUE);
+      set_option_flag(arguments[VERIFICATION], TRUE);
       break;
     case '?' :
     default  :
@@ -293,7 +293,7 @@ void set_default_arguments (option_t * arguments [ARGUMENTS_NUMBER]) {
     set_argument(arguments, PATH, ".");
   }
 
-  if (!is_set(arguments[PRINT]) && (!is_set(arguments[LONG_LISTING]) || !is_set(arguments[LONG_LISTING_ALIGNED])) && !(is_set(arguments[PROVERIF])) && !(is_set(arguments[LONG_LISTING_ALIGNED]))) {
+  if (!is_set(arguments[PRINT]) && (!is_set(arguments[LONG_LISTING]) || !is_set(arguments[LONG_LISTING_ALIGNED])) && !(is_set(arguments[VERIFICATION])) && !(is_set(arguments[LONG_LISTING_ALIGNED]))) {
     set_option_flag(arguments[PRINT], TRUE);
   }
 

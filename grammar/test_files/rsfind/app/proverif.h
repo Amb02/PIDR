@@ -10,6 +10,8 @@
 #ifndef PROVERIF
 #define PROVERIF
 
+#include "includes.h"
+
 int  execute_proverif ();
 
 #endif

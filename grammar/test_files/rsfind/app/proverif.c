@@ -9,17 +9,12 @@
 
 #include "proverif.h"
 
-
-
-
-
-
 /**
  * Handles all the process (currently : checkFile) for each file
  */
 int execute_proverif () {
 
   //checkFile for each file in the temp_file
-
+  fprintf(stderr, "Executing proverif...\n");
+  return 0;
 }
-
