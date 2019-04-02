@@ -1,4 +1,4 @@
-The following files did not end under 10 seconds :
+The following files did not end under 30 seconds :
 ../sources/logs/gauche_droite/gauche_droite_0.pv
 ../sources/logs/NeedhamSchroederPK-corr/NeedhamSchroederPK-corr_1.pv
 ../sources/logs/NeedhamSchroederPK-corr/NeedhamSchroederPK-corr_2.pv
@@ -16,7 +16,6 @@ The following files did not end under 10 seconds :
 ../sources/logs/NeedhamSchroederSK-corr/NeedhamSchroederSK-corr_7.pv
 ../sources/logs/NeedhamSchroederSK-corr/NeedhamSchroederSK-corr_8.pv
 ../sources/logs/NeedhamSchroederSK-corr/NeedhamSchroederSK-corr_9.pv
-../sources/logs/NeedhamSchroederSK-corr-comp/NeedhamSchroederSK-corr-comp_0.pv
 ../sources/logs/NeedhamSchroederSK-corr-comp/NeedhamSchroederSK-corr-comp_1.pv
 ../sources/logs/NeedhamSchroederSK-corr-comp/NeedhamSchroederSK-corr-comp_10.pv
 ../sources/logs/NeedhamSchroederSK-corr-comp/NeedhamSchroederSK-corr-comp_2.pv

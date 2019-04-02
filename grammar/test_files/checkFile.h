@@ -13,7 +13,7 @@
 #include <time.h>
 #include <errno.h>
 
-#define TIME_BEFORE_ALARM 10
+#define TIME_BEFORE_ALARM 30
 
 #define STRING_BUFFER_SIZE 2048
 #define SMALL_BUFFER_SIZE 128
