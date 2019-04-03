@@ -98,14 +98,14 @@ let processInitiator(pkS: spkey, xA: host, skA: sskey, pkA: spkey) =
 	event beginBparam(xA, h2);
 	new k: key;
 	event beginBkey(xA, h2, k);
-	out(c, ((cert1, cert2), (encrypt(sign((A,h2,k),skA),pk2))));
+	out(c, ((cert1, cert2), (encrypt(sign(((A, h2), k), skA), pk2))));
 	new secretA: bitstring;
 	out(c, sencrypt(secretA, k)).
 
 (* Responder *)
 
 let processResponder(pkS: spkey,  xB: host, skB: skey, pkB: pkey) =
-	in(c, ((cert1:bitstring, cert2:bitstring), km:bitstring));
+	in(c, ((cert1: bitstring, cert2: bitstring), km: bitstring));
 	let (h1: host, pk1: spkey) = checksign(cert1, pkS) in
 	let (=xB, =pkB) = checksign(cert2, pkS) in
 	let ks = decrypt(km,skB) in

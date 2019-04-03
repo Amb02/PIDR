@@ -129,7 +129,7 @@ let processResponder =
 (* Server *)
 
 let processS =
-	in(c, (xA1:host, (xB1:host, m2:bitstring)));
+	in(c, (xA1: host, (xB1: host, m2: bitstring)));
 	get keys(=xB1, kbs) in
 	get keys(=xA1, kas) in
 	let (=m3, (=xB1, n:nonce)) = decrypt(m2, kas) in

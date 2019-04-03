@@ -99,7 +99,7 @@ let processClient(SVerKey: pkey) =
     new dhsecretC: exponent;
     let dhpublicC = exp(g, dhsecretC) in
     out(c, (KEXDHINIT, dhpublicC));
-    in(c, (((=KEXDHREPLY, ServerVerKey:pkey), dhpublicS:G), sign:bitstring));
+    in(c, (((=KEXDHREPLY, ServerVerKey: pkey), dhpublicS: G), sign: bitstring));
     let K = exp(dhpublicS, dhsecretC) in
     let h = H((((ServerVerKey, dhpublicC), dhpublicS), K)) in
     if checknmrsign(ServerVerKey, sign, h) = true then
@@ -133,7 +133,7 @@ let processServer(SSigKey: skey, SVerKey: pkey) =
     let dhpublicS = exp(g, dhsecretS) in
     let K = exp(dhpublicC, dhsecretS) in
     let h = H((((SVerKey, dhpublicC), dhpublicS), K)) in
-    out(c, (((KEXDHREPLY, SVerKey), dhpublicS), (nmrsign(SSigKey,h))));
+    out(c, (((KEXDHREPLY, SVerKey), dhpublicS), (nmrsign(SSigKey, h))));
     let enckeyCtoS = H(((K, h), keyEncCtoS)) in
     let enckeyStoC = H(((K, h), keyEncStoC)) in
     let mackeyCtoS = H(((K, h), keyMacCtoS)) in

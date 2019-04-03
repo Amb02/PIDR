@@ -135,7 +135,7 @@ let processInitiator(pkS: spkey, skA: skey, skB: skey) =
         out(c, encrypt((Na, xA), pkX));
         (* Message 6 *)
         in(c, m: bitstring); 
-        let (=Na, (NX2:nonce, =hostX)) = decrypt(m, skA) in
+        let (=Na, (NX2: nonce, =hostX)) = decrypt(m, skA) in
 	event beginBfull(xA, hostX, pkX, pkxA, Na, NX2);
 	(* Message 7 *)
         out(c, encrypt(nonce_to_bitstring(NX2), pkX));

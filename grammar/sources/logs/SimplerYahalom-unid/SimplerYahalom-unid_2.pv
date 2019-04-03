@@ -91,8 +91,8 @@ query x: host, y: host, z: nonce, t: key; inj-event(endBkey(x,y,z,t)) ==> inj-ev
 let processInitiator(xA: host, kas: key) =
 	new Na: nonce; 
 	out(c, (xA, Na)); 
-	in(c, ((nb:nonce, m1:bitstring), m2:bitstring));
-        let ((b:host, kab:key), na2:nonce) = decrypt(m1, kas) in
+	in(c, ((nb: nonce, m1: bitstring), m2: bitstring));
+        let ((b: host, kab: key), na2: nonce) = decrypt(m1, kas) in
 	event beginBparam(b, xA);
 	event beginBkey(b, xA, nb, kab);
         if na2 = Na then 
@@ -110,9 +110,9 @@ let processResponder(xB: host, kbs: key) =
 	in(c, (a: host, na: nonce)); 
 	event beginAparam(a, xB);
         new Nb: nonce; 
-	out(c, ((xB, Nb), (encrypt((a,na),kbs))));
+	out(c, ((xB, Nb), (encrypt((a, na), kbs))));
 	in(c, (m3: bitstring, m4: bitstring));
-        let ((=a, kab:key), =Nb) = decrypt(m3, kbs) in
+        let ((=a, kab: key), =Nb) = decrypt(m3, kbs) in
         if nonce_to_bitstring(Nb) = decrypt(m4, kab) then
 	(* OK protocol finished 
            If the interlocutor is honest, execute the events endBparam
@@ -126,12 +126,12 @@ let processResponder(xB: host, kbs: key) =
 (* Server *)
 
 let processS = 
-	in(c, ((b:host, nb:nonce), m5:bitstring));
+	in(c, ((b: host, nb: nonce), m5: bitstring));
 	get keys(=b, kbs2) in (* get the key of b from the key table *)
         let (a: host, na: nonce) = decrypt(m5,kbs2) in
 	get keys(=a, kas2) in (* get the key of a from the key table *)
         new kab: key;
-	out(c, ((nb, encrypt((b,kab,na),kas2)), (encrypt((a,kab,nb),kbs2)))).
+	out(c, ((nb, encrypt(((b, kab), na), kas2)), (encrypt(((a, kab), nb), kbs2)))).
 
 (* Key registration *)
 

@@ -129,7 +129,7 @@ let processS =
 	in(c, xB0: host);(* Choose the B host *)
 	get keys(=xB0, kbs) in
 	in(c,m: bitstring);
-	let (=m4, (xA1:host, m2:bitstring)) = decrypt(m, kbs) in
+	let (=m4, (xA1: host, m2: bitstring)) = decrypt(m, kbs) in
 	get keys(=xA1, kas) in
         let (=m3, n: nonce) = decrypt(m2, kas) in
         out(c, encrypt((m5, n), kbs)).

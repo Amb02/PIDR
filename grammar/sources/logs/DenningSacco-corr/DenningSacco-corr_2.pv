@@ -106,7 +106,7 @@ let processInitiator(pkS: spkey, sskA: sskey, sskB: sskey) =
 	event beginBparam(xA, h2);
 	new k: key;
 	event beginBkey(xA, h2, k);
-	out(c, ((cert1, cert2), (encrypt(sign((xA,h2,k),sskA),pk2))));
+	out(c, ((cert1, cert2), (encrypt(sign(((xA, h2), k), sskA), pk2))));
 	if h2 = B then
 	out(c, sencrypt(secretA, k)).
 
@@ -120,11 +120,11 @@ let processResponder(pkS: spkey, skA: skey, skB: skey) =
 	let skB = if xB = A then skA else skB in
 	let pkB = pk(skB) in
 	(* Real start of the role *)
-	in(c, ((cert1:bitstring, cert2:bitstring), km:bitstring));
+	in(c, ((cert1: bitstring, cert2: bitstring), km: bitstring));
 	let (h1: host, pk1: spkey) = checksign(cert1, pkS) in
 	let (=xB, =pkB) = checksign(cert2, pkS) in
 	let ks = decrypt(km,skB) in
-	let ((=h1, =xB), k:key) = checksign(ks, pk1) in
+	let ((=h1, =xB), k: key) = checksign(ks, pk1) in
 	if h1 = A then
 	event endBparam(h1, xB);
 	event endBkey(h1, xB, k);

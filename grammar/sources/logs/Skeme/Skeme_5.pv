@@ -96,7 +96,7 @@ let processA(skA: skey, pkA: pkey, pkB: pkey) =
 	let gx = exp(g,x) in
 	new Ka: nonce;
         out(c, (encrypt((pkA, Ka), pkX), gx));
-        in(c, (m1:bitstring, (m2:bitstring, m3:bitstring)));
+        in(c, (m1: bitstring, (m2: bitstring, m3: bitstring)));
 	let nonce_to_bitstring(Kb) = decrypt(m1, skA) in
         let K0 = hash((Ka, Kb)) in
 	if m3 = keyhash(((gx, m2), (pkX, pkA)), K0) then
@@ -121,7 +121,7 @@ let processB(skB: skey, pkB: pkey, pkA: pkey) =
 	let gy = exp(g,y) in
         let sh = hash(exp(m2, y)) in
 	event beginAkey(pkAr, sh);
-	out(c, ((encrypt(nonce_to_bitstring(Kb),pkAr)), (gy, keyhash((m2,gy,pkB,pkAr),K0))));
+	out(c, ((encrypt(nonce_to_bitstring(Kb), pkAr)), (gy, keyhash(((m2, gy), (pkB, pkAr)), K0))));
         in(c, m3: bitstring);
 	if m3 = keyhash(((gy, m2), (pkAr, pkB)), K0) then
         (* OK *)

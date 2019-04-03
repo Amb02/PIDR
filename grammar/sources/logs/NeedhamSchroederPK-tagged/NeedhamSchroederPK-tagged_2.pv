@@ -133,13 +133,13 @@ let processInitiator(pkS: spkey, skA: skey, skB: skey) =
 	(* Get the public key certificate for the other host *)
 	out(c, (xA, hostX));
 	in(c, ms: bitstring); 
-	let ((=c0, pkX:pkey), =hostX) = checksign(ms,pkS) in
+	let ((=c0, pkX: pkey), =hostX) = checksign(ms,pkS) in
         (* Message 3 *)
 	new Na: nonce; 
         out(c, encrypt(((c1, Na), xA), pkX));
         (* Message 6 *)
         in(c, m: bitstring); 
-	let ((=c2, =Na), NX2:nonce) = decrypt(m, skxA) in
+	let ((=c2, =Na), NX2: nonce) = decrypt(m, skxA) in
 	event beginBfull(xA, hostX, pkX, pkxA, Na, NX2);
         (* Message 7 *)
         out(c, encrypt((c3, NX2), pkX));
@@ -162,12 +162,12 @@ let processResponder(pkS: spkey, skA: skey, skB: skey) =
 	(* Real start of the role *)
         (* Message 3 *)
 	in(c, m: bitstring);
-	let ((=c1, NY:nonce), hostY:host) = decrypt(m, skxB) in
+	let ((=c1, NY: nonce), hostY: host) = decrypt(m, skxB) in
 	event beginAparam(hostY, xB);
 	(* Get the public key certificate for the other host *)
         out(c, (xB, hostY));
 	in(c,ms: bitstring);
-        let ((=c0, pkY:pkey), =hostY) = checksign(ms,pkS) in
+        let ((=c0, pkY: pkey), =hostY) = checksign(ms,pkS) in
         (* Message 2 *)
 	new Nb: nonce;
 	event beginAfull(hostY, xB, pkxB, pkY, NY, Nb);

@@ -136,12 +136,12 @@ public class CombinationsHandler{
 			String originalString = tuple.getOriginalForm();
 			String newString = correspondanceMap.get(tuple);
 
-			System.out.println("Tuple en remplacement : " + tuple);
+			//System.out.println("Tuple en remplacement : " + tuple);
 
 			if (!originalString.replaceAll("\\s+", "").equals(newString.replaceAll("\\s+", ""))) {
-			    System.out.println("complete string to replace from : " + newLine + " pattern to look for : " + originalString + " replaced with :" + newString);
+			    //System.out.println("complete string to replace from : " + newLine + " pattern to look for : " + originalString + " replaced with :" + newString);
 			    newLine = replaceLine(newLine, originalString, newString);  //on modifie la ligne (CTRL+F tuple original / combinaison)
-			    System.out.println("giving :  " + newLine );
+			    // System.out.println("giving :  " + newLine );
 			}
 		    }
 		}

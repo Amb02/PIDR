@@ -87,7 +87,7 @@ let processInitiator =
 	(* Real start of the role *)
 	event beginBparam(xA, xB0);
 	new Na: nonce;
-        out(c, ((Na, (xA, xB0)), (encrypt((Na,xA,xB0),kA))));
+        out(c, ((Na, (xA, xB0)), (encrypt((Na, (xA, xB0)), kA))));
 	in(c, (=Na, m2: bitstring));
 	let (=Na, k: key) = decrypt(m2, kA) in
 	event beginBkey(xA, xB0, k);
@@ -107,11 +107,11 @@ let processResponder =
 	if xB = A || xB = B then
 	get keys(=xB, kB) in
 	(* Real start of the role *)
-	in(c, ((na:nonce, (xA1:host, =xB)), z:bitstring));
+	in(c, ((na: nonce, (xA1: host, =xB)), z: bitstring));
 	event beginAparam(xA1, xB);
 	new Nb: nonce;
-	out(c, ((na, (xA1, ((xB, z), Nb))), (encrypt((na,xA1,xB),kB))));
-	in(c, (=na, (m3:bitstring, m4:bitstring)));
+	out(c, ((na, (xA1, ((xB, z), Nb))), (encrypt((na, (xA1, xB)), kB))));
+	in(c, (=na, (m3: bitstring, m4: bitstring)));
 	let (=Nb, k: key) = decrypt(m4, kB) in
 	event beginAkey(xA1, xB, k);
 	out(c, (na, m3));
@@ -124,7 +124,7 @@ let processResponder =
 (* Server *)
 
 let processS = 
-        in(c, ((Na1:nonce, (xA1:host, ((xB1:host, m2:bitstring), Nb1:nonce))), m3:bitstring));
+        in(c, ((Na1: nonce, (xA1: host, ((xB1: host, m2: bitstring), Nb1: nonce))), m3: bitstring));
     	get keys(=xA1, kA1) in
 	get keys(=xB1, kB1) in
 	let (=Na1, (=xA1, =xB1)) = decrypt(m2, kA1) in

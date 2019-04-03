@@ -105,7 +105,7 @@ let processInitiator =
 	new Na: nonce;
 	out(c, (xA, Na));
 	in(c, (cert1: bitstring, cert2: bitstring));
-	let ((b:host, k:key), (=Na, nb:nonce)) = decrypt(cert1, kas) in
+	let ((b: host, k: key), (=Na, nb: nonce)) = decrypt(cert1, kas) in
 	event beginBparam(xA, b);
 	event beginBkey(xA, b, k);
 	out(c, (cert2, encrypt(nonce_to_bitstring(nb), k)));
@@ -144,7 +144,7 @@ let processResponder =
 let processS =
 	in(c, (h2: host, m: bitstring));
 	get keys(=h2, k2) in (* get the key of h2 from the key table *)
-	let ((h1:host, n1:nonce), n2:nonce) = decrypt(m, k2) in
+	let ((h1: host, n1: nonce), n2: nonce) = decrypt(m, k2) in
 	get keys(=h1, k1) in (* get the key of h1 from the key table *)
 	new k: key;
 	out(c, (encrypt(((h2, k), (n1, n2)), k1), encrypt((h1, k), k2))).
