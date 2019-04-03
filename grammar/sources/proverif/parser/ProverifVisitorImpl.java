@@ -16,7 +16,7 @@ import java.util.HashMap;
 import proverif.file.*;
 
 public class ProverifVisitorImpl extends ProverifBaseVisitor {
-  private BufferedTokenStream tokens;
+  public static BufferedTokenStream tokens;
 
   private static final int MAX_RULE_SIZE = 7;
   public static Tuples tuples;
@@ -43,20 +43,28 @@ public class ProverifVisitorImpl extends ProverifBaseVisitor {
     );
   }
 
-  private void tupleCreation (ParserRuleContext ctx) {
-    Token start = ctx.getStart();
-    Token end = ctx.getStop();
-    int tokPos = start.getTokenIndex();
-    int tokenPosEnd = end.getTokenIndex();
+    public static String getRealString (ParseTree tree) {
+	ParserRuleContext ctx = (ParserRuleContext) tree;
+	
+	Token start = ctx.getStart();
+	Token end = ctx.getStop();
+	int tokPos = start.getTokenIndex();
+	int tokenPosEnd = end.getTokenIndex();
 
-    List<Token> refDefaultChannel = tokens.getTokens(tokPos, tokenPosEnd);
+	List<Token> refDefaultChannel = tokens.getTokens(tokPos, tokenPosEnd);
 
-    StringBuilder originalString = new StringBuilder();
-    for (Token t : refDefaultChannel) {
-      originalString.append(t.getText());
+	StringBuilder originalString = new StringBuilder();
+	for (Token t : refDefaultChannel) {
+	    originalString.append(t.getText());
+	}
+
+	return originalString.toString();
     }
+    
+  private void tupleCreation (ParserRuleContext ctx) {
+    
 
-    Tuple tuple  = new Tuple(ctx, originalString.toString());
+      Tuple tuple  = new Tuple(ctx, getRealString(ctx));
     tuples.add(tuple);
 
     int line = ctx.getStart().getLine();

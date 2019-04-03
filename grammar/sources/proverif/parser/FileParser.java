@@ -100,7 +100,7 @@ public class FileParser {
 			displayParsingErrorMessage();
 		}
 
-		if (!parseOnly) {
+		if (!parseOnly && listener.hasNoError()) {
 			copyFile();
 
 			visit(context, tokens);

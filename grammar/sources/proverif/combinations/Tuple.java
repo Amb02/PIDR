@@ -7,6 +7,8 @@ import org.antlr.v4.runtime.*;
 
 import java.util.Comparator;
 
+import proverif.parser.ProverifVisitorImpl;
+
 
 public class Tuple extends ArrayList<String> implements Comparable<Tuple>{
 	private String originalForm;
@@ -22,17 +24,17 @@ public class Tuple extends ArrayList<String> implements Comparable<Tuple>{
 
 	public Tuple (ParserRuleContext ctx, String originalString) {
 
-		this.combinations	= new ArrayList<>();
+		this.combinations = new ArrayList<>();
 		originalForm = originalString;
 		ArrayList<ParseTree> list = new ArrayList();
 
 		for (int i = 0 ; i < ctx.getChildCount() ; i++){
-			ParseTree child = ctx.getChild(i);
-			String txt = child.getText();
+		    ParseTree child = ctx.getChild(i);
+		    String txt = child.getText();
 
-			if (isElement(txt)) {
-				this.add(child.getText());
-			}
+		    if (isElement(txt)) {
+			this.add(ProverifVisitorImpl.getRealString(child));
+		    }
 		}
 	}
 
@@ -46,7 +48,7 @@ public class Tuple extends ArrayList<String> implements Comparable<Tuple>{
 		ArrayList<String> possibilite = new ArrayList<>();
 
 		for (int i = 1; i < t.size(); i ++) {
-			ArrayList<String> gauche = generate(t.beforeIndex(i));
+		    ArrayList<String> gauche = generate(t.beforeIndex(i));
 			ArrayList<String> droite = generate(t.afterIndex(i));
 
 			String membreGauche = "";
@@ -185,6 +187,4 @@ public class Tuple extends ArrayList<String> implements Comparable<Tuple>{
 		string += "\n";
 		return string;
 	}
-
-
 }
