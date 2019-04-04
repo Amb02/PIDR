@@ -141,7 +141,7 @@ void runFile(char* file){
 			} else {
 				fprintf(stdout, "File not matching parent results\nLogging in");
 
-				write_file(different, (secured) ? ": No attack" : "Attack");
+				write_file(different, (secured) ? " : No attack" : " : Attack");
 			}
 		}
 
