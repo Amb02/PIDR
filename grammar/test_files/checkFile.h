@@ -29,7 +29,7 @@ int check_for_parent;
 int is_parent_safe;
 
 void  handle_alarm       (int);
-void  write_file         (FILE *);
+void  write_file         (FILE *, char *);
 void  check_parent       ();
 void  open_logs          ();
 void  close_logs         ();

@@ -5,14 +5,14 @@ int alarm_flag;
 void handle_alarm (int sig) {
 	alarm_flag = 1;
 	fprintf(stderr, "Took more than %d seconds to finish\nLogging in.\n", TIME_BEFORE_ALARM);
-	write_file(unfinished);
+	write_file(unfinished, "");
 
 	kill(pid, SIGKILL);
 }
 
-void write_file (FILE * file) {
+void write_file (FILE * file, char * details) {
 	char * message = (char *) malloc (SMALL_BUFFER_SIZE * sizeof(char));
-	sprintf(message, "%s\n", current_file);
+	sprintf(message, "%s%s\n", current_file, details);
 	fwrite(message, strlen(message), 1, file);
 
 	free(message);
@@ -141,7 +141,7 @@ void runFile(char* file){
 			} else {
 				fprintf(stdout, "File not matching parent results\nLogging in");
 
-				write_file(different);
+				write_file(different, (secured) ? ": No attack" : "Attack");
 			}
 		}
 
