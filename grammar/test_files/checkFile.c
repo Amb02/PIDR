@@ -12,7 +12,7 @@ void handle_alarm (int sig) {
 
 void write_file (FILE * file, char * details) {
 	char * message = (char *) malloc (SMALL_BUFFER_SIZE * sizeof(char));
-	sprintf(message, "%s%s\n", current_file, details);
+	sprintf(message, "%s %s\n", current_file, details);
 	fwrite(message, strlen(message), 1, file);
 
 	free(message);
@@ -139,7 +139,7 @@ int isSecure(char* file){
 
 	if (strstr(inFile,"A trace has been found") != NULL) {
 		secure = NOT_SAFE;
-	} else if (strstr(inFile, "Cannot be proven") != NULL) {
+	} else if (strstr(inFile, "cannot be proved") != NULL) {
 		secure = CANNOT_PROVE;
 	}
 
