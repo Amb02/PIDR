@@ -159,20 +159,23 @@ failtypedecl
 	;
 
 proverifOptionsFree
-	: (LEFTBRACKET (OPTIONFREE COMMA)* OPTIONFREE RIGHTBRACKET)?
+	: (LEFTBRACKET PRIVATE RIGHTBRACKET)?
 	;
 
 proverifOptionsFun
-	: (LEFTBRACKET (OPTIONFUN COMMA)* OPTIONFUN RIGHTBRACKET)?
+	: (LEFTBRACKET (optionfun COMMA)* optionfun RIGHTBRACKET)?
 	;
 
 proverifOptionsPred
-	: (LEFTBRACKET (OPTIONPRED COMMA)* OPTIONPRED RIGHTBRACKET)?
+	: (LEFTBRACKET (optionpred COMMA)* optionpred RIGHTBRACKET)?
 	;
 
 proverifOptions
 	: (LEFTBRACKET (ident COMMA)* ident RIGHTBRACKET)?
 	;
+
+optionfun : DATA | PRIVATE | TYPECONVERTER;
+optionpred : MEMBEROPTIM | BLOCKOPTION;
 
 ident : id;
 id : ID;
@@ -257,9 +260,11 @@ LETFUN : 'letfun';
 NONINTERF : 'noninterf';
 AMONG : 'among';
 
-OPTIONFREE : 'private';
-OPTIONFUN : 'data' | OPTIONFREE | 'typeConverter';
-OPTIONPRED : 'memberOptim' | 'block';
+DATA : 'data';
+PRIVATE : 'private';
+TYPECONVERTER : 'typeConverter';
+MEMBEROPTIM : 'memberOptim';
+BLOCKOPTION : 'blockOption';
 
 ID : ('a'..'z'|'A'..'Z'|'_')('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'\'')*;
 
