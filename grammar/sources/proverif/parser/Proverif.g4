@@ -31,16 +31,16 @@ declaration
 	| SET name EQUAL value POINT
 	| EVENT ident ( LEFTPARENTHESIS ((typeid COMMA)* typeid)? RIGHTPARENTHESIS )? POINT
 	| QUERY (typedecl SEMICOLON)? query POINT
-	| NONINTERF (typedecl SEMICOLON)? ((nidecl COMMA)* nidecl)?
-	| WEAKSECRET ident
+	| NONINTERF (typedecl SEMICOLON)? ((nidecl COMMA)* nidecl)? POINT
+	| WEAKSECRET ident POINT
 	| NOT (typedecl SEMICOLON)? gterm POINT
 	| NOUNIF (typedecl SEMICOLON)? nounifdecl POINT
-	| ELIMTRUE (failtypedecl SEMICOLON)? term
-	| CLAUSES clauses
-	| PARAM (ident COMMA)* ident proverifOptions
-	| PROBA ident
-	| DEF ident ((typeid COMMA)* typeid)? CURLYBRACKETLEFT (declaration)* CURLYBRACKETRIGHT
-	| EXPAND ident ((typeid COMMA)* typeid)?
+	| ELIMTRUE (failtypedecl SEMICOLON)? term POINT
+	| CLAUSES clauses POINT
+	| PARAM (ident COMMA)* ident proverifOptions POINT
+	| PROBA ident POINT
+	| DEF ident ((typeid COMMA)* typeid)? CURLYBRACKETLEFT (declaration)* CURLYBRACKETRIGHT POINT
+	| EXPAND ident ((typeid COMMA)* typeid)? POINT
 	;
 
 nidecl
