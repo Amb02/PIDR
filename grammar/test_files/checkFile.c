@@ -17,15 +17,37 @@ void write_file (FILE * file, char * details) {
 
 	free(message);
 }
-void open_logs () {
+
+void get_file_name_from_path (char * path) {
+	char * pch;
+	if (path[strlen(path) - 1] == '/') path[strlen(path) - 1] = '\0';
+
+	pch = strrchr(path,'/');
+
+	strcpy(path, ++pch);
+}
+
+void open_logs (char * file_name) {
+	char file_name_usage [128];
+	char unfinished_file_name [128];
+	char different_file_name [128];
+
 	current_file = (char *) malloc(SMALL_BUFFER_SIZE * sizeof(char));
 	check_parent();
 
-	unfinished = fopen("unfinished.txt", "w");
-	different  = fopen("different.txt", "w");
+	strcpy(file_name_usage, file_name);
+	get_file_name_from_path(file_name_usage);
+
+	sprintf(unfinished_file_name, "results/unfinished_%s.txt", file_name_usage);
+	sprintf(different_file_name, "results/different_%s.txt", file_name_usage);
+
+	unfinished = fopen(unfinished_file_name, "w");
+	different  = fopen(different_file_name, "w");
 
 	if (unfinished == NULL || different == NULL) {
 		fprintf(stderr, "Impossible to create log files\n");
+		fprintf(stderr, "Trying to create the following files : \n\t.%s\n\t.%s\n", unfinished_file_name, different_file_name);
+		perror("Error : ");
 		exit(3);
 	}
 
@@ -72,7 +94,7 @@ void executeProverif(char* file){
 		fprintf(stderr, "Fork-exec error\n" );
 		exit(1);
 	}
-	else if (pid > 0){
+	else if (pid > 0) {
 		int status;
 		struct timespec time_before, time_after;
 		double time;
@@ -95,11 +117,14 @@ void executeProverif(char* file){
 		exit(2);
 	}
 
+
 	close(fileOutput);
 }
 
 int isSecure(char* file){
 	FILE* resultsFile = fopen(".temp_file","r");
+	int secure = SAFE;
+
 	if (resultsFile==NULL){
 		perror("Error ");
 		exit(3);
@@ -112,7 +137,12 @@ int isSecure(char* file){
 
 	fclose(resultsFile);
 
-	int secure = (strstr(inFile,"A trace has been found") == NULL);
+	if (strstr(inFile,"A trace has been found") != NULL) {
+		secure = NOT_SAFE;
+	} else if (strstr(inFile, "Cannot be proven") != NULL) {
+		secure = CANNOT_PROVE;
+	}
+
 	free(inFile);
 
 	return secure;
@@ -122,7 +152,7 @@ void check_parent () {
 	check_for_parent = 1;
 }
 
-void runFile(char* file){
+void runFile (char* file) {
 	int secured = 0;
 	strcpy(current_file, file);
 
@@ -141,7 +171,16 @@ void runFile(char* file){
 			} else {
 				fprintf(stdout, "File not matching parent results\nLogging in");
 
-				write_file(different, (secured) ? " : No attack" : " : Attack");
+				char result_string [20];
+				if (secured == SAFE) {
+					strcpy(result_string, "No attack");
+				} else if (secured == NOT_SAFE) {
+					strcpy(result_string, "Attack");
+				} else {
+					strcpy(result_string, "Not proven");
+				}
+
+				write_file(different, result_string);
 			}
 		}
 

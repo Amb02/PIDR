@@ -18,6 +18,12 @@
 #define STRING_BUFFER_SIZE 2048
 #define SMALL_BUFFER_SIZE 128
 
+enum {
+  SAFE,
+  NOT_SAFE,
+  CANNOT_PROVE,
+};
+
 pid_t pid;
 
 FILE * unfinished;
@@ -31,7 +37,7 @@ int is_parent_safe;
 void  handle_alarm       (int);
 void  write_file         (FILE *, char *);
 void  check_parent       ();
-void  open_logs          ();
+void  open_logs          (char *);
 void  close_logs         ();
 void  add_header_to_logs ();
 int		sizeOfFile		     (FILE* file);

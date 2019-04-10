@@ -12,26 +12,39 @@ options {
 
 programme
 	: declaration* PROCESS process
+	| declaration* EQUIVALENCE process process
 	;
 
 declaration
 	: TYPE ident proverifOptions POINT
 	| CHANNEL  (ident COMMA)* ident POINT
-	| FREE (ident COMMA)* ident	COLON typeid proverifOptions POINT
-	| CONST (ident COMMA)* ident COLON typeid proverifOptions POINT
-	| FUN ident LEFTPARENTHESIS ((typeid COMMA)* typeid)? RIGHTPARENTHESIS COLON typeid proverifOptions POINT
+	| FREE (ident COMMA)* ident	COLON typeid proverifOptionsFree POINT
+	| CONST (ident COMMA)* ident COLON typeid proverifOptionsFun POINT
+	| FUN ident LEFTPARENTHESIS ((typeid COMMA)* typeid)? RIGHTPARENTHESIS COLON typeid proverifOptionsFun POINT
 	| LETFUN ident ( LEFTPARENTHESIS (typedecl)? RIGHTPARENTHESIS)? EQUAL pterm POINT
-	| REDUC reduc proverifOptions POINT
-	| FUN ident LEFTPARENTHESIS ((typeid COMMA)* typeid)? RIGHTPARENTHESIS COLON typeid REDUC reducprime proverifOptions POINT
+	| REDUC reduc proverifOptionsFree POINT
+	| FUN ident LEFTPARENTHESIS ((typeid COMMA)* typeid)? RIGHTPARENTHESIS COLON typeid REDUC reducprime proverifOptionsFun POINT
 	| EQUATION eqlist proverifOptions POINT
-	| PRED ident ( LEFTPARENTHESIS ((typeid COMMA)* typeid)? RIGHTPARENTHESIS )? proverifOptions POINT
+	| PRED ident ( LEFTPARENTHESIS ((typeid COMMA)* typeid)? RIGHTPARENTHESIS )? proverifOptionsPred POINT
 	| TABLE ident LEFTPARENTHESIS ((typeid COMMA)* typeid)? RIGHTPARENTHESIS POINT
 	| LET ident ( LEFTPARENTHESIS (typedecl)? RIGHTPARENTHESIS)? EQUAL process POINT
 	| SET name EQUAL value POINT
 	| EVENT ident ( LEFTPARENTHESIS ((typeid COMMA)* typeid)? RIGHTPARENTHESIS )? POINT
 	| QUERY (typedecl SEMICOLON)? query POINT
+	| NONINTERF (typedecl SEMICOLON)? ((nidecl COMMA)* nidecl)?
+	| WEAKSECRET ident
 	| NOT (typedecl SEMICOLON)? gterm POINT
 	| NOUNIF (typedecl SEMICOLON)? nounifdecl POINT
+	| ELIMTRUE (failtypedecl SEMICOLON)? term
+	| CLAUSES clauses
+	| PARAM (ident COMMA)* ident proverifOptions
+	| PROBA ident
+	| DEF ident ((typeid COMMA)* typeid)? CURLYBRACKETLEFT (declaration)* CURLYBRACKETRIGHT
+	| EXPAND ident ((typeid COMMA)* typeid)?
+	;
+
+nidecl
+	: ident (AMONG (term COMMA)* term)?
 	;
 
 reduc
@@ -145,8 +158,20 @@ failtypedecl
 	:	ident COLON typeid (ORWORD FAIL)? (COMMA typedecl)?
 	;
 
+proverifOptionsFree
+	: (LEFTBRACKET (OPTIONFREE COMMA)* OPTIONFREE RIGHTBRACKET)?
+	;
+
+proverifOptionsFun
+	: (LEFTBRACKET (OPTIONFUN COMMA)* OPTIONFUN RIGHTBRACKET)?
+	;
+
+proverifOptionsPred
+	: (LEFTBRACKET (OPTIONPRED COMMA)* OPTIONPRED RIGHTBRACKET)?
+	;
+
 proverifOptions
-	: (LEFTBRACKET (OPTIONCHOICE COMMA)* OPTIONCHOICE RIGHTBRACKET )?
+	: (LEFTBRACKET (ident COMMA)* ident RIGHTBRACKET)?
 	;
 
 ident : id;
@@ -182,8 +207,18 @@ DOUBLEARROW : '<->';
 EQUIVALENT : '<=>';
 REVERSEIMPLICATES : '<=';
 PIPE : '|';
+CURLYBRACKETLEFT : '{';
+CURLYBRACKETRIGHT : '}';
 
+WEAKSECRET : 'weaksecret';
+ELIMTRUE : 'elimtrue';
+CLAUSES : 'clauses';
+PARAM : 'param';
+PROBA : 'proba';
+DEF : 'def';
+EXPAND : 'expand';
 PROCESS : 'process';
+EQUIVALENCE : 'equivalence';
 CHANNEL : 'channel';
 FREE : 'free';
 REDUC : 'reduc';
@@ -219,10 +254,14 @@ FOREACH : 'foreach';
 CHOICE : 'choice';
 TYPE : 'type';
 LETFUN : 'letfun';
+NONINTERF : 'noninterf';
+AMONG : 'among';
 
-OPTIONCHOICE : 'data' | 'private' | 'typeConverter' | 'memberOptim' | 'block';
+OPTIONFREE : 'private';
+OPTIONFUN : 'data' | OPTIONFREE | 'typeConverter';
+OPTIONPRED : 'memberOptim' | 'block';
 
-ID : ('a'..'z'|'A'..'Z'|'_')('a'..'z'|'A'..'Z'|'0'..'9'|'_')*;
+ID : ('a'..'z'|'A'..'Z'|'_')('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'\'')*;
 
 INT : '0'..'9'+;
 

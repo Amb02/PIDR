@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
 	if (argc!=2){usageError();}
 	else {file_name = argv[1];}
 
-	open_logs();
+	open_logs(file_name);
 	browse_directory(file_name);
 	close_logs();
 
