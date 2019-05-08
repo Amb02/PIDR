@@ -1,0 +1,8 @@
+
+fun enc(bitstring,bitstring):bitstring.
+fun dec(bitstring,bitstring):bitstring.
+
+equation forall x:bitstring,k:bitstring; dec(enc(x,k),k) = x;
+	 forall x:bitstring,k:bitstring; enc(dec(x,k),k) = x [convergent].
+
+process 0

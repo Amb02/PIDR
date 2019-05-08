@@ -1,0 +1,18 @@
+free c:channel.
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+event A(bitstring).
+
+const ok,ko:bitstring.
+
+axiom x:bitstring,y:bitstring;
+  event(A(choice[x,y])) ==> x=a;
+  event(A(choice[x,y])) ==> y=a.
+
+process
+  in(c,x:bitstring);
+    event A(x);
+    out(c,diff[a,x])

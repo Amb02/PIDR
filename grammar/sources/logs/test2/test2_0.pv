@@ -1,0 +1,49 @@
+(* Handshake protocol.
+   From Delaune, Jacquemard, CSFW'04
+*)
+
+set traceDisplay = long.
+
+free c:  channel.
+
+free A:bitstring [private].
+
+free B:bitstring.
+
+free C:bitstring.
+
+free D:bitstring.
+
+free E:bitstring.
+
+free F:bitstring.
+
+free G:bitstring.
+
+free H:bitstring.
+
+free I:bitstring.
+
+free J:bitstring.
+
+free K:bitstring.
+
+free L:bitstring.
+
+free LLLLLLLLLLL:bitstring.
+
+table k(bitstring, bitstring).
+table t(bitstring, bitstring).
+
+let processA = new s:bitstring; out (c, A).
+
+let processB = insert k(A,LLLLLLLLLLL); insert t(B,B); insert k(A, C); insert t(B, D); insert k(B, E); insert k(A, F); insert k(A, G); insert k(A, J); insert k(A, K); insert k(C, L); insert k(A, I); insert k(C, F); insert k(C, G); insert k(C, J); insert k(C, K); insert t(C, L); insert k(C, I).
+
+(* let processC = insert k(A,C); insert k(A, C). *)
+
+ let processC = get k(=A, B) in out (c, A).
+
+process
+(*       out(c, A); in(c, x:bitstring) *)
+(*          processA *)
+         processB |  processC

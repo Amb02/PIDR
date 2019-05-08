@@ -1,0 +1,31 @@
+free c:channel.
+free d:channel [private].
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+event A(bitstring).
+event B(bitstring).
+
+const ok,ko,k:bitstring[private].
+
+lemma attacker(new k'[x=a]).
+
+axiom attacker(h(k)).
+
+let P1 =
+  (in(c,(x:bitstring,y:bitstring));
+  event B(x);
+  event A(y);
+   out(d,x))
+  | in(d,x:bitstring); if x = a then new k':bitstring; out(c,h(k')).
+
+let P2 =
+  (in(c,(x:bitstring,y:bitstring));
+  event B(y);
+  event A(x);
+   out(d,x))
+  | in(d,x:bitstring); if x = a then new k'': bitstring; out(c,k'').
+
+equivalence P1 P2

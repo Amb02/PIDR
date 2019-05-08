@@ -1,0 +1,46 @@
+(* 
+
+? -> A : pkB
+A -> B : { N_A, pkA }_pkB
+B -> A : { N_A, N_B, pkB }_pkA
+A -> B : { N_B, K }_pkB
+B -> A : { S }_K
+
+*)
+
+(* Public key cryptography *)
+
+fun pk/1.
+fun encrypt/2.
+reduc decrypt(encrypt(x,pk(y)),y) = x.
+
+query secret.
+
+let processA = in(c,pkX); new Na; 
+               (out(c, encrypt((Na, pkA), pkX)) |
+                in(c, m); let (Na2, NX2, pkX2) = decrypt(m, skA) in
+                          if Na2 = Na then
+                             if pkX2 = pkX then
+			       new k;
+                               out(c, encrypt((NX2, k), pkX))
+                             else 0
+                          else 0).
+
+let processB = in(c, m); let (NY, pkY) = decrypt(m, skB) in
+			 new Nb;
+			 (out(c, encrypt((NY, Nb, pkB), pkY)) |
+			  in(c, m3);
+                          let (Nb2, k) = decrypt(m3, skB) in
+                          if Nb2 = Nb then
+			    if pkY = pkA then
+			      out(c, encrypt(secret, pk(k)))
+                            else 0
+                          else 0).
+
+
+process new skA; let pkA = pk(skA) in
+        out(c, pkA);
+        new skB; let pkB = pk(skB) in
+        out(c, pkB);
+	new secret;
+	(!processA | !processB)

@@ -137,9 +137,9 @@ int isSecure(char* file){
 
 	fclose(resultsFile);
 
-	if (strstr(inFile,"A trace has been found") != NULL) {
+	if (strstr(inFile, PROVERIF_TRACE_STATEMENT) != NULL) {
 		secure = NOT_SAFE;
-	} else if (strstr(inFile, "cannot be proved") != NULL) {
+	} else if (strstr(inFile, PROVERIF_NOPROOF_STATEMENT) != NULL) {
 		secure = CANNOT_PROVE;
 	}
 

@@ -1,0 +1,14 @@
+const g0:bitstring.
+const gc:bitstring.
+const c0:bitstring.
+const c1:bitstring.
+
+equation g0=gc.
+reduc ung(g0) = c0;
+      ung(gc) = c1.
+
+free c:channel.
+free a:bitstring.
+free b:bitstring.
+
+process 0

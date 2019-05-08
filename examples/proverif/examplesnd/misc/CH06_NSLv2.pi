@@ -1,0 +1,59 @@
+(* insecure version of NSL *)
+
+free c.
+
+(* Public key cryptography *)
+fun pk/1.
+fun encrypt/2.
+reduc decrypt(encrypt(x,pk(y)),y) = x.
+
+(* Host *)
+fun host/1.
+
+(* Secrecy assumptions *)
+not skA.
+not skB.
+
+(******* Process specification *******)
+let processA =
+(* Message 1 *)
+new Na;
+let m1 = encrypt((hostA, Na), pkB) in
+out(c, m1);
+
+(* Message 2 *)
+in(c, m);
+let (=hostB, =Na, NY) = decrypt(m, skA) in
+
+(* Message 3 *)
+event Akey(NY);
+out(c, encrypt(NY, pkB));
+out(c, choice[NY, randomkey]).
+
+let processB =
+(* Message 1 *)
+in(c, m);
+let (=hostA, NX) = decrypt(m, skB) in
+
+(* Message 2 *)
+new Nb;
+out(c, encrypt((hostB, NX, Nb), pkA));
+
+(* Message 3 *)
+in(c, m3);
+if Nb = decrypt(m3, skB) then
+
+(* OK *)
+event Bkey(Nb);
+out(c, choice[Nb, randomkey]).
+
+process 
+new skA; 
+let pkA = pk(skA) in
+new skB; 
+let pkB = pk(skB) in
+let hostA = host(skA) in
+let hostB = host(skB) in
+out(c, pkA); out(c, pkB);
+new randomkey;
+(processA | processB)

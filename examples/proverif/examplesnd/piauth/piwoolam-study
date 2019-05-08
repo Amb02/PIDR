@@ -1,0 +1,112 @@
+free c.
+piwoolam-orig2
+AUTH Bparam
+
+
+Rule 16: c:encrypt((m4(),host(v105),encrypt((m3(),v106),v105)),v107) & c:host(v107) -> c:encrypt((m5(),v106),v107)
+Rule 15: c:encrypt((m5(),N[host(kAS[]),v103]),kBS[]) & c:v104 & c:host(kAS[]) -> end:(v103),(host(kBS[]))
+Rule 14: c:v101 & c:v102 -> c:encrypt((m4(),v102,v101),kBS[])
+Rule 13: c:v99 -> c:N[v99,v100]
+Rule 12: c:v97 & c:v98 -> c:encrypt((m3(),v97),kAS[]) (out:(v98))
+Rule 11: c:v96 -> c:host(kAS[]) (out:(v96))
+Rule 10: c:host(kBS[])
+Rule 9: c:host(kAS[])
+Rule 8: c:c & c:m -> private:c,m
+Rule 7: c:c[]
+Rule 6: private:c,m & c:c -> c:m
+Rule 5: c:encrypt(m,k) & c:k -> c:m
+Rule 4: c:any6 -> c:host(any6)
+Rule 3: c:any5 & c:any4 -> c:encrypt(any5,any4)
+Rule 2: c:m5()
+Rule 1: c:m4()
+Rule 0: c:m3()
+
+goal reachable: end:(v181),(B)
+rule 15 end:(v182),(B)
+  rule 16 c:encrypt((m5(),N[A,v182]),kBS[])
+    rule 14 c:encrypt((m4(),A,encrypt((m3(),N[A,v182]),kAS[])),kBS[])
+      rule 12 c:encrypt((m3(),N[A,v182]),kAS[])
+        rule 13 c:N[A,v182]
+          duplicate c:A
+        any c:v183
+      rule 11 c:A
+        any c:v184
+    rule 10 c:B
+  any c:v185
+  rule 11 c:A
+    any c:v186
+
+A -> C(B) : A
+B -> A : N
+A -> C(B) : { m3, N }kAS
+B -> S : { m4, A, {m3,N}kAS }kBS
+S -> B : { m5, N}kBS
+
+A thinks he talks to C, B thinks he talks to A
+The messages from A to C are relayed to B by the intruder.
+This does not correspond to the attack of Abadi, Needham,
+prudent engineering pratice... It corresponds to the
+attack of Anderson and Needham, LNCS 1000, 1995.
+
+piwoolam-corr1
+First correction of Abadi, Needham, Prudent engineering practice...
+
+A -> B : A
+B -> A : N (fresh)
+A -> B : { N }_kAS
+B -> S : { A,{ N }_kAS }_kBS
+S -> B : { A, N }_kBS
+B: verify { A, N }_kBS = the message from S
+
+
+
+Rule 13: c:encrypt((host(v10),encrypt(v11,v10)),v12) & c:host(v12) -> c:encrypt((host(v10),v11),v12)
+Rule 12: c:encrypt((host(kAS[]),N[host(kAS[]),v8]),kBS[]) & c:v9 & c:host(kAS[]) -> end:(v8),(host(kBS[]))
+Rule 11: c:v6 & c:v7 -> c:encrypt((v7,v6),kBS[])
+Rule 10: c:v4 -> c:N[v4,v5]
+Rule 9: c:v2 & c:v3 -> c:encrypt(v2,kAS[]) (begin:(v3))
+Rule 8: c:v1 -> c:host(kAS[]) (begin:(v1))
+Rule 7: c:host(kBS[])
+Rule 6: c:host(kAS[])
+Rule 5: c:c & c:m -> private:c,m
+Rule 4: c:c[]
+Rule 3: private:c,m & c:c -> c:m
+Rule 2: c:encrypt(m,k) & c:k -> c:m
+Rule 1: c:any3 -> c:host(any3)
+Rule 0: c:any2 & c:any1 -> c:encrypt(any2,any1)
+
+goal reachable: end:(v377),(B)
+rule 12 end:(v378),(B)
+  rule 11 c:encrypt((A,N[A,v378]),kBS[])
+    rule 10 c:N[A,v378]
+      duplicate c:A
+    duplicate c:A
+  any c:v379
+  rule 8 c:A
+    any c:v380
+
+
+I -> B : A
+B -> I : N
+I -> B : N
+B -> I : { A, N }_kBS
+I -> B : { A, N }_kBS
+B says OK
+
+
+piwoolam
+Woo,Lam 97
+
+A -> B : A
+B -> A : N (fresh)
+A -> B : { A,B,N }_kAS
+B -> S : { A,B,{ A,B,N }_kAS }_kBS
+S -> B : { A,B,N }_kBS
+B: verify { A,B,N }_kBS = the message from S
+
+I -> B : A
+B -> I : N
+I -> B : N
+B -> I : { A,B,N }_kBS
+I -> B : { A,B,N }_kBS
+B says OK

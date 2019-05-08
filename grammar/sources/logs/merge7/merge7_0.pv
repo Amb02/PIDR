@@ -1,0 +1,10 @@
+free a: bitstring.
+free c,d,e:channel.
+fun hash(bitstring):bitstring.
+
+equivalence
+   in(c, x:bitstring); in(c, y:bitstring); ! new a: bitstring; if hash((a,x)) = hash((a,y)) then
+   ! out(c,x) else ! out(c,y)
+
+   in(c, x:bitstring); in(c, y:bitstring); ! out(c,y)
+

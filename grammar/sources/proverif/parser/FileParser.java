@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.tree.*;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ public class FileParser {
 
 	private String path;
 	private File currentFile;
+	private FileWriter errorWriter;
 
 	private ProverifErrorListener listener;
 	private ProverifParser parser;
@@ -25,8 +27,12 @@ public class FileParser {
 	private ANTLRInputStream inputStream;
 	private BufferedTokenStream tokens;
 
-	public FileParser (String path) {
+	private int fileParsedCount = 0;
+
+	public FileParser (String path, FileWriter fw) {
 		this.path = path;
+
+		errorWriter = fw;
 	}
 
 	private void parseFromDirectory (int level) throws IOException {
@@ -45,6 +51,8 @@ public class FileParser {
 				parse(file.getPath());
 			}
 		}
+
+		System.out.println("Number of file parsed in this directory : " + fileParsedCount);
 	}
 
 	public void parse () throws IOException {
@@ -93,11 +101,13 @@ public class FileParser {
 		}
 	}
 
-	private void postParsingOperations (ProverifParser.ProgrammeContext context) {
+	private void postParsingOperations (ProverifParser.ProgrammeContext context) throws IOException {
 		if (listener.hasNoError()) {
 			displayParsingSuccessfulMessage();
+			fileParsedCount++;
 		} else {
-			displayParsingErrorMessage();
+			//displayParsingErrorMessage();
+			errorWriter.write(String.format("%s\n", currentFile));
 		}
 
 		if (!parseOnly && listener.hasNoError()) {
@@ -111,6 +121,7 @@ public class FileParser {
 
 	private void fileReplacement () {
 		Tuples tuples 										= ProverifVisitorImpl.tuples;
+
 		HashMap<Integer, ArrayList<Tuple> > referenceLines 	= ProverifVisitorImpl.referenceLines;
 		//references lines contient < les lignes qui doivent subir une modif (ie : contiennent un tuple) , ce tuple >
 		Combinations combinations = new Combinations(tuples);

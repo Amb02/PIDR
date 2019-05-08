@@ -1,0 +1,13 @@
+fun g(bitstring, bitstring):bitstring.
+
+reduc 
+  forall x:bitstring; r(g(x,x)) = x.
+
+letfun f(x:bitstring or fail,y:bitstring or fail) = let z = r(x) in g(x,y) else g(y,y).
+
+channel c.
+free a, b, d: bitstring.
+
+
+
+process out(c, f(r(g(a,b)),d)); out(c, f(a,f(b,d)))

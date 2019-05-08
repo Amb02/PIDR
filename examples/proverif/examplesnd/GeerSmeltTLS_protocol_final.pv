@@ -1,0 +1,416 @@
+(**************************************************************************
+ * DEFINITIONS                                                            *
+ **************************************************************************)
+ 
+(* param verboseClauses = explained. *)
+(* param traceDisplay = long. *)
+
+(* A public channel *)
+free net.
+
+(* Message tags *)
+free ClientHello, ServerHello, ServerCertificate, ServerKeyExchange, ClientCertificateRequest, ServerHelloDone, ClientCertificate, ClientKeyExchange, CertificateVerify, ClientChangeCipherSpec, ClientFinished, ServerChangeCipherSpec, ServerFinished, ClientPassport, ActiveAuthenticationChallenge, ActiveAuthenticationReponse.
+
+(* Agent initialization is done over a private channel *)
+private free clientInit, serverInit, initChannel.
+
+(* The cryptographic constructors *)
+fun hash/1. 	(* hashing *)
+fun hmac/2.
+fun encrypt/2. 	(* symmetric key encryption *)
+fun sign/2. 	(* Public key signing *)
+fun sk/1. 	(* Extracts secret key of a keypair *)
+fun pk/1. 	(* Extracts public key of a keypair *)
+
+(* The cryptographic destructors *)
+
+reduc decrypt(encrypt(x, y), y) = x.
+reduc unsign(sign(x, sk(y)), pk(y)) = x.
+
+(* A constructor that maps agents to their secret keypairs *)
+private fun keypair/1.
+
+(* Pseudo−random−number function for generating TLS session key randomness *)
+fun PRF/1.
+
+(* Symmetric key construction *)
+fun clientK/3.
+fun serverK/3.
+
+(* Certificates *)
+private fun cert/2.
+
+(* If cert(x, y) establishes x as owner of key y, y is returned, i.e. this retrieves the public key from the server's certificate *)
+reduc verify(cert(x, y), x) = y.
+
+(* Diffie-Hellman computations *)
+fun g/0. 					(* Generator of the group (a constant) *)
+fun exp/2.					(* Exponentiation *)
+equation exp(exp(g, x), y) = exp(exp(g, y), x). (* Equality property *)
+
+(**************************************************************************
+ * QUERIES 																  *
+ **************************************************************************)
+ 
+ (* secrecy secure channel *)
+private free clientS.
+private free serverS.
+ query attacker: clientS.
+ query attacker: serverS.
+ 
+ private free passportFlag.
+ query attacker: passportFlag. 
+ 
+(* secrecy Pre Master secret *)
+private free PMSa.
+private free PMSb.
+query attacker: PMSa.
+query attacker: PMSb.
+
+(* secrecy Master secret *)
+private free MSa. 
+private free MSb.
+query attacker: MSa.
+query attacker: MSb.
+
+(* secrecy Finished message from the client *)
+private free FinishedAFlag.
+query attacker: FinishedAFlag.
+
+(* secrecy Finished message from the server *)
+private free FinishedBFlag.
+query attacker: FinishedBFlag. 
+
+(* authenticity of the server *)
+query evinj: endServerAuth(x, y, z) ==> evinj: beginServerAuth(x, y, z).
+
+(* authenticity of the client *)
+query evinj: endClientAuth(x, y, z) ==> evinj: beginClientAuth(x, y, z).
+
+(* Passport checks *)
+query evinj: endPassiveAuth(x, y, z) ==> evinj: beginPassiveAuth(x, y, z).
+(* query evinj: endActiveAuth(x, y, z) ==> evinj: beginActiveAuth(x, y, z). *)
+
+(* ABC transaction check *)
+(* query evinj: endTransaction(x, y, z) ==> evinj: beginTransaction(x, y, z). *)
+
+(* Dead code check *)
+private free clientFinished.
+private free serverFinished.
+query attacker: clientFinished.
+query attacker: serverFinished.
+
+(**************************************************************************
+ * THE SERVER PROCESS                                                     *
+ **************************************************************************)
+let Server =
+	(** Initial agent data from a trusted channel **)
+	in(serverInit, (B, serverKeypair, serverCert));
+	
+	(** Receive issuer keypair over another trusted channel, double checking to make sure it is in fact intended for me **)
+	in(initChannel, (=B, issuerKeypair, issuerCert));
+	
+	let SKs = sk(serverKeypair) in (* Secret key used for communication *)
+	let SKi = sk(issuerKeypair) in (* Secret key used for signing of attributes *)
+	
+	(** Replication to model arbitrary sessions **)
+	!
+	
+	(* A −> B : ClientHello *)
+	in(net, CH); let (=ClientHello, A, Na, SupportedOptions) = CH in
+	
+	(* B generates fresh nonce Nb *)
+	new Nb;
+	(* Moved new *)
+	new s;
+	
+	(* Server picks a cipher suite and compression method from SupportedOptions *)
+	new SelectedOptions;
+	
+	(* B −> A : ServerHello *)
+	let SH = (ServerHello, B, Nb, SelectedOptions) in out(net, SH);
+	
+	(* B −> A : ServerCertificate *)
+	let SC = (ServerCertificate, serverCert) in out(net, SC);
+	
+	(* Generate Diffie-Hellman Key Exchange parameters *)
+	new N; (* Modulus (prime), public *)
+	new Y; (* Server's secret exponent *)
+	
+	(* B -> A: ServerKeyExchange *)
+	let SKE = (ServerKeyExchange, g, N, exp(g, Y), sign((Na, Nb, g, N, exp(g, Y)), SKs)) in out(net, SKE);
+	
+	(* Create a list of acceptable certificate types and CAs *)
+	new Acceptable_certificate_types;
+	new Acceptable_certificate_authorities;
+	
+	(* Sending ClientCertificateRequest *)
+	let CCR = (ClientCertificateRequest, Acceptable_certificate_types, Acceptable_certificate_authorities) in out(net, CCR);
+	
+	(* Sending ServerHello Done *)
+	let SHD = ServerHelloDone in out(net, SHD);
+	
+	(* A −> B : ClientCertificate *)
+	in(net, CC); let (=ClientCertificate, clientCert) = CC in
+	
+	(* A −> B : ClientKeyExchange *)
+	in(net, CKE); let (=ClientKeyExchange, GX) = CKE in
+	
+	(* A −> B : CertificateVerify *)
+	let unsignKey = verify(clientCert, A) in
+	in(net, CV); let (=CertificateVerify, cvHash) = unsign(CV, unsignKey) in
+	
+	(* B verifies client signature *)	
+	let =cvHash = hash((CH, SH, SC, SKE, CCR, SHD, CC, CKE)) in
+	
+	(** end client authentication **)
+	event endClientAuth(A, B, cvHash);
+	
+	(* Calculating the Pre-Master Secret *)
+	let PMS = exp(GX, Y) in
+	
+	(* Receiving ClientChangeCipherSpec *)
+	in(net, CCCS); let =ClientChangeCipherSpec = CCCS in
+	
+	(* A −> B : Finished *)
+	in(net, FA);
+	
+	(* B calculates M *)
+	let M = PRF((PMS, Na, Nb)) in
+	
+	(* B calculates Finished *)
+	let Finished = hash((CH, SH, SC, SKE, CCR, SHD, CC, CKE, CV, CCCS, M)) in
+	
+	(** server authentication **)
+	event beginServerAuth(A, B, Finished);
+	
+	(* Sending ServerChangeCipherSpec, indicating a switch to the encryption negotiated above. Essentially just 1 byte *) 	
+	let SCCS = ServerChangeCipherSpec in out(net, SCCS);
+		
+	(* B −> A : Finished *)
+	out(net, encrypt(Finished, serverK(Na, Nb, M)));
+	
+	(* B verifies received Finished *)
+	let =Finished = decrypt(FA, clientK(Na, Nb, M)) in
+	
+	(* End of TLS handshake *)	
+	
+	(* Set up a new secure channel encrypted with the newly generated session key *)
+	out(net, encrypt(s, serverK(Na, Nb, M)));
+	
+	(* Start of application data *)
+	
+	(* Receiving the encrypted passport and HMAC *)
+	in(s, CP); let (=ClientPassport, EP, HP) = CP in
+
+	(* Decrypt the passport data *)
+	let DP = decrypt(EP, clientK(Na, Nb, M)) in
+
+	(* Verify the HMAC *)
+	let =HP = hmac(EP, clientK(Na, Nb, M)) in
+
+	(* Verify the participants and store the nonce for after passport checks *)
+	let (Passport, =A, =B, Nonce) = DP in
+
+	(* Split up passport and store public key *)
+	(* Note: If BAC is required, everything is inaccessible until BAC is performed *)
+	(* We assume BAC is performed once we get to this part *)
+	let (DG, SOD, PKp) = Passport in
+
+	(* Do Passive Authentication by verifying the hash of the datagroups against the SOD file *)
+	let =SOD = hash(DG) in
+
+	event endPassiveAuth(A, B, Passport);
+
+	(* Start Active Authentication by sending a challenge *)
+	new AAC;
+
+	(* event beginActiveAuth(A, B, AAC); *)
+
+	out(s, (ActiveAuthenticationChallenge, AAC));
+
+	(* Receive the response and verify if it is the correct solution *)
+	in(s, AAR); let (=ActiveAuthenticationReponse, AAResp) = AAR in
+	
+	let =AAC = unsign(AAResp, PKp) in
+	
+	(* Secrecy checks *)
+	(
+		(out(s, serverS)) |
+		
+		(** secrecy check on the Master secret **)
+		(out(M, MSb)) |
+		
+		(** secrecy check on the Pre-Master Secret **)
+		(out(PMS, PMSb)) |
+		
+		(** secrecy check on the finished **)
+		(out(Finished, FinishedBFlag)) |
+		
+		(** dead code check **)
+		(out(net, serverFinished))
+	).
+	
+(**************************************************************************
+ * CLIENT PROCESS, this client is the initiator of the protocol.          *
+ **************************************************************************)
+let Client =
+	(** Initial agent data from a trusted channel **)
+	in(clientInit, (A, clientKeypair, clientCert));
+	
+	let SKc = sk(clientKeypair) in
+	
+	(** Get the server’s name, perhaps as user input **)
+	in(net, B);
+	
+	(* A generates fresh nonce Na *)
+	new Na;
+	
+	(* Supported cipher suites and compression methods *)
+	new SupportedOptions;
+	
+	(* A −> B : ClientHello *)
+	let CH = (ClientHello, A, Na, SupportedOptions) in out(net, CH);
+	
+	(* B −> A : ServerHello *)
+	in(net, SH); let (=ServerHello, =B, Nb, SelectedOptions) = SH in
+	
+	(* B −> A : ServerCertificate *)
+	in(net, SC); let (=ServerCertificate, serverCert) = SC in
+	
+	(* Receiving Server DH Key Parameters and checking integrity *)
+	in(net, SKE); let (=ServerKeyExchange, G, N, GY, DHSignature) = SKE in
+	let unsignKey = verify(serverCert, B) in
+	let (=Na, =Nb, =g, =N, =GY) = unsign(DHSignature, unsignKey) in
+	
+	(* Receiving ClientCertificateRequest *)
+	in(net, CCR); let (=ClientCertificateRequest, Acceptable_certificate_types, Acceptable_certificate_authorities) = CCR in
+	
+	(* Receiving ServerHelloDone *)
+	in(net, SHD); let =ServerHelloDone = SHD in
+	
+	(* A −> B: ClientCertificate *)
+	let CC = (ClientCertificate, clientCert) in out(net, CC);
+	
+	(* A −> B : ClientKeyExchange *)
+	new X;
+	let CKE = (ClientKeyExchange, exp(g, X)) in out(net, CKE);
+	
+	(* Creating hash of past messages *)
+	let cvHash = hash((CH, SH, SC, SKE, CCR, SHD, CC, CKE)) in
+	
+	(** begin client authentication **)
+	event beginClientAuth(A, B, cvHash);
+	
+	(* A −> B: CertificateVerify *)
+	let CV = sign((CertificateVerify, cvHash), SKc) in out(net, CV);
+	
+	(* Compute the pre-master secret (g^xy) *)
+	let PMS = exp(GY, X) in
+	
+	(* Compute the master secret, technically also requires "master secret" to be part of the arguments for hashing *)
+	let M = PRF((PMS, Na, Nb)) in
+	
+	(* Sending ClientChangeCipherSpec, indicating a switch to the encryption negotiated above. Essentially just 1 byte *)
+	let CCCS = ClientChangeCipherSpec in out(net, CCCS);
+	
+	(* Compute Finished using hash *)
+	let Finished = hash((CH, SH, SC, SKE, CCR, SHD, CC, CKE, CV, CCCS, M)) in
+	
+	(* A −> B : Finished *)
+	out(net, encrypt(Finished, clientK(Na, Nb, M)));
+	
+	(* Receiving ServerChangeCipherSpec, indicating a switch to the encryption negotiated above. Essentially just 1 byte *)
+	in(net, SCCS); let =ServerChangeCipherSpec = SCCS in
+	
+	(* B −> A : Finished *)
+	in(net, FB);
+	
+	(* A verifies received finished *)
+	let =Finished = decrypt(FB, serverK(Na, Nb, M)) in
+	
+	(** end server authentication **)
+	event endServerAuth(A, B, Finished);
+	
+	(* End of TLS handshake *)
+	
+	(* Receive the secure channel created by the server *)
+	in(net, newChannel); let s = decrypt(newChannel, serverK(Na, Nb, M)) in
+	
+	(** Start of application data **)
+	
+	(* Build passport (data is actually received through a separate process) *)
+	new DG; (* 16 data groups in total *)
+	let SOD = hash(DG) in (* Contains hashes of all DG values *)
+	new P; (* Create new passport agent (only part of the model, not part of passport) *)
+	let passportKeypair = keypair(P) in (* Public key is technically stored in DG15 *)	
+
+	let Passport = (DG, SOD, pk(passportKeypair)) in
+
+	event beginPassiveAuth(A, B, Passport); (* TODO: Add P to event? *)
+	
+	(* Generating fresh nonce for passport communication *)
+	new Np;
+	
+	(* Encrypting passport using the session key *)
+	let EP = encrypt((Passport, A, B, Np), clientK(Na, Nb, M)) in
+	
+	(* Generating HMAC of the encrypted passport, again reusing the session key *)
+	let HP = hmac(EP, clientK(Na, Nb, M)) in
+	
+	(* Send the entire passport data *)
+	let CP = (ClientPassport, EP, HP) in out(s, CP);
+
+	(* Start of Active Authentication *)
+
+	(* Receive challenge from Server *)
+	in(s, AAC); let (=ActiveAuthenticationChallenge, Ch) = AAC in
+
+	(* Send response to AA challenge *)
+	let AAR = (ActiveAuthenticationReponse, sign(Ch, sk(passportKeypair))) in out(s, AAR);
+
+	(* End of Active Authentication *)
+
+	(* Secrecy checks *)
+	(
+		(out(s, clientS)) |
+		
+		(out(CP, passportFlag)) |
+		
+		(** secrecy check on the Master secret **)
+		(out(M, MSa)) |
+		
+		(** secrecy check on the Pre-Master Secret **)
+		(out(PMS, PMSa)) |
+		
+		(** secrecy check on the Finished message **)
+		(out(Finished, FinishedAFlag)) |
+		
+		(** dead code check **)
+		(out(net, clientFinished))
+	).
+				
+(**************************************************************************
+ * THE INITIALIZER PROCESS                                                *
+ **************************************************************************)
+let initializer =
+	new C; (* Generate agent name (unique) *)
+	new S; (* Generate agent name (unique) *)
+	let clientKeypair = keypair(C) in (* Generate client keypair *) 
+	let serverKeypair = keypair(S) in (* Generate server keypair *)
+	let issuerKeypair = keypair(S) in (* Generate issuer keypair *)
+	let clientCert = cert(C, pk(clientKeypair)) in
+	let serverCert = cert(S, pk(serverKeypair)) in
+	let issuerCert = cert(S, pk(issuerKeypair)) in
+	(
+		out(clientInit, (C, clientKeypair, clientCert)) |
+		out(serverInit, (S, serverKeypair, serverCert)) |
+		out(initChannel, (S, issuerKeypair, issuerCert)) |
+		out(net, S) (* Inform clients of the central server (e.g. IP address) *)
+	).
+	
+(**************************************************************************
+ * THE SYSTEM                                                             *
+ **************************************************************************)
+process
+	!initializer | !Client | !Server

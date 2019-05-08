@@ -1,0 +1,189 @@
+free c:channel.
+
+(* The type type_key was replaced by bitstring since types are ignored. *)
+(* The type id_tpm was replaced by bitstring since types are ignored. *)
+
+free bindk:bitstring.
+free sealk:bitstring.
+
+(* The type private_key was replaced by bitstring since types are ignored. *)
+(* The type public_key was replaced by bitstring since types are ignored. *)
+(* The type value_pcr was replaced by bitstring since types are ignored. *)
+
+free nil:bitstring.
+
+fun hpcr(bitstring,bitstring):bitstring.
+
+free init:bitstring.
+
+fun pk(bitstring):bitstring.
+fun certPCR(bitstring,bitstring,bitstring):bitstring.
+fun certKey(bitstring,bitstring,bitstring):bitstring.
+
+reduc forall sk:bitstring,v:bitstring,d:bitstring; check_certPCR(certPCR(sk,v,d),pk(sk)) = (v,d).
+
+reduc forall sk:bitstring,v:bitstring,xpk:bitstring; check_certKey(certKey(sk,xpk,v),pk(sk)) = (xpk,v).
+
+fun aenc(bitstring,bitstring):bitstring.
+
+reduc forall sk:bitstring,d:bitstring; adec(sk,aenc(pk(sk),d)) = d.
+
+table keyloaded(bitstring,bitstring,bitstring,bitstring,bitstring).
+
+fun wrap(bitstring,bitstring,bitstring,bitstring,bitstring):bitstring.
+
+reduc forall x_pk:bitstring,x_key:bitstring,t_key:bitstring,data:bitstring,x_pcr:bitstring; unwrap(wrap(x_pk,x_key,t_key,data,x_pcr)) = (x_pk,x_key,t_key,data,x_pcr) [private].
+
+fun seal(bitstring,bitstring,bitstring,bitstring):bitstring.
+
+reduc forall x_pk:bitstring,d:bitstring,p:bitstring,v:bitstring; unseal(seal(x_pk,d,p,v)) = (x_pk,d,p,v) [private].
+
+free load:bitstring.
+free read:bitstring.
+free quote:bitstring.
+free wrap_key:bitstring.
+free certify:bitstring.
+free unbind:bitstring.
+free seal_data:bitstring.
+free unseal_data:bitstring.
+free extend:bitstring.
+free a1:bitstring.
+free a2:bitstring.
+
+event Attack.
+
+type stamp.
+
+free id:stamp [private].
+
+event Counter(channel,stamp,stamp,nat).
+event VCell_bitstring(channel,bitstring).
+
+query i:nat,i1:nat,st:stamp,st1:stamp,st2:stamp,d:channel,x:bitstring,x1:bitstring;
+  event(Attack) ==>
+        event(VCell_bitstring(d,(i1,x1))) && event(VCell_bitstring(d,(i,x))) && i1 = i && (i1,x1) <> (i,x)
+    ||  event(Counter(d,st2,st,i1)) && event(Counter(d,st2,st,i)) && i1 <> i
+    ||  event(Counter(d,st2,st,i1)) && event(Counter(d,st2,st1,i1)) && st <> st1.
+
+process
+  !(
+  new id1:bitstring; (* Application of the process Main_Process *)
+  new pcr:channel;
+  new aik:bitstring;
+  new srk:bitstring;
+  new tpm_proof:bitstring;
+  new k1:bitstring;
+  new k2:bitstring;
+  insert keyloaded(id1,k1,pk(k1),bindk,hpcr(init,a1));
+  insert keyloaded(id1,k2,pk(k2),bindk,hpcr(init,a2));
+  out(c,pk(k1));
+  out(c,pk(k2));
+  (
+    new s1:bitstring; (* Application of the process Alice *)
+    new s2:bitstring;
+    in(c,(cert1:bitstring,cert2:bitstring));
+    let (= pk(k1),v1:bitstring) = check_certKey(cert1,pk(aik)) in
+    let (= pk(k2),v2:bitstring) = check_certKey(cert2,pk(aik)) in
+    out(c,(aenc(pk(k1),s1),aenc(pk(k2),s2)));
+    in(c,(= s1,= s2));
+    event Attack();
+    0
+  ) | (
+  (* Application of the process Main_TPM *)
+  (* Application of the process Initialisation *)
+    insert keyloaded(id1,srk,pk(srk),bindk,nil);
+    0
+  ) | (
+    out(c,pk(srk));
+    0
+  ) | (
+    out(pcr,(0,init));
+    0
+  ) | (
+    !(
+    in(pcr,(i:nat,x:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+    event VCell_bitstring(pcr,(i,x));
+    out(pcr,(i,x));
+    0
+    )  ) | (
+    !(
+    (
+      in(c,= read); (* Application of the process Read *)
+      in(pcr,(i:nat,v:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+      event VCell_bitstring(pcr,(i,v));
+      out(pcr,(i,v));
+      out(c,v);
+      0
+    ) | (
+      in(c,(= quote,x:bitstring)); (* Application of the process Quote *)
+      in(pcr,(i:nat,v:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+      event VCell_bitstring(pcr,(i,v));
+      out(pcr,(i,v));
+      out(c,certPCR(aik,v,x));
+      0
+    ) | (
+      new key:bitstring; (* Application of the process CreateWrapKey *)
+      in(c,(= wrap_key,x_pk:bitstring,t:bitstring,v_lock:bitstring));
+      in(pcr,(i:nat,v_cur:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+      event VCell_bitstring(pcr,(i,v_cur));
+      out(pcr,(i,v_cur));
+      get keyloaded(= id1,x_key:bitstring,= x_pk,t':bitstring,v:bitstring) in
+      if (v = nil || v = v_cur) then
+      out(c,(pk(key),wrap(x_pk,key,t,tpm_proof,v_lock)));
+      0
+    ) | (
+      in(c,(= load,x_pk:bitstring,x_w:bitstring)); (* Application of the process LoadKey2 *)
+      let (y_pk:bitstring,x_key:bitstring,t:bitstring,= tpm_proof,x_pcr:bitstring) = unwrap(x_w) in
+      if pk(x_key) = x_pk then
+      in(pcr,(i:nat,v:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+      event VCell_bitstring(pcr,(i,v));
+      out(pcr,(i,v));
+      get keyloaded(= id1,x_sk:bitstring,= y_pk,t':bitstring,v':bitstring) in
+      if (v = v' || v' = nil) then
+      insert keyloaded(id1,x_key,x_pk,t,x_pcr);
+      0
+    ) | (
+      in(c,(= certify,x_pk:bitstring)); (* Application of the process CertifyKey *)
+      get keyloaded(= id1,x_key:bitstring,= x_pk,t:bitstring,v:bitstring) in
+      out(c,certKey(aik,x_pk,v));
+      0
+    ) | (
+      in(c,(= unbind,x_pk:bitstring,cypher:bitstring)); (* Application of the process Unbind *)
+      in(pcr,(i:nat,v:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+      event VCell_bitstring(pcr,(i,v));
+      out(pcr,(i,v));
+      get keyloaded(= id1,x_sk:bitstring,= x_pk,= bindk,v':bitstring) in
+      if (v' = nil || v = v') then
+      out(c,adec(x_sk,cypher));
+      0
+    ) | (
+      in(c,(= seal_data,d:bitstring,x_pcr:bitstring,x_pk:bitstring)); (* Application of the process Seal *)
+      in(pcr,(i:nat,v:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+      event VCell_bitstring(pcr,(i,v));
+      out(pcr,(i,v));
+      get keyloaded(= id1,x_sk:bitstring,= x_pk,= sealk,v':bitstring) in
+      if (v' = nil || v = v') then
+      out(c,seal(x_pk,d,tpm_proof,x_pcr));
+      0
+    ) | (
+      in(c,(= unseal_data,x:bitstring)); (* Application of the process Unseal *)
+      let (x_pk:bitstring,d:bitstring,= tpm_proof,v':bitstring) = unseal(x) in
+      in(pcr,(i:nat,v:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+      event VCell_bitstring(pcr,(i,v));
+      out(pcr,(i,v));
+      get keyloaded(= id1,x_sk:bitstring,= x_pk,= sealk,v'':bitstring) in
+      if ((v' = nil && v'' = nil) || ((v' = nil && v = v'') || ((v' = v && v'' = nil) || (v' = v && v'' = v)))) then
+      out(c,d);
+      0
+    ) | (
+      in(c,(= extend,x:bitstring)); (* Application of the process Extend *)
+      in(pcr,(i:nat,v:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+      event VCell_bitstring(pcr,(i,v));
+      new st[]:stamp;
+      event Counter(pcr,id,st,i);
+      event VCell_bitstring(pcr,(i + 1,hpcr(v,x)));
+      out(pcr,(i + 1,hpcr(v,x)));
+      0
+    )
+    )  )
+  )

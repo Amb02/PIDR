@@ -1,0 +1,40 @@
+#!/bin/bash
+
+title=$1
+output_time=result_time-$1.txt
+output_proverif=output_proverif-$1.txt
+
+if [ \( .$1 = .master \) ]
+then
+  proverif=../../../proverif2.00/proverif
+else
+  proverif=../proverif
+  git checkout $1
+  git pull
+  cd ..
+  ./build
+  cd benchmark
+fi
+
+function run_it {
+    { time $proverif $1 > $output_proverif ;} 2> .time_tmp;
+    real_tmp=$(cat .time_tmp | grep real);
+    user_tmp=$(cat .time_tmp | grep user);
+    echo "File: $1  -  real time: $real_tmp  -  user time: $user_tmp"  >> $output_time;
+}
+
+bench_dir="NoiseExplorer Signal"
+
+echo "Benchmark for proverif with github $title with executable $proverif" > $output_time;
+echo "Benchmark for proverif with github $title with executable $proverif" > $output_proverif;
+
+run_it '-lib TLS/tls-lib.pvl TLS/tls12.pv'
+run_it '-lib TLS/tls-lib.pvl TLS/tls12-tls13-draft18.pv'
+run_it '-lib TLS/tls-lib.pvl TLS/tls13-draft18-only.pv'
+run_it '-lib TLS/tls-lib-draft20.pvl TLS/tls13-draft20-only.pv'
+
+files=$(find $bench_dir -name "*.pv")
+for value in $files
+do
+  run_it $value
+done

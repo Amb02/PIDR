@@ -1,0 +1,83 @@
+(* Needham Shroeder shared key protocol
+
+The weakness of this protocol is that if an attacker has
+a session key k[Kas[], Kbs[], Na[Kbs[],c0]]
+for one c0, he can have all secrets of B, since B cannot
+distinguish different sessions.
+
+Notice that we have slightly changed the protocol such that
+the analyzer terminates. The
+	{ Nb }Kab -> { Nb-1 }Kab 
+is replaced by
+	{ Nb, 0 }Kab -> { Nb, 1 }Kab
+
+ *)
+
+
+(* Shared-key encryption *)
+
+fun encrypt/2.
+reduc decrypt(encrypt(m,k),k) = m.
+
+fun host/1.
+
+(* constants 0 and 1 *)
+
+fun c0/0.
+fun c1/0.
+
+param keyCompromise = strict.
+
+query secretA.
+query secretB.
+
+(* A *)
+
+let pA = 
+	new secretA;
+	in(c, h); 
+	new Na; 
+	out(c, (A, h, Na)); 
+	in(c, menc); 
+	let (Nar, hr, key, m) = decrypt(menc, Kas) in
+	if Nar = Na then
+  	if hr = h then 
+    	(out(c,m);
+	(if h = B then
+		out(c, encrypt(secretA, key))) |
+     	(in(c, menc2);
+    	let (n,v) = decrypt(menc2, key) in
+     	if v = c0 then
+     		out(c, encrypt((n, c1), key)))).
+
+(* B *)
+
+let pB =
+	new secretB;
+	in(c, menc);
+	let (key, h) = decrypt(menc, Kbs) in
+	new Nb;
+	out(c, encrypt((Nb, c0), key));
+	if h = A then
+		out(c, encrypt(secretB, key)).
+
+(* S *)
+
+let pS =
+	in(c, m);
+	let (h1, h2, n) = m in
+	if h1 = A then
+	if h2 = B then
+	(new k;
+	out(c, encrypt((n, h2, k, encrypt((k, h1), Kbs)), Kas))).
+
+process
+
+new Kas; 
+let A = host(Kas) in
+out(c, A);
+new Kbs;
+let B = host(Kbs) in
+out(c, B);
+((!pA) | (!pB) | (!pS))
+

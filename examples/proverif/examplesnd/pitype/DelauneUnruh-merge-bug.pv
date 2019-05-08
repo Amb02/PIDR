@@ -1,0 +1,19 @@
+(* il semble y avoir une confusion gauche/droite dans l'opérateur choice 
+   aux lignes numérotées {3} et {4}.
+   Bug fixed 23/1/2013. *)
+
+free io:channel.
+
+free k:bitstring.
+
+
+let P =
+ let y= k in
+    (        in(io,x:bitstring)
+    |            if y = k then out(io,k)
+    ) .
+
+
+let Q = in(io,x:bitstring) |  out(io,k) .
+
+equivalence  P Q

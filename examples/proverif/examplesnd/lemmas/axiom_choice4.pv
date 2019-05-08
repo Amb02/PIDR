@@ -1,0 +1,22 @@
+free c:channel.
+free d:channel [private].
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+event A(bitstring).
+event B(bitstring).
+
+const ok,ko,k:bitstring[private].
+
+axiom x:bitstring,y:bitstring; event(A(x)) ==> x <> a [fullSat].
+
+
+process
+  (in(c,x:bitstring);
+   event B(a);
+   event A(x);
+   in(c,y:bitstring);
+   out(d,x))
+  | in(d,x:bitstring); out(c,choice[a,b])

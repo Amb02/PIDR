@@ -1,0 +1,51 @@
+(* ~~ Types ~~ *)
+type skey.
+type pkey.
+
+(* ~~ Functions ~~ *)
+fun                                         pk(skey): pkey.
+
+fun                                         sign(bitstring, skey): bitstring.
+reduc forall m: bitstring, sk: skey;        verifySign(m, sign(m, sk), pk(sk)) = true.
+
+fun                                         sencrypt(bitstring, bitstring): bitstring.
+reduc forall x: bitstring, k: bitstring;    sdecrypt (sencrypt (x, k), k) = x.
+
+fun                                         DH (pkey, skey): bitstring.
+equation forall x: skey, y: skey;           DH (pk (x), y) = DH (pk (y), x).
+
+(* ~~ Channels ~~ *)
+free ch: channel.
+
+(* ~~ Queries ~~ *)
+free c_secret: bitstring [private].
+query attacker(c_secret).
+
+
+
+let Alice =
+    in (ch, (dummy: bitstring, (b: pkey, signature: bitstring)));
+
+    if verifySign (dummy, signature, b) then
+        new a1[]: skey;
+        new a2[b]: skey;
+
+        out (ch, (pk(a1), pk(a2))).
+
+let Bob =
+    new b: skey;
+    new dummy: bitstring;
+
+    out (ch, (dummy, (pk(b), sign (dummy, b))));
+
+    in (ch, (a1: pkey, a2: pkey));
+
+    let DH1: bitstring = DH (a1, b) in
+    let DH2: bitstring = DH (a2, b) in
+    let SK: bitstring = (DH1, DH2) in
+
+    out(ch, sencrypt(c_secret, SK)).
+
+process
+    Alice |
+    Bob

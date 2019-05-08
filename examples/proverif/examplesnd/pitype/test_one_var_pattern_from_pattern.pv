@@ -1,0 +1,9 @@
+type host.
+
+channel c.
+
+const A: host.
+
+process
+	in(c, =A);
+	out(c, choice[true, false])

@@ -1,0 +1,23 @@
+
+
+
+free c.
+
+(* Public key cryptography *)
+
+fun penc/2.
+fun pk/1.
+reduc pdec(penc(x,pk(y)),y) = x.
+
+fun hash/1.
+
+private free w.
+weaksecret w.
+
+process
+	new s;
+	let pk = pk(s) in
+	out(c, pk);
+	out(c, penc(hash(w), pk))
+
+

@@ -1,0 +1,41 @@
+free c:channel.
+
+event A.
+event B.
+
+free a:bitstring[private].
+free b:bitstring[private].
+
+free d:bitstring [private].
+free e:bitstring.
+
+
+type stamp.
+event Unique(stamp,bitstring).
+
+axiom st:stamp,st1:stamp, st1':stamp,st2:stamp, st2':stamp, x1:bitstring, x1':bitstring, x2:bitstring, x2':bitstring;
+  event(Unique(choice[st,st2],choice[x1,x2])) && event(Unique(choice[st,st2'],choice[x1',x2'])) ==> x1 = x1';
+  event(Unique(choice[st1,st],choice[x1,x2])) && event(Unique(choice[st1',st],choice[x1',x2'])) ==> x2 = x2'.
+
+process
+  new st1:stamp;
+  new st2:stamp;
+  in(c,(i:nat,x:bitstring));
+  event Unique(st1,(i,x));
+  in(c,(j:nat,y:bitstring));
+  event Unique(st2,(j,y));
+  if x = e
+  then
+    (if is_nat(j) then
+    if is_nat(i) then
+    if i > j -5
+    then out(c,choice[a,b])
+    else out(c,choice[a,d])
+    )
+  else
+  (if is_nat(i) then
+  if is_nat(j) then
+  if j <= i - 3
+  then out(c,choice[a,a])
+  else out(c,choice[b,d])
+  )

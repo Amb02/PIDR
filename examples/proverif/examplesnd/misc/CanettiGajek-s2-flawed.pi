@@ -1,0 +1,75 @@
+(***** Header *******)
+
+free c.
+free hostA, hostB.
+
+private free initiator, responder.
+
+(* Host *) 
+
+fun host/1. 
+
+(* Secrecy assumptions *)
+
+not skA. 
+not skB. 
+
+(* Certification. *)
+
+data true/0.
+fun CERT_sign/2.
+reduc CERT_verify(host(hostname), msg, CERT_sign(hostname, msg)) = true.
+
+(* KEM *)
+
+fun KEM_pk/1. 
+fun KEM_encaps_to_ciphertext/1.
+fun KEM_encaps_to_key/2.
+
+reduc KEM_decaps(sk, KEM_encaps_to_ciphertext(same_nonce))
+ = KEM_encaps_to_key(same_nonce, KEM_pk(sk)).
+
+(******* Process specification *******)
+
+let processA =
+(* Message 1 *) 
+new x;
+let Agtothex = KEM_pk(x) in
+out(c, (hostA, Agtothex));
+(* Message 2 *) 
+in(c, m2); 
+let (=hostB, Agtothey, m2_signature) = m2 in
+if CERT_verify(hostB, (Agtothex, Agtothey), m2_signature) = true then
+(* Message 3 *) 
+out(c, (CERT_sign(skA, (Agtothex, Agtothey))));
+(* done *)
+let gtothexy =  KEM_decaps(x, Agtothey) in
+out(c, choice[gtothexy, randomkey]).
+
+let processB =
+(* Message 1 *) 
+in(c, m1);
+let (=hostA, Bgtothex) = m1 in
+(* Message 2 *) 
+new y;
+let Bgtothey = KEM_encaps_to_ciphertext(y) in
+out(c, (hostB, Bgtothey, CERT_sign(skB, (Bgtothex, Bgtothey))));
+(* Message 3 *)
+in(c, m3);
+if CERT_verify(hostA, (Bgtothex, Bgtothey), m3) = true then
+(* done *) 
+let gtothexy= KEM_encaps_to_key(y, Bgtothex) in
+out(c, choice[gtothexy, randomkey]).
+
+
+process 
+new randomkey;
+new skA; 
+new skB;
+let hostA = host(skA) in
+let hostB = host(skB) in
+out(c, hostA);
+out(c, hostB);
+(processA | processB)
+
+

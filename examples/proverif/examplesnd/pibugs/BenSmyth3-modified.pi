@@ -1,0 +1,24 @@
+(* This file avoids the bug exhibited by BenSmyth3.pi, by 
+simplifying the equational theory *)
+
+private free a,b.
+free c.
+
+private free s.
+query attacker:s.
+
+fun f/1.
+private fun h/0.
+
+reduc g(f(x)) = h;
+      g(x) = h.
+
+process
+        (
+                in (a,=g(s));
+                out(b,g(s))
+        ) | (
+                out(a,g(s));
+                in (b,=g(s));
+                out(c,s)
+        )

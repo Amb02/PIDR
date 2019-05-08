@@ -1,0 +1,130 @@
+param reconstructTrace = no.
+(* DO NOT DISTRIBUTE *)
+
+(* param predicatesImplementable = nocheck.*) 
+data cons/2.
+data nil/0.
+data emptyTuple/0.
+reduc hd(cons(a,b))=a.
+reduc tl(cons(a,b))=b.
+data Element/3.
+reduc ElementAtt(Element(x,y,z))=y.
+reduc ElementBody(Element(x,y,z))=z.
+data Attribute/2.
+reduc AttributeParm(Attribute(x,y))=y.
+pred memberList/2 memberOptim.
+clauses 
+memberList:x,cons(x,l);
+memberList:x,l -> memberList:x,cons(y,l).
+data JunkTAG/0.
+ data SecurityTAG/0.
+ data UserTAG/0.
+ data PasswordTAG/0.
+ data BinarySecurityTokenTAG/0.
+ data ValueTypeTAG/0.
+ data X509v3STRING/0.
+ data ReferenceTAG/0.
+ data DigestValueTAG/0.
+ data SignedInfoTAG/0.
+ data SignatureMethodTAG/0.
+ data AlgorithmTAG/0.
+ data SignatureTAG/0.
+ data SignatureValueTAG/0.
+ data BodyTAG/0.
+ data GetOrderTAG/0.
+ data orderIdTAG/0.
+ data pathTAG/0.
+ data actionTAG/0.
+ data toTAG/0.
+ data fwdTAG/0.
+ data viaTAG/0.
+ data idTAG/0.
+ data hmacsha1STRING/0.
+ data EnvelopeTAG/0.
+ data HeaderTAG/0.
+ data firewallTAG/0.
+ data UsernameTokenTAG/0.
+ data UsernameTAG/0.
+ data NonceTAG/0.
+ data CreatedTAG/0.
+ data rsasha1STRING/0.
+ data concat/2.
+ data c14n/1.
+ data utf8/1.
+ data base64/1.
+ fun sha1/1.
+ fun psha1/2.
+ fun hmacsha1/2.
+ fun pk/1.
+ fun rsasha1/2.
+ fun x509/4.
+ fun principal/1.
+ pred hasSecurityHeader/2.
+ pred hasBody/2.
+ pred isUser/3.
+ pred isUserTokenKey/5.
+ pred isX509Cert/5.
+ pred isX509Token/5.
+ pred isSigVal/4.
+ pred ref/2.
+ pred isSigInfo1/3.
+ pred isSignature1/4.
+ pred isSigInfo2/4.
+ pred isSignature2/5.
+ free httpUChan.
+ free httpFChan.
+ free publishChan.
+ free initChan.
+ private free initFChan.
+ pred isGetOrder/2.
+ pred hasPathHeaderFirewall/5.
+ pred hasUserSignedBody/6.
+ pred hasUserSignedBodyFw/10.
+ pred hasFirewallHeader/5.
+ pred hasX509SignedBodyFw/7.
+ reduc x509key(x509(s,u,a,k)) = k.
+ reduc checkx509(x509(s,u,a,k),pk(s)) = pk(s).
+ reduc checkrsasha1(pk(k),x,rsasha1(k,x)) = pk(k).
+ reduc x509user(x509(s,u,a,k)) = u.
+ reduc x509alg(x509(s,u,a,k)) = a.
+ clauses env = Element(EnvelopeTAG,nil,cons(Element(HeaderTAG,nil,headers),cons(dummyl47c42,nil))) & memberList:header,headers & header = Element(SecurityTAG,nil,toks) -> hasSecurityHeader:env,toks.
+ clauses env = Element(EnvelopeTAG,nil,cons(Element(HeaderTAG,nil,dummyl52c31),cons(b,nil))) & b = Element(BodyTAG,dummyl53c15,cons(dummyl53c18,nil)) -> hasBody:env,b.
+ clauses U = Element(UserTAG,nil,cons(Element(UsernameTAG,nil,cons(u,nil)),cons(Element(PasswordTAG,nil,cons(pwd,nil)),nil))) -> isUser:U,u,pwd.
+ clauses isUser:U,u,pwd & tok = Element(UsernameTokenTAG,nil,cons(Element(UsernameTAG,nil,cons(u,nil)),cons(Element(NonceTAG,nil,cons(base64(n),nil)),cons(Element(CreatedTAG,nil,cons(t,nil)),nil)))) & k = psha1(pwd,concat(n,utf8(t))) -> isUserTokenKey:tok,U,n,t,k.
+ clauses kr = checkx509(xcert,kr) & u = x509user(xcert) & k = x509key(xcert) & a = x509alg(xcert) -> isX509Cert:xcert,kr,u,a,k.
+ clauses tok = Element(BinarySecurityTokenTAG,cons(Attribute(ValueTypeTAG,X509v3STRING),nil),cons(base64(xcert),nil)) & isX509Cert:xcert,kr,u,a,k -> isX509Token:tok,kr,u,a,k.
+ clauses hmacsha1STRING = a & sv = hmacsha1(k,c14n(si)) -> isSigVal:sv,si,k,a; 
+  rsasha1STRING = a & p = checkrsasha1(p,c14n(si),sv) -> isSigVal:sv,si,p,a.
+ clauses r = Element(ReferenceTAG,nil,cons(dummyl143c19,cons(dummyl143c21,cons(Element(DigestValueTAG,nil,cons(base64(sha1(c14n(t))),nil)),nil)))) -> ref:t,r.
+ clauses si = Element(SignedInfoTAG,nil,cons(dummyl265c20,cons(Element(SignatureMethodTAG,cons(Attribute(AlgorithmTAG,a),nil),nil),cons(r1,nil)))) & ref:x1,r1 -> isSigInfo1:si,a,x1.
+ clauses sig = Element(SignatureTAG,nil,cons(si,cons(Element(SignatureValueTAG,nil,cons(base64(sv),nil)),cons(dummyl269c56,nil)))) & isSigInfo1:si,a,x & isSigVal:sv,si,k,a -> isSignature1:sig,a,k,x.
+ clauses si = Element(SignedInfoTAG,nil,cons(dummyl274c21,cons(Element(SignatureMethodTAG,cons(Attribute(AlgorithmTAG,a),nil),nil),cons(r1,cons(r2,nil))))) & ref:x1,r1 & ref:x2,r2 -> isSigInfo2:si,a,x1,x2.
+ clauses sig = Element(SignatureTAG,nil,cons(si,cons(Element(SignatureValueTAG,nil,cons(base64(sv),nil)),dummyl279c58))) & isSigInfo2:si,a,x1,x2 & isSigVal:sv,si,k,a -> isSignature2:sig,a,k,x1,x2.
+ clauses b = Element(BodyTAG,dummyl23c15,cons(Element(GetOrderTAG,nil,cons(Element(orderIdTAG,nil,cons(orderid,nil)),nil)),nil)) -> isGetOrder:b,orderid.
+ clauses e = Element(EnvelopeTAG,nil,cons(Element(HeaderTAG,nil,headers),cons(dummyl26c41,nil))) & memberList:header,headers & header = Element(pathTAG,nil,cons(Element(actionTAG,nil,cons(ac,nil)),cons(Element(toTAG,nil,cons(to,nil)),cons(Element(fwdTAG,nil,cons(Element(viaTAG,nil,cons(fw,nil)),nil)),cons(Element(idTAG,nil,cons(id,nil)),nil))))) -> hasPathHeaderFirewall:e,ac,to,fw,id.
+ clauses hasBody:e,b & hasSecurityHeader:e,toks & memberList:utok,toks & u = principal(pwd) & isUser:U,u,pwd & isUserTokenKey:utok,U,n,t,k & memberList:sig,toks & isSignature1:sig,hmacsha1STRING,k,b -> hasUserSignedBody:e,u,pwd,n,t,b.
+ clauses hasPathHeaderFirewall:e,ac,to,fw,id & hasUserSignedBody:e,u,pwd,n,t,b -> hasUserSignedBodyFw:e,ac,to,fw,id,u,pwd,n,t,b.
+ clauses e = Element(EnvelopeTAG,nil,cons(Element(HeaderTAG,nil,headers),cons(dummyl50c41,nil))) & memberList:h,headers & h = Element(firewallTAG,nil,cons(utok,nil)) & utok = Element(UsernameTokenTAG,nil,cons(Element(UsernameTAG,nil,cons(u,nil)),cons(Element(NonceTAG,nil,cons(base64(n),nil)),cons(Element(CreatedTAG,nil,cons(t,nil)),nil)))) -> hasFirewallHeader:e,h,u,n,t.
+ clauses hasBody:e,b & hasFirewallHeader:e,h,u,n,t & hasSecurityHeader:e,toks & memberList:xtok,toks & isX509Token:xtok,kr,f,rsasha1STRING,p & memberList:sig,toks & isSignature2:sig,rsasha1STRING,p,b,h -> hasX509SignedBodyFw:e,kr,f,u,n,t,b.
+ query ev:endLogU(a,b,c,d).
+ query ev:endLogF(a,b,c,d).
+ query ev:endLog(a,b,c,d).
+ process new sr;new su;new sf;new S;new W;let u = principal(su) in 
+  (let kf = pk(sf) in 
+  (let f = principal(base64(sf)) in 
+  (let kr = pk(sr) in 
+  (let xf = x509(sr,f,rsasha1STRING,kf) in 
+  (out (publishChan,(u,S,W,kr,kf,xf));!(in (initChan,(orderid,n,t));let junk = Element(JunkTAG,nil,nil) in 
+  (let b = Element(BodyTAG,nil,cons(Element(GetOrderTAG,nil,cons(Element(orderIdTAG,nil,cons(orderid,nil)),nil)),nil)) in 
+  (new pathid;let k = psha1(su,concat(n,utf8(t))) in 
+  (let ea = Element(actionTAG,nil,cons(W,nil)) in 
+  (let et = Element(toTAG,nil,cons(S,nil)) in 
+  (let ei = Element(idTAG,nil,cons(pathid,nil)) in 
+  (event  beginLogU(u,n,t,b); event  beginLog(u,n,t,b); let siginfo = Element(SignedInfoTAG,nil,cons(junk,cons(Element(SignatureMethodTAG,cons(Attribute(AlgorithmTAG,hmacsha1STRING),nil),nil),cons(Element(ReferenceTAG,nil,cons(junk,cons(junk,cons(Element(DigestValueTAG,nil,cons(base64(sha1(c14n(b))),nil)),nil)))),nil)))) in 
+  (out (httpUChan,(Element(EnvelopeTAG,nil,cons(Element(HeaderTAG,nil,cons(Element(pathTAG,nil,cons(ea,cons(et,cons(Element(fwdTAG,nil,cons(Element(viaTAG,nil,cons(f,nil)),nil)),cons(ei,nil))))),cons(Element(SecurityTAG,nil,cons(Element(UsernameTokenTAG,nil,cons(Element(UsernameTAG,nil,cons(u,nil)),cons(Element(NonceTAG,nil,cons(base64(n),nil)),cons(Element(CreatedTAG,nil,cons(t,nil)),nil)))),cons(Element(SignatureTAG,nil,cons(siginfo,cons(Element(SignatureValueTAG,nil,cons(base64(hmacsha1(k,c14n(siginfo))),nil)),cons(junk,nil)))),nil))),nil))),cons(b,nil)))));0))))))))|(!(in (httpUChan,(e));let v,n,t,b,pac,pto,pid suchthat hasUserSignedBodyFw:e,pac,pto,f,pid,v,su,n,t,b in 
+  (event endLogU(v,n,t,b); out (initFChan,(v,n,t,b));0))|(!(in (initFChan,(v,n,t,b));event  beginLogF(v,n,t,b); let firewallHeader = Element(firewallTAG,nil,cons(Element(UsernameTokenTAG,nil,cons(Element(UsernameTAG,nil,cons(v,nil)),cons(Element(NonceTAG,nil,cons(base64(n),nil)),cons(Element(CreatedTAG,nil,cons(t,nil)),nil)))),nil)) in 
+  (let junk = Element(JunkTAG,nil,nil) in 
+  (let siginfo = Element(SignedInfoTAG,nil,cons(junk,cons(Element(SignatureMethodTAG,cons(Attribute(AlgorithmTAG,rsasha1STRING),nil),nil),cons(Element(ReferenceTAG,nil,cons(junk,cons(junk,cons(Element(DigestValueTAG,nil,cons(base64(sha1(c14n(b))),nil)),nil)))),cons(Element(ReferenceTAG,nil,cons(junk,cons(junk,cons(Element(DigestValueTAG,nil,cons(base64(sha1(c14n(firewallHeader))),nil)),nil)))),nil))))) in 
+  (out (httpFChan,(Element(EnvelopeTAG,nil,cons(Element(HeaderTAG,nil,cons(firewallHeader,cons(Element(SecurityTAG,nil,cons(Element(BinarySecurityTokenTAG,cons(Attribute(ValueTypeTAG,X509v3STRING),nil),cons(base64(xf),nil)),cons(Element(SignatureTAG,nil,cons(siginfo,cons(Element(SignatureValueTAG,nil,cons(base64(rsasha1(sf,c14n(siginfo))),nil)),cons(junk,nil)))),nil))),nil))),cons(b,nil)))));0))))|(!in (httpFChan,(e));let v,n,t,b suchthat hasX509SignedBodyFw:e,kr,f,v,n,t,b in 
+  (let orderid suchthat isGetOrder:b,orderid in 
+  (event endLogF(v,n,t,b); event endLog(v,n,t,b); event done(); 0))))))))))

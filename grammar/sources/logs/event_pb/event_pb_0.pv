@@ -1,0 +1,18 @@
+(* Non interference is true because the decryption decrypt(x,x)
+   always fails, so the process stops at the event and never
+   executes the output. *)
+
+fun hash(bitstring): bitstring.
+
+free c: channel.
+free x,n,m: bitstring [private].
+
+fun encrypt(bitstring, bitstring): bitstring.
+reduc forall x: bitstring, k: bitstring; decrypt(encrypt(x,k),k) = x.
+
+noninterf x among (n, hash(m)).
+
+event e(bitstring).
+
+process event e(decrypt(x,x));
+	out(c, (m, x))

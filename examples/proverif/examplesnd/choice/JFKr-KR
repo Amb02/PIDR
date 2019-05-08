@@ -1,0 +1,196 @@
+(* JFKr *)
+
+(* Exponential and Diffie-Hellman *)
+
+data g/0.
+fun exp/2.
+equation exp(exp(g,y),z) = exp(exp(g,z),y).
+
+(* Signature *)
+
+fun S/2.
+fun Pk/1.
+data true/0.
+fun V/3.
+fun RecoverKey/1.
+fun RecoverText/1.
+equation V(S(k,v), Pk(k),v) = true.
+equation RecoverKey(S(k,v)) = Pk(k). (* For the attacker *)
+equation RecoverText(S(k,v)) = v.    (* For the attacker *)
+
+(* Shared-key encryption *)
+
+fun E/2.
+fun D/2.
+equation D(k,E(k,v)) = v.
+
+(* Keyed hash function *)
+
+fun H/2.
+
+(* Sets 
+
+data consset/2.
+data emptyset/0.
+pred member/2.
+clauses
+  member:x,consset(x,y);
+  member:x,y -> member:x,consset(z,y).
+*)
+
+(* Tags *)
+
+data tagE/0. data tagA/0. data tagV/0.
+
+(* Constructors for JFK's formatted messages
+   Selectors are implicit when using "data" *)
+
+data cons1/2. data cons2/5. data cons3/7. data cons4/2.
+
+(* More constants *)
+
+data constI/0. data constR/0. data saR/0.
+
+(* Free names *)
+
+free c. (* Public channel *)
+free pub, genprinc, getexponential, grpinfoR, init, getprinc.
+
+(* Responder
+   The process processR corresponds to R^A in the figure. *)
+
+let processR =
+    new KR1;
+    (
+      (
+        !
+        in(exponent2, (dR, xR, KR2));
+        let KR = choice[KR1,KR2] in
+        !
+        in(c, cons1(NI, xI));
+        new NR;
+        let tR = H(KR, (xR, NR, NI)) in
+        out(c, cons2(NI, NR, xR, grpinfoR, tR))
+      )
+    |
+      (
+        !
+        in(c, cons3(NI,NR,xI,x,tR,eI,hI));
+        !
+        in(exponent2, (dR, xR, KR2));
+        let KR = choice[KR1,KR2] in
+        if tR = H(KR, (xR, NR, NI)) then
+	if x = xR then
+        out(getR, (NI, NR, xI, xR, tR, eI, hI))
+      )
+    ).
+
+(* Whole JFK system. *)
+
+process
+  new exponent2;
+  ( ! new d; let x = exp(g,d) in out(getexponential, x); out(exponent, (d, x)); new KR2; out(exponent2, (d,x, KR2)) )
+  |
+  (
+    processR
+  )
+    
+
+(* 
+
+Let us name S' the above process.
+Let us define the context C as follows:
+
+C = 
+new exponent;
+(
+  []
+|
+  (
+    !
+    new kAminus;
+    let IDA = Pk(kAminus) in
+    new init; new connect; new accept; new channelSIA;
+    out(getprinc, (IDA, init, accept, connect, channelSIA));
+    in(channelSIA, SIA);
+    ( processI | processR2 | processRnormal)
+  )
+)
+
+let processI =
+  !
+  in(exponent, (dI, xI));
+  !
+  in(init, (IDRp, saI));
+  new NI; 
+  out(c, cons1(NI, xI));
+  in(c, cons2(=NI, NR, xR, grpinfoR, tR));
+  let h = exp(xR, dI) in
+  let Ka = H(h, (NI, NR, tagA)) in
+  let Ke = H(h, (NI, NR, tagE)) in
+  let Kv = H(h, (NI, NR, tagV)) in
+  let sI = S(kAminus, (NI, NR, xI, xR, grpinfoR)) in
+  let eI = E(Ke, (IDA, IDRp, saI, sI)) in
+  let hI = H(Ka, (constI, eI)) in
+  out(c, cons3(NI, NR, xI, xR, tR, eI, hI));
+  in(c, cons4(eR, hR));
+  if H(Ka, (constR, eR)) = hR then
+  let (IDRl, saR, sR) = D(Ke, eR) in
+  if V(sR, IDRl, (NI, NR, xI, xR)) = true then 
+  out(connect, (IDRl, IDRp, saI, saR, Kv)).
+
+
+let processR2 =
+  new f;
+  (
+    out(f, emptyset)
+  |
+    (
+      !
+      in(getR, (NI, NR, xI, xR, tR, eI, hI));
+      in(f, cache);
+        (
+          out(f, consset(tR, cache))
+        |
+          if member:tR,cache then 0 else
+          new l;
+          (
+	    (
+            !
+            in(exponent, (dR, =xR));
+            out(l, dR)
+            )
+          |
+            (
+            in(l, dR);
+            processR4
+            )
+          )
+        )
+     )
+  ).
+
+let processR4 =
+  let h = exp(xI,dR) in
+  let Ka = H(h, (NI, NR, tagA)) in
+  let Ke = H(h, (NI, NR, tagE)) in
+  let Kv = H(h, (NI, NR, tagV)) in
+  let sR = S(kAminus, (NI, NR, xI, xR)) in
+  if H(Ka, (constI, eI)) = hI then
+  let (IDIl, IDRp, saI, sI) = D(Ke,eI) in
+  if member:IDIl,SIA then
+  if V(sI, IDIl, (NI, NR, xI, xR, grpinfoR)) = true then
+  out(accept, (IDIl, IDRp, saI, saR, Kv));
+  let eR = E(Ke, (IDA, saR, sR)) in
+  let hR = H(Ka, (constR, eR)) in
+  out(c, cons4(eR, hR)).
+
+The full JFKr script S (version with cache) is weakly observationally
+equivalent to C[S'] (more precisely, fst(S) is equivalent to
+fst(C[S']) and snd(S) is equivalent to snd(C[S'])). This is proved by
+eliminating communications on the private channel getprinc and on each
+instance of getI and getR.  ProVerif shows that S' satisfies
+equivalence, then so does C[S'] by the contextual property of
+equivalence, then fst(S) is weakly observationally equivalent to snd(S).
+
+*)

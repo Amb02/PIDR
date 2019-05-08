@@ -1,0 +1,4 @@
+free c.
+
+process
+   new s; new t; out(c,choice[s,t]); in(c,x); if x = s then out(c,c)

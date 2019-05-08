@@ -1,0 +1,17 @@
+#!/bin/sh
+
+echo Starting demo installation on proverif16.paris.inria.fr
+
+sudo mkdir -p /var/www/html/bin
+sudo mkdir -p /var/www/html/tmpfiles
+
+# Unpack the archive
+tar -xzf proverifdemo.tgz
+# Initially, I am in the home directory, cd to the proverif directory
+cd proverif
+# After cd .., I am in the proverif directory
+./build
+sudo cp proverif /var/www/html/bin
+sudo cp -r cssproverif.css demo/examples demo/index.php /var/www/html
+cd /var/www/html
+sudo chown www-data:www-data * bin/* examples/* examples/*/*

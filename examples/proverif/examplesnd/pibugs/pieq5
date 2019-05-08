@@ -1,0 +1,19 @@
+(* 
+
+The system should detect that c0 is published, since f(c0) = j(c0) = c0
+The reduction rules of destructors must be closed under equations.
+
+*)
+
+private fun c0/0.
+fun j/1.
+
+equation j(x) = x.
+
+reduc f(x) = j(x).
+
+query attacker:c0.
+
+free c.
+
+process out(c,f(c0))

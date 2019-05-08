@@ -1,0 +1,42 @@
+type v.
+
+fun hash(v) : v.
+
+fun inv(v) : v.
+equation forall x: v; inv(inv(x)) = x.
+
+fun times(v, v): v.
+equation forall x: v, y: v; times(x, y) = times(y, x).
+
+const g: v.
+fun exp(v, v): v.
+equation forall x: v, y: v;  exp(exp(g,x),y) = exp(exp(g,y),x).
+
+fun enc(v, v): v.
+fun dec(v, v): v.
+equation forall k: v, m: v; dec(k, enc(k, m)) = m.
+
+free c: channel.
+free m1: v.
+free m2: v.
+
+let Sender =
+    new a: v; let A = exp(g, a) in
+    out(c, A);
+    in(c, B: v);
+    let k0 = hash(exp(B, a)) in
+    let k1 = hash(exp(times(B, inv(A)), a)) in
+    out(c, enc(k0, m1)); out(c, enc(k1, m1));
+    0.
+
+let Receiver1 =
+    new b: v; let B = exp(g, b) in
+    in(c, A: v);
+    out(c, B);
+    let key = hash(exp(g, b)) in
+    in(c, e0: v); in(c, e1: v);
+    let m = dec(key, e0) in
+    0.
+
+process
+    ( Sender | !Receiver1)

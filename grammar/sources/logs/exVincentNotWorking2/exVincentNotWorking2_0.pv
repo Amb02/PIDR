@@ -1,0 +1,37 @@
+free c:channel.
+
+type stamp.
+type int.
+
+free cell:channel [private].
+free id:bitstring [private].
+
+const zero : int.
+fun succ(int) : int [data].
+
+fun PrivateFunc(bitstring,bitstring): bitstring [private].
+
+let P_Server =
+  !
+  in(c, (=id,x:bitstring));
+  out(c, PrivateFunc(id,x)).
+
+
+let P_ButtonPress =
+  in(cell, (st:stamp,i:int));
+  out(c, id);
+  new st':stamp;
+  out(cell, (st',succ(i))).
+
+query id:bitstring, x:bitstring, st:stamp, st':stamp, x':int;
+  attacker(PrivateFunc(id,x))   ==>
+    (mess(cell,(st,x')) && mess(cell,(st',x')) && st <> st').
+
+process
+  (
+    new st:stamp;
+    out(cell, (st, succ(zero)))
+  )
+  | P_Server
+  | (! P_ButtonPress)
+  | (! in(cell,(st:stamp,i:int)); out(cell,(st,i)))

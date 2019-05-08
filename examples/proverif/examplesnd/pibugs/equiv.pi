@@ -1,0 +1,6 @@
+free c.
+
+not s.
+
+process
+   new s; new s'; new t; out(c,choice[t,s'])

@@ -1,0 +1,289 @@
+Linear part:
+exp(exp(g,x),y) = exp(exp(g,y),x)
+Completing equations...
+Completed equations:
+exp(exp(g,x),y) = exp(exp(g,y),x)
+Convergent part:
+dec(enc(x_7,y_8),y_8) = x_7
+enc(dec(x_9,y_10),y_10) = x_9
+Completing equations...
+Completed equations:
+enc(dec(x_9,y_10),y_10) = x_9
+dec(enc(x_7,y_8),y_8) = x_7
+Process:
+(
+    {1}!
+    {2}new RA: exponent;
+    {3}out(c, (A,enc(exp(g,RA),h(PAA))));
+    {4}in(c, (m1: bitstring,m2: bitstring));
+    {5}let gRB: G = dec(m1,h(PAA)) in
+    {6}let K: key = exp(gRB,RA) in
+    {7}let challengeB: nonce = dec(m2,K) in
+    {8}new challengeA: nonce;
+    {9}out(c, enc((challengeA,challengeB),K));
+    {10}in(c, m3: bitstring);
+    {11}if (challengeA = dec(m3,K)) then
+    {12}out(c, enc(F(PAA,K),K))
+) | (
+    {13}!
+    {14}in(c, (=A,m: bitstring));
+    {15}let gRA: G = dec(m,h(PAA)) in
+    {16}new RB: exponent;
+    {17}let K_25: key = exp(gRA,RB) in
+    {18}new challengeB_26: nonce;
+    {19}out(c, (enc(exp(g,RB),h(PAA)),enc(challengeB_26,K_25)));
+    {20}in(c, m4: bitstring);
+    {21}let (challengeA_27: nonce,=challengeB_26) = dec(m4,K_25) in
+    {22}out(c, enc(challengeA_27,K_25));
+    {23}in(c, m5: bitstring);
+    {24}let fr: bitstring = dec(m5,K_25) in
+    {25}if (T(h(PAA),fr,K_25) = true) then
+    0
+) | (
+    {26}!
+    {27}new RA_28: exponent;
+    {28}out(c, (B,enc(exp(g,RA_28),h(PBB))));
+    {29}in(c, (m1_29: bitstring,m2_30: bitstring));
+    {30}let gRB_31: G = dec(m1_29,h(PBB)) in
+    {31}let K_32: key = exp(gRB_31,RA_28) in
+    {32}let challengeB_33: nonce = dec(m2_30,K_32) in
+    {33}new challengeA_34: nonce;
+    {34}out(c, enc((challengeA_34,challengeB_33),K_32));
+    {35}in(c, m3_35: bitstring);
+    {36}if (challengeA_34 = dec(m3_35,K_32)) then
+    {37}out(c, enc(F(PBB,K_32),K_32))
+) | (
+    {38}!
+    {39}in(c, (=B,m_36: bitstring));
+    {40}let gRA_37: G = dec(m_36,h(PBB)) in
+    {41}new RB_38: exponent;
+    {42}let K_39: key = exp(gRA_37,RB_38) in
+    {43}new challengeB_40: nonce;
+    {44}out(c, (enc(exp(g,RB_38),h(PBB)),enc(challengeB_40,K_39)));
+    {45}in(c, m4_41: bitstring);
+    {46}let (challengeA_42: nonce,=challengeB_40) = dec(m4_41,K_39) in
+    {47}out(c, enc(challengeA_42,K_39));
+    {48}in(c, m5_43: bitstring);
+    {49}let fr_44: bitstring = dec(m5_43,K_39) in
+    {50}if (T(h(PBB),fr_44,K_39) = true) then
+    0
+) | (
+    {51}!
+    {52}new RA_45: exponent;
+    {53}out(c, (A,enc(exp(g,RA_45),h(PAB))));
+    {54}in(c, (m1_46: bitstring,m2_47: bitstring));
+    {55}let gRB_48: G = dec(m1_46,h(PAB)) in
+    {56}let K_49: key = exp(gRB_48,RA_45) in
+    {57}let challengeB_50: nonce = dec(m2_47,K_49) in
+    {58}new challengeA_51: nonce;
+    {59}out(c, enc((challengeA_51,challengeB_50),K_49));
+    {60}in(c, m3_52: bitstring);
+    {61}if (challengeA_51 = dec(m3_52,K_49)) then
+    {62}out(c, enc(F(PAB,K_49),K_49))
+) | (
+    {63}!
+    {64}in(c, (=B,m_53: bitstring));
+    {65}let gRA_54: G = dec(m_53,h(PAB)) in
+    {66}new RB_55: exponent;
+    {67}let K_56: key = exp(gRA_54,RB_55) in
+    {68}new challengeB_57: nonce;
+    {69}out(c, (enc(exp(g,RB_55),h(PAB)),enc(challengeB_57,K_56)));
+    {70}in(c, m4_58: bitstring);
+    {71}let (challengeA_59: nonce,=challengeB_57) = dec(m4_58,K_56) in
+    {72}out(c, enc(challengeA_59,K_56));
+    {73}in(c, m5_60: bitstring);
+    {74}let fr_61: bitstring = dec(m5_60,K_56) in
+    {75}if (T(h(PAB),fr_61,K_56) = true) then
+    0
+) | (
+    {76}!
+    {77}new RA_62: exponent;
+    {78}out(c, (B,enc(exp(g,RA_62),h(PAB))));
+    {79}in(c, (m1_63: bitstring,m2_64: bitstring));
+    {80}let gRB_65: G = dec(m1_63,h(PAB)) in
+    {81}let K_66: key = exp(gRB_65,RA_62) in
+    {82}let challengeB_67: nonce = dec(m2_64,K_66) in
+    {83}new challengeA_68: nonce;
+    {84}out(c, enc((challengeA_68,challengeB_67),K_66));
+    {85}in(c, m3_69: bitstring);
+    {86}if (challengeA_68 = dec(m3_69,K_66)) then
+    {87}out(c, enc(F(PAB,K_66),K_66))
+) | (
+    {88}!
+    {89}in(c, (=A,m_70: bitstring));
+    {90}let gRA_71: G = dec(m_70,h(PAB)) in
+    {91}new RB_72: exponent;
+    {92}let K_73: key = exp(gRA_71,RB_72) in
+    {93}new challengeB_74: nonce;
+    {94}out(c, (enc(exp(g,RB_72),h(PAB)),enc(challengeB_74,K_73)));
+    {95}in(c, m4_75: bitstring);
+    {96}let (challengeA_76: nonce,=challengeB_74) = dec(m4_75,K_73) in
+    {97}out(c, enc(challengeA_76,K_73));
+    {98}in(c, m5_77: bitstring);
+    {99}let fr_78: bitstring = dec(m5_77,K_73) in
+    {100}if (T(h(PAB),fr_78,K_73) = true) then
+    0
+)
+
+-- Weak secret PAB
+Termination warning: v_573 <> v_574 && attacker_guess(v_572,v_573) && attacker_guess(v_572,v_574) -> bad
+Selecting 0
+Termination warning: v_576 <> v_577 && attacker_guess(v_576,v_575) && attacker_guess(v_577,v_575) -> bad
+Selecting 0
+nounif attacker(enc(challengeB_907,exp(dec(*m1_906,h(PAA[])),RA[!1 = *@sid_908])))/-5000
+nounif attacker(enc(challengeB_2300,exp(dec(*m1_2299,h(PBB[])),RA_28[!1 = *@sid_2301])))/-5000
+nounif attacker(enc(challengeB_3693,exp(dec(*m1_3692,h(PAB[])),RA_45[!1 = *@sid_3694])))/-5000
+nounif attacker(enc(challengeB_5086,exp(dec(*m1_5085,h(PAB[])),RA_62[!1 = *@sid_5087])))/-5000
+Completing...
+Termination warning: v_573 <> v_574 && attacker_guess(v_572,v_573) && attacker_guess(v_572,v_574) -> bad
+Selecting 0
+Termination warning: v_576 <> v_577 && attacker_guess(v_576,v_575) && attacker_guess(v_577,v_575) -> bad
+Selecting 0
+Termination warning: v_6690 <> v_6691 && attacker(v_6690) && attacker_guess(v_6690,v_6691) -> bad
+Selecting 1
+Termination warning: v_6733 <> v_6734 && attacker(v_6733) && attacker_guess(v_6734,v_6733) -> bad
+Selecting 1
+200 rules inserted. The rule base contains 184 rules. 144 rules in the queue.
+nounif attacker(enc(challengeB_6829,exp(exp(g,RA[!1 = *@sid_6830]),RA[!1 = *@sid_6831])))/-5000
+nounif attacker(enc(challengeB_6933,exp(exp(g,RA_28[!1 = *@sid_6934]),RA_28[!1 = *@sid_6935])))/-5000
+nounif attacker(enc(challengeB_7037,exp(exp(g,RA_45[!1 = *@sid_7038]),RA_45[!1 = *@sid_7039])))/-5000
+nounif attacker(enc(challengeB_7096,exp(exp(g,RA_45[!1 = *@sid_7097]),RA_62[!1 = *@sid_7098])))/-5000
+nounif attacker(enc(challengeB_7102,exp(exp(g,RA_62[!1 = *@sid_7103]),RA_45[!1 = *@sid_7104])))/-5000
+nounif attacker(enc(challengeB_7160,exp(exp(g,RA_62[!1 = *@sid_7161]),RA_62[!1 = *@sid_7162])))/-5000
+nounif attacker(enc(challengeB_7889,exp(exp(g,RA[!1 = *@sid_7890]),RB[m = *m_7888,!1 = *@sid_7891])))/-5000
+nounif attacker(enc(challengeB_7897,exp(exp(g,RB[m = *m_7896,!1 = *@sid_7898]),RA[!1 = *@sid_7899])))/-5000
+400 rules inserted. The rule base contains 365 rules. 377 rules in the queue.
+nounif attacker(enc(challengeB_8092,exp(exp(g,RA_28[!1 = *@sid_8093]),RB_38[m_36 = *m_8091,!1 = *@sid_8094])))/-5000
+nounif attacker(enc(challengeB_8100,exp(exp(g,RB_38[m_36 = *m_8099,!1 = *@sid_8101]),RA_28[!1 = *@sid_8102])))/-5000
+nounif attacker(enc(challengeB_8295,exp(exp(g,RA_62[!1 = *@sid_8296]),RB_55[m_53 = *m_8294,!1 = *@sid_8297])))/-5000
+nounif attacker(enc(challengeB_8303,exp(exp(g,RB_55[m_53 = *m_8302,!1 = *@sid_8304]),RA_62[!1 = *@sid_8305])))/-5000
+nounif attacker(enc(challengeB_8317,exp(exp(g,RA_45[!1 = *@sid_8318]),RB_55[m_53 = *m_8316,!1 = *@sid_8319])))/-5000
+nounif attacker(enc(challengeB_8325,exp(exp(g,RB_55[m_53 = *m_8324,!1 = *@sid_8326]),RA_45[!1 = *@sid_8327])))/-5000
+nounif attacker(enc(challengeB_8756,exp(exp(g,RA_62[!1 = *@sid_8757]),RB_72[m_70 = *m_8755,!1 = *@sid_8758])))/-5000
+nounif attacker(enc(challengeB_8764,exp(exp(g,RB_72[m_70 = *m_8763,!1 = *@sid_8765]),RA_62[!1 = *@sid_8766])))/-5000
+nounif attacker(enc(challengeB_8778,exp(exp(g,RA_45[!1 = *@sid_8779]),RB_72[m_70 = *m_8777,!1 = *@sid_8780])))/-5000
+nounif attacker(enc(challengeB_8786,exp(exp(g,RB_72[m_70 = *m_8785,!1 = *@sid_8787]),RA_45[!1 = *@sid_8788])))/-5000
+600 rules inserted. The rule base contains 552 rules. 763 rules in the queue.
+800 rules inserted. The rule base contains 744 rules. 942 rules in the queue.
+1000 rules inserted. The rule base contains 938 rules. 1182 rules in the queue.
+1200 rules inserted. The rule base contains 1054 rules. 1082 rules in the queue.
+1400 rules inserted. The rule base contains 1190 rules. 858 rules in the queue.
+1600 rules inserted. The rule base contains 1385 rules. 820 rules in the queue.
+1800 rules inserted. The rule base contains 1571 rules. 769 rules in the queue.
+2000 rules inserted. The rule base contains 1757 rules. 693 rules in the queue.
+2200 rules inserted. The rule base contains 1930 rules. 587 rules in the queue.
+2400 rules inserted. The rule base contains 2108 rules. 496 rules in the queue.
+2600 rules inserted. The rule base contains 2298 rules. 377 rules in the queue.
+2800 rules inserted. The rule base contains 2481 rules. 266 rules in the queue.
+3000 rules inserted. The rule base contains 2664 rules. 195 rules in the queue.
+3200 rules inserted. The rule base contains 2850 rules. 164 rules in the queue.
+3400 rules inserted. The rule base contains 3044 rules. 102 rules in the queue.
+3600 rules inserted. The rule base contains 3212 rules. 156 rules in the queue.
+3800 rules inserted. The rule base contains 3412 rules. 147 rules in the queue.
+4000 rules inserted. The rule base contains 3612 rules. 134 rules in the queue.
+4200 rules inserted. The rule base contains 3808 rules. 20 rules in the queue.
+RESULT Weak secret PAB is true (bad not derivable).
+-- Weak secret PAA
+Termination warning: v_41172 <> v_41173 && attacker_guess(v_41171,v_41172) && attacker_guess(v_41171,v_41173) -> bad
+Selecting 0
+Termination warning: v_41175 <> v_41176 && attacker_guess(v_41175,v_41174) && attacker_guess(v_41176,v_41174) -> bad
+Selecting 0
+nounif attacker(enc(challengeB_41512,exp(dec(*m1_41511,h(PAA[])),RA[!1 = *@sid_41513])))/-5000
+nounif attacker(enc(challengeB_42905,exp(dec(*m1_42904,h(PBB[])),RA_28[!1 = *@sid_42906])))/-5000
+nounif attacker(enc(challengeB_44298,exp(dec(*m1_44297,h(PAB[])),RA_45[!1 = *@sid_44299])))/-5000
+nounif attacker(enc(challengeB_45691,exp(dec(*m1_45690,h(PAB[])),RA_62[!1 = *@sid_45692])))/-5000
+Completing...
+Termination warning: v_41172 <> v_41173 && attacker_guess(v_41171,v_41172) && attacker_guess(v_41171,v_41173) -> bad
+Selecting 0
+Termination warning: v_41175 <> v_41176 && attacker_guess(v_41175,v_41174) && attacker_guess(v_41176,v_41174) -> bad
+Selecting 0
+Termination warning: v_47294 <> v_47295 && attacker(v_47294) && attacker_guess(v_47294,v_47295) -> bad
+Selecting 1
+Termination warning: v_47337 <> v_47338 && attacker(v_47337) && attacker_guess(v_47338,v_47337) -> bad
+Selecting 1
+200 rules inserted. The rule base contains 184 rules. 144 rules in the queue.
+nounif attacker(enc(challengeB_47433,exp(exp(g,RA[!1 = *@sid_47434]),RA[!1 = *@sid_47435])))/-5000
+nounif attacker(enc(challengeB_47537,exp(exp(g,RA_28[!1 = *@sid_47538]),RA_28[!1 = *@sid_47539])))/-5000
+nounif attacker(enc(challengeB_47641,exp(exp(g,RA_45[!1 = *@sid_47642]),RA_45[!1 = *@sid_47643])))/-5000
+nounif attacker(enc(challengeB_47700,exp(exp(g,RA_45[!1 = *@sid_47701]),RA_62[!1 = *@sid_47702])))/-5000
+nounif attacker(enc(challengeB_47706,exp(exp(g,RA_62[!1 = *@sid_47707]),RA_45[!1 = *@sid_47708])))/-5000
+nounif attacker(enc(challengeB_47764,exp(exp(g,RA_62[!1 = *@sid_47765]),RA_62[!1 = *@sid_47766])))/-5000
+nounif attacker(enc(challengeB_48485,exp(exp(g,RA[!1 = *@sid_48486]),RB[m = *m_48484,!1 = *@sid_48487])))/-5000
+nounif attacker(enc(challengeB_48493,exp(exp(g,RB[m = *m_48492,!1 = *@sid_48494]),RA[!1 = *@sid_48495])))/-5000
+400 rules inserted. The rule base contains 366 rules. 382 rules in the queue.
+nounif attacker(enc(challengeB_48688,exp(exp(g,RA_28[!1 = *@sid_48689]),RB_38[m_36 = *m_48687,!1 = *@sid_48690])))/-5000
+nounif attacker(enc(challengeB_48696,exp(exp(g,RB_38[m_36 = *m_48695,!1 = *@sid_48697]),RA_28[!1 = *@sid_48698])))/-5000
+nounif attacker(enc(challengeB_48891,exp(exp(g,RA_62[!1 = *@sid_48892]),RB_55[m_53 = *m_48890,!1 = *@sid_48893])))/-5000
+nounif attacker(enc(challengeB_48899,exp(exp(g,RB_55[m_53 = *m_48898,!1 = *@sid_48900]),RA_62[!1 = *@sid_48901])))/-5000
+nounif attacker(enc(challengeB_48913,exp(exp(g,RA_45[!1 = *@sid_48914]),RB_55[m_53 = *m_48912,!1 = *@sid_48915])))/-5000
+nounif attacker(enc(challengeB_48921,exp(exp(g,RB_55[m_53 = *m_48920,!1 = *@sid_48922]),RA_45[!1 = *@sid_48923])))/-5000
+nounif attacker(enc(challengeB_49352,exp(exp(g,RA_62[!1 = *@sid_49353]),RB_72[m_70 = *m_49351,!1 = *@sid_49354])))/-5000
+nounif attacker(enc(challengeB_49360,exp(exp(g,RB_72[m_70 = *m_49359,!1 = *@sid_49361]),RA_62[!1 = *@sid_49362])))/-5000
+nounif attacker(enc(challengeB_49374,exp(exp(g,RA_45[!1 = *@sid_49375]),RB_72[m_70 = *m_49373,!1 = *@sid_49376])))/-5000
+nounif attacker(enc(challengeB_49382,exp(exp(g,RB_72[m_70 = *m_49381,!1 = *@sid_49383]),RA_45[!1 = *@sid_49384])))/-5000
+600 rules inserted. The rule base contains 551 rules. 763 rules in the queue.
+800 rules inserted. The rule base contains 746 rules. 954 rules in the queue.
+1000 rules inserted. The rule base contains 937 rules. 1190 rules in the queue.
+1200 rules inserted. The rule base contains 1107 rules. 1280 rules in the queue.
+1400 rules inserted. The rule base contains 1287 rules. 1117 rules in the queue.
+1600 rules inserted. The rule base contains 1475 rules. 1100 rules in the queue.
+1800 rules inserted. The rule base contains 1668 rules. 1045 rules in the queue.
+2000 rules inserted. The rule base contains 1864 rules. 996 rules in the queue.
+2200 rules inserted. The rule base contains 2053 rules. 990 rules in the queue.
+2400 rules inserted. The rule base contains 2250 rules. 890 rules in the queue.
+2600 rules inserted. The rule base contains 2437 rules. 802 rules in the queue.
+2800 rules inserted. The rule base contains 2613 rules. 700 rules in the queue.
+3000 rules inserted. The rule base contains 2801 rules. 584 rules in the queue.
+3200 rules inserted. The rule base contains 2970 rules. 488 rules in the queue.
+3400 rules inserted. The rule base contains 3150 rules. 388 rules in the queue.
+3600 rules inserted. The rule base contains 3326 rules. 285 rules in the queue.
+3800 rules inserted. The rule base contains 3506 rules. 192 rules in the queue.
+4000 rules inserted. The rule base contains 3690 rules. 208 rules in the queue.
+4200 rules inserted. The rule base contains 3890 rules. 137 rules in the queue.
+4400 rules inserted. The rule base contains 4054 rules. 108 rules in the queue.
+4600 rules inserted. The rule base contains 4254 rules. 208 rules in the queue.
+4800 rules inserted. The rule base contains 4454 rules. 219 rules in the queue.
+5000 rules inserted. The rule base contains 4654 rules. 207 rules in the queue.
+5200 rules inserted. The rule base contains 4850 rules. 116 rules in the queue.
+RESULT Weak secret PAA is true (bad not derivable).
+-- Weak secret PBB
+Termination warning: v_86219 <> v_86220 && attacker_guess(v_86218,v_86219) && attacker_guess(v_86218,v_86220) -> bad
+Selecting 0
+Termination warning: v_86222 <> v_86223 && attacker_guess(v_86222,v_86221) && attacker_guess(v_86223,v_86221) -> bad
+Selecting 0
+nounif attacker(enc(challengeB_86559,exp(dec(*m1_86558,h(PAA[])),RA[!1 = *@sid_86560])))/-5000
+nounif attacker(enc(challengeB_87952,exp(dec(*m1_87951,h(PBB[])),RA_28[!1 = *@sid_87953])))/-5000
+nounif attacker(enc(challengeB_89345,exp(dec(*m1_89344,h(PAB[])),RA_45[!1 = *@sid_89346])))/-5000
+nounif attacker(enc(challengeB_90738,exp(dec(*m1_90737,h(PAB[])),RA_62[!1 = *@sid_90739])))/-5000
+Completing...
+Termination warning: v_86219 <> v_86220 && attacker_guess(v_86218,v_86219) && attacker_guess(v_86218,v_86220) -> bad
+Selecting 0
+Termination warning: v_86222 <> v_86223 && attacker_guess(v_86222,v_86221) && attacker_guess(v_86223,v_86221) -> bad
+Selecting 0
+Termination warning: v_92341 <> v_92342 && attacker(v_92341) && attacker_guess(v_92341,v_92342) -> bad
+Selecting 1
+Termination warning: v_92384 <> v_92385 && attacker(v_92384) && attacker_guess(v_92385,v_92384) -> bad
+Selecting 1
+200 rules inserted. The rule base contains 184 rules. 144 rules in the queue.
+nounif attacker(enc(challengeB_92480,exp(exp(g,RA[!1 = *@sid_92481]),RA[!1 = *@sid_92482])))/-5000
+nounif attacker(enc(challengeB_92584,exp(exp(g,RA_28[!1 = *@sid_92585]),RA_28[!1 = *@sid_92586])))/-5000
+nounif attacker(enc(challengeB_92688,exp(exp(g,RA_45[!1 = *@sid_92689]),RA_45[!1 = *@sid_92690])))/-5000
+nounif attacker(enc(challengeB_92747,exp(exp(g,RA_45[!1 = *@sid_92748]),RA_62[!1 = *@sid_92749])))/-5000
+nounif attacker(enc(challengeB_92753,exp(exp(g,RA_62[!1 = *@sid_92754]),RA_45[!1 = *@sid_92755])))/-5000
+nounif attacker(enc(challengeB_92811,exp(exp(g,RA_62[!1 = *@sid_92812]),RA_62[!1 = *@sid_92813])))/-5000
+nounif attacker(enc(challengeB_93532,exp(exp(g,RA[!1 = *@sid_93533]),RB[m = *m_93531,!1 = *@sid_93534])))/-5000
+nounif attacker(enc(challengeB_93540,exp(exp(g,RB[m = *m_93539,!1 = *@sid_93541]),RA[!1 = *@sid_93542])))/-5000
+400 rules inserted. The rule base contains 365 rules. 385 rules in the queue.
+nounif attacker(enc(challengeB_93735,exp(exp(g,RA_28[!1 = *@sid_93736]),RB_38[m_36 = *m_93734,!1 = *@sid_93737])))/-5000
+nounif attacker(enc(challengeB_93743,exp(exp(g,RB_38[m_36 = *m_93742,!1 = *@sid_93744]),RA_28[!1 = *@sid_93745])))/-5000
+nounif attacker(enc(challengeB_93938,exp(exp(g,RA_62[!1 = *@sid_93939]),RB_55[m_53 = *m_93937,!1 = *@sid_93940])))/-5000
+nounif attacker(enc(challengeB_93946,exp(exp(g,RB_55[m_53 = *m_93945,!1 = *@sid_93947]),RA_62[!1 = *@sid_93948])))/-5000
+nounif attacker(enc(challengeB_93960,exp(exp(g,RA_45[!1 = *@sid_93961]),RB_55[m_53 = *m_93959,!1 = *@sid_93962])))/-5000
+nounif attacker(enc(challengeB_93968,exp(exp(g,RB_55[m_53 = *m_93967,!1 = *@sid_93969]),RA_45[!1 = *@sid_93970])))/-5000
+nounif attacker(enc(challengeB_94399,exp(exp(g,RA_62[!1 = *@sid_94400]),RB_72[m_70 = *m_94398,!1 = *@sid_94401])))/-5000
+nounif attacker(enc(challengeB_94407,exp(exp(g,RB_72[m_70 = *m_94406,!1 = *@sid_94408]),RA_62[!1 = *@sid_94409])))/-5000
+nounif attacker(enc(challengeB_94421,exp(exp(g,RA_45[!1 = *@sid_94422]),RB_72[m_70 = *m_94420,!1 = *@sid_94423])))/-5000
+nounif attacker(enc(challengeB_94429,exp(exp(g,RB_72[m_70 = *m_94428,!1 = *@sid_94430]),RA_45[!1 = *@sid_94431])))/-5000
+600 rules inserted. The rule base contains 551 rules. 763 rules in the queue.
+800 rules inserted. The rule base contains 745 rules. 945 rules in the queue.
+1000 rules inserted. The rule base contains 937 rules. 1190 rules in the queue.

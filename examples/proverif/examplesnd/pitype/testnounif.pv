@@ -1,0 +1,13 @@
+type nonce.
+
+fun hash(nonce): nonce.
+
+nounif x:sid; attacker(choice[new n[!1 = x], hash(new n[!1 = x])]).
+nounif attacker(new n).
+(* nounif x: sid, y: sid; attacker(new n[!1 = choice[x,y]]).*)
+
+free c: channel.
+
+process !
+	new n: nonce;
+	out(c, choice[n, hash(n)])

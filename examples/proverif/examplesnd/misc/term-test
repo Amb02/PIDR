@@ -1,0 +1,17 @@
+nounif c:x.
+anytrue c.
+tupleinv c.
+
+param verbose = rules.
+param maxDepth = 3.
+param maxHyp = 10.
+
+fun f/4.
+fun g/2.
+
+query c:f(a[],c[],b[],d[]).
+
+reduc
+
+c:a & c:b & c:a2 & c:b2 -> c:f(x,f(x,a,a2,y),f(y,b,b2,z),z);
+c:x & c:y & c:f(a,x,y,z) -> c:g(a,z).

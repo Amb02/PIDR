@@ -1,0 +1,634 @@
+set redundancyElim = no.
+
+free io:channel.
+
+type number.
+type function.
+type args.
+type return.
+type object_aesgcmresult.
+type key.
+type iv.
+type object_msg.
+type object_keypair.
+type object_me.
+type array_1.
+type object_them.
+type object_sendoutput.
+type object_recvoutput.
+type object_2.
+type object_48.
+type object_52.
+type object_74.
+type object_118.
+type object_142.
+
+fun Type_key_construct():key.
+fun Type_key_toBitstring(key):bitstring [data, typeConverter].
+fun Type_key_fromBitstring(bitstring):key [data, typeConverter].
+reduc forall a:key; Type_key_assert(a) = a.
+fun Type_iv_construct():iv.
+fun Type_iv_toBitstring(iv):bitstring [data, typeConverter].
+fun Type_iv_fromBitstring(bitstring):iv [data, typeConverter].
+reduc forall a:iv; Type_iv_assert(a) = a.
+fun Type_msg_construct():object_msg.
+fun Type_msg_toBitstring(object_msg):bitstring [data, typeConverter].
+fun Type_msg_fromBitstring(bitstring):object_msg [data, typeConverter].
+reduc forall a:object_msg; Type_msg_assert(a) = a.
+fun Type_keypair_construct():object_keypair.
+fun Type_keypair_toBitstring(object_keypair):bitstring [data, typeConverter].
+fun Type_keypair_fromBitstring(bitstring):object_keypair [data, typeConverter].
+reduc forall a:object_keypair; Type_keypair_assert(a) = a.
+fun Type_me_construct():object_me.
+fun Type_me_toBitstring(object_me):bitstring [data, typeConverter].
+fun Type_me_fromBitstring(bitstring):object_me [data, typeConverter].
+reduc forall a:object_me; Type_me_assert(a) = a.
+fun Type_them_construct():object_them.
+fun Type_them_toBitstring(object_them):bitstring [data, typeConverter].
+fun Type_them_fromBitstring(bitstring):object_them [data, typeConverter].
+reduc forall a:object_them; Type_them_assert(a) = a.
+fun Type_sendoutput_construct():object_sendoutput.
+fun Type_sendoutput_toBitstring(object_sendoutput):bitstring [data, typeConverter].
+fun Type_sendoutput_fromBitstring(bitstring):object_sendoutput [data, typeConverter].
+reduc forall a:object_sendoutput; Type_sendoutput_assert(a) = a.
+fun Type_recvoutput_construct():object_recvoutput.
+fun Type_recvoutput_toBitstring(object_recvoutput):bitstring [data, typeConverter].
+fun Type_recvoutput_fromBitstring(bitstring):object_recvoutput [data, typeConverter].
+reduc forall a:object_recvoutput; Type_recvoutput_assert(a) = a.
+
+fun Object_aesgcmresult(bitstring, bool):object_aesgcmresult [data].
+reduc forall data:bitstring, valid:bool;
+Object_aesgcmresult_get_data(Object_aesgcmresult(data, valid)) = data.
+reduc forall data:bitstring, valid:bool;
+Object_aesgcmresult_get_valid(Object_aesgcmresult(data, valid)) = valid.
+reduc forall data:bitstring, valid:bool, n:bitstring;
+Object_aesgcmresult_set_data(Object_aesgcmresult(data, valid), n) = Object_aesgcmresult(n, valid).
+reduc forall data:bitstring, valid:bool, n:bool;
+Object_aesgcmresult_set_valid(Object_aesgcmresult(data, valid), n) = Object_aesgcmresult(data, n).
+
+fun Object_msg(bitstring, key, key, key, iv, key, key, number, key, bool):object_msg [data].
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool;
+Object_msg_get_ciphertext(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid)) = ciphertext.
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool;
+Object_msg_get_ephemeral(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid)) = ephemeral.
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool;
+Object_msg_get_identity(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid)) = identity.
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool;
+Object_msg_get_initEphemeral(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid)) = initEphemeral.
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool;
+Object_msg_get_iv(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid)) = iv.
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool;
+Object_msg_get_prekey(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid)) = prekey.
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool;
+Object_msg_get_prekeySig(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid)) = prekeySig.
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool;
+Object_msg_get_status(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid)) = status.
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool;
+Object_msg_get_tag(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid)) = tag.
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool;
+Object_msg_get_valid(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid)) = valid.
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool, n:bitstring;
+Object_msg_set_ciphertext(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid), n) = Object_msg(n, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid).
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool, n:key;
+Object_msg_set_ephemeral(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid), n) = Object_msg(ciphertext, n, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid).
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool, n:key;
+Object_msg_set_identity(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid), n) = Object_msg(ciphertext, ephemeral, n, initEphemeral, iv, prekey, prekeySig, status, tag, valid).
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool, n:key;
+Object_msg_set_initEphemeral(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid), n) = Object_msg(ciphertext, ephemeral, identity, n, iv, prekey, prekeySig, status, tag, valid).
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool, n:iv;
+Object_msg_set_iv(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid), n) = Object_msg(ciphertext, ephemeral, identity, initEphemeral, n, prekey, prekeySig, status, tag, valid).
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool, n:key;
+Object_msg_set_prekey(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid), n) = Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, n, prekeySig, status, tag, valid).
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool, n:key;
+Object_msg_set_prekeySig(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid), n) = Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, n, status, tag, valid).
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool, n:number;
+Object_msg_set_status(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid), n) = Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, n, tag, valid).
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool, n:key;
+Object_msg_set_tag(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid), n) = Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, n, valid).
+reduc forall ciphertext:bitstring, ephemeral:key, identity:key, initEphemeral:key, iv:iv, prekey:key, prekeySig:key, status:number, tag:key, valid:bool, n:bool;
+Object_msg_set_valid(Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, valid), n) = Object_msg(ciphertext, ephemeral, identity, initEphemeral, iv, prekey, prekeySig, status, tag, n).
+
+fun Object_keypair(key, key):object_keypair [data].
+reduc forall priv:key, pub:key;
+Object_keypair_get_priv(Object_keypair(priv, pub)) = priv.
+reduc forall priv:key, pub:key;
+Object_keypair_get_pub(Object_keypair(priv, pub)) = pub.
+reduc forall priv:key, pub:key, n:key;
+Object_keypair_set_priv(Object_keypair(priv, pub), n) = Object_keypair(n, pub).
+reduc forall priv:key, pub:key, n:key;
+Object_keypair_set_pub(Object_keypair(priv, pub), n) = Object_keypair(priv, n).
+
+fun Object_me(object_keypair, object_keypair):object_me [data].
+reduc forall identity:object_keypair, prekey:object_keypair;
+Object_me_get_identity(Object_me(identity, prekey)) = identity.
+reduc forall identity:object_keypair, prekey:object_keypair;
+Object_me_get_prekey(Object_me(identity, prekey)) = prekey.
+reduc forall identity:object_keypair, prekey:object_keypair, n:object_keypair;
+Object_me_set_identity(Object_me(identity, prekey), n) = Object_me(n, prekey).
+reduc forall identity:object_keypair, prekey:object_keypair, n:object_keypair;
+Object_me_set_prekey(Object_me(identity, prekey), n) = Object_me(identity, n).
+
+fun Array_1(key, key):array_1 [data].
+reduc forall e_0:key, e_1:key;
+Array_1_get_e_0(Array_1(e_0, e_1)) = e_0.
+reduc forall e_0:key, e_1:key;
+Array_1_get_e_1(Array_1(e_0, e_1)) = e_1.
+reduc forall e_0:key, e_1:key, n:key;
+Array_1_set_e_0(Array_1(e_0, e_1), n) = Array_1(n, e_1).
+reduc forall e_0:key, e_1:key, n:key;
+Array_1_set_e_1(Array_1(e_0, e_1), n) = Array_1(e_0, n).
+
+fun Object_them(key, key, key, key, key, object_keypair, key, array_1, array_1, key, number):object_them [data].
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number;
+Object_them_get_ephemeral(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status)) = ephemeral.
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number;
+Object_them_get_identity(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status)) = identity.
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number;
+Object_them_get_initEphemeral(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status)) = initEphemeral.
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number;
+Object_them_get_kENC(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status)) = kENC.
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number;
+Object_them_get_kMAC(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status)) = kMAC.
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number;
+Object_them_get_myEphemeral(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status)) = myEphemeral.
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number;
+Object_them_get_myIdentity(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status)) = myIdentity.
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number;
+Object_them_get_recvKeys(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status)) = recvKeys.
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number;
+Object_them_get_sendKeys(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status)) = sendKeys.
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number;
+Object_them_get_shared(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status)) = shared.
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number;
+Object_them_get_status(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status)) = status.
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number, n:key;
+Object_them_set_ephemeral(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status), n) = Object_them(n, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status).
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number, n:key;
+Object_them_set_identity(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status), n) = Object_them(ephemeral, n, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status).
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number, n:key;
+Object_them_set_initEphemeral(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status), n) = Object_them(ephemeral, identity, n, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status).
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number, n:key;
+Object_them_set_kENC(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status), n) = Object_them(ephemeral, identity, initEphemeral, n, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status).
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number, n:key;
+Object_them_set_kMAC(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status), n) = Object_them(ephemeral, identity, initEphemeral, kENC, n, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status).
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number, n:object_keypair;
+Object_them_set_myEphemeral(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status), n) = Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, n, myIdentity, recvKeys, sendKeys, shared, status).
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number, n:key;
+Object_them_set_myIdentity(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status), n) = Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, n, recvKeys, sendKeys, shared, status).
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number, n:array_1;
+Object_them_set_recvKeys(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status), n) = Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, n, sendKeys, shared, status).
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number, n:array_1;
+Object_them_set_sendKeys(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status), n) = Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, n, shared, status).
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number, n:key;
+Object_them_set_shared(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status), n) = Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, n, status).
+reduc forall ephemeral:key, identity:key, initEphemeral:key, kENC:key, kMAC:key, myEphemeral:object_keypair, myIdentity:key, recvKeys:array_1, sendKeys:array_1, shared:key, status:number, n:number;
+Object_them_set_status(Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, status), n) = Object_them(ephemeral, identity, initEphemeral, kENC, kMAC, myEphemeral, myIdentity, recvKeys, sendKeys, shared, n).
+
+fun Object_sendoutput(object_msg, object_them):object_sendoutput [data].
+reduc forall output:object_msg, them:object_them;
+Object_sendoutput_get_output(Object_sendoutput(output, them)) = output.
+reduc forall output:object_msg, them:object_them;
+Object_sendoutput_get_them(Object_sendoutput(output, them)) = them.
+reduc forall output:object_msg, them:object_them, n:object_msg;
+Object_sendoutput_set_output(Object_sendoutput(output, them), n) = Object_sendoutput(n, them).
+reduc forall output:object_msg, them:object_them, n:object_them;
+Object_sendoutput_set_them(Object_sendoutput(output, them), n) = Object_sendoutput(output, n).
+
+fun Object_recvoutput(object_msg, bitstring, object_them):object_recvoutput [data].
+reduc forall output:object_msg, plaintext:bitstring, them:object_them;
+Object_recvoutput_get_output(Object_recvoutput(output, plaintext, them)) = output.
+reduc forall output:object_msg, plaintext:bitstring, them:object_them;
+Object_recvoutput_get_plaintext(Object_recvoutput(output, plaintext, them)) = plaintext.
+reduc forall output:object_msg, plaintext:bitstring, them:object_them;
+Object_recvoutput_get_them(Object_recvoutput(output, plaintext, them)) = them.
+reduc forall output:object_msg, plaintext:bitstring, them:object_them, n:object_msg;
+Object_recvoutput_set_output(Object_recvoutput(output, plaintext, them), n) = Object_recvoutput(n, plaintext, them).
+reduc forall output:object_msg, plaintext:bitstring, them:object_them, n:bitstring;
+Object_recvoutput_set_plaintext(Object_recvoutput(output, plaintext, them), n) = Object_recvoutput(output, n, them).
+reduc forall output:object_msg, plaintext:bitstring, them:object_them, n:object_them;
+Object_recvoutput_set_them(Object_recvoutput(output, plaintext, them), n) = Object_recvoutput(output, plaintext, n).
+
+fun Object_2(function, function, function):object_2 [data].
+reduc forall HKDF:function, TDH0:function, TDH1:function;
+Object_2_get_HKDF(Object_2(HKDF, TDH0, TDH1)) = HKDF.
+reduc forall HKDF:function, TDH0:function, TDH1:function;
+Object_2_get_TDH0(Object_2(HKDF, TDH0, TDH1)) = TDH0.
+reduc forall HKDF:function, TDH0:function, TDH1:function;
+Object_2_get_TDH1(Object_2(HKDF, TDH0, TDH1)) = TDH1.
+reduc forall HKDF:function, TDH0:function, TDH1:function, n:function;
+Object_2_set_HKDF(Object_2(HKDF, TDH0, TDH1), n) = Object_2(n, TDH0, TDH1).
+reduc forall HKDF:function, TDH0:function, TDH1:function, n:function;
+Object_2_set_TDH0(Object_2(HKDF, TDH0, TDH1), n) = Object_2(HKDF, n, TDH1).
+reduc forall HKDF:function, TDH0:function, TDH1:function, n:function;
+Object_2_set_TDH1(Object_2(HKDF, TDH0, TDH1), n) = Object_2(HKDF, TDH0, n).
+
+fun Object_48(function, function):object_48 [data].
+reduc forall deriveRecvKeys:function, deriveSendKeys:function;
+Object_48_get_deriveRecvKeys(Object_48(deriveRecvKeys, deriveSendKeys)) = deriveRecvKeys.
+reduc forall deriveRecvKeys:function, deriveSendKeys:function;
+Object_48_get_deriveSendKeys(Object_48(deriveRecvKeys, deriveSendKeys)) = deriveSendKeys.
+reduc forall deriveRecvKeys:function, deriveSendKeys:function, n:function;
+Object_48_set_deriveRecvKeys(Object_48(deriveRecvKeys, deriveSendKeys), n) = Object_48(n, deriveSendKeys).
+reduc forall deriveRecvKeys:function, deriveSendKeys:function, n:function;
+Object_48_set_deriveSendKeys(Object_48(deriveRecvKeys, deriveSendKeys), n) = Object_48(deriveRecvKeys, n).
+
+fun Object_52(key, key, array_1, array_1):object_52 [data].
+reduc forall kENC:key, kMAC:key, recvKeys:array_1, sendKeys:array_1;
+Object_52_get_kENC(Object_52(kENC, kMAC, recvKeys, sendKeys)) = kENC.
+reduc forall kENC:key, kMAC:key, recvKeys:array_1, sendKeys:array_1;
+Object_52_get_kMAC(Object_52(kENC, kMAC, recvKeys, sendKeys)) = kMAC.
+reduc forall kENC:key, kMAC:key, recvKeys:array_1, sendKeys:array_1;
+Object_52_get_recvKeys(Object_52(kENC, kMAC, recvKeys, sendKeys)) = recvKeys.
+reduc forall kENC:key, kMAC:key, recvKeys:array_1, sendKeys:array_1;
+Object_52_get_sendKeys(Object_52(kENC, kMAC, recvKeys, sendKeys)) = sendKeys.
+reduc forall kENC:key, kMAC:key, recvKeys:array_1, sendKeys:array_1, n:key;
+Object_52_set_kENC(Object_52(kENC, kMAC, recvKeys, sendKeys), n) = Object_52(n, kMAC, recvKeys, sendKeys).
+reduc forall kENC:key, kMAC:key, recvKeys:array_1, sendKeys:array_1, n:key;
+Object_52_set_kMAC(Object_52(kENC, kMAC, recvKeys, sendKeys), n) = Object_52(kENC, n, recvKeys, sendKeys).
+reduc forall kENC:key, kMAC:key, recvKeys:array_1, sendKeys:array_1, n:array_1;
+Object_52_set_recvKeys(Object_52(kENC, kMAC, recvKeys, sendKeys), n) = Object_52(kENC, kMAC, n, sendKeys).
+reduc forall kENC:key, kMAC:key, recvKeys:array_1, sendKeys:array_1, n:array_1;
+Object_52_set_sendKeys(Object_52(kENC, kMAC, recvKeys, sendKeys), n) = Object_52(kENC, kMAC, recvKeys, n).
+
+fun Object_74(function, function, function, function):object_74 [data].
+reduc forall AKEResponse:function, AKEStart:function, completeAKE:function, message:function;
+Object_74_get_AKEResponse(Object_74(AKEResponse, AKEStart, completeAKE, message)) = AKEResponse.
+reduc forall AKEResponse:function, AKEStart:function, completeAKE:function, message:function;
+Object_74_get_AKEStart(Object_74(AKEResponse, AKEStart, completeAKE, message)) = AKEStart.
+reduc forall AKEResponse:function, AKEStart:function, completeAKE:function, message:function;
+Object_74_get_completeAKE(Object_74(AKEResponse, AKEStart, completeAKE, message)) = completeAKE.
+reduc forall AKEResponse:function, AKEStart:function, completeAKE:function, message:function;
+Object_74_get_message(Object_74(AKEResponse, AKEStart, completeAKE, message)) = message.
+reduc forall AKEResponse:function, AKEStart:function, completeAKE:function, message:function, n:function;
+Object_74_set_AKEResponse(Object_74(AKEResponse, AKEStart, completeAKE, message), n) = Object_74(n, AKEStart, completeAKE, message).
+reduc forall AKEResponse:function, AKEStart:function, completeAKE:function, message:function, n:function;
+Object_74_set_AKEStart(Object_74(AKEResponse, AKEStart, completeAKE, message), n) = Object_74(AKEResponse, n, completeAKE, message).
+reduc forall AKEResponse:function, AKEStart:function, completeAKE:function, message:function, n:function;
+Object_74_set_completeAKE(Object_74(AKEResponse, AKEStart, completeAKE, message), n) = Object_74(AKEResponse, AKEStart, n, message).
+reduc forall AKEResponse:function, AKEStart:function, completeAKE:function, message:function, n:function;
+Object_74_set_message(Object_74(AKEResponse, AKEStart, completeAKE, message), n) = Object_74(AKEResponse, AKEStart, completeAKE, n).
+
+fun Object_118(object_msg, object_them):object_118 [data].
+reduc forall msg:object_msg, them:object_them;
+Object_118_get_msg(Object_118(msg, them)) = msg.
+reduc forall msg:object_msg, them:object_them;
+Object_118_get_them(Object_118(msg, them)) = them.
+reduc forall msg:object_msg, them:object_them, n:object_msg;
+Object_118_set_msg(Object_118(msg, them), n) = Object_118(n, them).
+reduc forall msg:object_msg, them:object_them, n:object_them;
+Object_118_set_them(Object_118(msg, them), n) = Object_118(msg, n).
+
+fun Object_142(function, function, function, function, function):object_142 [data].
+reduc forall acceptSession:function, newIdentity:function, recv:function, send:function, startSession:function;
+Object_142_get_acceptSession(Object_142(acceptSession, newIdentity, recv, send, startSession)) = acceptSession.
+reduc forall acceptSession:function, newIdentity:function, recv:function, send:function, startSession:function;
+Object_142_get_newIdentity(Object_142(acceptSession, newIdentity, recv, send, startSession)) = newIdentity.
+reduc forall acceptSession:function, newIdentity:function, recv:function, send:function, startSession:function;
+Object_142_get_recv(Object_142(acceptSession, newIdentity, recv, send, startSession)) = recv.
+reduc forall acceptSession:function, newIdentity:function, recv:function, send:function, startSession:function;
+Object_142_get_send(Object_142(acceptSession, newIdentity, recv, send, startSession)) = send.
+reduc forall acceptSession:function, newIdentity:function, recv:function, send:function, startSession:function;
+Object_142_get_startSession(Object_142(acceptSession, newIdentity, recv, send, startSession)) = startSession.
+reduc forall acceptSession:function, newIdentity:function, recv:function, send:function, startSession:function, n:function;
+Object_142_set_acceptSession(Object_142(acceptSession, newIdentity, recv, send, startSession), n) = Object_142(n, newIdentity, recv, send, startSession).
+reduc forall acceptSession:function, newIdentity:function, recv:function, send:function, startSession:function, n:function;
+Object_142_set_newIdentity(Object_142(acceptSession, newIdentity, recv, send, startSession), n) = Object_142(acceptSession, n, recv, send, startSession).
+reduc forall acceptSession:function, newIdentity:function, recv:function, send:function, startSession:function, n:function;
+Object_142_set_recv(Object_142(acceptSession, newIdentity, recv, send, startSession), n) = Object_142(acceptSession, newIdentity, n, send, startSession).
+reduc forall acceptSession:function, newIdentity:function, recv:function, send:function, startSession:function, n:function;
+Object_142_set_send(Object_142(acceptSession, newIdentity, recv, send, startSession), n) = Object_142(acceptSession, newIdentity, recv, n, startSession).
+reduc forall acceptSession:function, newIdentity:function, recv:function, send:function, startSession:function, n:function;
+Object_142_set_startSession(Object_142(acceptSession, newIdentity, recv, send, startSession), n) = Object_142(acceptSession, newIdentity, recv, send, n).
+
+
+const number_99:number [data]. (* 3.000000 *)
+const number_115:number [data]. (* 2.000000 *)
+const number_169:number [data]. (* 0.000000 *)
+const number_201:number [data]. (* 1.000000 *)
+const string_13:bitstring [data]. (* 01 *)
+const string_16:bitstring [data]. (* 02 *)
+const string_56:bitstring [data]. (* WhisperRatchet *)
+const string_60:bitstring [data]. (* 1 *)
+const string_63:bitstring [data]. (* WhisperMessageKeys *)
+const string_80:bitstring [data]. (* xyz *)
+const string_93:bitstring [data]. (*  *)
+const string_103:bitstring [data]. (* abc *)
+const string_150:bitstring [data]. (* ddd *)
+const string_153:bitstring [data]. (* ppp *)
+const string_176:bitstring [data]. (* kkk *)
+const string_179:bitstring [data]. (* eee *)
+const key_0:key [data].
+const iv_0:iv [data].
+const key_83:key [data].
+
+const nullArgs:args [data].
+const HKDF:function [data].
+const TDH0:function [data].
+const TDH1:function [data].
+const deriveRecvKeys:function [data].
+const deriveSendKeys:function [data].
+const AKEResponse:function [data].
+const AKEStart:function [data].
+const completeAKE:function [data].
+const message:function [data].
+const acceptSession:function [data].
+const newIdentity:function [data].
+const recv:function [data].
+const send:function [data].
+const startSession:function [data].
+
+fun add(bitstring, bitstring):bitstring [data].
+fun modulo(number, number):number [data].
+fun divide(number, number):number [data].
+fun multiply(number, number):number [data].
+fun subtract(number, number):number [data].
+fun bitShiftLeft(number, number):number [data].
+fun bitShiftRight(number, number):number [data].
+fun bitFillZero(number, number):number [data].
+fun lessThan(number, number):number [data].
+fun greaterThan(number, number):number [data].
+fun lessThanOrEqual(number, number):number [data].
+fun greaterThanOrEqual(number, number):number [data].
+fun bitAND(number, number):number [data].
+fun bitXOR(number, number):number [data].
+fun bitOR(number, number):number [data].
+fun bitNOT(number, number):number [data].
+fun minus(number, number):number [data].
+fun plus(number, number):number [data].
+fun one_way(key, bitstring):key.
+fun ProScript_crypto_DH25519(key, key):key.
+equation forall a:key, b:key;
+	ProScript_crypto_DH25519(b, ProScript_crypto_DH25519(a, key_83)) =
+	ProScript_crypto_DH25519(a, ProScript_crypto_DH25519(b, key_83)).
+fun ProScript_crypto_AESGCMEncrypt(key, bitstring):bitstring.
+reduc forall k:key, m:bitstring; ProScript_crypto_AESGCMDecrypt(
+	k, ProScript_crypto_AESGCMEncrypt(k, m)
+) = Object_aesgcmresult(m, true).
+fun ProScript_crypto_AESCTREncrypt(key, iv, bitstring):bitstring.
+reduc forall k:key, i:iv, m:bitstring; ProScript_crypto_AESCTRDecrypt(
+	k, i, ProScript_crypto_AESCTREncrypt(k, i, m)
+) = m.
+(* reduc forall k:key, i:iv, m1:bitstring, m2:bitstring;
+	AESCTRReuse(ProScript_crypto_AESCTREncrypt(k, i, m1), ProScript_crypto_AESCTREncrypt(k, i, m2)) = (m1, m2). *)
+fun ProScript_crypto_SHA256(bitstring):key.
+fun ProScript_crypto_ED25519(key, bitstring):key.
+reduc forall k:key, m:bitstring; ProScript_crypto_checkED25519(ProScript_crypto_DH25519(k, key_83), m, ProScript_crypto_ED25519(k, m)) = true.
+fun ProScript_crypto_HMACSHA256(key, bitstring):key.
+reduc forall k:key, m:bitstring; ProScript_crypto_checkHMACSHA256(k, m, ProScript_crypto_HMACSHA256(k, m)) = true.
+fun ProScript_crypto_random32Bytes(bitstring):key [private].
+fun ProScript_crypto_random16Bytes(bitstring):iv  [private].
+
+
+fun HKDF_setArgs(key, key, bitstring):args [data].
+reduc forall ikm:key, salt:key, info:bitstring;
+HKDF_getArgs(HKDF_setArgs(ikm, salt, info)) = (ikm, salt, info).
+fun HKDF_setReturn(array_1):return [data, typeConverter].
+reduc forall a:array_1;
+HKDF_getReturn(HKDF_setReturn(a)) = a.
+
+fun TDH0_setArgs(key, key, key, key, key):args [data].
+reduc forall myIdentityPriv:key, myEphemeralPriv:key, theirIdentityPub:key, theirPrekeyPub:key, theirEphemeralPub:key;
+TDH0_getArgs(TDH0_setArgs(myIdentityPriv, myEphemeralPriv, theirIdentityPub, theirPrekeyPub, theirEphemeralPub)) = (myIdentityPriv, myEphemeralPriv, theirIdentityPub, theirPrekeyPub, theirEphemeralPub).
+fun TDH0_setReturn(key):return [data, typeConverter].
+reduc forall a:key;
+TDH0_getReturn(TDH0_setReturn(a)) = a.
+
+fun TDH1_setArgs(key, key, key, key, key):args [data].
+reduc forall myIdentityPriv:key, myPrekeyPriv:key, myEphemeralPriv:key, theirIdentityPub:key, theirEphemeralPub:key;
+TDH1_getArgs(TDH1_setArgs(myIdentityPriv, myPrekeyPriv, myEphemeralPriv, theirIdentityPub, theirEphemeralPub)) = (myIdentityPriv, myPrekeyPriv, myEphemeralPriv, theirIdentityPub, theirEphemeralPub).
+fun TDH1_setReturn(key):return [data, typeConverter].
+reduc forall a:key;
+TDH1_getReturn(TDH1_setReturn(a)) = a.
+
+fun deriveRecvKeys_setArgs(object_them, key):args [data].
+reduc forall them:object_them, newEphemeralPub:key;
+deriveRecvKeys_getArgs(deriveRecvKeys_setArgs(them, newEphemeralPub)) = (them, newEphemeralPub).
+fun deriveRecvKeys_setReturn(object_52):return [data, typeConverter].
+reduc forall a:object_52;
+deriveRecvKeys_getReturn(deriveRecvKeys_setReturn(a)) = a.
+
+fun deriveSendKeys_setArgs(object_them, key):args [data].
+reduc forall them:object_them, newEphemeralPriv:key;
+deriveSendKeys_getArgs(deriveSendKeys_setArgs(them, newEphemeralPriv)) = (them, newEphemeralPriv).
+fun deriveSendKeys_setReturn(object_52):return [data, typeConverter].
+reduc forall a:object_52;
+deriveSendKeys_getReturn(deriveSendKeys_setReturn(a)) = a.
+
+fun AKEResponse_setArgs(object_me, object_them, object_msg):args [data].
+reduc forall me:object_me, them:object_them, msg:object_msg;
+AKEResponse_getArgs(AKEResponse_setArgs(me, them, msg)) = (me, them, msg).
+fun AKEResponse_setReturn(object_recvoutput):return [data, typeConverter].
+reduc forall a:object_recvoutput;
+AKEResponse_getReturn(AKEResponse_setReturn(a)) = a.
+
+fun AKEStart_setArgs(object_me, object_them, object_msg):args [data].
+reduc forall me:object_me, them:object_them, msg:object_msg;
+AKEStart_getArgs(AKEStart_setArgs(me, them, msg)) = (me, them, msg).
+fun AKEStart_setReturn(object_recvoutput):return [data, typeConverter].
+reduc forall a:object_recvoutput;
+AKEStart_getReturn(AKEStart_setReturn(a)) = a.
+
+fun completeAKE_setArgs(object_me, object_them, object_msg):args [data].
+reduc forall me:object_me, them:object_them, msg:object_msg;
+completeAKE_getArgs(completeAKE_setArgs(me, them, msg)) = (me, them, msg).
+fun completeAKE_setReturn(object_118):return [data, typeConverter].
+reduc forall a:object_118;
+completeAKE_getReturn(completeAKE_setReturn(a)) = a.
+
+fun message_setArgs(object_118):args [data].
+reduc forall themMsg:object_118;
+message_getArgs(message_setArgs(themMsg)) = (themMsg).
+fun message_setReturn(object_recvoutput):return [data, typeConverter].
+reduc forall a:object_recvoutput;
+message_getReturn(message_setReturn(a)) = a.
+
+fun acceptSession_setArgs(object_me, object_them, object_msg):args [data].
+reduc forall me:object_me, them:object_them, msg:object_msg;
+acceptSession_getArgs(acceptSession_setArgs(me, them, msg)) = (me, them, msg).
+fun acceptSession_setReturn(object_recvoutput):return [data, typeConverter].
+reduc forall a:object_recvoutput;
+acceptSession_getReturn(acceptSession_setReturn(a)) = a.
+
+fun newIdentity_setReturn(object_me):return [data, typeConverter].
+reduc forall a:object_me;
+newIdentity_getReturn(newIdentity_setReturn(a)) = a.
+
+fun recv_setArgs(object_me, object_them, object_msg):args [data].
+reduc forall me:object_me, them:object_them, msg:object_msg;
+recv_getArgs(recv_setArgs(me, them, msg)) = (me, them, msg).
+fun recv_setReturn(object_recvoutput):return [data, typeConverter].
+reduc forall a:object_recvoutput;
+recv_getReturn(recv_setReturn(a)) = a.
+
+fun send_setArgs(object_them, bitstring):args [data].
+reduc forall them:object_them, plaintext:bitstring;
+send_getArgs(send_setArgs(them, plaintext)) = (them, plaintext).
+fun send_setReturn(object_sendoutput):return [data, typeConverter].
+reduc forall a:object_sendoutput;
+send_getReturn(send_setReturn(a)) = a.
+
+fun startSession_setArgs(object_me, object_them):args [data].
+reduc forall me:object_me, them:object_them;
+startSession_getArgs(startSession_setArgs(me, them)) = (me, them).
+fun startSession_setReturn(object_sendoutput):return [data, typeConverter].
+reduc forall a:object_sendoutput;
+startSession_getReturn(startSession_setReturn(a)) = a.
+
+
+letfun fun_HKDF(ikm:key, salt:key, info:bitstring) =
+let prk = ProScript_crypto_HMACSHA256(salt, Type_key_toBitstring(ikm)) in
+let k0 = ProScript_crypto_HMACSHA256(prk, add(info, string_13)) in
+let k1 = ProScript_crypto_HMACSHA256(prk, add(add(Type_key_toBitstring(k0), info), string_16)) in
+Array_1(k0, k1).
+
+letfun fun_TDH0(myIdentityPriv:key, myEphemeralPriv:key, theirIdentityPub:key, theirPrekeyPub:key, theirEphemeralPub:key) =
+ProScript_crypto_SHA256(add(add(add(Type_key_toBitstring(ProScript_crypto_DH25519(myIdentityPriv, theirPrekeyPub)), Type_key_toBitstring(ProScript_crypto_DH25519(myEphemeralPriv, theirIdentityPub))), Type_key_toBitstring(ProScript_crypto_DH25519(myEphemeralPriv, theirPrekeyPub))), Type_key_toBitstring(ProScript_crypto_DH25519(myEphemeralPriv, theirEphemeralPub)))).
+
+letfun fun_TDH1(myIdentityPriv:key, myPrekeyPriv:key, myEphemeralPriv:key, theirIdentityPub:key, theirEphemeralPub:key) =
+ProScript_crypto_SHA256(add(add(add(Type_key_toBitstring(ProScript_crypto_DH25519(myPrekeyPriv, theirIdentityPub)), Type_key_toBitstring(ProScript_crypto_DH25519(myIdentityPriv, theirEphemeralPub))), Type_key_toBitstring(ProScript_crypto_DH25519(myPrekeyPriv, theirEphemeralPub))), Type_key_toBitstring(ProScript_crypto_DH25519(myEphemeralPriv, theirEphemeralPub)))).
+
+letfun fun_deriveRecvKeys(them:object_them, newEphemeralPub:key) =
+let kShared = ProScript_crypto_DH25519(Object_keypair_get_priv(Object_them_get_myEphemeral(them)), newEphemeralPub) in
+let recvKeys = fun_HKDF(kShared, Array_1_get_e_0(Object_them_get_sendKeys(them)), string_56) in
+let kKeys = fun_HKDF(ProScript_crypto_HMACSHA256(Array_1_get_e_1(recvKeys), string_60), Type_key_construct(), string_63) in
+Object_52(Array_1_get_e_0(kKeys), Array_1_get_e_1(kKeys), recvKeys, Object_them_get_sendKeys(them)).
+
+letfun fun_deriveSendKeys(them:object_them, newEphemeralPriv:key) =
+let kShared = ProScript_crypto_DH25519(newEphemeralPriv, Object_them_get_ephemeral(them)) in
+let sendKeys = fun_HKDF(kShared, Array_1_get_e_0(Object_them_get_recvKeys(them)), string_56) in
+let kKeys = fun_HKDF(ProScript_crypto_HMACSHA256(Array_1_get_e_1(sendKeys), string_60), Type_key_construct(), string_63) in
+Object_52(Array_1_get_e_0(kKeys), Array_1_get_e_1(kKeys), Object_them_get_recvKeys(them), sendKeys).
+
+letfun fun_AKEResponse(me:object_me, them:object_them, msg:object_msg) =
+let e = ProScript_crypto_random32Bytes(string_80) in
+let ge = ProScript_crypto_DH25519(e, key_83) in
+let shared = fun_TDH0(Object_keypair_get_priv(Object_me_get_identity(me)), e, Object_them_get_identity(them), Object_msg_get_prekey(msg), Object_msg_get_ephemeral(msg)) in
+let recvKeys = fun_HKDF(shared, Type_key_construct(), string_56) in
+let validSig = ProScript_crypto_checkED25519(Object_them_get_identity(them), Type_key_toBitstring(Object_msg_get_prekey(msg)), Object_msg_get_prekeySig(msg)) in
+(* let validSig = true in *)
+Object_recvoutput(Object_msg(string_93, Type_key_construct(), Type_key_construct(), ge, Type_iv_construct(), Type_key_construct(), Type_key_construct(), number_99, Type_key_construct(), validSig), string_93, Object_them(Object_msg_get_ephemeral(msg), Object_them_get_identity(them), ge, Object_them_get_kENC(them), Object_them_get_kMAC(them), Object_keypair(e, ge), Object_them_get_myIdentity(them), recvKeys, Object_them_get_sendKeys(them), shared, number_99)).
+
+letfun fun_AKEStart(me:object_me, them:object_them, msg:object_msg) =
+let meNewEphemeralPriv = ProScript_crypto_random32Bytes(string_103) in
+let meNewEphemeralPub = ProScript_crypto_DH25519(meNewEphemeralPriv, key_83) in
+Object_recvoutput(Object_msg(string_93, meNewEphemeralPub, Object_keypair_get_pub(Object_me_get_identity(me)), Type_key_construct(), Type_iv_construct(), Object_keypair_get_pub(Object_me_get_prekey(me)), Type_key_assert(ProScript_crypto_ED25519(Object_keypair_get_priv(Object_me_get_identity(me)), Type_key_toBitstring(Object_keypair_get_pub(Object_me_get_prekey(me))))), number_115, Type_key_construct(), true), string_93, Object_them(Object_them_get_ephemeral(them), Object_them_get_identity(them), Object_them_get_initEphemeral(them), Object_them_get_kENC(them), Object_them_get_kMAC(them), Object_keypair(meNewEphemeralPriv, meNewEphemeralPub), Object_keypair_get_pub(Object_me_get_identity(me)), Object_them_get_recvKeys(them), Object_them_get_sendKeys(them), Object_them_get_shared(them), number_115)).
+
+letfun fun_completeAKE(me:object_me, them:object_them, msg:object_msg) =
+let shared = fun_TDH1(Object_keypair_get_priv(Object_me_get_identity(me)), Object_keypair_get_priv(Object_me_get_prekey(me)), Object_keypair_get_priv(Object_them_get_myEphemeral(them)), Object_them_get_identity(them), Object_msg_get_initEphemeral(msg)) in
+let sendKeys = fun_HKDF(shared, Type_key_construct(), string_56) in
+Object_118(msg, Object_them(Object_them_get_ephemeral(them), Object_them_get_identity(them), Object_msg_get_initEphemeral(msg), Object_them_get_kENC(them), Object_them_get_kMAC(them), Object_them_get_myEphemeral(them), Object_them_get_myIdentity(them), Object_them_get_recvKeys(them), sendKeys, shared, Object_them_get_status(them))).
+
+letfun fun_message(themMsg:object_118) =
+let them = Object_118_get_them(themMsg) in
+let msg = Object_118_get_msg(themMsg) in
+let keys = fun_deriveRecvKeys(them, Object_msg_get_ephemeral(msg)) in
+Object_recvoutput(Object_msg(string_93, Type_key_construct(), Type_key_construct(), Type_key_construct(), Type_iv_construct(), Type_key_construct(), Type_key_construct(), number_99, Type_key_construct(), ProScript_crypto_checkHMACSHA256(Object_52_get_kMAC(keys), add(add(add(add(add(string_93, Type_key_toBitstring(Object_them_get_identity(them))), Type_key_toBitstring(Object_them_get_myIdentity(them))), Type_key_toBitstring(Object_msg_get_ephemeral(msg))), Type_iv_toBitstring(Object_msg_get_iv(msg))), Object_msg_get_ciphertext(msg)), Object_msg_get_tag(msg))), ProScript_crypto_AESCTRDecrypt(Object_52_get_kENC(keys), Object_msg_get_iv(msg), Object_msg_get_ciphertext(msg)), Object_them(Object_msg_get_ephemeral(msg), Object_them_get_identity(them), Object_them_get_initEphemeral(them), Object_52_get_kENC(keys), Object_52_get_kMAC(keys), Object_them_get_myEphemeral(them), Object_them_get_myIdentity(them), Object_52_get_recvKeys(keys), Object_52_get_sendKeys(keys), Object_them_get_shared(them), number_99)).
+
+letfun fun_acceptSession(me:object_me, them:object_them, msg:object_msg) =
+let me = Type_me_assert(me) in
+let them = Type_them_assert(them) in
+let msg = Type_msg_assert(msg) in
+fun_AKEStart(me, them, msg).
+
+letfun fun_newIdentity(a:bitstring) =
+let identityPriv = ProScript_crypto_random32Bytes(a) in
+let prekeyPriv = ProScript_crypto_random32Bytes(Type_key_toBitstring(ProScript_crypto_SHA256(a))) in
+Object_me(Object_keypair(identityPriv, ProScript_crypto_DH25519(identityPriv, key_83)), Object_keypair(prekeyPriv, ProScript_crypto_DH25519(prekeyPriv, key_83))).
+
+letfun fun_recv(me:object_me, them:object_them, msg:object_msg) =
+let me = Type_me_assert(me) in
+let them = Type_them_assert(them) in
+let msg = Type_msg_assert(msg) in
+let themMsg = Object_118(msg, them) in
+if (Object_msg_get_status(msg) = number_115 && Object_them_get_status(them) = number_169) then (
+fun_AKEResponse(me, them, msg))
+else (if (Object_msg_get_status(msg) = number_99 && Object_them_get_status(them) = number_115) then (
+fun_message(fun_completeAKE(me, them, msg)))
+else (if (Object_msg_get_status(msg) = number_99 && Object_them_get_status(them) = number_99) then (
+fun_message(themMsg))
+else (
+Object_recvoutput(Type_msg_construct(), string_93, Type_them_construct())))).
+
+letfun fun_send(them:object_them, plaintext:bitstring) =
+let them = Type_them_assert(them) in
+let outputIv = Type_iv_assert(ProScript_crypto_random16Bytes(string_176)) in
+let meNewEphemeralPriv = ProScript_crypto_random32Bytes(string_179) in
+let meNewEphemeralPub = ProScript_crypto_DH25519(meNewEphemeralPriv, key_83) in
+let keys = fun_deriveSendKeys(them, meNewEphemeralPriv) in
+let ciphertext = ProScript_crypto_AESCTREncrypt(Object_52_get_kENC(keys), outputIv, plaintext) in
+Object_sendoutput(Object_msg(ciphertext, meNewEphemeralPub, Object_them_get_myIdentity(them), Object_them_get_initEphemeral(them), outputIv, Type_key_construct(), Type_key_construct(), Object_them_get_status(them), ProScript_crypto_HMACSHA256(Object_52_get_kMAC(keys), add(add(add(add(add(string_93, Type_key_toBitstring(Object_them_get_myIdentity(them))), Type_key_toBitstring(Object_them_get_identity(them))), Type_key_toBitstring(meNewEphemeralPub)), Type_iv_toBitstring(outputIv)), ciphertext)), true), Object_them(Object_them_get_ephemeral(them), Object_them_get_identity(them), Object_them_get_initEphemeral(them), Object_52_get_kENC(keys), Object_52_get_kMAC(keys), Object_keypair(meNewEphemeralPriv, meNewEphemeralPub), Object_them_get_myIdentity(them), Array_1(Array_1_get_e_0(Object_52_get_recvKeys(keys)), Array_1_get_e_1(Object_52_get_recvKeys(keys))), Array_1(Array_1_get_e_0(Object_52_get_sendKeys(keys)), Array_1_get_e_1(Object_52_get_sendKeys(keys))), Object_them_get_shared(them), Object_them_get_status(them))).
+
+letfun fun_startSession(me:object_me, them:object_them) =
+let me = Type_me_assert(me) in
+let them = Type_them_assert(them) in
+Object_sendoutput(Object_msg(string_93, Type_key_construct(), Object_keypair_get_pub(Object_me_get_identity(me)), Type_key_construct(), Type_iv_construct(), Type_key_construct(), Type_key_construct(), number_201, Type_key_construct(), true), them).
+
+set attacker = passive.
+									
+free comMsg1:bitstring [private].
+free comMsg2:bitstring [private].
+free secMsg1:bitstring [private].
+free secMsg2:bitstring [private].
+query attacker(secMsg2).
+
+let Alice(me:object_me, them:object_them) =
+	let aStartSession = fun_startSession(me, them) in
+	let them = Object_sendoutput_get_them(aStartSession) in
+	out(io, Object_sendoutput_get_output(aStartSession));
+	in(io, bAcceptSession:object_msg);
+	let aAcceptSession = fun_recv(me, them, bAcceptSession) in
+	let them = Object_recvoutput_get_them(aAcceptSession) in
+	let encMsg1 = fun_send(them, secMsg1) in
+	let them = Object_sendoutput_get_them(encMsg1) in
+	out(io, Object_sendoutput_get_output(encMsg1));
+	phase 1;
+	out(io, (Array_1_get_e_0(Object_them_get_sendKeys(them)), Object_them_get_myEphemeral(them)));
+	in(io, encMsg2:object_msg);
+	let decMsg2 = fun_recv(me, them, encMsg2) in 0.
+
+let Bob(me:object_me, them:object_them) =
+	in(io, aStartSession:object_msg);
+	let bAcceptSession = fun_acceptSession(me, them, aStartSession) in
+	let them = Object_recvoutput_get_them(bAcceptSession) in
+	out(io, Object_recvoutput_get_output(bAcceptSession));
+	in(io, encMsg1:object_msg);
+	phase 1;
+	let decMsg1 = fun_recv(me, them, encMsg1) in
+	if (Object_msg_get_valid(Object_recvoutput_get_output(decMsg1)) = true) then (
+		let msg1 = Object_recvoutput_get_plaintext(decMsg1) in
+		let them = Object_recvoutput_get_them(decMsg1) in
+		let encMsg2 = fun_send(them, secMsg2) in
+		out(io, Object_sendoutput_get_output(encMsg2))
+	).
+
+process
+
+let alice   = fun_newIdentity(string_103) in
+let bob     = fun_newIdentity(string_150) in
+
+let alicesBob = Object_them(
+	Type_key_construct(),
+	Object_keypair_get_pub(Object_me_get_identity(bob)),
+	Type_key_construct(),
+	Type_key_construct(),
+	Type_key_construct(),
+	Type_keypair_construct(),
+	Object_keypair_get_pub(Object_me_get_identity(alice)),
+	Array_1(Type_key_construct(), Type_key_construct()),
+	Array_1(Type_key_construct(), Type_key_construct()),
+	Type_key_construct(),
+	number_169) in
+let bobsAlice = Object_them(
+	Type_key_construct(),
+	Object_keypair_get_pub(Object_me_get_identity(alice)),
+	Type_key_construct(),
+	Type_key_construct(),
+	Type_key_construct(),
+	Type_keypair_construct(),
+	Object_keypair_get_pub(Object_me_get_identity(bob)),
+	Array_1(Type_key_construct(), Type_key_construct()),
+	Array_1(Type_key_construct(), Type_key_construct()),
+	Type_key_construct(),
+	number_169) in
+
+(Alice(alice, alicesBob) | Bob(bob, bobsAlice))

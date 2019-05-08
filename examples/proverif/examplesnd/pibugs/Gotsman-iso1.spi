@@ -1,0 +1,77 @@
+private free pk.
+private free sid1, sid2.
+free c, start.
+private fun inv/1.
+equation inv(inv(k))=k.
+fun pencrypt/2.
+reduc pdecrypt(pencrypt(x,y),inv(y)) = x.
+fun sencrypt/2.
+reduc sdecrypt(sencrypt(x,y),y) = x.
+fun hashfun/2.
+
+private free na.
+query ev:wrequest(x1, x2, na, x3) ==> ev:witness(x2, x1, na, x3).
+
+(*query attacker:(sencrypt((y1, y2, y3, y4, sid1), pk), sencrypt((y1, y2, y3, y4, sid2), pk)).*)
+query attacker:(sencrypt((y1, y2, y3, y4, z1), pk), sencrypt((y1, y2, y3, y4, z2), pk)) ==> z1 = z2.
+
+let ISO1Init = 
+	new Na;
+	ISO1Init0.
+
+let ISO1Init0 = 
+	in(c, =start);
+	new Na;
+	event witness(A, B, na, Na);
+	out(c, (Pka, A, pencrypt((Pka, A), inv(Pks)), Na, B, ctext, pencrypt((Na, B, ctext), inv(Pka))));
+	ISO1Init1.
+
+let ISO1Init1 = 0.
+
+
+let ISO1Resp = 
+	new Text;
+	new Na;
+	new Pka;
+	ISO1Resp0.
+
+let ISO1Resp0 = 
+	in(c, (Pka, =A, m1, Na, =B, Text, m2));
+	let (=Pka, =A) = pdecrypt(m1, Pks) in
+	let (=Na, =B, =Text) = pdecrypt(m2, Pka) in
+	if A <> i then
+	if B <> i then
+	out(c, sencrypt((B, A, na, Na, SID), pk));
+	event wrequest(B, A, na, Na);
+	ISO1Resp1
+	else ISO1Resp1
+	else ISO1Resp1.
+
+let ISO1Resp1 = 0.
+
+
+let Session = 
+	(let (A, B, Pka, Pks, Snd, Rcv) = (A, B, Pka, Pks, SA, RA) in ISO1Init) |
+	(let (A, B, Pks, Rec) = (A, B, Pks, RB) in ISO1Resp).
+
+process
+	new rb2;
+	new ra2;
+	new sa2;
+	new rb1;
+	new ra1;
+	new sa1;
+	new pks;
+	new pkb;
+	new pka;
+	new i;
+	new b;
+	new a;
+	new ctext;
+	out(c, pka);
+	out(c, pks);
+	out(c, b);
+	out(c, a);
+	(let (A, B, Pka, Pks, SA, RA, RB, SID) = (a, b, pka, pks, sa1, ra1, rb1, sid1) in Session) |
+	(let (A, B, Pka, Pks, SA, RA, RB, SID) = (a, b, pka, pks, sa2, ra2, rb2, sid2) in Session)
+

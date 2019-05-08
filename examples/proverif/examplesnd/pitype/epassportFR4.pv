@@ -1,0 +1,37 @@
+(* ePassport Protocol
+   Taken from Myrto Ryan, CSF'10 *)
+
+set verboseRules = false.
+set ignoreTypes = true.
+set movenew = true.
+
+fun aenc(bitstring, bitstring): bitstring.
+fun enc(bitstring, bitstring): bitstring.
+
+fun pk(bitstring): bitstring.
+fun mac(bitstring,bitstring): bitstring.
+
+(* asymetric decryption definition *)
+
+reduc forall x: bitstring, y: bitstring; adec(aenc(x,pk(y)),y) = x.
+
+(* Symetric decryption *)
+
+reduc forall x: bitstring, y:bitstring; dec(enc(x,y),y) = x.
+
+(* addition of one *)
+
+free c: channel.
+free d_k:channel [private].
+free get_challenge: bitstring.
+free error_6A80: bitstring.
+free error: bitstring [private].
+free error_6300: bitstring.
+
+process
+	!(new ke1:bitstring; new km1:bitstring;
+	!(new ke2:bitstring; new km2:bitstring; 
+	    out(c,enc(error_6300,choice[ke1,ke2])); 
+	    in(c,x:bitstring);
+	    let y:bitstring = dec(x,choice[ke1,ke2]) in
+	    out(c,km1)))                                      

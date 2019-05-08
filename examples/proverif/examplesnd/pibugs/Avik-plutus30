@@ -1,0 +1,106 @@
+(* Plutus *)
+
+fun skgen/3.
+fun pkgen/2.
+
+data zero/0.
+data succ/1.
+
+data r12/0.
+data r1/0.
+
+fun larger/3.
+
+equation larger(r12,r1,x) = x.
+
+reduc unwind(skgen(w,succ(x),y)) = skgen(w,x,y).
+
+fun write/3.
+
+reduc read(z,write(z,u,pkgen(x,y)),skgen(w,x,y)) = u.
+
+free c.
+free f, newgroup, newreader, newwriter.
+free corrupt.
+free revokedreader.
+
+query ev:gets(x, y, v) ==> ev:isreader(gx, x, v) & ev:iswriter(gx, wx) & ev:writem(wx, y, vy).
+query let mx = m; attacker:mx ==> ev:isreader(gx, x, v) & ev:corrupt(x) & ev:writem(wx, mx, vy) & ev:iswriter(gx, wx).
+query attacker:m1 ==> ev:isreader(gx, x, v) & ev:corrupt(x) & ev:writem(wx, m1, vy) & ev:iswriter(gx, wx).
+query ev:gets(revokedreader, y, succ(zero)).
+query let mx = m; attacker:mx ==> 
+      (ev:isreader(gx, x, v) & ev:corrupt(x) & ev:writem(wx, mx, vy) & ev:iswriter(gx, wx) & x <> revokedreader) 
+    | (ev:isreader(gx, revokedreader, v) & ev:corrupt(revokedreader) & ev:writem(wx, mx, zero) & ev:iswriter(gv, wx)).
+query let mx = m1; attacker:mx ==> 
+      (ev:isreader(gx, x, v) & ev:corrupt(x) & ev:writem(wx, mx, vy) & ev:iswriter(gx, wx) & x <> revokedreader) 
+    | (ev:isreader(gx, revokedreader, v) & ev:corrupt(revokedreader) & ev:writem(wx, mx, zero) & ev:iswriter(gv, wx)).
+
+private fun rprivchannel/1.
+private fun wprivchannel/1.
+
+let process0 =
+    in(newgroup, g); 
+    new sk;
+    (
+    !
+    in(newreader, (=g, r));
+    event isreader(g,r,zero);
+    out(rprivchannel(r), (skgen(g, zero, sk), zero));
+    phase 1;
+    if r <> revokedreader then
+    event isreader(g,r,succ(zero));
+    out(rprivchannel(r), (skgen(g, succ(zero), sk), succ(zero)))
+    )
+    |
+    (
+    !
+    in(newwriter, (=g, w));
+    event iswriter(g,w);
+    out(wprivchannel(w), (pkgen(zero, sk), zero));
+    phase 1;
+    out(wprivchannel(w), (pkgen(succ(zero), sk), succ(zero)))
+    ).
+
+
+let process1 = 
+    in(c,r);
+    in(rprivchannel(r),(rkey,v));
+    in(f,(v2,crypt));
+    if v2 = v then
+    (
+    let m2 = read(f,crypt,rkey) in
+    event gets(r, m2, v)
+    )
+    else 
+    (
+    let rkey2 = unwind(rkey) in
+    let m2 = read(f,crypt,rkey2) in
+    event gets(r, m2, v)
+    ).
+
+let process2 =
+    in(c,r);
+    in(rprivchannel(r), (rkey,v));
+    in(corrupt, =r);
+    event corrupt(r);
+    out(c, rkey).
+
+let process3 =
+    in(c, w); 
+    in(wprivchannel(w),(wkey,v));
+    new m; 
+    event writem(w, m, v);
+    out(f,(v,write(f,m,wkey))).
+ 
+let process31 =
+    in(c, w); 
+    in(wprivchannel(w),(wkey,v));
+    new m1; 
+    event writem(w, m1, v);
+    out(f,(v,write(f,m1,wkey))).
+ 
+
+process
+	((!process0) | (! process1) | (!process2)  | (! process3) |
+	phase 1; ((!process1) | (!process2) | (!process31))) 
+	

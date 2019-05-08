@@ -1,0 +1,16 @@
+free c. 
+
+private free m.
+
+
+(* Check if attacker can recover m*)
+ 
+ query attacker:m.
+
+(* processes *)
+
+fun hostA/0.
+
+process  
+	 phase 1; in(c, =hostA); out(c, m)
+

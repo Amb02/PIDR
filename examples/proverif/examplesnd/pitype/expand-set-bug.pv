@@ -1,0 +1,7 @@
+def macro() {
+  set ignoresTypes = true.
+}
+
+expand macro().
+
+process 0

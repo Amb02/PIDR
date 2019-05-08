@@ -1,0 +1,17 @@
+free c:channel.
+free d:channel [private].
+free s,k:bitstring [private].
+fun h(bitstring):bitstring.
+
+process
+  out(d,0) |
+
+  (!in(d,i:nat);
+   out(c,choice[h((i,s)),h((s,i))]);
+   out(d,i+1)
+  )
+  |
+
+  !in(d,i:nat);
+
+   out(d,i+2)

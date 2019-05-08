@@ -1,0 +1,22 @@
+free c:channel.
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+event A(bitstring).
+
+const ok,ko:bitstring.
+
+not attacker(a).
+
+query x:bitstring; event(A(x)).
+
+process
+  in(c,x:bitstring);
+  if x = a
+  then
+    event A(a);
+    out(c,ok)
+  else
+    out(c,ko)

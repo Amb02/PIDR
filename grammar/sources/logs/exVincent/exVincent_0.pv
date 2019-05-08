@@ -1,0 +1,16 @@
+free c_secret:bitstring [private].
+free c:channel.
+event Toto(bitstring).
+event Bob(bitstring).
+free a:bitstring.
+free b:bitstring.
+
+query x:bitstring, y:bitstring, x':bitstring, y':bitstring; attacker(c_secret) ==> (event(Toto(x)) && event(Toto(y)) && x <> y) || (event(Bob(x')) && event(Bob(y')) && x' <> y').
+
+process
+  in(c,x:bitstring);
+  event Toto(x);
+  event Toto(a);
+  event Bob(x);
+  event Bob(b);
+  out(c,c_secret)

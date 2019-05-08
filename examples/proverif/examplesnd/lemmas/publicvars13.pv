@@ -1,0 +1,38 @@
+free c:channel.
+free d:channel [private].
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+event A(bitstring).
+event B(bitstring).
+
+const ok,ko,k:bitstring[private].
+
+lemma x:bitstring;
+  event(B(x)) ==> x = b for { public_vars x };
+  event(B(x)) ==> x = b for { secret x [real_or_random] }.
+
+(* lemma x:bitstring;
+  event(B(x)) ==> x = a;
+  event(A(x)) ==> x = b. *)
+
+pred Test(bitstring) [block].
+
+
+query x:bitstring; event(A(x)) ==> event(B(a)) public_vars x; attacker(x) public_vars x.
+noninterf d.
+weaksecret d.
+query secret x [real_or_random].
+
+process
+  (in(c,x:bitstring);
+  if x = a
+  then
+    event A(a);
+    out(d,k)
+  else
+    out(c,ko))
+
+  | in(d,x:bitstring); out(c,ok)

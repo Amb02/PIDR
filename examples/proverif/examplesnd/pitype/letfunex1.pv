@@ -1,0 +1,22 @@
+type t.
+
+const c0, c1: bitstring.
+
+letfun f(x:t) =
+     let y = x in c0 else c1.
+
+letfun g(x:t or fail) =
+           let y = x in c0 else c1.
+
+channel c.
+
+fun h(): t
+reduc h() = fail.
+
+event bad.
+
+query event(bad).
+
+process
+(let z= f(h()) in event bad) |
+(if g(h()) <> c1 then event bad)

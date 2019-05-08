@@ -1,0 +1,8 @@
+fun h(bitstring): bitstring.
+reduc forall x: bitstring; g(h(x)) = x.
+
+event e(bitstring).
+
+free a: bitstring.
+
+process event e(choice[g(a), a])

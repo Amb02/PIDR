@@ -1,0 +1,35 @@
+(* Comparing an abstract MAC primitive to its implementation using
+   hashes of blocks, as explained in "mobile values", section 6. 
+   This example amounts to a change of signature, with
+   the implementation signature having additional equations for the
+   benefit of the attacker. *)
+
+fun mac/2. (* MAC specification, with no equation. *)
+private fun impl/2. (* choice of a MAC implementation *)
+
+fun f/2. (* variable-length keyed hash *)
+fun h/2. (* keyed-hash for a single block *)
+
+(* 
+The first, broken implementation uses 
+equation impl(k,x) = f(k,x).
+
+The second, correct implementation uses 
+equation impl(k,x) = f(k,f(k,x)).
+*)
+
+equation impl(k,x) = f(k,f(k,x)).
+
+equation h(f(x,y),z) = f(x,(y,z)).  
+
+free a.
+free b.
+free c.
+
+process
+	new k;
+	(
+	  ( !in(a, x); out(b,(x,choice[mac(k,x),impl(k,x)])))
+	|       
+	  ( in(b,(x,m)); if choice[mac(k,x),impl(k,x)] = m then out(c,x))
+	)

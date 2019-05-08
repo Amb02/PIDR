@@ -1,0 +1,8 @@
+type G.
+type Z.
+
+const g:G.
+fun exp(G,Z):G.
+equation forall x:Z,y:Z; exp(exp(g,x),y) = exp(exp(g,y),x) [convergent].
+
+process 0

@@ -1,0 +1,77 @@
+(* Protocol of Celine Chevalier's report
+   Version in which A and B talk to anybody *)
+
+free c.
+
+(* Symmetric cryptography
+   One does not know whether decryption succeeds or not
+   For use with weak secrets *)
+
+fun enc/2.
+fun dec/2.
+equation dec(enc(x,y),y) = x.
+equation enc(dec(x,y),y) = x.
+
+(* Diffie-Hellman *)
+
+data g/0.
+fun exp/2.
+equation exp(exp(g,y),x) = exp(exp(g,x),y).
+
+(* Hash functions *)
+
+fun hash1/5.
+fun hash0/5.
+
+(* Host
+   We need some kind of coding to represent an unbounded number
+   of dishonest host. host(PU,PS) represents the host that uses
+   password PU with U and password PS with S. (This is not the
+   only possibility of coding.)  *)
+
+data host/2.
+
+(* param verboseRules  = yes. *)
+
+free hostU, hostS.
+private free P.
+weaksecret P.
+
+let processU =
+	new x;
+	let X = exp(g,x) in
+	out(c, (hostU, X));
+	in(c,(=hostSX,Ystar));
+	let Y = dec(Ystar,P) in
+	let Ku = exp(Y, x) in
+	let auth = hash1(hostU, hostSX, X, Y, Ku) in
+	let skU = hash0(hostU, hostSX, X, Y, Ku) in
+	out(c, auth);
+	0.
+
+
+let processS =
+	in(c, (=hostUX, X));
+	new y;
+	let Y = exp(g,y) in
+	let Ks = exp(X,y) in
+	out(c, (hostS, enc(Y, P)));
+	in(c, =hash1(hostUX, hostS,X,Y,Ks));
+	let skS = hash0(hostUX, hostS, X, Y, Ks) in
+	0.
+
+let processUtalkingX =
+        in(c, (PU,PS));
+        let hostSX = host(PU,PS) in
+        let P = PU in
+        processU.
+
+let processStalkingX =
+        in(c, (PU,PS));
+        let hostUX = host(PU,PS) in
+        let P = PS in
+        processS.
+
+process 
+	(!let hostSX = hostS in processU) | (!let hostUX = hostU in processS) |
+	(!processUtalkingX) | (!processStalkingX)

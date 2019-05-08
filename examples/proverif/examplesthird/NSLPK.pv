@@ -1,0 +1,63 @@
+free c:channel.
+
+type public_key.
+type private_key.
+
+fun penc(bitstring,public_key):bitstring.
+fun pk(bitstring):public_key.
+fun sk(bitstring):private_key [private].
+
+fun pdec(bitstring,private_key):bitstring
+reduc forall x:bitstring,y:bitstring; pdec(penc(x,pk(y)),sk(y)) = x.
+
+fun pair(bitstring,bitstring):bitstring.
+fun proj1(bitstring):bitstring
+reduc forall x:bitstring,y:bitstring ; proj1(pair(x,y)) = x.
+fun proj2(bitstring):bitstring
+reduc forall x:bitstring,y:bitstring ; proj2(pair(x,y)) = y.
+
+equation forall x:bitstring,y:bitstring, z:bitstring; pair(pair(x,y),z) = pair(x,pair(y,z)).
+
+
+let P_I(A:bitstring,B:bitstring) =
+  new n_a:bitstring;
+  out(c,penc(pair(A,n_a),pk(B)));
+  in(c,y:bitstring);
+  if n_a = proj1(proj1(pdec(y,sk(A)))) then
+  let xn_b = proj2(proj1(pdec(y,sk(A)))) in
+  if B = proj2(pdec(y,sk(A))) then
+  out(c,penc(xn_b,pk(B))).
+
+let P_R_Honest(B:bitstring,A:bitstring) =
+  in(c,z:bitstring);
+  if A = proj1(pdec(z,sk(B))) then
+  let y:bitstring = proj2(pdec(z,sk(B))) in
+  new n_b:bitstring;
+  out(c,penc(pair(pair(y,n_b),B),pk(A)));
+  in(c,z':bitstring);
+  if pdec(z',sk(B)) = n_b then
+  0.
+
+let P_R_Dishonest(B:bitstring,A:bitstring) =
+in(c,z:bitstring);
+if A = proj1(pdec(z,sk(B))) then
+let y:bitstring = proj2(pdec(z,sk(B))) in
+new n_b':bitstring;
+out(c,penc(pair(pair(y,n_b'),B),pk(A)));
+in(c,z':bitstring);
+if pdec(z',sk(B)) = n_b' then
+0.
+
+query attacker(new n_b).
+
+free C:bitstring.
+free A:bitstring.
+free B:bitstring.
+
+process
+    out(c,pk(A)) |
+    out(c,pk(B)) |
+    out(c,sk(C)) |
+    (! P_I(A,B)) |
+    (! P_R_Honest(B,A)) |
+    (! P_R_Dishonest(B,C))

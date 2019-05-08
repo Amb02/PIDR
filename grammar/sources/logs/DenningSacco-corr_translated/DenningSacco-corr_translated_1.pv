@@ -1,0 +1,134 @@
+type host.
+type key.
+type pkey.
+type skey.
+type spkey.
+type sskey.
+type stamp.
+
+event UniqueAction(stamp,bitstring).
+event UniqueActionhost(stamp,host).
+event UniqueActionpkey(stamp,pkey).
+event UniqueActionspkey(stamp,spkey).
+
+free c:channel.
+
+fun pk(skey):pkey.
+fun encrypt(bitstring,pkey):bitstring.
+
+reduc forall x:bitstring, y:skey; decrypt(encrypt(x,pk(y)),y) = x.
+
+fun spk(sskey):spkey.
+fun sign(bitstring,sskey):bitstring.
+
+reduc forall m:bitstring, k:sskey; getmess(sign(m,k)) = m.
+
+reduc forall m:bitstring, k:sskey; checksign(sign(m,k),spk(k)) = m.
+
+fun sencrypt(bitstring,key):bitstring.
+
+reduc forall x:bitstring, y:key; sdecrypt(sencrypt(x,y),y) = x.
+
+not attacker(new sskA).
+not attacker(new skB).
+not attacker(new skS).
+
+free A:host.
+free B:host.
+
+table enc_keys(host,pkey).
+table sign_keys(host,spkey).
+
+free secretA:bitstring [private].
+free secretB:bitstring [private].
+
+event endBparam(host,host).
+event beginBparam(host,host).
+event endBkey(host,host,key).
+event beginBkey(host,host,key).
+
+let processInitiator(pkS:spkey, sskA:sskey, sskB:sskey) = 
+  new st0[]:stamp;
+  in(c,xA:host);  event UniqueActionhost(st0,xA);
+  if (xA = A || xA = B) then 
+  let sskA':sskey = if xA = A then sskA else sskB in 
+  let spkA:spkey = spk(sskA') in 
+  new st1[]:stamp;
+  in(c,(cert1:bitstring,cert2:bitstring));  event UniqueAction(st1,(cert1,cert2));
+  let (= xA,= spkA) = checksign(cert1,pkS) in 
+  let (h2:host,pk2:pkey) = checksign(cert2,pkS) in   event beginBparam(xA,h2);
+  new k:key;  event beginBkey(xA,h2,k);
+  new st2[]:stamp;  event UniqueAction(st2,(cert1, (cert2, encrypt(sign((xA, (h2, k)),sskA'),pk2))));
+  out(c,(cert1, (cert2, encrypt(sign((xA, (h2, k)),sskA'),pk2))));
+  if h2 = B then 
+  new st3[]:stamp;  event UniqueAction(st3,sencrypt(secretA,k));
+  out(c,sencrypt(secretA,k));0.
+
+let processResponder(pkS:spkey, skA:skey, skB:skey) = 
+  new st4[]:stamp;
+  in(c,xB:host);  event UniqueActionhost(st4,xB);
+  if (xB = A || xB = B) then 
+  let skB':skey = if xB = A then skA else skB in 
+  let pkB:pkey = pk(skB') in 
+  new st5[]:stamp;
+  in(c,(cert1:bitstring, (cert2:bitstring, km:bitstring)));  event UniqueAction(st5,(cert1, (cert2, km)));
+  let (h1:host,pk1:spkey) = checksign(cert1,pkS) in 
+  let (= xB,= pkB) = checksign(cert2,pkS) in 
+  let ks:bitstring = decrypt(km,skB') in 
+  let (= h1, (= xB, k:key)) = checksign(ks,pk1) in 
+  if h1 = A then   event endBparam(h1,xB);  event endBkey(h1,xB,k);
+  new st6[]:stamp;  event UniqueAction(st6,sencrypt(secretB,k));
+  out(c,sencrypt(secretB,k));0.
+
+let processS(skS:sskey) = 
+  new st7[]:stamp;
+  in(c,(h1:host,h2:host));  event UniqueAction(st7,(h1,h2));
+  get sign_keys(= h1,pk1:spkey) in 
+  get enc_keys(= h2,pk2:pkey) in 
+  new st8[]:stamp;  event UniqueAction(st8,(sign((h1,pk1),skS),sign((h2,pk2),skS)));
+  out(c,(sign((h1,pk1),skS),sign((h2,pk2),skS)));0.
+
+let process_signK = 
+  new st9[]:stamp;
+  in(c,(h:host,pk':spkey));  event UniqueAction(st9,(h,pk'));
+  if ((h <> A) && (h <> B)) then 
+  insert sign_keys(h,pk');0.
+
+let process_encK = 
+  new st10[]:stamp;
+  in(c,(h:host,pk':pkey));  event UniqueAction(st10,(h,pk'));
+  if ((h <> A) && (h <> B)) then 
+  insert enc_keys(h,pk');0.
+
+query y4:spkey, x4:spkey, y3:pkey, x3:pkey, y2:host, x2:host, st16:stamp, y1:bitstring, x1:bitstring; (attacker(secretA) ==> (((event(UniqueAction(st16,x1)) && event(UniqueAction(st16,y1))) && (x1 <> y1)) || (((event(UniqueActionhost(st16,x2)) && event(UniqueActionhost(st16,y2))) && (x2 <> y2)) || (((event(UniqueActionpkey(st16,x3)) && event(UniqueActionpkey(st16,y3))) && (x3 <> y3)) || ((event(UniqueActionspkey(st16,x4)) && event(UniqueActionspkey(st16,y4))) && (x4 <> y4))))));
+     (attacker(secretB) ==> (((event(UniqueAction(st16,x1)) && event(UniqueAction(st16,y1))) && (x1 <> y1)) || (((event(UniqueActionhost(st16,x2)) && event(UniqueActionhost(st16,y2))) && (x2 <> y2)) || (((event(UniqueActionpkey(st16,x3)) && event(UniqueActionpkey(st16,y3))) && (x3 <> y3)) || ((event(UniqueActionspkey(st16,x4)) && event(UniqueActionspkey(st16,y4))) && (x4 <> y4)))))).
+
+query x:host, y:host, y4:spkey, x4:spkey, y3:pkey, x3:pkey, y2:host, x2:host, st16:stamp, y1:bitstring, x1:bitstring; (inj-event(endBparam(x,y)) ==> (inj-event(beginBparam(x,y)) || (((event(UniqueAction(st16,x1)) && event(UniqueAction(st16,y1))) && (x1 <> y1)) || (((event(UniqueActionhost(st16,x2)) && event(UniqueActionhost(st16,y2))) && (x2 <> y2)) || (((event(UniqueActionpkey(st16,x3)) && event(UniqueActionpkey(st16,y3))) && (x3 <> y3)) || ((event(UniqueActionspkey(st16,x4)) && event(UniqueActionspkey(st16,y4))) && (x4 <> y4))))))).
+
+query x:host, y:host, z:key, y4:spkey, x4:spkey, y3:pkey, x3:pkey, y2:host, x2:host, st16:stamp, y1:bitstring, x1:bitstring; (inj-event(endBkey(x,y,z)) ==> (inj-event(beginBkey(x,y,z)) || (((event(UniqueAction(st16,x1)) && event(UniqueAction(st16,y1))) && (x1 <> y1)) || (((event(UniqueActionhost(st16,x2)) && event(UniqueActionhost(st16,y2))) && (x2 <> y2)) || (((event(UniqueActionpkey(st16,x3)) && event(UniqueActionpkey(st16,y3))) && (x3 <> y3)) || ((event(UniqueActionspkey(st16,x4)) && event(UniqueActionspkey(st16,y4))) && (x4 <> y4))))))).
+
+process 
+  new sskA:sskey;
+  let spkA:spkey = spk(sskA) in 
+  new st11[]:stamp;  event UniqueActionspkey(st11,spkA);
+  out(c,spkA);
+  insert sign_keys(A,spkA);
+  new skA:skey;
+  let pkA:pkey = pk(skA) in 
+  new st12[]:stamp;  event UniqueActionpkey(st12,pkA);
+  out(c,pkA);
+  insert enc_keys(A,pkA);
+  new sskB:sskey;
+  let spkB:spkey = spk(sskB) in 
+  new st13[]:stamp;  event UniqueActionspkey(st13,spkB);
+  out(c,spkB);
+  insert sign_keys(B,spkB);
+  new skB:skey;
+  let pkB:pkey = pk(skB) in 
+  new st14[]:stamp;  event UniqueActionpkey(st14,pkB);
+  out(c,pkB);
+  insert enc_keys(B,pkB);
+  new skS:sskey;
+  let pkS:spkey = spk(skS) in 
+  new st15[]:stamp;  event UniqueActionspkey(st15,pkS);
+  out(c,pkS);(! processInitiator(pkS,sskA,sskB)) | ((! processResponder(pkS,skA,skB)) | ((! processS(skS)) | ((! process_signK) | (! process_encK))))

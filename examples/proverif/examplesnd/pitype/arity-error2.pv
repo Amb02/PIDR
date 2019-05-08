@@ -1,0 +1,7 @@
+fun add2(bitstring, bitstring, bitstring, bitstring) : bitstring
+     reduc forall a:bitstring, b:bitstring; add2(a,a) = a.
+
+free tmp : channel.
+const null : bitstring.
+process
+      (in(tmp,x:bitstring) | out(tmp, null))

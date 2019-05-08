@@ -1,0 +1,18 @@
+fun sencrypt/2.
+reduc sdecrypt(sencrypt(x,y),y) = x.
+
+private free secret.
+free e.
+
+query	attacker : secret.
+
+let pA = in(e,x);
+	 new cle;
+       	 out(e,cle);
+	 if x = a then
+	 out(e,sencrypt(secret,cle)).
+
+process new a;
+	out(e,a);
+	pA
+

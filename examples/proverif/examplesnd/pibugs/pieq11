@@ -1,0 +1,29 @@
+(* h3(x) = f(h1(x),h2(x)) = f(h1(x),h1(x)) = f(g(h1(x)),h1(x)) = h4(h1(x))
+   The analyzer should find that the attacker obtains the secret
+
+Equations not handled. Could be modified to make
+it convergent.
+
+ *)
+
+
+fun f/2.
+fun g/1.
+fun h/1.
+fun h1/1.
+fun h2/1.
+fun h3/1.
+fun h4/1.
+
+equation h1(x) = h2(x).
+equation f(h1(x),h2(x)) = h3(x).
+equation g(x) = x.
+equation f(g(x),x) = h4(x).
+
+free c.
+private free secret.
+query attacker:secret.
+
+
+process
+	new a; if h3(a) = h4(h1(a)) then out(c, secret)

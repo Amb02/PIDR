@@ -1,0 +1,18 @@
+(* JFKr *)
+
+(* Keyed hash function *)
+
+fun H/2.
+
+(* Free names *)
+
+free c. (* Public channel *)
+
+(* Queries: properties to prove *)
+
+process
+	new KR;
+	!
+	in(c, V);
+	new N;
+	out(c, choice[N, H(KR, (N,V))])

@@ -1,0 +1,17 @@
+(* 
+
+The system should not terminate on this example.
+(The equation has a critical pair with itself, which
+yields a loop.)
+
+*)
+
+private fun m/0.
+query attacker:m.
+
+param verboseRules = yes.
+
+fun exp/2.
+equation exp(exp(z,x),y) = exp(exp(z,y),x).
+
+process 0

@@ -1,0 +1,17 @@
+(* Should find that observational equivalence is wrong *)
+
+param verboseRules = yes.
+
+free c.
+private free autorR, n1, n2.
+noninterf autorR among (n1, n2).
+
+process
+  new honestC;
+  (  
+  out(honestC, autorR)
+  |
+  in(honestC, IDI);
+  if n1 = IDI then 
+    out(c, tagA) 
+  )

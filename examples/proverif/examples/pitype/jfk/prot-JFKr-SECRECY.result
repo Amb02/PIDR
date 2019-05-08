@@ -1,0 +1,175 @@
+Linear part:
+exp(exp(g,y),z) = exp(exp(g,z),y)
+Completing equations...
+Completed equations:
+exp(exp(g,y),z) = exp(exp(g,z),y)
+Convergent part:
+V(S(k,v),Pk(k),v) = true
+RecoverKey(S(k_1,v_1)) = Pk(k_1)
+RecoverText(S(k_2,v_2)) = v_2
+D(k_3,E(k_3,v_3)) = v_3
+Completing equations...
+Completed equations:
+D(k_3,E(k_3,v_3)) = v_3
+RecoverText(S(k_2,v_2)) = v_2
+RecoverKey(S(k_1,v_1)) = Pk(k_1)
+V(S(k,v),Pk(k),v) = true
+Process 0 (that is, the initial process):
+{1}new exponent: channel;
+{2}new honestC: channel;
+(
+    {3}!
+    {4}new d: texponent;
+    {5}let x: G = exp(g,d) in
+    {6}out(getexponential, x);
+    {7}!
+    {8}out(exponent, (d,x))
+) | (
+    {9}!
+    {10}new kAminus: skey;
+    {11}let IDA: pkey = Pk(kAminus) in
+    {12}new connect: channel;
+    {13}new accept: channel;
+    {14}new init: channel;
+    {15}new channelSIA: channel;
+    {16}out(getprinc, (IDA,init,channelSIA));
+    {17}in(channelSIA, SIA: idset);
+    {18}event princ(kAminus,IDA,init,accept,connect,SIA);
+    (
+        {19}phase 1;
+        {20}out(pub, kAminus)
+    ) | (
+        {21}!
+        {22}in(accept, x_1: bitstring)
+    ) | (
+        {23}!
+        {24}in(connect, x_2: bitstring)
+    ) | (
+        {25}!
+        {26}out(honestC, IDA)
+    ) | (
+        {27}!
+        {28}in(exponent, (dI: texponent,xI: G));
+        {29}!
+        {30}in(init, (IDRp: pkey,saI: sainfo));
+        {31}event initev(init,IDRp,saI);
+        {32}new NI: nonce;
+        {33}event mess1(IDA,NI,xI,init,IDRp,saI);
+        {34}out(c, cons1(NI,xI));
+        {35}in(c, cons2(=NI,NR: nonce,xR: G,grpinfoR_1: grpinfo,tR: key));
+        {36}event mess2rec(IDA,NI,NR,xR,grpinfoR_1,tR,xI,IDRp,saI);
+        {37}event enddosi(IDA,NI);
+        {38}let h: key = exp(xR,dI) in
+        {39}let Ka: key = H(h,(NI,NR,tagA)) in
+        {40}let Ke: key = H(h,(NI,NR,tagE)) in
+        {41}let Kv: key = H(h,(NI,NR,tagV)) in
+        {42}let sI: bitstring = S(kAminus,(NI,NR,xI,xR,grpinfoR_1)) in
+        {43}let eI: bitstring = E(Ke,(IDA,IDRp,saI,sI)) in
+        {44}let hI: key = H(Ka,(constI,eI)) in
+        {45}event mess3(IDA,NI,NR,xI,xR,tR,eI,hI,grpinfoR_1,IDRp,saI,Kv);
+        {46}out(c, cons3(NI,NR,xI,xR,tR,eI,hI));
+        {47}in(c, cons4(eR: bitstring,hR: key));
+        {48}if (H(Ka,(constR,eR)) = hR) then
+        {49}let (IDRl: pkey,saR_1: sainfo,sR: bitstring) = D(Ke,eR) in
+        {50}if V(sR,IDRl,(NI,NR,xI,xR)) then
+        {51}event mess4rec(IDA,eR,hR,connect,IDRl,IDRp,saI,saR_1,Kv);
+        {52}event connectev(connect,IDRl,IDRp,saI,saR_1,Kv);
+        {53}out(connect, (IDRl,IDRp,saI,saR_1,Kv));
+        {54}in(honestC, =IDRl);
+        {55}out(c, E(Kv,secretI))
+    ) | (
+        {56}new KR: key;
+        (
+            {57}!
+            {58}in(exponent, (dR: texponent,xR_1: G));
+            {59}!
+            {60}in(c, cons1(NI_1: nonce,xI_1: G));
+            {61}event mess1rec(IDA,NI_1,xI_1);
+            {62}new NR_1: nonce;
+            {63}let tR_1: key = H(KR,(xR_1,NR_1,NI_1)) in
+            {64}event mess2(IDA,NI_1,NR_1,xI_1,xR_1,grpinfoR,tR_1);
+            {65}out(c, cons2(NI_1,NR_1,xR_1,grpinfoR,tR_1))
+        ) | (
+            {66}new f: channel;
+            (
+                {67}out(f, emptyset)
+            ) | (
+                {68}!
+                {69}in(c, cons3(NI_2: nonce,NR_2: nonce,xI_2: G,xR_2: G,tR_2: key,eI_1: bitstring,hI_1: key));
+                {70}event mess3rec(IDA,NI_2,NR_2,xI_2,xR_2,tR_2,eI_1,hI_1);
+                {71}if (tR_2 = H(KR,(xR_2,NR_2,NI_2))) then
+                {72}in(f, cache: keyset);
+                (
+                    {73}out(f, consset(tR_2,cache))
+                ) | (
+                    {74}if member(tR_2,cache) then
+                        0
+                    else
+                        {75}new l: channel;
+                        (
+                            {76}!
+                            {77}in(exponent, (dR_1: texponent,=xR_2));
+                            {78}out(l, dR_1)
+                        ) | (
+                            {79}in(l, dR_2: texponent);
+                            {80}event enddosr(IDA,NI_2,NR_2);
+                            {81}let h_1: key = exp(xI_2,dR_2) in
+                            {82}let Ka_1: key = H(h_1,(NI_2,NR_2,tagA)) in
+                            {83}let Ke_1: key = H(h_1,(NI_2,NR_2,tagE)) in
+                            {84}let Kv_1: key = H(h_1,(NI_2,NR_2,tagV)) in
+                            {85}if (H(Ka_1,(constI,eI_1)) = hI_1) then
+                            {86}let (IDIl: pkey,IDRp_1: pkey,saI_1: sainfo,sI_1: bitstring) = D(Ke_1,eI_1) in
+                            {87}if memberid(IDIl,SIA) then
+                            {88}if V(sI_1,IDIl,(NI_2,NR_2,xI_2,xR_2,grpinfoR)) then
+                            {89}event acceptev(accept,IDIl,IDRp_1,saI_1,saR,Kv_1);
+                            {90}out(accept, (IDIl,IDRp_1,saI_1,saR,Kv_1));
+                            {91}let sR_1: bitstring = S(kAminus,(NI_2,NR_2,xI_2,xR_2)) in
+                            {92}let eR_1: bitstring = E(Ke_1,(IDA,saR,sR_1)) in
+                            {93}let hR_1: key = H(Ka_1,(constR,eR_1)) in
+                            {94}event mess4(IDA,IDIl,eR_1,hR_1,NI_2,NR_2,xI_2,xR_2,tR_2,eI_1,hI_1);
+                            {95}out(c, cons4(eR_1,hR_1));
+                            {96}in(honestC, =IDIl);
+                            {97}out(c, E(Kv_1,secretR))
+                        )
+                )
+            )
+        )
+    )
+)
+
+Translating the process into Horn clauses...
+COMPUTATIONTIME translation to clauses: 0.004856s
+NUMBERIMPLIES translation to clauses: 21592
+-- Query not attacker_p1(secretI[]); not attacker_p1(secretR[]) in process 0.
+nounif member(*x_3,y_1)/-5000
+nounif memberid(*x_3,y_1)/-5000
+Completing...
+200 rules inserted. The rule base contains 196 rules. 33 rules in the queue.
+nounif mess(f[SIA = *SIA_1,!1 = *@sid],cache_1)/-5000
+400 rules inserted. The rule base contains 331 rules. 38 rules in the queue.
+600 rules inserted. The rule base contains 373 rules. 46 rules in the queue.
+800 rules inserted. The rule base contains 397 rules. 31 rules in the queue.
+1000 rules inserted. The rule base contains 476 rules. 30 rules in the queue.
+COMPUTATIONTIME completion of rules: 0.152965s
+NUMBERIMPLIES completion of rules: 65847
+ok, secrecy assumption verified: fact unreachable attacker(kAminus[!1 = v_4])
+ok, secrecy assumption verified: fact unreachable attacker_p1(d[!1 = v_4])
+ok, secrecy assumption verified: fact unreachable attacker(d[!1 = v_4])
+ok, secrecy assumption verified: fact unreachable attacker_p1(f[SIA = v_4,!1 = v_5])
+ok, secrecy assumption verified: fact unreachable attacker(f[SIA = v_4,!1 = v_5])
+Starting query not attacker_p1(secretI[])
+RESULT not attacker_p1(secretI[]) is true.
+Starting query not attacker_p1(secretR[])
+RESULT not attacker_p1(secretR[]) is true.
+COMPUTATIONTIME solving_queries (include completion): 0.155277s
+NUMBERIMPLIES solving_queries (include completion): 2225
+
+--------------------------------------------------------------
+Verification summary:
+
+Query not attacker_p1(secretI[]) is true.
+
+Query not attacker_p1(secretR[]) is true.
+
+--------------------------------------------------------------
+

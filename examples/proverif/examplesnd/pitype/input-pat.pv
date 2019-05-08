@@ -1,0 +1,18 @@
+free e: bitstring.
+free d: channel.
+type key.
+type host.
+type nonce.
+
+(* Shared key cryptography *)
+
+fun encrypt(bitstring,key):bitstring.
+reduc forall x:bitstring, y:key; decrypt(encrypt(x,y),y) = x.
+
+process
+	new a: bitstring;
+	new b: bitstring;
+	new k: key;
+	new c: channel;
+	(out(c, a) | in(c, (x:bitstring, =choice[decrypt(a,k),b])); out(d, e))
+

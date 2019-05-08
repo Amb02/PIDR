@@ -1,0 +1,85 @@
+(* JFKr
+   Finds a trace reaching the event accept.
+ *)
+
+(* param channels = names. *)
+param redundantHypElim = true.
+
+(* Exponential and Diffie-Hellman *)
+
+data g/0.
+fun exp/2.
+equation exp(exp(g,y),z) = exp(exp(g,z),y).
+
+(* Signature *)
+
+fun S/2.
+fun Pk/1.
+data true/0.
+fun V/3.
+fun RecoverKey/1.
+fun RecoverText/1.
+equation V(S(k,v), Pk(k),v) = true.
+
+(* Shared-key encryption *)
+
+fun E/2.
+fun D/2.
+equation D(k,E(k,v)) = v.
+
+(* Keyed hash function *)
+
+fun H/2.
+
+(* Tags *)
+
+data tagE/0. data tagA/0. data tagV/0.
+
+(* Constructors for JFK's formatted messages
+   Selectors are implicit when using "data" *)
+
+data cons3/4. 
+
+(* More constants *)
+
+data constI/0. data constR/0. data saR/0.
+
+(* Free names *)
+
+free c. (* Public channel *)
+free pub, getprinc, genprinc, getexponential, grpinfoR, connect, accept, init.
+
+(* Queries: properties to prove *)
+
+query ev:accept(XacceptB, XIDA, XIDRp, XsaI, XasR, XKv).
+
+(* Secrecy assumptions *)
+
+not kAminus phase 0.
+
+let processR =
+  !
+  in(c, cons3(NI,xI,eI,hI));
+  let h = exp(xI,dR) in
+  let Ka = H(h, (NI, tagA)) in
+  let Ke = H(h, (NI, tagE)) in
+  let Kv = H(h, (NI, tagV)) in
+  if H(Ka, (constI, eI)) = hI then
+  let (IDIl, IDRp, saI, sI) = D(Ke,eI) in
+(*  if V(sI, IDIl, (NI, xI, xR)) = true then *)
+  event accept(accept, IDIl, IDRp, saI, saR, Kv).
+
+
+(* Whole JFK system. *)
+
+process
+  new dR;
+  let xR = exp(g,dR) in
+  out(c, xR);
+  new kAminus;
+  let IDA = Pk(kAminus) in
+  out(c, IDA);
+  processR
+
+
+

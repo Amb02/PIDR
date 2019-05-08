@@ -1,0 +1,23 @@
+(* The problem is with the construct 
+   let (partnerNonce, =(bobNonce, partnerNonce)) = ...
+   partnerNonce is bound and used in the same "let", and when calling
+   transl_term on "(bobNonce, partnerNonce)", partnerNonce has not been
+   bound yet, because transl_pat_list translates the tail first.
+   Still, the pisyntax.ml module accepts this code because check_pat_list
+   checks the head first, so partnerNonce is bound when 
+   =(bobNonce, partnerNonce) is checked.
+*)
+query attacker: ack.
+
+free c,ack.
+
+(* Shared-key cryptography *)
+fun sencrypt/2.
+reduc sdecrypt(sencrypt(x,y),y) = x.
+
+process
+	in(c, (Y, bobNonce, Kab));
+	let(partnerNonce, =(bobNonce, partnerNonce)) = sdecrypt(Y,Kab) in
+	out(c,ack)
+
+

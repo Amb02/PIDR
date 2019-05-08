@@ -1,0 +1,142 @@
+free c:channel.
+
+(* The type attribute was replaced by bitstring since types are ignored. *)
+
+table tbl_handle(bitstring,channel).
+
+fun enc(bitstring,bitstring):bitstring.
+
+fun dec(bitstring,bitstring):bitstring
+reduc forall x:bitstring,y:bitstring; dec(enc(x,y),y) = x.
+
+fun Query_NewKey(bitstring,bitstring):bitstring [private].
+fun Query_WrapKey(bitstring,bitstring):bitstring [private].
+fun Query_DecKey(bitstring,bitstring):bitstring [private].
+
+event WrapKey(bitstring,bitstring).
+event WrapHandle(bitstring).
+event DecKey(bitstring,bitstring).
+event DecUsing(bitstring,bitstring).
+event EncUsing(bitstring,bitstring).
+event Wrap(bitstring,bitstring).
+event Unwrapped(bitstring,bitstring).
+
+const create:bitstring.
+const set_wrap:bitstring.
+const set_dec:bitstring.
+const init:bitstring.
+const wrap:bitstring.
+const decr:bitstring.
+
+type stamp.
+
+free id:stamp [private].
+
+event Counter(channel,stamp,stamp,nat).
+event VCell_bitstring(channel,bitstring).
+
+query k:bitstring,h:bitstring,i:nat,i1:nat,x:bitstring,x1:bitstring,st:stamp,st1:stamp,st2:stamp,x2:bitstring,x3:bitstring,d:channel;
+  attacker((k,Query_NewKey(h,k))) ==>
+        event(VCell_bitstring(d,(i1,x3,x1))) && event(VCell_bitstring(d,(i,x2,x))) && i1 = i && (i1,x3,x1) <> (i,x2,x)
+    ||  event(Counter(d,st2,st,i1)) && event(Counter(d,st2,st,i)) && i1 <> i
+    ||  event(Counter(d,st2,st,i1)) && event(Counter(d,st2,st1,i1)) && st <> st1.
+
+process
+  !(  (* Application of the process main_process *)
+  (
+    in(c,= create); (* Application of the process create *)
+    new k:bitstring;
+    new lock:channel;
+    new handle:bitstring;
+    insert tbl_handle(handle,lock);
+    out(c,Query_NewKey(handle,k));
+    (
+      out(lock,(0,k,init));
+      out(c,handle);
+      0
+    ) | (
+      !(
+      in(lock,(i:nat,x:bitstring,x1:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+      event VCell_bitstring(lock,(i,x,x1));
+      out(lock,(i,x,x1));
+      0
+      )    )
+  ) | (
+    in(c,(= set_wrap,h:bitstring)); (* Application of the process set_wrap *)
+    get tbl_handle(= h,lock:channel) in
+    in(lock,(i:nat,k:bitstring,att:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+    event VCell_bitstring(lock,(i,k,att));
+    new st[]:stamp;
+    event Counter(lock,id,st,i);
+    event VCell_bitstring(lock,(i + 1,k,wrap));
+    if att = init then
+    out(lock,(i + 1,k,wrap));
+    0
+  ) | (
+    in(c,(= set_dec,h:bitstring)); (* Application of the process set_dec *)
+    get tbl_handle(= h,lock:channel) in
+    in(lock,(i:nat,k:bitstring,att:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+    event VCell_bitstring(lock,(i,k,att));
+    new st[]:stamp;
+    event Counter(lock,id,st,i);
+    event VCell_bitstring(lock,(i + 1,k,decr));
+    if att = init then
+    out(lock,(i + 1,k,decr));
+    0
+  ) | (
+    in(c,(h:bitstring,cipher:bitstring)); (* Application of the process decrypt *)
+    get tbl_handle(= h,lock:channel) in
+    in(lock,(i:nat,k:bitstring,att:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+    event VCell_bitstring(lock,(i,k,att));
+    if att = decr then
+    let plain:bitstring = dec(cipher,k) in
+    out(c,plain);
+    out(lock,(i,k,att));
+    0
+  ) | (
+    in(c,(h:bitstring,plain:bitstring)); (* Application of the process encrypt *)
+    get tbl_handle(= h,lock:channel) in
+    in(lock,(i:nat,k:bitstring,att:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+    event VCell_bitstring(lock,(i,k,att));
+    if att = decr then
+    out(c,enc(plain,k));
+    out(lock,(i,k,att));
+    0
+  ) | (
+    in(c,(h1:bitstring,h2:bitstring)); (* Application of the process wrap_proc *)
+    get tbl_handle(= h1,lock1:channel) in
+    in(lock1,(i:nat,k1:bitstring,att1:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+    event VCell_bitstring(lock1,(i,k1,att1));
+    if att1 = wrap then
+    get tbl_handle(= h2,lock2:channel) in
+    in(lock2,(i1:nat,k2:bitstring,att2:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+    event VCell_bitstring(lock2,(i1,k2,att2));
+    out(lock2,(i1,k2,att2));
+    if att2 = wrap then
+    out(c,enc(k2,k1));
+    out(lock1,(i,k1,att1));
+    0
+  ) | (
+    new lock2:channel; (* Application of the process unwrap *)
+    new handle2:bitstring;
+    insert tbl_handle(handle2,lock2);
+    in(c,(h:bitstring,cipher:bitstring));
+    get tbl_handle(= h,lock:channel) in
+    in(lock,(i:nat,k:bitstring,att:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+    event VCell_bitstring(lock,(i,k,att));
+    if att = wrap then
+    let k2:bitstring = dec(cipher,k) in
+    out(lock,(i,k,att));
+    (
+      out(lock2,(0,k2,wrap));
+      out(c,handle2);
+      0
+    ) | (
+      !(
+      in(lock2,(i1:nat,x:bitstring,x1:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+      event VCell_bitstring(lock2,(i1,x,x1));
+      out(lock2,(i1,x,x1));
+      0
+      )    )
+  )
+  )

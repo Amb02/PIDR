@@ -1,0 +1,24 @@
+param traceDisplay = long.
+
+data A/0.
+
+data B/0.
+
+pred match/2.
+
+clauses match:A(), B().
+
+query ev:Ev1(x) ==> ev:Ev2(y) & match:x,y.
+
+process
+	event Ev2(B());
+	event Ev1(A())
+
+(* The following does not work either
+process 
+	let x,y suchthat match:x,y in 
+	event Ev2(y);
+	event Ev1(x)
+*)
+
+

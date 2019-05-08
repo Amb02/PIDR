@@ -1,0 +1,59 @@
+free c.
+Rule 12: c:(host(v15),host(v16),v17,v18) -> c:(encrypt((v17,host(v15),host(v16),k[(host(v15),host(v16),v17,v18),v19]),v15),encrypt((v18,host(v15),host(v16),k[(host(v15),host(v16),v17,v18),v19]),v16))
+Rule 11: c:(v11,encrypt((Nb[(host(kA[]),host(kB[]),v12),v13],host(kA[]),host(kB[]),v14),kB[])) & c:(host(kA[]),host(kB[]),v12) -> end:(v13),(host(kB[]))
+Rule 10: c:(v6,encrypt((Nb[(v7,host(kB[]),v8),v9],v7,host(kB[]),v10),kB[])) & c:(v7,host(kB[]),v8) -> c:v6
+Rule 9: c:(v3,host(kB[]),v4) -> c:(v3,host(kB[]),v4,Nb[(v3,host(kB[]),v4),v5])
+Rule 8: c:v1 -> c:(host(kA[]),v1,Na[v1,v2]) (begin:(v1))
+Rule 7: c:host(kB[])
+Rule 6: c:host(kA[])
+Rule 5: c:c & c:m -> private:c,m
+Rule 4: c:c[]
+Rule 3: private:c,m & c:c -> c:m
+Rule 2: c:encrypt(m,k) & c:k -> c:m
+Rule 1: c:any3 -> c:host(any3)
+Rule 0: c:any2 & c:any1 -> c:encrypt(any2,any1)
+
+rule 11 end:(v215),(host(kB[]))
+  2-tuple c:(v216,encrypt((Nb[(host(kA[]),host(kB[]),v217),v215],host(kA[]),host(kB[]),k[(host(kA[]),host(kB[]),v218,Nb[(host(kA[]),host(kB[]),v217),v215]),v219]),kB[]))
+    any c:v216
+    1-th c:encrypt((Nb[(host(kA[]),host(kB[]),v217),v215],host(kA[]),host(kB[]),k[(host(kA[]),host(kB[]),v218,Nb[(host(kA[]),host(kB[]),v217),v215]),v219]),kB[])
+      rule 12 c:(encrypt((v218,host(kA[]),host(kB[]),k[(host(kA[]),host(kB[]),v218,Nb[(host(kA[]),host(kB[]),v217),v215]),v219]),kA[]),encrypt((Nb[(host(kA[]),host(kB[]),v217),v215],host(kA[]),host(kB[]),k[(host(kA[]),host(kB[]),v218,Nb[(host(kA[]),host(kB[]),v217),v215]),v219]),kB[]))
+        4-tuple c:(host(kA[]),host(kB[]),v218,Nb[(host(kA[]),host(kB[]),v217),v215])
+          rule 6 c:host(kA[])
+          rule 7 c:host(kB[])
+          any c:v218
+          3-th c:Nb[(host(kA[]),host(kB[]),v217),v215]
+            rule 9 c:(host(kA[]),host(kB[]),v217,Nb[(host(kA[]),host(kB[]),v217),v215])
+              3-tuple c:(host(kA[]),host(kB[]),v217)
+                duplicate c:host(kA[])
+                rule 7 c:host(kB[])
+                duplicate c:v217
+  3-tuple c:(host(kA[]),host(kB[]),v217)
+    rule 6 c:host(kA[])
+    rule 7 c:host(kB[])
+    any c:v217
+
+rule 11 end:(v215),(B)
+  2-tuple c:(v216,encrypt((Nb[(A,B,v217),v215],A,B,k[(A,B,v218,Nb[(A,B,v217),v215]),v219]),kB[]))
+    any c:v216
+    1-th c:encrypt((Nb[(A,B,v217),v215],A,B,k[(A,B,v218,Nb[(A,B,v217),v215]),v219]),kB[])
+      rule 12 c:(encrypt((v218,A,B,k[(A,B,v218,Nb[(A,B,v217),v215]),v219]),kA[]),encrypt((Nb[(A,B,v217),v215],A,B,k[(A,B,v218,Nb[(A,B,v217),v215]),v219]),kB[]))
+        4-tuple c:(A,B,v218,Nb[(A,B,v217),v215])
+            rule 9 c:(A,B,v217,Nb[(A,B,v217),v215])
+              3-tuple c:(A,B,v217)
+  3-tuple c:(A,B,v217)
+
+I -> B : (A,B,v217)
+B -> I : (A,B,v217,Nb[(A,B,v217),v215])
+I -> S : (A,B,v218,Nb[(A,B,v217),v215])
+S -> I : (encrypt((v218,               A,B,k[(A,B,v218,Nb[(A,B,v217),v215]),v219]),kA[]),
+	  encrypt((Nb[(A,B,v217),v215],A,B,k[(A,B,v218,Nb[(A,B,v217),v215]),v219]),kB[]))
+I -> B : (v216, encrypt((Nb[(A,B,v217),v215],A,B,k[(A,B,v218,Nb[(A,B,v217),v215]),v219]),kB[]))
+B says end(B)
+
+Simpler: 
+
+I -> B : (A,B,v217)
+B -> S : (A,B,v217,Nb[(A,B,v217),v215])
+S -> B : (...., encrypt((Nb[(A,B,v217),v215],A,B,k[(A,B,v217,Nb[(A,B,v217),v215]),v219]),kB[]))
+B says end(B)

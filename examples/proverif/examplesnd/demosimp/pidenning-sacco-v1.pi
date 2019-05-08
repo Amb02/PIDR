@@ -1,0 +1,46 @@
+(* Denning-Sacco *)
+
+param verboseClauses = explained.
+
+free c.
+
+(* Public key cryptography *)
+
+fun pk/1.
+fun aenc/2.
+reduc adec(aenc(x,pk(y)),y) = x.
+
+(* Signatures *)
+
+fun sign/2.
+reduc getmess(sign(m,k)) = m.
+reduc checksign(sign(m,k), pk(k)) = m.
+
+(* Shared-key cryptography *)
+
+fun senc/2.
+reduc sdec(senc(x,y),y) = x.
+
+private free s.
+query attacker:s.
+
+let processA =
+        in(c, x_pkB);
+	new k;
+	out(c, aenc(sign(k, skA), x_pkB));
+	in(c, x); 
+	let s = sdec(x,k) in 0.
+
+let processB =
+	in(c, y);
+	let y' = adec(y,skB) in
+	let k = checksign(y', pkA) in
+	out(c, senc(s, k)).
+
+process new skA; 
+	let pkA = pk(skA) in
+        out(c, pkA);
+        new skB; 
+	let pkB = pk(skB) in
+        out(c, pkB);
+	((!processA) | (!processB))

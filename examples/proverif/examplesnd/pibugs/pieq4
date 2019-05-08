@@ -1,0 +1,16 @@
+(* 
+
+The system should prove non-injective agreement
+
+*)
+
+query ev:endpar1(z) ==> ev:beginpar1(z).
+
+fun c0/0.
+fun g/1.
+fun i/2.
+fun j/1.
+
+equation j(x) = x.
+
+process event beginpar1(i(c0,j(g(c0)))); event endpar1(i(c0,j(g(c0))))

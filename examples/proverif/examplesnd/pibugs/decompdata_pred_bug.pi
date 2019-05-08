@@ -1,0 +1,23 @@
+(* BUG
+
+2. By 1, the attacker may know Internal error: Unexpected attacker fact
+Please report bug to Bruno.Blanchet@ens.fr, including input file and output
+
+*)
+
+param predicatesImplementable = nocheck.
+
+pred p/1 decompData.
+pred q/1.
+
+fun c0/0.
+fun h/1.
+
+query ev:bad().
+
+clauses
+	p:x -> q:h(x);
+	p:c0.
+
+process
+	if q:h((c0,c0)) then event bad()

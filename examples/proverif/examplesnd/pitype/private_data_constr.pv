@@ -1,0 +1,17 @@
+(* Denning-Sacco
+   In this model, I separate the keys for encryption and the
+   keys for signature, which complicates the model. *)
+
+free c: channel.
+
+fun priv_constr(bitstring):bitstring [private, data].
+
+(* Queries *)
+
+free a: bitstring [private].
+query attacker(a).
+
+
+
+process 
+	out(c, priv_constr(a))

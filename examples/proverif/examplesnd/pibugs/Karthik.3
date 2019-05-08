@@ -1,0 +1,47 @@
+ data cons/2.
+ data STSSTRING/0.
+ data ServiceTAG/3.
+ data rsasha1STRING/0.
+ data SecurityContextTAG/5.
+ fun pk/1.
+ fun x509/4.
+
+ pred isService/4.
+ pred isSCT/6.
+
+ free publish.
+ private free anySCTService.
+ not anySCTService.
+
+
+ clauses S = ServiceTAG(uri, ac, subj) -> isService:S,uri,ac,subj.
+
+ clauses tok = SecurityContextTAG(sctid,key,basetoken,appTo,basecert)
+	 -> isSCT:tok,sctid,key,basetoken,appTo,basecert.
+
+ let Service = 
+	in (publish,AServ);
+ 	let Aac,Asubj,Auri suchthat isService:AServ,Auri,Aac,Asubj in 
+	in (anySCTService,sctoken1);
+	let sctid1,sctkey1,U suchthat isSCT:sctoken1,sctid1,sctkey1,U,Auri,cert in 
+  	event endC3().
+
+ let Client = 
+	in (publish,(u,appTo));
+	new pwd;
+	let U = cons(u, pwd) in 
+	new id1;new sctid;new sctkey;
+  	out (publish,sctkey);
+	let sct = SecurityContextTAG(sctid, sctkey, U, appTo, cert) in
+	out (anySCTService,sct).
+
+ query ev:endC3().
+
+ process 
+	new sr;
+	let kr = pk(sr) in 
+	new sx;
+	let cert = x509(sr,STSSTRING,rsasha1STRING,pk(sx)) in 
+  	out (publish,kr);
+   	out (publish,cert);
+   	( Service | Client )

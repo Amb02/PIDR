@@ -1,0 +1,13 @@
+fun tdcommit/3.
+fun open/2.
+fun f/4.
+
+equation open(tdcommit(x,y,z),y) = z.
+equation tdcommit(x2,f(x1,y,z,x2),z) = tdcommit(x1,y,z).
+equation open(tdcommit(x1,y,z), f(x1,y,z,x2)) = x2.
+equation f(x2,f(x1,y,z,x2),z,x3) = f(x1,y,z,x3).
+
+free c,pk,s,t.
+
+process out(c, choice[s,t])
+

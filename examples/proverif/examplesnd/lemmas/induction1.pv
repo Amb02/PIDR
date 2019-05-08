@@ -1,0 +1,21 @@
+free d:channel[private].
+
+type nat.
+fun succ(nat):nat [data].
+const zero:nat.
+event ev_is_nat(nat).
+event priv_channel1(channel).
+event priv_channel2(channel).
+
+pred is_nat(nat) [block].
+
+(* Symmetric encryption --------------------------------------------------- *)
+fun senc(bitstring,bitstring) : bitstring.
+reduc forall K:bitstring, M:bitstring; sdec(senc(M,K),K) = M.
+
+query x:nat,y:nat;
+  mess(d,x) ==> is_nat(x) [induction].
+
+process
+  (out(d,zero)
+  | ! in(d,x:nat); out(d,succ(x)))

@@ -1,0 +1,43 @@
+(* 
+
+A -> B : A
+B -> A : B, N_1, N_2
+A -> B : A, { N_1, N_2, M }_pkB received as { N_1, X, Y }_pkB
+B -> A : N_1, X, { X, Y, N_1 }_pkB
+
+simplified into 
+
+B -> A : N_1, N_2
+A -> B : { N_1, N_2, M }_pkB received as { N_1, X, Y }_pkB
+B -> A : N_1, X, { X, Y, N_1 }_pkB
+
+version with 4 nonces.
+
+*)
+
+(* Public key cryptography *)
+
+fun pk/1.
+fun encrypt/2.
+reduc decrypt(encrypt(x,pk(y)),y) = x.
+
+free c.
+private free M.
+
+query attacker:M.
+
+let processA = 
+	in(c,(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13, n14, n15, n16, n17, n18, n19, n20, n21, n22, n23, n24, n25, n26, n27, n28, n29, n30));
+	out(c, encrypt(( n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13, n14, n15, n16, n17, n18, n19, n20, n21, n22, n23, n24, n25, n26, n27, n28, n29, n30, M ), pkB)).
+
+let processB = 
+	new n1; new n2; new n3; new n4; new n5; new n6; new n7; new n8; new n9; new n10; new n11; new n12; new n13; new n14; new n15; new n16; new n17; new n18; new n19; new n20; new n21; new n22; new n23; new n24; new n25; new n26; new n27; new n28; new n29; new n30;
+	out(c, (n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13, n14, n15, n16, n17, n18, n19, n20, n21, n22, n23, n24, n25, n26, n27, n28, n29, n30));
+	in(c, mes);
+	let (=n1, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20, x21, x22, x23, x24, x25, x26, x27, x28, x29, x30) = decrypt(mes, skB) in
+	out(c, (n1, x1, encrypt((x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20, x21, x22, x23, x24, x25, x26, x27, x28, x29, x30, n1), pkB))).
+
+process 
+        new skB; let pkB = pk(skB) in
+        out(c, pkB);
+	((!processA) | (!processB))

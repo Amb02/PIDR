@@ -1,0 +1,1397 @@
+
+
+
+(*---------------------------- ProVerif internal flags ----------------------------*)
+
+set attacker = active.
+set reconstructTrace = false.
+set simplifyDerivation = true.
+set unifyDerivation = true.
+set predicatesImplementable=nocheck.
+set redundantHypElim=true.
+
+
+
+(*---------------------------- Flags determining attacker power ----------------------------*)
+
+letfun NetworkSetup() = true.
+letfun NetworkAttackers() = true.
+letfun MaliciousUsers() = true.
+letfun UntrustedJavaScript() = false.
+letfun HttpRedirectors() = false.
+letfun MaliciousServers() = false. (* Use with care: This option may cause ProVerif to use up all your memory. *)
+letfun UntrustedWebsites() = false. (* try this with redirector => *)
+letfun DynamicCompromise() = false. 
+
+
+
+(*---------------------------- Auxiliary functions ----------------------------*)
+
+letfun AND(b1:bool,b2:bool) =  if b1 = true && b2 = true then true else false.
+
+
+
+(*---------------------------- Standard Crypto primitives ----------------------------*)
+
+(* Types *)
+type Secret.
+
+(* Authenticated Encryption *)
+type symkey.
+fun aenc(bitstring,symkey): bitstring.
+reduc forall b:bitstring,k:symkey; adec(aenc(b,k),k) = b.
+
+(* Nonce *)
+fun mkCorrelator(symkey):bitstring [data].
+
+(* Key Derivation *)
+fun pbkdf2(Secret,bitstring): symkey.
+fun keygen(bitstring): symkey.
+
+(* MAC *)
+type Mac.
+fun mac(bitstring, symkey):Mac.
+
+(* Public-key Encryption and Signatures *)
+type privkey.
+type pubkey.
+fun pk(privkey):pubkey.
+fun wrap(symkey,pubkey): bitstring.
+reduc forall k:symkey,dk:privkey; unwrap(wrap(k,pk(dk)),dk) = k.
+fun sign(bitstring,privkey): bitstring.
+reduc forall b:bitstring,sk:privkey; verify(sign(b,sk),pk(sk)) = b.
+
+
+
+(*---------------------------- HTTP model ----------------------------*)
+
+(* Types *)
+
+type Uri. (* Uri modeled as http[s]://Host/Path?Params *)
+type Protocol.
+type Domain.
+type SubDomain.
+type Host.
+type Path.
+type Params.
+type Origin.
+type Data.
+type Cookie.
+type CookieSet.
+type Session.
+type HttpRequest.
+type HttpResponse.
+type Ajax.
+type XDR.
+type Headers. (* Headers = referer, cookie, XmlHttpRequest *)
+type Page.
+
+(* Constructors *)
+
+fun noneUri():Uri.
+fun https():Protocol [data].
+fun http():Protocol [data].
+fun empty():SubDomain [data].
+fun domainHost(SubDomain,Domain):Host [data].
+letfun topLevelHost(d:Domain) = domainHost(empty(), d).
+fun orig(Protocol,Host):Origin  [data].
+fun uri(Protocol,Host,Path,Params):Uri  [data].
+fun nullParams():Params.
+fun nullData():Data.
+fun nullBits():bitstring.
+fun slash():Path.
+fun httpGet():HttpRequest [data].
+fun httpPost(Params):HttpRequest [data].
+fun httpOk(bitstring):HttpResponse [data].
+fun httpRedirect(Uri):HttpResponse [data].
+fun httpError():HttpResponse [data].
+fun notajax():Ajax [data].
+fun ajax():Ajax [data].
+fun notxdr():XDR [data].
+fun xdr():XDR [data].
+fun headers(Uri, CookieSet, Ajax): Headers [data].
+fun httpReq(Uri,Headers,HttpRequest) : bitstring [data].
+fun httpResp(HttpResponse,CookieSet,XDR) : bitstring [data].
+fun aboutBlank():Page.
+fun mkPage(Uri):Page [private].
+
+(* Destructors *)
+
+reduc forall r:Protocol,h:Host,p:Path,q:Params; path(uri(r,h,p,q)) = p.
+reduc forall r:Protocol,h:Host,p:Path,q:Params; host(uri(r,h,p,q)) = h.
+reduc forall r:Protocol,h:Host,p:Path,q:Params; protocol(uri(r,h,p,q)) = r.
+reduc forall r:Protocol,h:Host,p:Path,q:Params; params(uri(r,h,p,q)) = q.
+reduc forall r:Protocol,h:Host,p:Path,q:Params; origin(uri(r,h,p,q)) = orig(r,h).
+reduc forall r:Protocol,h:Host; originhost(orig(r,h)) = h.
+reduc forall c:CookieSet, u:Uri, a:Ajax; getCookie(headers(u, c, a)) = c.
+reduc forall c:CookieSet, u:Uri, a:Ajax; getReferer(headers(u, c, a)) = u.
+reduc forall c:CookieSet, u:Uri, a:Ajax; getAjax(headers(u, c, a)) = a.
+
+(* Cookie constructors *)
+
+fun cookie(bitstring,bitstring,bitstring,bitstring):Cookie [data].
+fun pathCookie(Cookie,Path):Cookie [data].
+fun cookiePair(Cookie,Cookie):CookieSet [data].
+fun nullCookieFragment():bitstring [data].
+letfun nullCookie() = cookie(nullCookieFragment(),nullCookieFragment(),nullCookieFragment(),nullCookieFragment()).
+letfun nullCookieSet() = cookiePair(nullCookie(), nullCookie()).
+
+(* Cookie destructors *)
+
+reduc forall sh:bitstring,ih:bitstring,sj:bitstring,ij:bitstring; 
+         domcookie(cookie(sh,ih,sj,ij)) = cookie(nullCookieFragment(),nullCookieFragment(),sj,ij).
+
+reduc forall bs:bitstring;
+         mkHttpOnlySecureCookie(bs) = cookie(bs,nullCookieFragment(),nullCookieFragment(),nullCookieFragment()).
+
+reduc forall sh:bitstring,ih:bitstring,sj:bitstring,ij:bitstring,nsj:bitstring,nij:bitstring;
+         updatedomcookie(cookie(sh,ih,sj,ij),nsj,nij) = cookie(sh,ih,nsj,nij).
+
+reduc forall sj:bitstring; sjcookie(sj) = cookie(nullCookieFragment(),nullCookieFragment(),sj,nullCookieFragment()).
+reduc forall sh:bitstring; shcookie(sh) = cookie(sh,nullCookieFragment(),nullCookieFragment(),nullCookieFragment()).
+reduc forall sh:bitstring,ih:bitstring,sj:bitstring,ij:bitstring; securehttp(cookie(sh,ih,sj,ij)) = sh.
+reduc forall sh:bitstring,ih:bitstring,sj:bitstring,ij:bitstring; securejs(cookie(sh,ih,sj,ij)) = sj.
+reduc forall sh:bitstring,ih:bitstring,sj:bitstring,ij:bitstring; insecurehttp(cookie(sh,ih,sj,ij)) = ih.
+reduc forall sh:bitstring,ih:bitstring,sj:bitstring,ij:bitstring; insecurejs(cookie(sh,ih,sj,ij)) = ij.
+reduc forall sh:bitstring,ih:bitstring,sj:bitstring,ij:bitstring; secure(cookie(sh,ih,sj,ij)) = cookie(sh,nullCookieFragment(),sj,nullCookieFragment()).
+reduc forall sh:bitstring,ih:bitstring,sj:bitstring,ij:bitstring; insecure(cookie(sh,ih,sj,ij)) = cookie(nullCookieFragment(),ih,nullCookieFragment(),ij).
+
+(* Cookie auxiliary functions *)
+letfun extractPathCookie(c:Cookie, h:Path) =
+    let pathCookie(nc,nh) = c in
+        (nc, nh)
+     else
+        (c, h).
+letfun protocolCookie(c:Cookie, o:Origin) =
+    let orig(r,h) = o in
+    (if r = https() 
+     then c
+     else insecure(c)).
+
+letfun updateProtocolCookie(c:Cookie, nc:Cookie, o:Origin) =
+    if c <> nullCookie() then c else protocolCookie(nc,o).
+
+letfun updateProtocolPathCookie(c:Cookie, nc:Cookie, o:Origin) =
+    if c <> nullCookie() 
+    then (let pathCookie(h,ch) = c in (h,ch) else
+          (slash(),nullCookie()))
+    else let pathCookie(nch,nh) = nc in
+         (if nh = slash() 
+          then (nh,nullCookie()) 
+          else (nh,protocolCookie(nch,o)))
+         else (slash(),nullCookie()).
+
+
+
+(* ---------------------------- HTML --------------------- *) 
+
+type HTMLtag.
+fun formGen(HTMLtag,Uri,bitstring): bitstring [data].
+reduc forall c: bitstring, tag: HTMLtag, action:Uri; formId(formGen(tag,action,c))=c .
+reduc forall c: bitstring, tag: HTMLtag, action:Uri; formAction(formGen(tag,action,c))=action .
+reduc forall c: bitstring, tag: HTMLtag, action:Uri; formTag(formGen(tag,action,c))=tag .
+
+fun csrfToken(Cookie): bitstring [data].
+
+
+(*---------------------------- Browser and server ----------------------------*)
+
+type Id.
+type Principal.
+type Browser.
+
+(* Initialization *)
+
+fun privateKey(Principal, Host):privkey [private].
+fun browser(Principal,Id): Browser [private].
+
+reduc forall p:Principal,id:Id; principal(browser(p,id)) = p.
+
+letfun makeServer(p:Principal, h:Host) =
+    let sk = privateKey(p, h) in
+    sk.
+
+letfun makeUser(p:Principal, h:Host) =
+    new user: Id;
+    new pwd: Secret;
+    (user,pwd).
+
+(* Tables *)
+
+table cookies(Browser,Host,Path,Cookie).
+table storage(Browser,Origin,Data).
+table credentials(Host, Principal, Id, bitstring).
+table serverSessions(Host,Cookie,Session).
+table pageOrigin(Page,Origin,Path,Uri).
+table pageParent(bitstring,Page,Page).
+table serverIdentities(Host,Principal,pubkey,privkey,XDR).
+
+(* Attacker channels *)
+
+free admin : channel [private].
+free config : channel [private].
+free pub:channel. (* channel that represents public knowledge *)
+
+(* Server channels *)
+
+free httpServerRequest : channel [private].
+free httpServerResponse : channel [private].
+
+(* Browser Channels *)
+
+fun rawRequest():channel [private].
+fun internalRequest(Browser):channel [private].
+fun browserRequest(Browser):channel [private].
+fun ajaxRequest(Browser):channel [private].
+fun ajaxResponse(Browser):channel [private].
+fun getCookieStorage(Browser):channel [private].
+fun setCookieStorage(Browser):channel [private].
+fun newPage(Browser):channel [private].
+fun pageClick(Browser):channel [private].
+fun upgradeDomain(Browser):channel [private].
+
+(* The network channel *)
+
+free net:channel. (* KB: should be private *)
+
+(* Derived notion of host-based encryption *)
+
+letfun hostenc(x:bitstring, host:Host, p:pubkey) =
+  new k:symkey;
+  (k,(wrap(k,p),aenc((host,x),k))).
+letfun hostdec(m:bitstring, host:Host, s:privkey) =
+  let (ek:bitstring,ex:bitstring) = m in
+  let k = unwrap(ek,s) in
+  let (=host,x:bitstring) = adec(ex,k) in
+  (k,x).
+
+(* Derived notion of HTTP/HTTPS encryption *)
+
+free nullkey:symkey.
+letfun reqenc(o:Origin,x:bitstring,p:pubkey) =
+  let orig(=https(),h) = o in
+      hostenc(x,h,p)
+  else (nullkey,x).
+letfun reqdec(o:Origin,m:bitstring,s:privkey) =
+  let orig(=https(),h) = o in
+      hostdec(m,h,s)
+  else (nullkey,m).
+
+letfun respenc(o:Origin,x:bitstring,k:symkey) =
+  let orig(=https(),h) = o in
+      aenc(x,k) else x.
+letfun respdec(o:Origin,m:bitstring,k:symkey) =
+  let orig(=https(),h) = o in
+  adec(m,k) else m.
+
+
+
+(*---------------------------- Attacker capabilities ----------------------------*)
+
+type Command.
+type AppCommand.
+
+fun createServer(Principal, XDR): Command [data].
+fun createUser(Principal, Host): Command [data].
+fun surf(Browser,Uri): Command [data].
+fun appCommand(AppCommand): Command [data].
+fun openBrowser(Principal): Command [data].
+fun initRequest(Browser,Uri,HttpRequest) : Command [data].
+fun initPageClick(Browser,Page,Uri,HttpRequest) : Command [data].
+fun initAjaxRequest(Browser,Page,Uri,HttpRequest) : Command [data].
+fun fetchCookieStorage(Browser,Page) : Command [data].
+fun injectCookieStorage(Browser,Page,CookieSet,Data) : Command [data].
+fun forceUpgradeDomain(Browser,Page) : Command [data].
+fun createMaliciousUser(Principal, Host): Command [data].
+fun createMaliciousServer(Principal, XDR): Command [data].
+fun compromiseServer(Host): Command [data].
+fun compromiseUser(Id, Host): Command [data]. 
+fun compromiseConnection(Uri,Uri): Command [data].
+fun injectMessage(Uri,Uri,bitstring): Command [data].
+fun interceptMessage(Uri,Uri): Command [data].
+fun startUntrustedApp(Uri): Command [data].
+fun getServerRequest(Uri): Command [data].
+fun sendServerResponse(Uri,HttpResponse,Cookie,bitstring): Command [data].
+fun getClientResponse(Browser,Uri): Command [data].
+fun sendClientRequest(Browser,Uri,HttpRequest,Uri,Page,Ajax): Command [data].
+fun startRedirector(Uri,Uri): Command[data].
+fun httpRequestResponse(Headers,Uri,HttpRequest): Command[data].
+
+letfun commandEnabled(c:Command) =
+   let createServer(p,x) = c in NetworkSetup() else
+   let createUser(p,h) = c in NetworkSetup() else
+   let openBrowser(p) = c in NetworkSetup() else
+   let surf(b,r) = c in NetworkSetup() else
+   let appCommand(ac) = c in NetworkSetup() else
+   let initRequest(b,u,r) = c in UntrustedJavaScript() else
+   let initPageClick(b,p,u,r) = c in UntrustedJavaScript() else
+   let initAjaxRequest(b,p,u,r) = c in UntrustedJavaScript() else
+   let fetchCookieStorage(b,p) = c in UntrustedJavaScript() else
+   let injectCookieStorage(b,p,ck,s) = c in UntrustedJavaScript() else
+   let forceUpgradeDomain(b,p) = c in UntrustedJavaScript() else
+   let createMaliciousServer(p,x) = c in MaliciousServers() else
+   let createMaliciousUser(p,h) = c in MaliciousUsers() else
+   let compromiseServer(h) = c in DynamicCompromise() else
+   let compromiseUser(i,h) = c in DynamicCompromise() else
+   let compromiseConnection(e1,e2) = c in NetworkAttackers() else
+   let injectMessage(e1,e2,x) = c in NetworkAttackers() else
+   let interceptMessage(e1,e2) = c in NetworkAttackers() else
+   let startUntrustedApp(a) = c in UntrustedWebsites() else
+   let getServerRequest(a) = c in UntrustedWebsites() else
+   let sendServerResponse(a,x,y,z) = c in UntrustedWebsites() else
+   let httpRequestResponse(hdr,u,r) = c in UntrustedWebsites() else
+   let getClientResponse(b,a) = c in AND(UntrustedWebsites(),UntrustedJavaScript()) else
+   let sendClientRequest(b,u1,req,ref,pId,aj) = c in AND(UntrustedWebsites(),UntrustedJavaScript()) else
+   let startRedirector(a,b) = c in HttpRedirectors() else
+   false.
+
+
+
+(*---------------------------- Distributed security policies ----------------------------*)
+
+(* Policies: *)
+type Fact.
+pred assume(Fact) [block].
+pred fact(Fact).
+event Expect(Fact).
+
+fun Compromised(Principal) : Fact.
+fun Says(Principal,Fact) : Fact.
+
+clauses forall e:Fact; assume(e) -> fact(e);
+        forall p:Principal,e:Fact; fact(e) -> fact(Says(p,e));
+        forall p:Principal,e:Fact; fact(Compromised(p)) -> fact(Says(p,e)).
+query e:Fact; event(Expect(e)) ==> fact(e). 
+query e:Fact; event(Expect(e)). 
+
+fun UntrustedApp(Host,Path):Fact.
+
+(* Events: *)
+(*
+event Compromised(Principal).
+event UntrustedApp(Host,Path).
+*)
+event Reachable().
+event Unreachable().
+
+(* ---------------------------- Events --------------------- *)
+
+(* For Policies, use the following: *)
+fun User(Principal,Id,Host): Fact.
+fun Server(Principal,Host): Fact.
+
+
+(* For Events, use the following: *)
+(*
+event User(Principal,Id,Host).
+event Server(Principal,Host).
+*)
+event BrowserSetCookie(Browser,Host,Path,Cookie).
+
+
+
+
+
+
+
+
+
+(* ------------------------------------------------------------ *)
+(* ---------------------------- Processes --------------------- *)
+(* ------------------------------------------------------------ *)
+
+
+
+(* ---------------------------- Http Server --------------------- *)
+
+let HttpServer() =
+  in(net,(b:Browser,o:Origin,m:bitstring));
+  get serverIdentities(=originhost(o),pr,pk_P,sk_P,xdrp) in
+  let (k:symkey,httpReq(u,hs,req)) = reqdec(o,m,sk_P) in
+  if origin(u) = o then
+  let corr = mkCorrelator(k) in
+  out(httpServerRequest,(u,hs,req,corr));
+  in(httpServerResponse,(=u,resp:HttpResponse,cookieOut:CookieSet,=corr));
+  out(net,(o,b,respenc(o,httpResp(resp,cookieOut,xdrp),k))).
+
+
+
+(*---------------------------- Http Client ----------------------------*)
+
+let HttpClient(b:Browser) =
+    (in (browserRequest(b),(u:Uri,req:HttpRequest));
+     out (internalRequest(b),(u,req,noneUri,aboutBlank(),notajax())))
+  | (in (pageClick(b),(p:Page,u:Uri,req:HttpRequest));
+     get pageOrigin(=p,oldorig,h,ref) in
+     out (internalRequest(b),(u,req,ref,aboutBlank(),notajax())))
+  | (in (ajaxRequest(b),(p:Page,u:Uri,req:HttpRequest));
+     get pageOrigin(=p,oldorig,h,ref) in
+     out (internalRequest(b),(u,req,ref,p,ajax())))
+  | (in (internalRequest(b),(u:Uri,req:HttpRequest,ref:Uri,p:Page,aj:Ajax));
+     let o = origin(u) in
+     let hst = host(u) in
+     let h = path(u) in
+     get cookies(=b,=hst,=slash(),cs) in
+     get cookies(=b,=hst,=h,ch) in
+     let header = headers(ref, cookiePair(protocolCookie(cs, o),protocolCookie(ch, o)), aj) in
+     get serverIdentities(=hst,pr,pk_host,xxxx,xdrp) in
+     let m = httpReq(u,header,req) in
+     let (k:symkey,e:bitstring) = reqenc(o,m,pk_host) in
+     out(net,(b, o, e));
+     in(net,(=o,=b,x:bitstring));
+     let httpResp(resp,cookiePair(csn,chn),foo) = respdec(o,x,k) in
+(*     insert cookies(b,hst,slash(),csn);     *)
+     let ck = updateProtocolCookie(cs,csn,o) in
+     event BrowserSetCookie(b,hst,slash(),ck);
+     insert cookies(b,hst,slash(),ck);
+(*     insert cookies(b,hst,nh,nc);  *)
+     let (nh:Path,nch:Cookie) = updateProtocolPathCookie(ch,chn,o) in
+     event BrowserSetCookie(b,hst,nh,nch);
+     insert cookies(b,hst,nh,nch);
+     ((let httpOk(dataIn) = resp in
+      if p = aboutBlank() then
+        (let p1 = mkPage(u) in
+         insert pageOrigin(p1,o,h,u);
+         out (newPage(b),(p1,u,dataIn)))
+      else
+        (if aj = ajax() then
+           (get pageOrigin(=p,oldorig,oldh,olduri) in
+            if (foo = xdr() || oldorig = o) then
+            out (ajaxResponse(b),(p,u,dataIn)))))
+     |(let httpRedirect(redir) = resp in
+       out (internalRequest(b),(redir,httpGet(),ref,p,notajax())))))
+  | (get pageOrigin(p,o,h,ref) in
+     get cookies(=b,=originhost(o),=slash(),cs) in
+     get cookies(=b,=originhost(o),=h,ch) in
+     get storage(=b,=o,s) in
+     out (getCookieStorage(b),(p,cookiePair(protocolCookie(domcookie(cs),o),protocolCookie(domcookie(ch),o)),s)))
+  | (in (setCookieStorage(b),(p:Page,c:CookieSet,ns:Data));
+     get pageOrigin(=p,o,h,ref) in
+     let cookiePair(cs,ch) = c in
+     get cookies(=b,=originhost(o),=h,ckh) in
+     insert cookies(b,originhost(o),h,updatedomcookie(ckh,securejs(ch),insecurejs(ch)));
+     get cookies(=b,=originhost(o),=slash(),cks) in
+     insert cookies(b,originhost(o),h,updatedomcookie(cks,securejs(cs),insecurejs(cs)));
+     insert storage(b,o,ns))
+  | (in(pub,(o:Origin,h:Path));
+     insert cookies(b,originhost(o),h,nullCookie());
+     insert storage(b,o,nullData()))
+
+(* BEGIN: KB trying to make cookie table more PV friendly *)
+
+  | (in(pub,(h:Host,a:Path,ck1:Cookie));
+     if NetworkAttackers() = true then
+     let o = orig(http(),h) in
+     insert cookies(b,h,a,protocolCookie(ck1,o)))
+  | (in(pub,(h:Host,a:Path));
+     if NetworkAttackers() = true then
+     let o = orig(http(),h) in
+     get cookies(=b,=h,=a,ck) in
+     out (pub,protocolCookie(ck,o)))
+
+(* END: Karthik trying to make cookie table more PV friendly *)
+  | (in (upgradeDomain(b),(p:Page));
+     get pageOrigin(=p,o,h,ref) in
+     let orig(r,domainHost(s,d)) = o in 
+     insert pageOrigin(p,orig(r,topLevelHost(d)),h,ref)).
+
+
+
+(* ---------------------------- HttpProxy --------------------- *)
+
+let HttpProxy() =
+    in (rawRequest(),(b:Browser,u:Uri,req:HttpRequest,hdr:Headers,corr:bitstring));
+    let o = origin(u) in
+    let hst = host(u) in
+    let h = path(u) in
+    get serverIdentities(=hst,pr,pk_host,xxxx,xdrp) in
+    let m = httpReq(u,hdr,req) in
+    let (k:symkey,e:bitstring) = reqenc(o,m,pk_host) in
+    out(net,(b, o, e));
+    in(net,(=o,=b,x:bitstring));
+    let httpResp(resp,c,foo) = respdec(o,x,k) in
+    out(rawRequest(),(b,resp,c,foo,corr)).
+
+
+
+(* ---------------------------- HTTP Redirector --------------- *)
+
+let HttpRedirector() =
+   in (admin,startRedirector(uri(pr,h,p,q), uri(pr1,h1,p1,q1)));
+ (!(in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   let uri(=https(),=h,=p,q2) = u in
+   let c = getCookie(hs) in
+   let redirectUri = uri(pr1,h1,p1,params(u)) in
+   out(httpServerResponse,(u,httpRedirect(redirectUri),c,corr)))).
+
+fun pageform(Uri,Params):bitstring [data].
+
+
+
+(* ---------------------------- User surfing the web --------------- *)
+
+let WebSurfer() =
+   (in (admin,openBrowser(p));
+    new bId:Id;
+    let b = browser(p,bId) in
+    out(pub,b);
+    ((out (config,(openBrowser(p),b))) | (!HttpClient(b)) |
+    !((in(admin,surf(=b,u:Uri));
+       out(browserRequest(b),(u,httpGet())))
+|
+     (in (newPage(b),(p1:Page,u:Uri,pageform(formUri,form)));
+      out(pageClick(b),(p1,formUri,httpPost(form))))))).
+
+
+
+(* ---------------------------- Create users and attackers --------------- *)
+
+let CredentialFactory() =
+(
+    (in(admin,createUser(p:Principal,h:Host));
+     let (uId:Id,sec:Secret) = makeUser(p,h) in
+    if assume(User(p,uId,h)) then   
+(*    event User(p,uId,h); *)
+    insert credentials(h, p, uId, (uId,sec));
+    out(config,(createUser(p,h),uId)))
+
+|  (in(admin,createMaliciousUser(p:Principal,h:Host));
+     let (uId:Id,sec:Secret) = makeUser(p,h) in
+    if assume(User(p,uId,h)) then  
+    if assume(Compromised(p)) then  
+(*    event User(p,uId,h); 
+    event Compromised(p); *)
+    insert credentials(h,p,uId,(uId,sec));
+    out(config,(createMaliciousUser(p,h),(uId,sec))))
+
+|   (in(admin,createServer(p, x));
+    new d:Domain;
+    let h = topLevelHost(d) in
+    let skey:privkey = makeServer(p, h) in
+    if assume(Server(p,h)) then    
+(*    event Server(p,h);*)
+    insert serverIdentities(h,p,pk(skey),skey,x);
+    out(pub,(orig(https(),h),slash()));
+    out(config,(createServer(p,x), (h,pk(skey)))))
+
+|  (in(admin,createMaliciousServer(p, x));
+    new d:Domain;
+    let h = topLevelHost(d) in
+    let skey:privkey = makeServer(p, h) in
+    if assume(Server(p,h)) then    
+    if assume(Compromised(p)) then    
+(*    event Server(p,h);
+    event Compromised(p); *)
+    insert serverIdentities(h,p,pk(skey),skey,x);
+    out(config,(createMaliciousServer(p, x),(h,pk(skey),skey))))
+
+|  (in(admin,compromiseUser(uId,h));
+    get credentials(=h,p,=uId,c) in
+    out (config,(compromiseUser(uId,h),c)))
+
+|  (in(admin,compromiseServer(h));
+    get serverIdentities(=h,p,pubk,sk,x) in
+    out (config,(compromiseServer(h),sk)))
+).
+
+
+
+(* ---------------------------- Attacker proxy --------------- *)
+
+let AttackerProxy() =
+   (in (pub,x:Command);
+    if commandEnabled(x) = true then
+    out(admin,x);
+    in (config,(=x,y:bitstring));
+    out(pub,y)).
+
+
+
+(*---------------------------- Script Attacker ----------------------------*)
+
+let ScriptAttacker() =
+    (in (admin,initRequest(b,u,req));
+     out (browserRequest(b),(u,req)))
+  | (in (admin,initPageClick(b,p,u,req));
+     out (pageClick(b),(p,u,req)))
+  | (in (admin,initAjaxRequest(b,p,u,req));
+     out (ajaxRequest(b),(p,u,req));
+     in (ajaxResponse(b),(=p,=u,dataIn:bitstring));
+     out (pub,dataIn))
+  | (in (admin,fetchCookieStorage(b:Browser,p:Page));
+     in (getCookieStorage(b),(=p,c:CookieSet,s:Data));
+     out (pub, (c,s)))
+  | (in (admin,injectCookieStorage(b,p,c,s));
+     out (setCookieStorage(b),(p,c,s)))
+  | (in (admin,forceUpgradeDomain(b,p));
+     out (upgradeDomain(b),p)).
+
+
+
+(* ---------------------------- Network Attacker --------------- *)
+
+let NetworkAttacker() =
+    in (admin,compromiseConnection(e1,e2));
+((  in (admin,injectMessage(=e1,=e2,x));
+    out (net,(e1,e2,x)))
+|(  in (admin,injectMessage(=e2,=e1,x));
+    out (net,(e2,e1,x)))
+|(  in (admin,interceptMessage(=e1,=e2));
+    in (net,(=e1,=e2,x:bitstring));
+    out (config,(interceptMessage(e1,e2),x)))
+|(  in (admin,interceptMessage(=e2,=e1));
+    in (net,(=e2,=e1,x:bitstring));
+    out (config,(interceptMessage(e2,e1),x)))).
+
+
+
+(* ---------------------------- Untrusted server application --------------- *)
+
+fun untrustedPath(Path): Path.
+
+let UntrustedApp() =
+   in(admin,startUntrustedApp(uri(p,h,app,q)));
+   if p = http() then (* If you only want to enable HTTP malicious servers uncomment this line *)
+   let a = untrustedPath(app) in
+   get serverIdentities(=h,sp,xx,yy,zz) in
+   if assume(UntrustedApp(h,a)) then
+   if assume(Compromised(sp)) then
+(*   event UntrustedApp(h,a); 
+     event Compromised(sp); 
+*)
+  ((in(admin,getServerRequest(uri(=p,=h,=a,q1)));
+    in(httpServerRequest,(uri(=p,=h,=a,q2),x:HttpRequest,hs:Headers,corr:bitstring));
+    out(config,(getServerRequest(uri(p,h,a,q1)),(uri(p,h,a,q2),x,hs,corr))))
+|  (in(admin,sendServerResponse(uri(=p,=h,=a,q1),x:HttpResponse,ck:Cookie,corr:bitstring));
+    out(httpServerResponse,(uri(p,h,a,q1),x,ck,corr)))
+|  (in(admin,getClientResponse(b,uri(=p,=h,=a,q1)));
+    in(newPage(b),(pId:Page,uri(=p,=h,=a,q2),d:bitstring));
+    out(config,(getClientResponse(b,uri(p,h,a,q1)),(pId,uri(p,h,a,q2),d))))
+|  (in(admin,sendClientRequest(b,uri(=p,=h,=a,q1),req,ref,pId,aj));
+    out(internalRequest(b),(uri(p,h,a,q1),req,ref,pId,aj)))
+|  (in(admin,httpRequestResponse(hdr,u,req));
+    new corr:bitstring;
+    new b:Browser;
+    out(rawRequest(),(b,u,req,hdr,corr));
+    in(rawRequest(),(=b, resp:HttpResponse, c:CookieSet, foo:XDR, =corr));
+    out(config,(httpRequestResponse(hdr,u,req),(c,resp))))
+  ).
+
+
+
+(* ---------------------------- The Network --------------------- *)
+
+let Network()=
+    (!NetworkAttacker()) | (!WebSurfer()) | (!AttackerProxy()) | (!HttpServer()) 
+   | (!CredentialFactory()) | (!HttpProxy())
+   | (!ScriptAttacker()) 
+   | (!HttpRedirector()) | (!UntrustedApp())
+.
+
+
+
+fun localLogin(Id):Session [data].
+fun socialLogin(Host,Id,bitstring):Session [data].
+
+letfun loginCSRFCheck() = true. (* true enables login CSRF checking *) (* false causes ValidSession for Login to fail *)
+letfun dataCSRFCheck() = true. (* true enables data form CSRF checking *)
+letfun autoSocialLoginCSRFCheck() = true. (* true enables automatic social login CSRF checking *)
+letfun stateSocialLoginCSRFCheck() = true. (* true enables social login CSRF checking *)
+letfun socialDataCSRFCheck() = true. (* true enables social data form CSRF checking *)
+letfun secureCookies() = true. (* true enables HTTPS-only cookies for login/data *)
+letfun passwordHash() = false. (* true enables Login JavaScript that hashes password *)
+letfun oauthImplicitFlow() = true. (* true enables OAuth User-Agent flow *)
+letfun oauthExplicitFlow() = false. (* true enables OAuth Web Server flow *)
+
+(* Policies: *)
+fun Authorize(Principal,Browser,Host,Host):Fact.
+fun SocialLogin(Principal,Browser,Cookie,Uri,Uri):Fact.
+fun SocialLoginDone(Principal,Browser,Cookie,Uri,Uri):Fact.
+
+
+fun SocialDataReleaseAuthorized(Principal,Host,Path,Id,bitstring,bitstring):Fact.
+fun SocialLoginAccepted(Principal,bitstring,Host,Host,bitstring):Fact.
+
+letfun checkSecureCookie(u:Uri,c:Cookie) =
+   if secureCookies() = false &&
+      secure(c) <> nullCookie() then true   (* WHY? *)
+   else
+    if protocol(u) = https() &&
+       secureCookies() = true &&
+       secure(c) <> nullCookie() then true
+    else false.
+
+fun newCorrCookie(Uri,bitstring):bitstring [private].
+letfun makeCorrCookie(u:Uri,c:bitstring) =
+   let sC = newCorrCookie(u,c) in
+   shcookie(sC).
+
+letfun makeClient(p:Principal,cl:Host,as:Host) =
+    new appId: Id;
+    new appSecret: Secret;
+    (appId,appSecret).
+
+(* Login App *)
+
+fun startLogin(Host,Path,Browser): AppCommand [data].
+fun startOAuthPermissionApp(Host,Path,Browser): AppCommand [data].
+fun loginPath():Path [data].
+fun permissionPath():Path [data].
+fun loginSuccess(): bitstring [data].
+fun loginFailure(): bitstring [data].
+free loginForm : HTMLtag .
+fun loginFormReply(bitstring,Id,Secret): Params [data].
+
+(* For Policies, use the following:*)
+fun Login(Principal,Browser,Host,Id):Fact.
+fun LoginAuthorized(Principal,Id,Host,Cookie):Fact.
+fun ValidSession(Principal,Browser,Host): Fact.
+fun DataWrite(Principal,Browser,Host,Path,bitstring): Fact.
+fun DataStoreAuthorized(Principal,Host,Path,Id,Cookie,bitstring): Fact.
+fun DataStore(Principal,Host,Id,bitstring): Fact.
+fun DataRead(Principal,Browser,Host,Path,bitstring): Fact.
+fun DataReleaseAuthorized(Principal,Host,Path,Id,Cookie,bitstring): Fact.
+
+(* For Events, use the following: *)
+(*
+event Login(Principal,Browser,Host,Id).
+event LoginAuthorized(Principal,Id,Host,Cookie).
+event ValidSession(Principal,Browser,Host).
+event DataWrite(Principal,Browser,Host,Path,bitstring).
+event DataStoreAuthorized(Principal,Host,Path,Id,Cookie,bitstring).
+event DataStore(Principal,Host,Id,bitstring).
+event DataRead(Principal,Browser,Host,Path,bitstring).
+event DataReleaseAuthorized(Principal,Host,Path,Id,Cookie,bitstring).
+*)
+
+table authorizedClients(Host,Id,Id).
+table oauthClients(Host,Principal,Id,Secret,Uri).
+table userData(Principal,Id,Host,bitstring).
+table userPermissions(Principal,Id,Host,Host).
+table tokenSessions(Host,bitstring,Id,Id).
+
+fun oauthLogin() : Params [data].
+fun oauthGetData() : Params [data].
+fun oauthSetData() : Params [data].
+
+fun oauthRequest(Id,bitstring,Uri): Params [data].
+fun oauthCode(Id,bitstring,Uri,bitstring): Params [data].
+fun oauthToken(bitstring,bitstring): Params [data].
+fun oauthCodeToken(bitstring): Params [data].
+
+fun oauthTokenRequest(Id,Secret,bitstring): Params [data].
+fun oauthDataRequest(bitstring): Params [data].
+fun oauthDataSubmit(bitstring,bitstring): Params [data].
+fun socialDataFormReply(bitstring,bitstring): Params [data].
+
+fun oauthForm(Host) : HTMLtag [data].
+fun oauthFormReply(bitstring,bitstring): Params [data].
+
+fun oauthClientPath(Path):Path [data].
+fun oauthServerPath(Path):Path [data].
+
+fun createOAuthClient(Host,Host,Path):AppCommand [data].
+fun startOAuthPermissionsServerApp(Host,Browser):AppCommand [data].
+fun startOAuthTokenServerApp(Host,Path):AppCommand [data].
+fun startOAuthClientApp(Host,Path,Host):AppCommand [data].
+fun socialLoginSuccess(Host):bitstring [data].
+
+
+fun dataGen(HTMLtag,bitstring): bitstring [data].
+reduc forall tag: HTMLtag, d:bitstring; dataTag(dataGen(tag,d))=tag .
+reduc forall tag: HTMLtag, d:bitstring; dataPayload(dataGen(tag,d))=d .
+fun dataFormReply(bitstring,bitstring): Params [data]. (* or UDATA? *)
+fun genData(Principal,Host):bitstring [private].
+
+free socialDataForm: HTMLtag .
+free socialDataDisplay: HTMLtag .
+
+fun authCode(Uri,Id,bitstring,Id): bitstring [private].
+fun authToken(bitstring): bitstring [private].
+
+(* Login App *)
+let LoginUserAgent(h:Host, b:Browser) =
+ let a = loginPath() in
+( (in(newPage(b),(p1:Page, loginURI:Uri, d:bitstring));
+   let p = principal(b) in
+   if loginForm = formTag(d) then
+   let uri(=https(), =h, =a, =nullParams()) = loginURI in 
+   get credentials(=h,=p,uId,c) in
+   let (=uId,pwd:Secret) = c in
+   if assume(Login(p,b,h,uId)) then 
+(*   event Login(p,b,h,uId);   *)
+   out(pageClick(b),(p1,loginURI,httpPost(loginFormReply(d,uId,pwd))))
+  )
+|
+ (in(newPage(b), (p1:Page,loginURI:Uri,d:bitstring));
+   let p = principal(b) in
+   if loginSuccess() = d then
+   let uri(=https(), =h, =a, =nullParams()) = loginURI in
+   event Expect(ValidSession(p,b,h));
+(*   event ValidSession(p,b,h);*)
+   out(net, (h)))
+ ).
+
+let LoginApp(h:Host) =
+ let a = loginPath() in
+( (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   let uri(=https(), =h, =a, q) = u in 
+   new state:bitstring;
+   let sid = mkHttpOnlySecureCookie(state) in
+   let c = cookiePair(sid,nullCookie()) in
+   out(httpServerResponse,(u,httpOk(formGen(loginForm,u,csrfToken(sid))),c,corr)))
+| (in(httpServerRequest,(u:Uri,hs:Headers,req:HttpRequest,corr:bitstring));
+   let uri(=https(), =h, =a, q) = u in 
+   let c = getCookie(hs) in
+   let cookiePair(sid,ch) = c in        
+   if secure(sid) <> nullCookie() then
+   let httpPost(loginFormReply(d,uId,pwd)) = req in
+   if (formTag(d) = loginForm) then
+   if (loginCSRFCheck() = false || formId(d) = csrfToken(sid)) then
+   get credentials(=h,p,=uId,(=uId,=pwd)) in
+   get serverIdentities(=h,sp,xx,yy,zz) in
+   event Expect(LoginAuthorized(sp,uId,h,sid)); 
+(*   event LoginAuthorized(sp,uId,h,sid); *)
+   insert serverSessions(h,sid,localLogin(uId));
+   out(httpServerResponse,(u,httpOk(loginSuccess()),c,corr)))).
+
+
+(* DataServer App *)
+
+free dataDisplay: HTMLtag .
+free dataForm : HTMLtag .
+fun startData(Host,Path,Browser): AppCommand [data].
+fun startDataApp(Host,Path): AppCommand [data].
+fun startPermissionApp(Host,Path): AppCommand [data].
+fun addUserData(Id,Host,Path): AppCommand [data].
+fun dataPath(Path):Path [data].
+
+fun personalData(bitstring): bitstring [data].
+fun commentData(bitstring): bitstring [data].
+
+let DataServerApp(h:Host,app:Path) =
+( (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   if h = host(u) && dataPath(app) = path(u) then
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   get serverSessions(=h,=cs,localLogin(uId)) in
+   get userData(p,=uId,=h,personalData(data)) in
+   get serverIdentities(=h,sp,xx,yy,zz) in
+   event Expect(DataReleaseAuthorized(sp,h,app,uId,cs,personalData(data)));  
+(* event DataReleaseAuthorized(sp,h,app,uId,cs,data);  *)
+   out(httpServerResponse,(u,httpOk(dataGen(dataDisplay,personalData(data))),c,corr)))
+| (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   if h = host(u) && dataPath(app) = path(u) then
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   get serverSessions(=h,=cs,localLogin(uId)) in
+   let df = formGen(dataForm,u,csrfToken(cs)) in
+   out(httpServerResponse,(u,httpOk(df),c,corr)))
+| (in(httpServerRequest,(u:Uri,hs:Headers,req:HttpRequest,corr:bitstring));
+   if h = host(u) && dataPath(app) = path(u) then
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   let httpPost(dataFormReply(d,newData)) = req in
+   if (formTag(d) = dataForm) then
+   if (dataCSRFCheck() = false || formId(d) = csrfToken(cs)) then
+   get serverSessions(=h,=cs,localLogin(uId)) in
+   get serverIdentities(=h,sp,xx,yy,zz) in
+   get credentials(=h,p,=uId,cred) in 
+   event Expect(DataStoreAuthorized(sp,h,app,uId,cs,newData)); 
+   if assume(DataStore(p,h,uId,newData)) then
+(*  event DataStoreAuthorized(sp,h,app,uId,cs,newData);  *)
+   insert userData(p,uId,h,newData);   (* Use with care: Causes ProVerif to use up a lot of memory *)
+   out(httpServerResponse,(u,httpOk(nullBits()),c,corr)))).
+
+let DataServerUserAgent(b:Browser) =
+ ( (in (newPage(b),(p1:Page, u:Uri, d:bitstring));
+   let p = principal(b) in
+   let uri(=https(), h, dataPath(a), =nullParams()) = u in
+   if(dataForm = formTag(d)) then
+(*   new newData:bitstring;*)
+   let newData = genData(p,h) in
+   let nd = personalData(newData) in
+   if assume(DataWrite(p,b,h,a,nd)) then 
+(*   event DataWrite(p,b,h,a,nd); *)
+   out(pageClick(b),(p1,formAction(d),httpPost(dataFormReply(d,nd))))
+  )
+| (in (newPage(b),(p1:Page, u:Uri, d:bitstring));
+   let p = principal(b) in
+   let uri(=https(), h, dataPath(a), =nullParams()) = u in
+   if(dataDisplay = dataTag(d)) then 
+   let personalData(x) = dataPayload(d) in
+   event Expect(DataRead(p,b,h,a,personalData(x)));
+(*  event DataRead(p,b,h,a,dataPayload(d)); *)
+   0
+  )
+).
+
+fun permissionsPath():Path [data].
+fun permissionsData(Host):bitstring [data].
+
+let OAuthPermissionsServerUserAgent(b:Browser,as:Host) =
+ ( (in (newPage(b),(p1:Page, u:Uri, d:bitstring));
+   let p = principal(b) in
+   let uri(=https(), =as, permissionsPath(), q) = u in
+   let oauthForm(cl) = formTag(d) in
+   let nd = permissionsData(cl) in
+   if assume(Authorize(p,b,as,cl)) then 
+(*   event DataWrite(p,b,h,a,nd); *)
+   out(pageClick(b),(p1,formAction(d),httpPost(oauthFormReply(d,nd))))
+  )
+).
+
+
+let OAuthPermissionsServerApp(h:Host) =
+( 
+  (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   let uri(=https(),=h,=permissionsPath(),q) = u in
+   get oauthClients(=h,clp,xx,yy,clu) in
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   get serverSessions(=h,=cs,localLogin(uId)) in
+   let df = formGen(oauthForm(host(clu)),u,csrfToken(cs)) in
+   out(httpServerResponse,(u,httpOk(df),c,corr)))
+| (in(httpServerRequest,(u:Uri,hs:Headers,req:HttpRequest,corr:bitstring));
+   let uri(=https(),=h,=permissionsPath(),q) = u in
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   let httpPost(oauthFormReply(d,permissionsData(cl))) = req in
+   if (formTag(d) = oauthForm(cl)) then
+   if (dataCSRFCheck() = false || formId(d) = csrfToken(cs)) then
+   get serverSessions(=h,=cs,localLogin(uId)) in
+   get credentials(=h,p,=uId,cred) in 
+   insert userPermissions(p,uId,h,cl);   
+   out(httpServerResponse,(u,httpOk(nullBits()),c,corr)))
+).
+
+let OAuthTokenServerApp(h:Host) =
+( (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   let uri(=https(),=h,=oauthServerPath(slash()),q) = u in
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   get serverSessions(=h,=cs,localLogin(uId)) in
+   let oauthRequest(appId,CSRFToken,redirectURI) = params(u) in
+   get oauthClients(=h,clp,=appId,appSecret,=redirectURI) in
+   get userPermissions(p,=uId,=h,=host(redirectURI)) in
+   let code = authCode(u,appId,CSRFToken,uId) in
+   let token = authToken(code) in
+   insert tokenSessions(h,token,uId,appId);
+   let tokenUri = uri(protocol(redirectURI),host(redirectURI),path(redirectURI),oauthToken(CSRFToken,token)) in
+   out(httpServerResponse,(u,httpRedirect(tokenUri),c,corr)))
+).
+
+let OAuthResourceServerApp(h:Host,app:Path) =
+( (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   let uri(=https(),=h,=dataPath(app),oauthDataRequest(token)) = u in
+   if  getCookie(hs) = nullCookieSet() then 
+   get tokenSessions(=h,=token,uId,appId) in
+   get userData(p,=uId,=h,personalData(data)) in
+   get serverIdentities(=h,sp,xx,yy,zz) in
+   event Expect(SocialDataReleaseAuthorized(sp,h,app,uId,token,personalData(data)));  
+(* event DataReleaseAuthorized(sp,h,app,uId,cs,data);  *)
+   out(httpServerResponse,(u,httpOk(personalData(data)),nullCookieSet(),corr)))
+).
+
+let OAuthClientApp(h:Host,app:Path,as:Host,me:Path) =
+( 
+  (in(httpServerRequest,(u:Uri,hs:Headers,req:HttpRequest,corr:bitstring));
+   let uri(=https(),=h,=oauthClientPath(app),oauthLogin()) = u in
+   get oauthClients(=as,sp,appId,appSecret,=uri(https(),h,oauthClientPath(app),nullParams())) in
+   let cs = makeCorrCookie(u,corr) in
+   let c = cookiePair(cs,nullCookie()) in
+   let reqUri = uri(https(),as,oauthServerPath(slash()),oauthRequest(appId,csrfToken(cs),u)) in
+   out(httpServerResponse,(u,httpRedirect(reqUri),c,corr)))
+
+|
+  (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   let uri(=https(),=h,=oauthClientPath(app),oauthToken(state,token)) = u in
+   get oauthClients(=as,sp,appId,appSecret,=uri(https(),h,oauthClientPath(app),nullParams())) in
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   if (stateSocialLoginCSRFCheck() = false || state = csrfToken(cs)) then
+   let reqUri = uri(https(),as,dataPath(me),oauthDataRequest(token)) in
+   new ncorr:bitstring;
+   new b:Browser;
+   out(rawRequest(),(b, reqUri, httpGet(), headers(noneUri(), nullCookieSet(), notajax()), ncorr));
+   in(rawRequest(),(=b, resp:HttpResponse, c1:CookieSet, foo:XDR, =ncorr));
+   let httpOk(personalData(x)) = resp in
+   event Expect(SocialLoginAccepted(sp,token,h,as,state)); 
+   insert serverSessions(h, cs, socialLogin(as,appId,token));
+   out(httpServerResponse,(u, httpOk(socialLoginSuccess(as)),c,corr)))
+).
+
+let AbstractLogin(h:Host,a:Path,b:Browser) =
+(  get credentials(=h,p,uId,c) in
+   get serverIdentities(=h,sp,xx,yy,zz) in
+   new state:bitstring;
+   let sid = mkHttpOnlySecureCookie(state) in
+   if assume(Login(p,b,h,uId)) then 
+   insert serverSessions(h,sid,localLogin(uId));
+   insert cookies(b,h,slash(),sid)
+).
+
+
+fun me(): Path.
+let ServerFactory () =
+(   (in (admin,appCommand(startLogin(h:Host,a:Path, b:Browser)));
+    (* (LoginUserAgent(h,b) | LoginApp(h)) *)
+    AbstractLogin(h,a,b))
+
+
+ |  (in(admin,appCommand(addUserData(uId:Id,h:Host,a:Path)));
+    get credentials(=h,p,=uId,sec) in
+    let data = genData(p,h) in
+    if assume(DataStore(p,h,uId,personalData(data))) then
+(*    event DataStore(p,h,uId,data);*)
+    insert userData(p,uId,h,personalData(data)))
+(*
+ |  (in (admin,appCommand(startData(h:Host,a:Path,b:Browser)));
+     (DataServerUserAgent(b) | DataServerApp(h,a))) *)
+
+
+ |  (in (admin,appCommand(createOAuthClient(as:Host,cl:Host,app:Path)));
+    get serverIdentities(=as,asp,axx,ayy,azz) in
+    get serverIdentities(=cl,clp,cxx,cyy,czz) in
+    let (appId:Id,appSecret:Secret) = makeClient(clp,cl,as) in
+    let redir = uri(https(),cl,oauthClientPath(app),nullParams()) in
+    insert oauthClients(as,clp,appId,appSecret,redir);
+    out (config,(appCommand(createOAuthClient(as,cl,app)),appId)))
+
+ |  (in (admin,appCommand(startOAuthPermissionsServerApp(as:Host,b:Browser)));
+     OAuthPermissionsServerUserAgent(b,as) |
+     OAuthPermissionsServerApp(as))
+
+ |  (in (admin,appCommand(startOAuthTokenServerApp(as:Host)));
+     OAuthTokenServerApp(as) |
+     OAuthResourceServerApp(as,me()))
+
+ |  (in (admin,appCommand(startOAuthClientApp(cl:Host,app:Path,as:Host)));
+     OAuthClientApp(cl,app,as,me()))
+
+
+(*
+ |  (in (admin,appCommand(createOAuthClient(clp:Principal,cl:Uri,as:Uri)));
+    if protocol(as) = https() && protocol(cl) = https() then
+    let (appId:Id,appSecret:Secret) = makeClient(clp,cl,as) in
+    let oauthClientPath(cla) = path(cl) in
+    insert oauthClients(host(as),clp,appId,appSecret,cl);
+    (OAuthClientApp(host(cl),path(cl),host(as),me())))
+ |  (in (admin,appCommand(startOAuthPermissionApp(h:Host,a:Path, b:Browser)));
+     OAuthPermissionsServerUserAgent(b,h))
+ |  (in (admin,appCommand(startOAuthServerApp(h:Host,a:Path)));
+     OAuthAuthorizationServerApp(h) |
+     OAuthResourceServerApp(h,me()))
+
+
+ |   (in (admin,appCommand(startOAuthPermissionApp(h:Host,a:Path, b:Browser)));
+     (OAuthPermissionsUserAgent(h,a,b)) | OAuthPermissionsServerApp(h,a))
+ |  (in (admin,appCommand(createOAuthClient(clp:Principal,cl:Uri,as:Uri)));
+    if protocol(as) = https() && protocol(cl) = https() then
+    let (appId:Id,appSecret:Secret) = makeClient(clp,cl,as) in
+    let oauthClientPath(cla) = path(cl) in
+    insert oauthClients(host(as),clp,appId,appSecret,cl))
+ | (in (admin,appCommand(startOAuthClientApp(clh:Host,clp:Path,as:Uri)));
+    get oauthClients(=host(as),p,appId,appSecret,cl) in
+    if host(cl) = clh && path(cl) = oauthClientPath(clp) && protocol(cl) = https() && protocol(as) = https() then
+     OAuthCommonClientApp(clh,clp,as) | OAuthImplicitClientApp(clh,clp,as))
+ |  (in (admin,appCommand(startOAuthServerApp(h:Host,a:Path)));
+     OAuthCommonServerApp(h,a) | OAuthImplicitServerApp(h,a))
+*)
+).
+
+free alice:Principal.
+free eve:Principal.
+free yahoo:Principal.
+free facebook:Principal.
+free yahoocom:Domain.
+free facebookcom:Domain.
+free evecom:Domain.
+event Check().
+
+let Init() =
+    (
+        out (admin,createServer(facebook, notxdr()));
+
+        in (config,((=createServer(facebook, notxdr()),h:Host,fbk:pubkey)));
+
+        out (admin,createServer(yahoo, notxdr()));
+        in (config,((=createServer(yahoo, notxdr()),h1:Host,yahook:pubkey)));
+
+        out (admin,createServer(eve, notxdr()));
+        in (config,(=createServer(eve, notxdr()),eveHost:Host,eveKey:pubkey));
+
+        out (admin,appCommand(startOAuthServerApp(h,slash())));
+
+        (* Seed the Browser Cookie Jar *)
+        out (pub,(orig(https(),h), oauthServerPath(slash())));
+        out (pub,(orig(https(),h), oauthServerPath(permissionPath())));
+        out (pub,(orig(https(),h), loginPath()));
+
+        let userCmd = createUser(alice,h) in 
+        out (admin, userCmd);
+        in (config,aliceId:Id);
+
+        out (admin,openBrowser(alice));
+        in (config,(=openBrowser(alice),aliceBrowser:Browser));
+        out (admin,appCommand(startLogin(h,loginPath(),aliceBrowser)));
+
+        let facebookLoginUri = uri(https(), h, loginPath(), nullParams()) in
+        out (admin,surf(aliceBrowser,facebookLoginUri));
+
+        let yahooUri = uri(https(), h1, oauthClientPath(slash()), nullParams()) in
+        let facebookOAuthUri = uri(https(), h, oauthServerPath(slash()), nullParams()) in
+
+        out (admin,appCommand(createOAuthClient(yahoo, yahooUri, facebookOAuthUri)));
+        
+        (* Seed Cookies *)
+        out (pub,(orig(https(),h1), oauthClientPath(slash())));
+
+        out (admin,appCommand(startOAuthPermissionApp(h,permissionPath(),aliceBrowser)));
+
+        (*  Alice Authorizes Yahoo on Facebook *)
+        new state:Cookie;
+        get oauthClients(=h,clp,appId,xx,cl) in
+        let facebookASUri = uri(https(), h, oauthServerPath(permissionPath()),oauthRequest(appId,csrfToken(state),yahooUri)) in
+        out (admin,surf(aliceBrowser,facebookASUri));
+
+        out (admin,startUntrustedApp(uri(http(),eveHost,slash(),nullParams())));
+        let eveUri = uri(http(), eveHost, slash(), nullParams()) in
+
+        (* Alice browses to Eve's website *)
+        out (admin,surf(aliceBrowser,eveUri));
+
+        out (admin,getServerRequest(eveUri));
+        in (config,(=getServerRequest(eveUri),
+                (u1:Uri,req:HttpRequest,hs:Headers,corr1:bitstring)));
+
+        out (admin,startRedirector(uri(https(),h1,oauthClientPath(slash()),nullParams()), eveUri));
+
+        (* Eve redirects Alice to Facebook's OAuth Server
+           using redirect_uri=yahoo_eve_redirector *)
+        new state1:Cookie;
+        let authUri = uri(https(), h, oauthServerPath(slash()),
+                oauthRequest(appId,csrfToken(state1),yahooUri)) in
+        let C2 = sendServerResponse(eveUri,httpRedirect(authUri),nullCookie(),corr1) in
+        out(admin,C2);
+
+        (* Alice is redirected to yahoo_eve_redirector with
+         her access token for Yahoo, which redirects her back to Eve *)
+        let C5 = getServerRequest(eveUri) in
+        out (admin,C5);
+        in (config,(=C5,(u2:Uri,req2:HttpRequest,
+                   hs2:Params,corr2:bitstring)));
+        let oauthToken(=csrfToken(state1),token) = params(u2) in
+        event Check()
+    ).
+
+
+
+(* Policies: *)
+
+clauses 
+	forall up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie;
+	fact(Server(sp,h)) &&
+	fact(User(up,x,h)) &&
+	fact(Says(up,Login(up,b,h,x))) ->    
+	fact(LoginAuthorized(sp,x,h,sid)).
+
+clauses 
+	forall up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie;
+	fact(Server(sp,h)) &&
+	fact(User(up,x,h)) &&
+	fact(Says(up,Login(up,b,h,x))) &&
+	fact(Says(sp,LoginAuthorized(sp,x,h,sid))) ->
+        fact(ValidSession(up,b,h)).
+
+clauses 
+	forall up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie,o:Path,d:bitstring;
+	fact(Server(sp,h)) &&
+	fact(User(up,x,h)) &&
+        fact(Says(up,DataStore(up,h,x,d))) &&
+	fact(Says(up,Login(up,b,h,x))) &&
+	fact(Says(sp,LoginAuthorized(sp,x,h,sid))) ->
+        fact(DataReleaseAuthorized(sp,h,o,x,sid,d)).
+
+clauses 
+	forall up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie,o:Path,d:bitstring;
+	fact(Server(sp,h)) &&
+	fact(User(up,x,h)) &&
+        fact(Says(up,DataStore(up,h,x,d))) && 
+	fact(Says(up,Login(up,b,h,x))) &&
+	fact(Says(sp,LoginAuthorized(sp,x,h,sid))) &&
+        fact(Says(sp,DataReleaseAuthorized(sp,h,o,x,sid,d))) ->
+	fact(DataRead(up,b,h,o,d)).
+
+clauses 
+	forall up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie,o:Path,d:bitstring;
+	fact(Server(sp,h)) &&
+	fact(User(up,x,h)) &&
+	fact(Says(up,Login(up,b,h,x))) &&
+	fact(Says(sp,LoginAuthorized(sp,x,h,sid))) &&
+        fact(Says(up,DataWrite(up,b,h,o,d))) ->
+        fact(DataStoreAuthorized(sp,h,o,x,sid,d)).
+
+
+query 	up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie; event(Expect(LoginAuthorized(sp,x,h,sid))) ==> fact(LoginAuthorized(sp,x,h,sid)).
+query 	up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie; event(Expect(LoginAuthorized(sp,x,h,sid))).
+
+query 	up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie; event(Expect(ValidSession(up,b,h))) ==> fact(ValidSession(up,b,h)).
+query 	up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie; event(Expect(ValidSession(up,b,h))).
+
+query	up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie,o:Path,d:bitstring;
+        event(Expect(DataReleaseAuthorized(sp,h,o,x,sid,d))) ==>
+        fact(DataReleaseAuthorized(sp,h,o,x,sid,d)).
+query	up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie,o:Path,d:bitstring;
+        event(Expect(DataReleaseAuthorized(sp,h,o,x,sid,d))).
+
+query	up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie,o:Path,d:bitstring;
+        event(Expect(DataStoreAuthorized(sp,h,o,x,sid,d))) ==>
+        fact(DataStoreAuthorized(sp,h,o,x,sid,d)).
+query	up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie,o:Path,d:bitstring;
+        event(Expect(DataStoreAuthorized(sp,h,o,x,sid,d))).
+
+query	up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie,o:Path,d:bitstring;
+        event(Expect(DataRead(up,b,h,o,d))) ==>
+        fact(DataRead(up,b,h,o,d)).
+
+query	up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie,o:Path,
+	t:bitstring,d:bitstring,as:Host,state:bitstring;
+	event(Expect(SocialLoginAccepted(sp,t,h,as,state))).         
+
+query	up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie,o:Path,
+	t:bitstring,d:bitstring;
+        event(Expect(SocialDataReleaseAuthorized(sp,h,o,x,t,d))).
+
+(*
+pred endpointUri(Uri,Protocol,Host,Path).
+clauses forall p:Protocol,h:Host,a:Path,x:Params; 
+        endpointUri(uri(p,h,a,x),p,h,a).
+
+
+clauses 
+	forall up:Principal,cp:Principal,sp:Principal,
+	       x:Id,cl:Uri,as:Uri,b:Browser,sid:Cookie,
+	       token:bitstring,state:bitstring,
+	       h:Host,app:Path,h':Host,app':Path;
+
+	fact(Server(sp,h)) && 
+	fact(Server(cp,h')) && 
+	fact(User(up,x,h)) &&
+	endpointUri(as,https(),h,oauthServerPath(app)) &&
+	endpointUri(cl,https(),h',oauthClientPath(app')) &&
+	fact(Says(up,SocialLogin(up,b,sid,cl,as))) ->    
+	fact(SocialLoginAccepted(cp,token,cl,as,state)).
+
+clauses 
+	forall up:Principal,cp:Principal,sp:Principal,
+	       x:Id,cl:Uri,as:Uri,b:Browser,sid:Cookie,
+	       token:bitstring,state:bitstring,
+	       h:Host,app:Path,h':Host,app':Path;
+
+	fact(Server(sp,h)) && 
+	fact(Server(cp,h')) && 
+	fact(User(up,x,h)) &&
+	endpointUri(as,https(),h,oauthServerPath(app)) &&
+	endpointUri(cl,https(),h',oauthClientPath(app')) &&
+	fact(Says(up,SocialLogin(up,b,sid,cl,as))) &&   
+	fact(Says(up,SocialLoginAccepted(cp,token,cl,as,state))) ->    
+	fact(SocialLoginDone(up,b,sid,cl,as)).
+
+clauses
+	forall up:Principal,sp:Principal,x:Id,h:Host,app:Path,
+	b:Browser,sid:Cookie,data:bitstring,e:Uri,b':Browser,
+	e':Uri,h':Host,app':Path,sid':Cookie,e'':Uri;
+	
+	fact(Server(sp,h)) &&
+	fact(User(up,x,h)) &&
+	endpointUri(e,https(),h,oauthServerPath(app)) &&
+	endpointUri(e,https(),h,oauthServerPath(app)) &&
+	endpointUri(e'',https(),h',loginPath()) &&
+	fact(Says(up,Login(up,b,sid,e'',x))) && 
+	fact(Says(up,SocialLogin(up,b,sid,e',e))) &&
+	fact(DataStore(up,h,x,data))  ->
+	fact(DataRead(up,b',sid',e',data)).
+
+query p:Principal,u:Id,sid:Cookie,e:Uri; 
+      event(Expect(LoginAuthorized(p,u,e,sid))).
+
+
+*)
+
+(* Queries: *)
+
+(*
+query 
+      up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie;
+	event(LoginAuthorized(sp,x,h,sid)).
+
+query 
+      up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie;
+	event(LoginAuthorized(sp,x,h,sid)) ==>
+	event(User(up,x,h)) && 
+	event(Login(up,b,h,x)).
+
+query 
+      up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie;
+	event(LoginAuthorized(sp,x,h,sid)) ==>
+	event(User(up,x,h)) && 
+	(event(Login(up,b,h,x)) || event(Compromised(up))).
+
+query 
+      up:Principal,sp:Principal,x:Id,h:Host,b:Browser,sid:Cookie,o:Path;
+	event(ValidSession(up,b,h)) ==>
+	event(User(up,x,h)) && 
+        (event(Compromised(up)) ||
+         event(UntrustedApp(h,o)) ||
+	(event(Login(up,b,h,x)) && 
+	event(LoginAuthorized(sp,x,h,sid)))).
+
+*)
+(*
+query 
+      up:Principal,sp:Principal,x:Id,u:Uri,h:Host,b:Browser,sid:Cookie,o:Path,d:bitstring;
+	event(DataReleaseAuthorized(sp,h,o,x,sid,d)) ==>
+	event(User(up,x,h)) && 
+        (event(Compromised(up)) ||
+         event(UntrustedApp(h,o)) ||
+	(event(Login(up,b,h,x)) && 
+	event(LoginAuthorized(sp,x,h,sid)))).
+
+query 
+      up:Principal,sp:Principal,x:Id,u:Uri,h:Host,b:Browser,sid:Cookie,o:Path,d:bitstring;
+	event(DataRead(up,b,h,o,d)) ==>
+	event(User(up,x,h)) && 
+        (event(Compromised(up)) ||
+         event(UntrustedApp(h,o)) ||
+	(event(Login(up,b,h,x)) && 
+	event(LoginAuthorized(sp,x,h,sid)) &&
+        event(DataReleaseAuthorized(sp,h,o,x,sid,d)))).
+
+
+query 
+      up:Principal,sp:Principal,x:Id,u:Uri,h:Host,b:Browser,sid:Cookie,o:Path,d:bitstring;
+	event(DataStoreAuthorized(sp,h,o,x,sid,d)) ==>
+	event(User(up,x,h)) && 
+        (event(Compromised(up)) ||
+         event(UntrustedApp(h,o)) ||
+	(event(Login(up,b,h,x)) && 
+	 event(LoginAuthorized(sp,x,h,sid)) &&
+         event(DataWrite(up,b,h,o,d)))).
+
+query 
+      up:Principal,sp:Principal,x:Id,u:Uri,h:Host,b:Browser,sid:Cookie,o:Path,d:bitstring;
+	event(DataStoreAuthorized(sp,h,o,x,sid,d)).
+
+query 
+      up:Principal,sp:Principal,x:Id,u:Uri,h:Host,b:Browser,sid:Cookie,o:Path,d:bitstring;
+	event(DataWrite(up,b,h,o,d)).
+
+*)
+(* query event(Reachable()).  *)
+
+
+
+process(
+    (* Init() | *) Network() | !ServerFactory()
+)

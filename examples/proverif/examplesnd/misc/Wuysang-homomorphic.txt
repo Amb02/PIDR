@@ -1,0 +1,43 @@
+free c, c1, c2, cA, ck1, ck2.
+
+fun pk/1.
+fun enc/2.
+reduc dec(enc(x, pk(y)), y) = x.
+
+fun add/2.
+fun mul/2.
+equation mul(enc(x, z), enc(y, z)) = enc(add(x, y), z).
+
+query attacker: typoflag.
+
+let process1 =
+	in(ck1, pubk);
+	new msg1;
+	out(c1, enc(msg1, pubk)).
+
+let process2 =
+	in(ck2, pubk);
+	new msg2;
+	out(c2, enc(msg2, pubk)).
+
+let processA =
+	in(c1, m1); in(c2, m2);
+	let resultA = mul(m1, m2) in
+	out(cA, resultA).
+
+let processN =
+	in(ckN, sk);
+	in(cA, rA);
+	let outcome = dec(rA, sk) in
+	out(c, outcome);
+	new typoflag; out(c, typoflag).
+
+let processK =
+	new sec;
+	out(ckN, sec);
+	let pub = pk(sec) in
+	out(ck1, pub); out(ck2, pub).
+
+process
+	new ckN;	
+	(processK | process1 | process2 | processA | processN)

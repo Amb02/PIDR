@@ -1,0 +1,100 @@
+free c.
+fun enc/2.
+fun dec/2.
+equation dec(enc(x,y),y)=x.
+equation enc(dec(x,y),y)=x.
+
+fun senc/2.
+reduc sdec(senc(x,y),y)=x.
+
+
+param traceDisplay=long.
+data f/1.
+fun penc/2.
+fun pk/1.
+reduc pdec(penc(x,pk(y)),y)=x.
+
+data host/1.
+
+free hostA,hostB.
+
+private free PA,PB.
+weaksecret PA.
+weaksecret PB.
+
+let processA=
+in(c,hostX);
+out(c,(hostA,hostX));
+in(c,(hostA,hostX,ns1));
+new na1;
+new na2;
+new ca;
+new ra;
+out(c,(penc((hostA,hostX,na1,na2,ca,enc(ns1,PA)),pkS),ns1,ra));
+in(c,(m1,m2));
+let(=na1,m3)=dec(m1,PA) in
+let k=sdec(m3,na2) in
+let(f(ra),rb)=sdec(m2,k) in
+out(c,senc(f(rb),k)).
+
+
+let processB=
+in(c,(m4,ns2,ra));
+new nb1;
+new nb2;
+new cb;
+new rb;
+out(c,(m4,penc((hostB,hostY,nb1,nb2,cb,enc(ns2,PB)),pkS)));
+in(c,(m5,m6));
+let(=nb1,m7)=sdec(m6,PB) in
+let k=sdec(m7,nb2) in
+out(c,(m5,senc((f(ra),rb),k)));
+in(c,m8);
+let(f(rb))=sdec(m8,k) in
+0.
+
+let pS=
+let ns=dec(m11,pX) in
+let ns=dec(m12,pY) in
+out(c,(enc((na1,senc(k,na2)),pX),enc((nb1,senc(k,nb2)),pY))).
+
+let processS=
+in(c,(hostX,hostY));
+new ns;
+out(c,(hostX,hostY,ns));
+in(c,(m9,m10));
+let(hostX,hostY,na1,na2,ca,m11)=pdec(m9,skS)  in
+let(hostY,hostX,nb1,nb2,cb,m12)=pdec(m10,skS) in
+new k;
+if hostX = hostA then
+	    (let pX = PA in
+	    if hostY = hostA then
+		(let pY = PA in pS)
+	    else if hostY = hostB then
+		(let pY = PB in pS)
+	    else
+		(let host(pY) = hostY in pS))
+	else if hostX = hostB then
+	    (let pX = PB in
+	    if hostY = hostA then
+		(let pY = PA in pS)
+	    else if hostY = hostB then
+		(let pY = PB in pS)
+	    else 
+		(let host(pY) = hostY in pS))
+	else
+	    (let host(pX) = hostX in
+	    if hostY = hostA then
+		(let pY = PA in pS)
+	    else if hostY = hostB then
+		(let pY = PB in pS)
+	    else 
+		(let host(pY) = hostY in pS)).
+
+	    
+process new skS;
+	let pkS = pk(skS) in
+	out(c, pkS);
+	(!processA) | (!processB) | (!processS)
+
+

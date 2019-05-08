@@ -1,6 +1,8 @@
 package proverif;
 
 import java.io.IOException;
+import java.io.File;
+import java.io.FileWriter;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,8 +24,12 @@ public class Main {
 				path = args[0];
 			}
 
-			FileParser parser = new FileParser(path);
+			FileWriter fw = new FileWriter(new File("file_not_parsing.txt"));
+			FileParser parser = new FileParser(path, fw);
+
 			parser.parse();
+
+			fw.close();
 		} catch (IOException e) {
 			System.err.println("The file : " + path + " does not exist");
 		}

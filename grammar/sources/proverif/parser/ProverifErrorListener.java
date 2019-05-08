@@ -16,6 +16,6 @@ public class ProverifErrorListener extends BaseErrorListener {
     @Override
     public void syntaxError(Recognizer<?,?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
       count = count + 1;
-      System.out.print("line " + line + ":" + charPositionInLine + " " + msg + " ");
+      System.out.println("line " + line + ":" + charPositionInLine + " " + msg + " ");
     }
 }

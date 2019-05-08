@@ -1,0 +1,82 @@
+(* Variantes de AKEP2 : 
+Bellare Rogaway 1993 : Entity Authentication and Key Distribution
+Attaque reflexive quand on enleve l'identité dans le deuxieme echange *)
+
+
+param attacker = active.
+param simplifyDerivation = true.
+
+(**** Header ****)
+free c.
+private free honestParticipants.
+
+(* fonctions *)
+fun encrypt/2.
+reduc decrypt(encrypt(x,y),y) = x.
+
+(* Hypotheses *)
+
+private free K. (* The key K is shared between A and B; the same key is assumed to be used both when A is initiator and B responder, and when B is responder and is initiator *)
+free A.
+free B.
+
+query evinj: InitAEnd(A,B,z,t) ==> evinj:RespBBegin(B).
+query evinj: InitAEnd(A,B,z,t) ==> evinj:RespBSession(B,A,z,t).
+(* By symmetry, the queries InitBEnd(B, ...) also hold if the ones
+above hold *)
+
+
+query ev:InitAEnd(xA,hostX,xra,xrb).
+query ev:InitBEnd(xB,hostX,xra,xrb).
+query ev:RespAEnd(hostY,xA,xra,xrb).
+query ev:RespBEnd(hostY,xB,xra,xrb).
+
+
+(* Processus *)
+let processInitA = 
+    new ra;
+    let m1 = (ra,A) in
+    out(c,m1);
+    in(c,(=B,m2)); 
+    let (=ra,=B,rb) = decrypt(m2,K) in
+    let m3 = encrypt((rb,A),K)  in
+    event InitAEnd(A,B,ra,rb);
+    out(c,m3).
+
+let processInitB = 
+    new ra;
+    let m1 = (ra,B) in
+    out(c,m1);
+    in(c,(=A,m2)); 
+    let (=ra,=A,rb) = decrypt(m2,K) in
+    let m3 = encrypt((rb,B),K)  in
+    event InitBEnd(B,A,ra,rb);
+    out(c,m3).
+
+let processRespA = 
+    in(c,m1);
+    let (ra,=B) = m1 in
+    event RespABegin(A);
+    new rb;
+    event RespASession(A,B,ra,rb);
+    let m2 = encrypt((ra,A,rb),K) in
+    out(c, (A,m2));
+    in(c,m3);
+    let (=rb,=B)=decrypt(m3,K) in
+    event RespAEnd(A,B,ra,rb).
+
+let processRespB = 
+    in(c,m1);
+    let (ra,A) = m1 in
+    event RespBBegin(B);
+    new rb;
+    event RespBSession(B,A,ra,rb);
+    let m2 = encrypt((ra,B,rb),K) in
+    out(c, (B,m2));
+    in(c,m3);
+    let (=rb,=A)=decrypt(m3,K) in
+    event RespBEnd(B,A,ra,rb).
+
+process 
+        (!processInitA) | (!processInitB) |
+        (!processRespA) | (!processRespB)

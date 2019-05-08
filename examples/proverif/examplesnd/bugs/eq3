@@ -1,0 +1,19 @@
+(*
+
+The system should find that c:secret[] is not reachable
+
+*)
+
+pred c/1 elimVar, decompData.
+nounif c:x.
+
+fun a/0.
+fun b/0.
+
+query c:secret[].
+
+equation a = b.
+
+reduc
+
+a <> b -> c:secret[].

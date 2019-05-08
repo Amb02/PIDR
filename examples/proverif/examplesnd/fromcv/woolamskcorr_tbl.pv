@@ -1,0 +1,165 @@
+(*
+
+WooLam shared-key auth protocol (1992, computer)
+Corrections of Gordon, Jeffrey CSFW'01
+
+A -> B : A
+B -> A : N (fresh)
+A -> B : { m3, B, N }_kAS
+B -> S : A,B,{ m3, B, N }_kAS
+S -> B : { m5, A, N }_kBS
+B: verify { m5, A, N }_kBS = the message from S
+
+Correct.
+*)
+
+param N, N2, N3, Nh.
+
+type nonce [large,fixed].
+type host [bounded].
+type mkey [bounded].
+type mkeyseed [fixed].
+type key [bounded].
+type keyseed [fixed].
+type seed [fixed].
+type macs [bounded].
+type tag [bounded].
+type maxenc [bounded].
+type maxmac [bounded].
+
+table keytbl (key, mkey, host).
+
+fun concat1(tag, host, nonce):maxenc [data].
+
+(* Shared-key encryption (CPA Stream cipher) *)
+
+proba Penc.
+
+expand IND_CPA_sym_enc_all_args(key, maxenc, maxmac, seed, enc, enc_r, enc_r', dec, injbot, Z, Penc).
+
+(* The function Z returns for each bitstring, a bitstring
+   of the same length, consisting only of zeroes. *)
+const Zconcat1:maxenc.
+equation forall y:tag, h:host, z:nonce; 
+	Z(concat1(y,h,z)) = Zconcat1.
+
+(* Mac *)
+
+proba Pmac.
+
+expand SUF_CMA_det_mac(mkey, maxmac, macs, mac, check, Pmac).
+
+(* We model an unbounded number of honest and dishonest participants.
+   Participants honest(...) are honest, dishonest(...) are dishonest *)
+
+type hname.
+fun honest(hname):host [data].
+fun dishonest(hname):host [data].
+
+(* Queries *)
+
+channel c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13,
+	start, finish.
+
+const tag3: tag.
+const tag5: tag.
+
+event beginA(host).
+event beginAfull(host, host, nonce).
+event endB(host, host, nonce).
+
+query x:host, y:host, z:nonce;
+	event(endB(x,y,z)) ==> event(beginAfull(x,y,z)).
+query x:host, y:host, z:nonce;
+	event(endB(x,y,z)) ==> event(beginA(x)).
+query x:host, y:host, z:nonce;
+	inj-event(endB(x,y,z)) ==> inj-event(beginAfull(x,y,z)).
+query x:host, y:host, z:nonce;
+	inj-event(endB(x,y,z)) ==> inj-event(beginA(x)).
+
+implementation table keytbl = "keytbl";
+               type key = 128;
+               type mkey = 160;
+	       type hname = "string";
+               type host = "string" [serial = "id", "id" ];
+               type maxmac = "string";
+               type macs = "string";
+               type seed = 128;
+	       type nonce = 64;
+               fun mac = "(mac Cryptokit.MAC.hmac_sha1)";
+               fun enc_r = "(sym_r_enc (Cryptokit.Cipher.aes ~mode:Cryptokit.Cipher.CBC ~pad:Cryptokit.Padding.length))";
+               fun concat1 = "concat_str_str_str" [ inverse = "unconcat_str_str_str" ];
+               const tag5 = "\"tag5\"";
+               fun dec = "(sym_r_dec 16 (Cryptokit.Cipher.aes ~mode:Cryptokit.Cipher.CBC ~pad:Cryptokit.Padding.length))";
+               fun injbot = "injbot" [inverse = "injbot_inv" ];
+	       fun honest = "id" [inverse = "id" ];
+               const tag3 = "\"tag3\"";
+               fun check = "(mac_check Cryptokit.MAC.hmac_sha1)".
+               
+
+let processInit(A1: host, kAS1: key, mkAS1: mkey) =
+    WLSK_Init {
+	in(c1, hostB2:host); (* Choose the responder *)
+	event beginA(hostB2);
+	out(c2, A1);
+	in(c3, n:nonce);
+	event beginAfull(hostB2, A1, n);
+	let e1 = enc(concat1(tag3, hostB2, n), kAS1) in
+	out(c4, (e1, mac(e1, mkAS1)))}.
+
+let processResp(A2: host, kAS2: key, mkAS2: mkey) =
+    WLSK_Resp {
+	in(c5, hostA2:host);
+	new N:nonce;
+	out(c6, N);
+	in(c7, (m:maxmac, macm:macs));
+	out(c8, (hostA2, A2, m, macm));
+	in(c9, (m2:maxmac, macm2:macs));
+	if check(m2, mkAS2, macm2) then
+	if injbot(concat1(tag5, hostA2, N)) = dec(m2, kAS2) then
+	out(c10, ()) };
+	(* OK *)
+	in(c11, ());
+	let honest(x) = hostA2 in
+	event endB(A2, hostA2, N).
+
+let processH =
+   WLSK_keygen [ kAS > wlsk_enc_key, mkAS > wlsk_mac_key, A > wlsk_id ] {
+        (* Generate keys for honest participant A *)
+	in(start, hostname: hname);
+	let A: host = honest(hostname) in
+	new kAS: key;
+	new mkAS: mkey;
+	insert keytbl(kAS, mkAS, A);
+	out(c13, ()) };
+	(* Each participant can play the roles of the initiator and 
+	   the responder *)
+   	((! i <= N processInit(A, kAS, mkAS)) | (! i <= N processResp(A, kAS, mkAS))).
+    
+
+let processK =
+        (* The adversary can register keys for dishonest participants *)
+	in(c10, (Khost: host, Kkey: key, Kmkey: mkey));
+	let dishonest(x) = Khost in
+           insert keytbl (Kkey, Kmkey, Khost).
+
+let processS =
+    WLSK_S {
+	in(c11, (hostA1:host, hostB0:host, m:maxmac, macm:macs));
+        get keytbl (kbs, mkbs, =hostB0) in
+        get keytbl (kas, mkas, =hostA1) in
+	if check(m, mkas, macm) then
+	let injbot(concat1(=tag3, =hostB0, n)) = dec(m, kas) in
+	let e3 = enc(concat1(tag5, hostA1, n), kbs) in
+	out(c12, (e3, mac(e3, mkbs)))}.
+
+
+process 
+	((! i <= Nh processH) |
+	 (! i <= N processS) |
+	 (! i <= N2 processK))
+
+(* EXPECTED
+All queries proved.
+0.056s (user 0.052s + system 0.004s), max rss 40848K
+END *)

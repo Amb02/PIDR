@@ -1,0 +1,118 @@
+private free pk.
+private free sid1, sid2.
+free c, start.
+private fun inv/1.
+equation inv(inv(k))=k.
+fun pencrypt/2.
+reduc pdecrypt(pencrypt(x,y),inv(y)) = x.
+fun sencrypt/2.
+reduc sdecrypt(sencrypt(x,y),y) = x.
+fun hashfun/2.
+
+private free secretm1.
+query attacker:secretm1.
+
+private free secretm2.
+query attacker:secretm2.
+
+private free secretm5.
+query attacker:secretm5.
+
+private free secretm6.
+query attacker:secretm6.
+
+private free na.
+query ev:wrequest(x1, x2, na, x3) ==> ev:witness(x2, x1, na, x3).
+
+query attacker:(sencrypt((y1, y2, y3, y4, z1), pk), sencrypt((y1, y2, y3, y4, z2), pk)) ==> z1 = z2.
+(*query attacker:(sencrypt((y1, y2, y3, y4, sid1), pk), sencrypt((y1, y2, y3, y4, sid2), pk)).*)
+
+
+let Alice = 
+	new Nb;
+	new Na;
+	Alice0.
+
+let Alice0 = 
+	in(c, =start);
+	new Na;
+	event witness(A, B, na, Na);
+	out(c, pencrypt((A, Na), Kb));
+	if A <> i then
+	if B <> i then
+	out(c, sencrypt(secretm1, Na));
+	out(c, sencrypt(secretm2, Na));
+	Alice1
+	else Alice1
+	else Alice1.
+
+let Alice1 = 
+	in(c, m3);
+	let (=Na, Nb, =B) = pdecrypt(m3, inv(Ka)) in
+	out(c, pencrypt(Nb, Kb));
+	Alice2.
+
+let Alice2 = 0.
+
+
+let Bob = 
+	new Nb;
+	new Na;
+	Bob0.
+
+let Bob0 = 
+	in(c, m4);
+	let (=A, Na) = pdecrypt(m4, inv(Kb)) in
+	new Nb;
+	out(c, pencrypt((Na, Nb, B), Ka));
+	if A <> i then
+	if B <> i then
+	out(c, sencrypt(secretm5, Nb));
+	out(c, sencrypt(secretm6, Nb));
+	Bob1
+	else Bob1
+	else Bob1.
+
+let Bob1 = 
+	in(c, m7);
+	let =Nb = pdecrypt(m7, inv(Kb)) in
+	if A <> i then
+	if B <> i then
+	out(c, sencrypt((B, A, na, Na, SID), pk));
+	event wrequest(B, A, na, Na);
+	Bob2
+	else Bob2
+	else Bob2.
+
+let Bob2 = 0.
+
+
+let Session = 
+	(let (A, B, Ka, Kb, Snd, Rcv) = (A, B, Ka, Kb, SA, RA) in Alice) |
+	(let (B, A, Kb, Ka, Snd, Rcv) = (B, A, Kb, Ka, SB, RB) in Bob).
+
+process
+	new rb2;
+	new sb2;
+	new ra2;
+	new sa2;
+	new rb1;
+	new sb1;
+	new ra1;
+	new sa1;
+	new ki;
+	new kb;
+	new ka;
+	new i;
+	new b;
+	new a;
+	out(c, inv(ki));
+	out(c, ki);
+	out(c, kb);
+	out(c, ka);
+	out(c, i);
+	out(c, b);
+	out(c, a);
+	(let (A, B, Ka, Kb, SA, RA, SB, RB, SID) = (a, b, ka, kb, sa1, ra1, sb1, rb1, sid1) in Session) |
+	(let (A, B, Ka, Kb, SA, RA, SB, RB, SID) = (a, i, ka, ki, sa2, ra2, sb2, rb2, sid2) in Session)
+

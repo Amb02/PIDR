@@ -1,0 +1,15 @@
+free c.
+(* EKE - RSA
+
+A -> B : A, { pkA }_kP
+B -> A : { { K }_pkA }_ kP
+A -> B : { Na }_K
+B -> A : { Na, Nb }_K
+A -> B : { Nb }_K
+
+*)
+
+(* Shared-key cryptography *)
+
+fun encrypt/2.
+reduc decrypt(encrypt(m,k),k) = m.

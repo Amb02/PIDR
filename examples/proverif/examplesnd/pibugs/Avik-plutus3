@@ -1,0 +1,61 @@
+(* The query is false (nothing guarantees that x <> revokedreader) *)
+
+fun skgen/3.
+fun pkgen/2.
+
+data zero/0.
+data succ/1.
+
+data r12/0.
+data r1/0.
+
+fun write/3.
+
+reduc read(z,write(z,u,pkgen(x,y)),skgen(w,x,y)) = u.
+
+free c.
+free f, newgroup, newreader, newwriter.
+free corrupt.
+free revokedreader.
+
+query let mx = m; attacker:mx ==> 
+      (ev:isreader(gx, x, v) & ev:corrupt(x) & ev:writem(wx, mx, vy) & ev:iswriter(gx, wx) & x <> revokedreader) 
+(*    | (ev:isreader(gx, revokedreader, v) & ev:corrupt(revokedreader) & ev:writem(wx, mx, zero) & ev:iswriter(gv, wx)) *).
+
+private fun rprivchannel/1.
+private fun wprivchannel/1.
+
+let process0 =
+    in(newgroup, g); 
+    new sk;
+    (
+    !
+    in(newreader, (=g, r));
+    event isreader(g,r,zero);
+    out(rprivchannel(r), (skgen(g, zero, sk), zero))
+    )
+    |
+    (
+    !
+    in(newwriter, (=g, w));
+    event iswriter(g,w);
+    out(wprivchannel(w), (pkgen(zero, sk), zero))
+    ).
+
+let process2 =
+    in(c,r);
+    in(rprivchannel(r), (rkey,v));
+    in(corrupt, =r);
+    event corrupt(r);
+    out(c, rkey).
+
+let process3 =
+    in(c, w); 
+    in(wprivchannel(w),(wkey,v));
+    new m; 
+    event writem(w, m, v);
+    out(f,(v,write(f,m,wkey))).
+ 
+process
+	((!process0) | (!process2)  | (! process3))
+	

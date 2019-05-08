@@ -1,0 +1,48 @@
+free c.
+(* 
+Woo Lam public key
+A -> B: pkA
+B -> A: b
+A -> B: {pkA,pkB,b}skA
+*)
+
+param verboseClauses = explained.
+
+(* Signatures *)
+
+fun sign/2.
+fun pk/1.
+reduc checksign(sign(x,y),pk(y)) = x.
+reduc getmess(sign(x,y)) = x.
+
+query evinj:eB(x) ==> evinj:eA(x).
+
+let processA =  
+	(* Choose the other host *)
+	in(c,x_pkB);
+        (* Message 1 *)
+	event eA(x_pkB);
+        out(c, pkA);
+	(* Message 2 *)
+        in(c, x_b); 
+	(* Message 3 *)
+        out(c, sign((pkA,x_pkB,x_b), skA)).
+
+let processB =
+        (* Message 1 *)
+	in(c, x_pkA); 
+        (* Message 2 *)
+	new b;
+	out(c, b);
+        (* Message 3 *)
+	in(c, m);
+        if (x_pkA,pkB,b)=checksign(m,x_pkA) then
+	(* OK *)
+        if x_pkA = pkA then
+	event eB(pkB).
+
+process new skA; let pkA = pk(skA) in
+        out(c, pkA);
+        new skB; let pkB = pk(skB) in
+        out(c, pkB);
+	((!processA) | (!processB))

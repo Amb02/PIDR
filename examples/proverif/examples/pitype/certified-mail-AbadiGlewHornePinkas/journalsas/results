@@ -1,0 +1,15 @@
+SECRECY
+PROP1
+goal reachable: begin(TTPSendS(Sname[],S(TTPSigKey[],(Released,A(pk(TTPDecKey[]),(Sname[],(Auth,Auth),(Give,k_1,PasswdTable(RPwd3_1),H((cleartext[],qtmp_1,Reply(PasswdTable(RPwd3_1),qtmp_1),E(k_1,Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth)))))))),PasswdTable(RPwd3_1))))) && begin(Shas(Sname[],k_1,cleartext[],qtmp_1,Reply(PasswdTable(RPwd3_1),qtmp_1),Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth)))) && attacker(RPwd3_1) -> end(Rreceived(Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth))))
+The goal is reached, represented in the following fact:
+event Rreceived(Message(PasswdTable(a_2),msgid_1,(Auth,Auth))) at {45} in copy a (goal)
+PROP2
+goal reachable: begin(TTPSendR(channel_with_host(PasswdTable(Rpwd[]),secchannel_2),(Try,y,H((cleartext5_1,q5_1,Reply(PasswdTable(Rpwd[]),q5_1),E(y,x)))))) && begin(Rhas(secchannel_2,E(y,x),H((cleartext5_1,q5_1,Reply(PasswdTable(Rpwd[]),q5_1),E(y,x))))) && attacker(Sname5_1) && attacker(cleartext5_1) && attacker(q5_1) && attacker(y) && attacker(x) -> end(JudgeSays(Received,PasswdTable(Rpwd[]),x))
+The goal is reached, represented in the following fact:
+PROP3
+goal reachable: begin(TTPSendS(Sname[],S(TTPSigKey[],(Released,A(pk(TTPDecKey[]),(Sname[],(Auth,Auth),(Give,k_1,PasswdTable(RPwd3_1),H((cleartext[],qtmp_1,Reply(PasswdTable(RPwd3_1),qtmp_1),E(k_1,Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth)))))))),PasswdTable(RPwd3_1))))) && begin(Shas(Sname[],k_1,cleartext[],qtmp_1,Reply(PasswdTable(RPwd3_1),qtmp_1),Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth)))) && attacker(RPwd3_1) -> end(Rreceived(Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth))))
+The goal is reached, represented in the following fact:
+event Rreceived(Message(PasswdTable(a_2),msgid_1,(Auth,Auth))) at {37} in copy a (goal)
+PROP4
+goal reachable: begin(TTPSendR2(channel_with_host(PasswdTable(Rpwd[]),secchannel_2),(Try,k_1,H((cleartext[],qtmp_1,Reply(PasswdTable(Rpwd[]),qtmp_1),E(k_1,Message(PasswdTable(Rpwd[]),msgid_1,(Auth,NoAuth)))))))) && begin(Rhas(secchannel_2,E(k_1,Message(PasswdTable(Rpwd[]),msgid_1,(Auth,NoAuth))),H((cleartext[],qtmp_1,Reply(PasswdTable(Rpwd[]),qtmp_1),E(k_1,Message(PasswdTable(Rpwd[]),msgid_1,(Auth,NoAuth))))))) -> end(SThinksRhas(Message(PasswdTable(Rpwd[]),msgid_1,(Auth,NoAuth))))
+The goal is reached, represented in the following fact:

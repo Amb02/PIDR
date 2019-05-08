@@ -1,0 +1,57 @@
+(* Informal narration
+A ‐> B: B, NA, {|A, kAB|}pkB
+
+B ‐> A: {NA, m}kAB
+*)
+
+(* Narration annotation
+A, B are users
+m is a secret message
+kAB a symmetric session key
+NA is a fresh nonce created by A
+pkA and pkB are the public keys of A and B
+*)
+
+(* Formal narration *)
+free net.                                   (* public channel *)
+
+fun pk/1.                                   (* public key *)
+fun encrypt/2.                              (* asymmetric encryption *) 
+fun sencrypt/2.                             (* symmetric encryption *)
+
+reduc decrypt(encrypt(x, pk(y)), y) = x.    (* asymmetric decryption *) 
+reduc sdecrypt(sencrypt(x, y), y) = x.      (* symmetric decryption *)
+
+
+
+
+(* Removed lines which trigger error condition *)
+(*not skA.*)                                    (* secrecy assumption: skA and skB cannot be *)
+(*not skB.*)                                    (* proved from the rules *)
+
+
+
+
+free A.
+free B.
+
+query attacker: m.                          (* secrecy query *)
+
+let A = in(net, pkP);
+        new NA;
+        new kAP;
+        out(net, (B, NA, encrypt((A, kAP), pkP))).
+
+let B = in(net, (=B, N, km));
+        let (=A, kAB) = decrypt(km, skB) in
+            new m;
+            out(net, sencrypt((N, m), kAB)).
+
+process new skB;
+    let (pkB) = pk(skB) in
+        out(net, pkB);
+        ((!A) | (!B))
+
+
+
+(* End Of Protocol *)

@@ -1,0 +1,18 @@
+event ea(bitstring).
+event eb(bitstring).
+event ec(bitstring).
+
+
+query x:bitstring;
+      inj-event(ea(x)) && inj-event(eb(x)) ==> inj-event(ec(x)).
+
+channel c.
+param n.
+
+process
+       ! i <= n
+       in(c, (x:bitstring));
+       event ec(x);
+       event eb(x);
+       event ea(x)
+       

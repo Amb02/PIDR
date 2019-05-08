@@ -1,0 +1,16 @@
+fun f(bitstring, bitstring, bitstring, bitstring): bitstring.
+
+equation forall x: bitstring, y: bitstring, z: bitstring, t: bitstring;
+	 f(x,y,z,t) = f(y,x,z,t).
+equation forall x: bitstring, y: bitstring, z: bitstring, t: bitstring;
+	 f(x,y,z,t) = f(x,z,y,t).
+equation forall x: bitstring, y: bitstring, z: bitstring, t: bitstring;
+	 f(x,y,z,t) = f(x,y,t,z).
+
+free a, b, c, d: bitstring [private].
+free c0: channel.
+
+query attacker(f(d,c,b,a)).
+
+process
+	out(c0, f(a,b,c,d))

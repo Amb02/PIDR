@@ -1,0 +1,88 @@
+set ignoreTypes = none. 
+(* Does not terminate if the adversary is not typed...
+   The property is wrong, because of a replay attack: the adversary
+   can force several sessions of the responder to use the same key,
+   thus he can distinguish Kab from a fresh random number distinct
+   for each session.
+ *)
+
+type coins.
+type host.
+type key.
+type tag.
+
+free c: channel.
+
+(* 
+A -> S : A, { c0, B, Kab }_{Kas}
+S -> B : { c1, A, Kab }_{Kbs}
+I added tags to distinguish the two encryptions.
+*)
+
+(* Shared key encryption *)
+
+fun encrypt(bitstring, key, coins):bitstring.
+reduc forall x:bitstring, y:key, r:coins; decrypt(encrypt(x,y,r),y) = x.
+
+(* Host names *)
+free A, B:host.
+
+(* "eqor(x,A,B) = true" means "x = A or x = B" 
+   A more elegant syntax might be added in the future *)
+
+reduc forall x: host, y: host; eqor(x,x,y) = true;
+      forall x: host, y: host; eqor(x,y,x) = true.
+
+(* Tags to distinguish the first from the second encryption *)
+free c0, c1:tag.
+
+(* Channel on which the table of keys is sent *)
+free keytable: channel [private].
+
+let processInit = 
+        (* Start honest initiator xI (A or B) wishing to talk to (honest or dishonest) xR.
+	   Kis is the key of xI *)
+        in(c, (xI: host, xR:host ));
+	if eqor(xI, A, B) = true then
+	in(keytable, (=xI, Kis: key));
+	(* Real initiator role *)
+	new Kab: key;
+	new r: coins;
+        out(c, (xI, encrypt(((c0, xR), Kab), Kis, r)));
+	(* OK *)
+	0.
+
+let processS = 
+	in(c, (a:host, m:bitstring));
+	in(keytable, (=a, kas:key));
+        let ((=c0, b:host), kab:key) = decrypt(m,kas) in
+	in(keytable, (=b, kbs:key));
+	new r: coins;
+	out(c, encrypt(((c1, a), kab), kbs, r)).
+                      
+let processK(Kas:key, Kbs:key) =
+        in(c, (h:host,k:key));
+	if h = A then (!out(keytable, (A, Kas))) else
+	if h = B then (!out(keytable, (B, Kbs))) else
+	(!out(keytable, (h,k))).
+   
+let processResp = 
+        (* Start honest responder of identity xR, which can be A or B.
+	   Krs is its corresponding key *)
+        in(c, xR:host);
+	if eqor(xR, A, B) = true then
+	in(keytable, (=xR, Krs:key));
+	(* Real responder role *)	
+	in(c, m:bitstring); 
+	let ((=c1, a:host), kab:key) = decrypt(m, Krs) in
+	(* OK *)
+	if eqor(a, A, B) = true then 
+	new Kab':key;
+	out(c, choice[kab, Kab']).
+
+process 
+	new Kas:key; new Kbs:key; 
+	((!processInit) | 
+	 (!processResp) |
+	 (!processS) | 
+	 (!processK(Kas, Kbs)))

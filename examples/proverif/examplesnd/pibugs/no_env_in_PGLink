@@ -1,0 +1,343 @@
+(* There is a bug here because in the query vy is defined after being used,
+so an error message should be displayed. However, the arity of m[...] is 
+not known yet, so the translation of  m[g = gx; v = vy] is delayed, 
+and the query is translated as if it was
+
+query let vy = cons(x111, y111);
+      let mx = m[g = gx; v = vy]; 
+      attacker:mx ==> 
+		  ev:corrupt(rx,gx,vx)
+		& geq:vx,vy
+      	      	& (ev:isreader(rx,gx,vx) | ev:iswriter(rx,gx,vx)).
+
+*)
+
+(* Generated script of the protocol Plutus with 1 versions, corrected *)
+
+param redundantHypElim = beginOnly.
+param traceBacktracking = false.
+
+(** FUNCTION SYMBOLS **)
+
+(* exponents *)
+fun e/2.
+fun d/2.
+
+(* modulus; a random RSA seed (p,q) is modeled as a fresh name s *)
+fun N/1.
+
+(* exponentiation modulo *)
+fun exp/2.
+
+(* symmetric encryption *)
+fun enc/2.
+
+(* hash function *)
+fun hash/1.
+
+(** ALGORITHMS AND EQUATIONS *)
+
+(* derive seed given RSA exponents and modulus *)
+reduc crack(e(x,y),d(x,y),N(x)) = x.                             
+
+(* verify RSA signature, etc. *)
+equation exp(exp(z,(d(x,y),N(x))),(e(x,y),N(x))) = z.            
+equation exp(exp(z,(e(x,y),N(x))),(d(x,y),N(x))) = z.            
+
+(* derive exponent from modulus and base *)
+reduc genExp(N(x),y) = e(x,y).                                    
+
+(* decrypt symmetric encryption *)
+reduc dec(enc(x,y),y) = x.                                        
+
+(** VERSION NUMBERS *)
+
+data zero/0.
+data succ/1.
+
+pred geq/2.
+clauses
+        geq:x,x;
+	geq:x,y -> geq:succ(x),y.
+
+(** ACCESS CONTROL LISTS *)
+
+data cons/2.
+data nil/0.
+
+pred member/2.
+clauses
+  member:x,cons(x,y);
+  member:x,y -> member:x,cons(z,y).
+
+(** CHANNEL DECLARATIONS *)
+
+(* The network and file system are under control of the adversary. *)
+free net,fs.
+
+(* The adversary can choose actions. *)
+free newgroup.
+free revoke.
+free rkeyreq, wkeyreq.
+free corrupt. 
+
+(* Keys are communicated securely to users. *)
+private fun rprivchannel/1.
+private fun wprivchannel/1.
+
+(** QUERIES *)
+
+query let mx = m[g = gx; v = vy]; 
+      let vy = cons(x111, y111);
+      attacker:mx ==> 
+		  ev:corrupt(rx,gx,vx)
+		& geq:vx,vy
+      	      	& (ev:isreader(rx,gx,vx) | ev:iswriter(rx,gx,vx)).
+
+(** CODE FOR OWNERS *)
+
+let processOwr =
+    (* create owner's RSA key pair *)
+    new seed1; new seed2;                                   
+    let ownerpubkey = (e(seed1,seed2),N(seed1)) in                
+    let ownerprivkey = (d(seed1,seed2),N(seed1)) in
+
+    (* publish owner's RSA public key *)
+    out(net,ownerpubkey);
+
+    (
+    ! (* receive a new group creation request;
+         initreaders and initwriters are the initial lists of allowed readers and writers, respectively *)
+      in(net, (=newgroup,initreaders,initwriters));         
+
+      (* create a new group g *)
+      new g;
+
+      (* assert that g is a group *)
+      event isgroup(g);
+
+      (* publish the name g *)
+      out(net,g);
+
+      (* create a private channel for the current state for group g *)
+      new currentstate;
+
+      (
+       ( (* create initial lk *)
+	 new initlk;       
+                                     
+	 (* generate initial sk *)
+         new seed3; let initsk = (d(seed3,initlk),N(seed3)) in        
+   
+	 (* assert the state at version 0 *)
+         event isstate(g,zero,initreaders,initwriters);
+
+	 (* store state for version 0 on channel currentstate *)
+         out(currentstate, (zero,initreaders,initwriters,initlk,initsk))
+       )
+
+      (* Next, we move from version 0 to version 1. *) 
+      | 
+       (
+         (* receive a revoke request for group g; 
+            newreaders and newwriters and the new lists of allowed readers and writers *)
+         in(net, (=revoke,=g,newreaders,newwriters));       
+
+         (* read state for version 0 *)
+         in(currentstate, (=zero,oldreaders,oldwriters,oldlk,oldsk));
+
+         (* wind old lk to new lk *)
+         let newlk = exp(oldlk,ownerprivkey) in              
+
+         (* generate new sk *)
+         new seed3; let newsk = (d(seed3,newlk),N(seed3)) in        
+
+         (* assert the state at version 1 *)
+         event isstate(g,succ(zero),newreaders,newwriters);
+
+         (* store state for version 1 on channel currentstate *)
+         out(currentstate, (succ(zero),newreaders,newwriters,newlk,newsk))    
+       )
+      |
+       (
+       ! (* receive read key request for reader r and group g *)
+         in(net, (=rkeyreq,r,=g));                            
+
+         (* get the current state *)    
+         in(currentstate, (v,readers,writers,lk,sk));
+         out(currentstate, (v,readers,writers,lk,sk));
+
+         (* check that the reader r is allowed *)
+         if member:r,readers then (                             
+
+            (* assert that r is a reader for group g and version v *)
+            event isreader(r,g,v); 
+
+            (* send lk and owner's public key to r *)
+            out(rprivchannel(r), (g,v,lk,ownerpubkey)) )
+       )
+      |
+       ( 
+       ! (* receive write key request for writer w and group g *)
+         in(net, (=wkeyreq,w,=g));                             
+
+         (* get the current state *)   
+         in(currentstate, (v,readers,writers,lk,sk));
+         out(currentstate, (v,readers,writers,lk,sk));
+
+         (* check that the writer w is allowed *)
+         if member:w,writers then (                             
+                                                               
+             (* sign the modulus *)  
+             let (dx,n) = sk in let sn = exp(hash((n,g,v)),ownerprivkey) in
+
+             (* assert that w is a writer for group g and version v *)
+	     event iswriter(w,g,v);
+
+             (* send lk, sk, and signed modulus to w *)
+             out(wprivchannel(w), (g,v,lk,sk,sn)) )
+       )
+      )
+    ).
+
+(** CODE FOR WRITERS *)
+
+let processGoodWtr =
+    (* initiate a writer w for group g *)
+    in(net, (w,g)); 
+
+    (* send write key request *)
+    out(net, (wkeyreq,w,g));                                      
+
+    (* obtain lk, sk, and signed modulus *)
+    in(wprivchannel(w), (=g,v,lk,sk,sn));                   
+
+    (* create data to write *)
+    new m;
+
+    (* encrypt *)
+    let encx = enc(m,lk) in
+
+    (* sign *)
+    let sencx = exp(hash(encx),sk) in
+
+    (* assert that data m has been written by w for group g at version v *)
+    event puts(w,m,g,v);
+
+    (* send content to the file system *)
+    let (dx,n) = sk in out(fs, (g,v,n,sn,encx,sencx)).
+
+let processBadWtr = 
+    (* initiate a writer w for group g *)
+    in(net, (w,g)); 
+
+    (* send write key request *)
+    out(net, (wkeyreq,w,g));                                      
+
+    (* obtain lk, sk, and signed modulus *)
+    in(wprivchannel(w), (=g,v,lk,sk,sn));                   
+
+    (* receive corrupt request for w *)
+    in(net, =(corrupt,w));             
+
+    (* assert that w has been corrupted for group g at version v *)                           
+    event corrupt(w,g,v);
+
+    (* leak lk, sk, and signed modulus *)
+    out(net, (lk,sk,sn)).                                   
+
+(** CODE FOR READERS *)
+
+let processGoodRdr = 
+    (* initiate a reader r for group g *)
+    in(net, (r,g));
+
+    (* send read key request *)
+    out(net, (rkeyreq,r,g));   
+
+    (* obtain lk and owner's public key *)
+    in(rprivchannel(r), (=g,vx,lk,ownerpubkey));      
+
+    (* obtain header and content from file system *)
+    in(fs, (=g,v,n,sn,encx,sencx));                               
+
+    (* verify signature in header *)
+    if hash((n,g,v)) = exp(sn,ownerpubkey) then
+
+    (
+      if vx = succ(zero) then (
+         if v = zero then (
+            (* unwind lk *)
+            let lk = exp(lk,ownerpubkey) in
+
+            (* derive vk *)                       
+            let vk = (genExp(n,lk),n) in
+
+            (* verify signature of encryption *)
+            if hash(encx) = exp(sencx,vk) then
+
+            (* decrypt to obtain data *)
+            let x = dec(encx,lk) in
+
+            (* assert that reader r read data x for group g and version v *)
+            event gets(r,x,g,v)
+         )
+        |
+         if v = succ(zero) then (
+            (* derive vk *)                       
+            let vk = (genExp(n,lk),n) in
+
+            (* verify signature of encryption *)
+            if hash(encx) = exp(sencx,vk) then
+
+            (* decrypt to obtain data *)
+            let x = dec(encx,lk) in
+
+            (* assert that reader r read data x for group g and version v *)
+            event gets(r,x,g,v)
+         )
+      )
+      |
+      if vx = zero then (
+         if v = zero then (
+            (* derive vk *)                       
+            let vk = (genExp(n,lk),n) in
+
+            (* verify signature of encryption *)
+            if hash(encx) = exp(sencx,vk) then
+
+            (* decrypt to obtain data *)
+            let x = dec(encx,lk) in
+
+            (* assert that reader r read data x for group g and version v *)
+            event gets(r,x,g,v)
+      ))
+    ).
+
+let processBadRdr =
+    (* initiate a reader r for group g *)
+    in(net, (r,g));
+
+    (* send read key request *)
+    out(net, (rkeyreq,r,g));   
+
+    (* obtain lk and owner's public key *)
+    in(rprivchannel(r), (=g,v,lk,ownerpubkey));      
+
+    (* receive corrupt request for r *)
+    in(net, =(corrupt,r));                                       
+
+    (* assert that r has been corrupted for group g at version v *)
+    event corrupt(r,g,v);
+
+    (* leak lk *)
+    out(net,lk).                                                
+
+(** TOP LEVEL PROCESS *)
+
+process
+         ( processOwr
+	 | (! processGoodWtr) | (! processBadWtr)
+         | (! processGoodRdr) | (! processBadRdr)  
+         ) 
+

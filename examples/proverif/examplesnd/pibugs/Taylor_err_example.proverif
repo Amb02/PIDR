@@ -1,0 +1,75 @@
+(* Wang Protocol - B cheats *)
+(* http://www.i2r.a-star.edu.sg/icsd/staff/guilin/papers/IWAP05-fl.pdf *)
+
+(* Want detailed traces *)
+param traceDisplay = long.
+
+(* Comms channel *)
+free ch.
+
+(* Actor identities *)
+free A,B,T.
+
+(* Message flags *)
+data fAT/0.
+data fRec/0.
+
+(* Hash function *)
+fun H/1.
+
+(* PKI *)
+fun pk/1.
+fun pkencrypt/3. 
+reduc pkdecrypt(pkencrypt(m, r, pk(sk)), sk) = (m,r).
+
+(* Symmetric Encryption *)
+fun skencrypt/2.
+reduc skdecrypt(skencrypt(m,sk),sk) = m.
+
+(* signing *)
+fun sign/2.
+reduc checksig(sign(m,sk), pk(sk)) = m.
+
+query attacker:signSKA;
+		attacker:skT.
+
+not signSKA.
+not skT.
+
+let A =
+	new message;
+	new random; 
+	new K;
+	let C = skencrypt(message,K) in
+	0.
+
+let TTP = 
+	in (ch, msgIn);
+	let (=fAT,A,B,T,HC,HK,AT) = msgIn in (
+		let decryptedSignedBlob = pkdecrypt(AT, skT) in
+		0
+	) else (
+		let (=fRec,=A,=B,=T,=HC,=HK,EK,EOO,EOR,Rec) = msgIn in
+		0
+	).
+
+process 
+	(
+		new signSKA;
+		in (ch, (=T,pkT)); 
+		out (ch, (A,pk(signSKA)));
+		in (ch, (=B,signPKB)); 
+		in (ch, (=T,signingPKT)); 
+		!A
+	)
+	|
+	(
+		new skT;
+		new signingSKT;
+		out (ch, (T,pk(skT)));
+		in (ch, (=A,signPKA));
+		in (ch, (=B,signPKB)); 
+		out (ch, (T,pk(signingSKT)));
+		!TTP
+	 )
+

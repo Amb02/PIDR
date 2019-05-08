@@ -1,0 +1,8 @@
+(* Equivalence is false: r(a,b) fails, a succeeds *)
+
+free c, a, b.
+
+reduc r(x,x) = x.
+
+process
+        let y = choice[r(a,b),a] in out(c,y)

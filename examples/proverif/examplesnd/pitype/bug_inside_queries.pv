@@ -1,0 +1,31 @@
+(* There was a bug in the treatment of inside queries. 
+ProVerif finds the clause
+cl = p1(x_92,y_93) && attacker(x_92) && attacker(y_93) -> end(e(x_92,y_93))
+It has to prove p2(x_92,y_93) from the hypothesis of cl.
+
+It considers an instance of cl in which x_92 and y_93 become constants
+say X and Y.
+This instance matches the conclusion of query with x -> X and y -> Y.
+Then it tries to prove p2(X,Y) from the hypothesis of the instance of cl
+p1(X,Y) && attacker(X) && attacker(Y).
+The proof succeeds using p1(x,y) && x <> y -> p2(x,y), because
+X and Y are different constants!
+However, x_92 and y_93 are not always different: this inequality needs
+to be rechecked with variables instead of the constant X and Y. *)
+
+pred p1(bitstring, bitstring) [block].
+pred p2(bitstring, bitstring).
+
+
+clauses
+   forall x: bitstring, y: bitstring; p1(x,y) && x <> y -> p2(x,y).
+
+channel c.
+event e(bitstring, bitstring).
+
+query x: bitstring, y: bitstring; event(e(x,y)) ==> p2(x,y).
+
+process
+   in(c, (x: bitstring, y: bitstring));
+   if p1(x,y) then
+   event e(x,y)

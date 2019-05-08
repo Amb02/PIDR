@@ -1,0 +1,34 @@
+free c:channel.
+free d:channel [private].
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+event A(bitstring).
+event B(bitstring).
+event C(bitstring).
+
+const ok,ko,k:bitstring[private].
+
+table tbl(bitstring).
+
+axiom x:bitstring,y:bitstring; event(A(x)) ==> event(B(x)) [fullSat].
+
+query x:bitstring,y:bitstring; event(A(x)) ==> event(B(x)).
+query x:bitstring; inj-event(C(x)) ==> (inj-event(A(x)) ==> event(B(x))).
+
+query x:bitstring,y:bitstring; event(A(x)) ==> event(B(x));
+inj-event(C(x)) ==> (inj-event(A(x)) ==> event(B(x))).
+
+process
+  (in(c,x:bitstring);
+  if x = a
+  then
+    event A(a);
+    event C(a);
+    out(d,k)
+  else
+    out(c,ko))
+
+  | in(d,x:bitstring); out(c,ok)

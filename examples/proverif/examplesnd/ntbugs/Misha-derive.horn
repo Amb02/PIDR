@@ -1,0 +1,32 @@
+
+param verboseRules = true. 
+
+pred begin/1 block.
+
+fun hash/2.
+
+fun server/1.
+fun client/1.
+
+pred derive/2.
+nounif derive: x, (y, z).
+
+query end:server(x).
+
+reduc
+  attacker:v_25 & attacker:v_26 -> attacker:hash(v_25,v_26);
+  attacker:v_27 & attacker:v_28 -> attacker:(v_27,v_28);
+  attacker:(v_29,v_30) -> attacker:v_29;
+  attacker:(v_31,v_32) -> attacker:v_32;
+  mess:v_34,v_33 & attacker:v_34 -> attacker:v_33;
+  attacker:v_36 & attacker:v_35 -> mess:v_36,v_35;
+  attacker:c[];
+  equal:v_38,v_38;
+  (* attacker:new_name[!att = v_39]; *)
+
+  derive:x_18,(y_20,z_19) -> derive:x_18,z_19;
+  derive:x_21,(y_22,z_23) -> derive:x_21,y_22;
+  derive:x_24,x_24;
+
+  begin:client(x_15[]) -> attacker:(x_15[],hash(x_15[],k_11[]));
+  derive:x_43,x'_44 & attacker:hash(x'_44,k_11[]) & attacker:x_43 -> end:server(x'_44).

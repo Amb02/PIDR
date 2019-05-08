@@ -1,0 +1,28 @@
+free c:channel.
+free d:channel[private].
+
+fun enc(nat,bitstring):bitstring.
+fun dec(bitstring,bitstring):nat
+reduc forall x:nat,y:bitstring; dec(enc(x,y),y) = x.
+
+event Record(nat,bitstring).
+event Public(nat,bitstring).
+
+query i:nat, k:bitstring; event(Record(i,k)) ==>  ((event(Public(i,k)) && attacker(k)) ==> event(Record(i,k))).
+
+process
+  new k:bitstring;
+  event Public(0,k);
+  out(c,enc(0,k));
+  out(d,(k,0))
+  |
+  !
+  in(d,(k:bitstring,j:nat));
+  in(c,i:nat);
+  in(c,y:bitstring);
+  if j = dec(y,k) && i > j then
+  new k'[]:bitstring;
+  event Record(j,k);
+  out(c,enc(i,k'));
+  event Public(i,k');
+  out(d,(k',i))

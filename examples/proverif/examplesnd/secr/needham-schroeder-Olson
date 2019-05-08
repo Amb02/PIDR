@@ -1,0 +1,209 @@
+(* Needham Shroeder shared key protocol
+
+Notice that we have slightly changed the protocol such that
+the analyzer terminates. The
+	{ Nb }Kab -> { Nb-1 }Kab 
+is replaced by
+	{ Nb, 0 }Kab -> { Nb, 1 }Kab
+
+ *)
+
+
+fun msg/2.		(* msg(t, text), network traffic at time t. *)
+
+fun store/2.		(* store(t, data), host stored data at time t. *)
+
+fun session/4.		(* session(t, host1, host2, key), host1 and
+			   host2 established a connection at time t
+			   using shared key.  *)
+
+fun encrypt/2.          (* encrypt(text, key) *)
+fun host/1.		(* host(key), hostname for key K_{host,server} *)
+
+(* constants 0 and 1 *)
+fun c0/0.
+fun c1/0.
+
+(* times, now, latter, last *)
+fun t0/0.
+fun t1/0.
+fun tn/0.
+
+(***** desired reachable goals *****)
+
+(* check that A and B do establish a session now (sanity check) *)
+(* Removed for timing.
+query a:session(t0, host(Kas[]), host(Kbs[]), k).
+query b:session(t0, host(Kbs[]), host(Kas[]), k).
+*)
+
+(* check that now (t0) secrets and key do leak latter (sanity check)
+   (now secrets leak because attacker can remember the encrypted
+   messages from now and decrypt them latter, after it has recovered
+   the key from A or B's store) *)
+(* Removed for timing.
+query net:msg(t1, key[Kas[], Kbs[], v1]).
+query net:msg(tn, secretA[t0, i]).
+query net:msg(tn, secretB[t0, i]).
+*)
+
+(***** desired UNreachable goals *****)
+
+(* check that the now secrets and key don't leak now *)
+(* Removed for timing.
+query net:msg(t0, secretA[t0, i]).
+query net:msg(t0, secretB[t0, i]).
+query net:msg(t0, key[Kas[], Kbs[], v1]).
+*)
+
+(* check that the latter secrets don't leak latter *)
+(* Needham-Schroeder fails this (i.e. these goals are reachable when
+   they shouldn't be) because attacker can recover the key from a store
+   and setup sessions latter. *)
+query net:msg(t1, secretA[t1, i]).
+query net:msg(t1, secretB[t1, i]).
+
+(* sanity check to ensure that normal run of protocol proceeds as we
+   expect; it catches some typos, logical errors and other mistakes
+   we might make.  query for session offers similar assurance; z:sane
+   offers finer granularity of that assurance. *)
+(* query z:sane1.
+query z:sane2.
+query z:sane3.
+query z:sane4.
+query z:sane5. *)
+
+reduc
+
+
+
+(* Attacker *)
+
+(* given a key, the attacker can en/decrypt a message *)
+net:msg(t, k) & net:msg(t, encrypt(m,k)) -> net:msg(t, m);
+net:msg(t, x) & net:msg(t, y) -> net:msg(t, encrypt(x,y));
+
+(* the attacker may invent a host and its key pair *)
+net:msg(t, x) -> net:msg(t, host(x));
+
+(* the attacker knows the public keys of its victims *)
+net:msg(t, host(Kas[]));
+net:msg(t, host(Kbs[]));
+
+net:msg(t0, c0);
+net:msg(t0, c1);
+
+(* Any message the attacker sees now, it can replay latter *)
+net:msg(t0, m) -> net:msg(t1, m);
+net:msg(t1, m) -> net:msg(tn, m);
+
+(* Any value which A or B stores for sometime (e.g. on disk), the
+   attacker may eventually recover. *)
+disk:store(t0, x) -> net:msg(t1, x);
+disk:store(t1, x) -> net:msg(tn, x);
+
+
+
+(* Msg 1, A -> S : A, B, N_A
+   Na[hb,t,i] -> A notes that it used Na to initiate a handshake for
+   host hb at time t. *)
+
+net:msg(t, hb) ->
+    net:msg(t, (host(Kas[]), hb, Na[hb,t,i]));
+
+(* net:msg(t0, (host(Kas[]), host(Kbs[]), Na[host(Kbs[]),t0,i])) ->
+    z:sane1; *)
+
+
+
+(* Msg 2, S -> A : {N_A, B, K, {K, A}_K_B }_K_A *)
+
+net:msg(t, (host(ka), host(kb), n)) -> 
+    net:msg(t, encrypt( ( n, host(kb), key[ka,kb,n],
+                          encrypt((key[ka,kb,n], host(ka)), kb)
+                        ), ka));
+
+(* net:msg(t0, 
+    encrypt( ( Na[host(Kbs[]),t0,i],
+               host(Kbs),
+               key[Kas[], Kbs[], Na[host(Kbs[]),t0,i]],
+               encrypt( ( key[Kas[], Kbs[], Na[host(Kbs[]),t0,i]],
+                          host(Kas[])),
+                        Kbs[])),
+             Kas[])) -> z:sane2; *)
+
+
+
+(* Msg 3, A -> B : {K, A}_K_B 
+   A may store K from Msg2; the attacker may discover it after some
+   time.
+ *)
+
+net:msg(t, encrypt((Na[hb,t,i], hb, k, m), Kas[])) ->
+    net:msg(t, m);
+
+net:msg(t, encrypt((Na[hb,t,i], hb, k, m), Kas[])) ->
+    disk:store(t, k);
+
+(* net:msg(t0, encrypt( ( key[Kas[], Kbs[], Na[host(Kbs[]),t0,i]],
+                       host(Kas[])),
+                     Kbs[])) -> z:sane3; *)
+
+
+
+(* Msg 4, B -> A : {N_B,0}_K 
+   Nb[ha,t,k,i] -> B notes that it used Nb to finish handshake for
+   host ha at time t using key k. *)
+
+net:msg(t, encrypt((k, ha), Kbs[])) ->
+    net:msg(t, encrypt((Nb[ha,t,k,i], c0), k));
+
+(* net:msg(t0, encrypt( ( Nb[  host(Kas[]),
+			    t0,
+			    key[Kas[], Kbs[], Na[host(Kbs[]), t0, i]],
+                            i],
+                       c0),
+                     key[Kas[], Kbs[], Na[host(Kbs[]),t0,i]])) -> z:sane4; *)
+
+
+
+(* Msg 5, A -> B : {N_B,1}_K 
+   A has completed the handshake to use K for securely talking to B.
+ *)
+
+net:msg(t, encrypt((nb, c0), k)) ->
+    net:msg(t, encrypt((nb, c1), k));
+
+(* net:msg(t0, encrypt( ( Nb[  host(Kas[]),
+			    t0,
+			    key[Kas[], Kbs[], Na[host(Kbs[]), t0, i]],
+                            i],
+                       c1),
+                     key[Kas[], Kbs[], Na[host(Kbs[]), t0, i]])) -> z:sane5; *)
+
+net:msg(t, encrypt((Na[h2,t,i], h2, k, m), Kas[])) &
+net:msg(t, encrypt((nb, c0), k)) ->
+    a:session(t, host(Kas[]), h2, k);
+
+
+
+(* B's response to Msg 5: B notes that it can use K for securely
+   talking to A. *)
+
+net:msg(t, encrypt((k, h1), Kbs[])) &
+net:msg(t, encrypt((Nb[h1,t,k,i], c1), k)) ->
+    b:session(t, host(Kbs[]), h1, k);
+
+
+
+(* Msg 6a, A -> B : {SecretA}_K *)
+
+a:session(t, host(Kas[]), host(Kbs[]), k) ->
+    net:msg(t, encrypt(secretA[t, i], k));
+
+
+
+(* Msg 6b, B -> A : {SecretB}_K *)
+
+b:session(t, host(Kbs[]), host(Kas[]), key) ->
+    net:msg(t, encrypt(secretB[t, i], key)).

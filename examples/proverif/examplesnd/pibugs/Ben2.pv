@@ -1,0 +1,8 @@
+(* Equivalence is true because the computation of r(a,b) always fails *)
+
+free c, a, b.
+
+reduc r(x,x) = x.
+
+process
+        let x = r(a,b) in let y = choice[x,a] in out(c,y)

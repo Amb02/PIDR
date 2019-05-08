@@ -1,0 +1,91 @@
+free ch.
+ 
+fun xor/2.
+fun mul/2.
+fun exp1/2.
+fun exp2/2.
+equation exp1(g, x) = exp2(g, x).
+equation exp1(exp2(g,x),y) = exp1(exp2(g,y),x).
+
+fun add/2.
+fun sub/2.
+(*Reference:proverif example signedaugmentedeke file*)
+equation add(sub(x,y),y)=x.
+equation sub(add(x,y),y)=x.
+
+fun computeshare/2.
+fun e/2.
+equation e(mul(a, p), mul(b,q)) = exp1(e(p, q), mul(a,b)).
+equation e(add(p, q), r) = mul(e(p, r), e(q, r)).
+equation e(p, add(q, r)) = mul(e(p, q), e(q, r)).
+
+
+fun h1/1.
+fun h2/1.
+fun h3/2.
+fun h4/3.
+ 
+fun lookup/2.
+ 
+not s1.
+
+query attacker: typoflag.
+ 
+ 
+let processK =
+        new g1; new g2; new pg; new s1; new one;
+        let Penc = mul(s1,pg) in
+        let P1enc = computeshare(pg,one) in
+        out(ch,(g1,g2,pg,Penc,P1enc));
+        in(ch1,Eid1); 
+        let Qide = h1(Eid1) in
+        let dID1 = computeshare(Qide, one) in
+        out(ch2,(Qide,dID1));
+	
+        in(ch3,Eid2); 
+        new s2;
+        let Psig = mul(s2,pg) in
+        out(ch,Psig);
+        let Qids = h1(Eid2) in
+        let Sids = mul(Qids,s2) in
+        out(ch4,(Qids,Sids));
+        phase 1.
+ 
+let processE =
+        new id1; new id2;
+        in(ch,msgE);
+        out(ch1,id1);
+        in(ch2,m1);
+       	let (a,b,p,encpkey,enckeyshare) = msgE in
+		let (pubkey,encskeyshare) = m1 in	
+        let l=e(enckeyshare,pubkey) in
+		let r=e(p,encskeyshare) in        
+        if l=r then
+        out(ch3,id2);
+        in(ch,sigpkey);
+        in(ch4,m2);
+        phase 1; new typoflag; out(ch,typoflag).
+ 
+let processC =
+        in(ch,pubparameters);
+        in(ch,spk);
+        phase 1.
+ 
+let processA =
+        new voterList;
+        in(ch,msg);
+        in(ch,esigpkey);
+        phase 1.
+ 
+let processS=
+        phase 1.
+ 
+let processV=
+        new Vid;
+        in(ch,msgV);
+        phase 1.
+        
+process
+        new ch1; new ch2; new ch3; new ch4; new chs; new che; new cha; 
+        (processK | processE | processC | processA | processS |processV)
+

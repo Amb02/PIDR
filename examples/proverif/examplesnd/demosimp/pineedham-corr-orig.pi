@@ -1,0 +1,74 @@
+free c.
+(* 
+
+Needham-Schroeder public key protocol
+Corrected version by Lowe
+
+	   ? -> A : pkB
+Message 1: A -> B : { N_A, pkA }_pkB
+Message 2: B -> A : { N_A, N_B, pkB }_pkA
+Message 3: A -> B : { N_B }_pkB
+
+*)
+
+param verboseClauses = explained.
+
+(* Public key cryptography *)
+
+fun pk/1.
+fun aenc/2.
+reduc adec(aenc(x,pk(y)),y) = x.
+
+(* Signatures *)
+
+fun sign/2.
+reduc checksign(sign(x,y),pk(y)) = x.
+reduc getmess(sign(x,y)) = x.
+
+(* Shared-key cryptography *)
+
+fun senc/2.
+reduc sdec(senc(x,y),y) = x.
+
+private free secretANa, secretANb, secretBNa, secretBNb.
+query attacker:secretANa;
+      attacker:secretANb;
+      attacker:secretBNa;
+      attacker:secretBNb.
+
+let processA =  
+	(* Choose the other host *)
+	in(c,pkX);
+        (* Message 1 *)
+	new Na; 
+        out(c, aenc((Na, pkA), pkX));
+	(* Message 2 *)
+        in(c, m); 
+        let (=Na, NX2, =pkX) = adec(m, skA) in
+	(* Message 3 *)
+        out(c, aenc(NX2, pkX));
+        (* OK *)
+	if pkX = pkB then
+	out(c, senc(secretANa, Na));
+	out(c, senc(secretANb, NX2)).
+
+let processB =
+        (* Message 1 *)
+	in(c, m); 
+	let (NY, pkY) = adec(m, skB) in
+        (* Message 2 *)
+	new Nb;
+	out(c, aenc((NY, Nb, pkB), pkY));
+        (* Message 3 *)
+	in(c, m3);
+        if Nb = adec(m3, skB) then
+	(* OK *)
+        if pkY = pkA then
+	out(c, senc(secretBNa, NY));
+	out(c, senc(secretBNb, Nb)).
+
+process new skA; let pkA = pk(skA) in
+        out(c, pkA);
+        new skB; let pkB = pk(skB) in
+        out(c, pkB);
+	((!processA) | (!processB))

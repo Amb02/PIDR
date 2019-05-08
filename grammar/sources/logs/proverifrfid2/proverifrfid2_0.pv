@@ -1,0 +1,236 @@
+(*set verboseRules = true.*)
+
+(*--------channels----------*)
+free ch1: channel.
+free ch2: channel.
+free sch1: channel [private].
+free sch2: channel [private].
+
+
+
+(*-----constants------------*)
+free IDi:bitstring [private]. 
+free RIDj:bitstring [private].
+free DATA:bitstring [private].
+
+table d1(bitstring,bitstring,bitstring,bitstring,bitstring).
+table d2(bitstring,bitstring,bitstring,bitstring,bitstring).
+
+(*-------functions----------*)
+fun h(bitstring):bitstring.  (*hash function*)
+fun xor(bitstring,bitstring):bitstring. 
+fun con(bitstring,bitstring):bitstring. (*string concatenation*)
+
+(*------equations-----------*)
+equation forall m:bitstring,n:bitstring; xor(xor(m,n),n)=m.
+
+(*----------queries---------*)
+query attacker(IDi).
+query attacker(RIDj).
+query attacker(DATA).
+
+query id:bitstring; inj-event(TAGAuth(id))==>inj-event(TAGStart(id)).
+query id:bitstring; inj-event(ReaderAuth(id))==>inj-event(ReaderStart(id)).
+
+
+
+
+(*-----------event----------*)
+event TAGStart(bitstring).
+event TAGAuth(bitstring).
+event ReaderStart(bitstring).
+event ReaderAuth(bitstring).
+
+(*------TAG's process------*)
+let TAG=
+  out(sch1,(IDi));
+  in(sch1,(xi:bitstring,PIDi:bitstring));
+ 
+!
+(
+  in(ch1,tRr:bitstring);
+  event TAGStart(IDi);
+  new Rt:bitstring;
+  new T1:bitstring;
+  let B1 = h(con(con(con(con(xi,tRr),Rt),IDi),T1)) in
+  let M2 = (B1,Rt,T1,PIDi) in
+  out(ch1,M2)(* ;
+  *** Useless code ***
+  in(ch1,(tB7:bitstring,tT4:bitstring));
+  new T5:bitstring;
+  let xinew = h(con(con(con(xi,Rt),tRr),IDi)) in
+  let PIDinew = h(con(con(con(xinew,Rt),tRr),PIDi)) in
+  if tB7 = h(con(h(con(con(con(con(xi,xinew),PIDi),PIDinew),IDi)),tT4)) then
+  let xi = xinew in
+  let PIDi = PIDinew in
+ 0 *)
+).
+ 
+(*-----Reader's process------*) 
+let READER=
+  out(sch2,(RIDj));
+  in(sch2,(xj:bitstring,PRIDj:bitstring));
+  
+!
+(
+ event ReaderStart(RIDj);
+ new Rr:bitstring;
+ new T2:bitstring;
+ new T4:bitstring;
+ let M1 = Rr in
+ out(ch1,(M1));
+ in(ch1,(rB1:bitstring,rRt:bitstring,rT1:bitstring,rPIDi:bitstring));
+ let B2 = h(con(con(con(con(con(xj,Rr),rRt),RIDj),rT1),T2)) in
+ let M3 = (rB1,B2,Rr,rRt,rT1,T2,rPIDi,PRIDj) in
+ out(ch2,M3);
+ 
+ in(ch2,(rB3:bitstring,rB4:bitstring,rB5:bitstring,rT3:bitstring));
+ let xjnew = h(con(con(con(xj,rRt),Rr),RIDj)) in
+ let PRIDjnew = h(con(con(con(xjnew,rRt),Rr),PRIDj)) in
+ let rDATA = xor(rB4,h(con(con(con(con(con(xj,xjnew),PRIDj),PRIDjnew),RIDj),rT3))) in
+ if rB5 = h(con(con(con(con(xj,RIDj),PRIDj),rDATA),rT3)) then
+ let B6 = xor(rB3,h(con(con(xjnew,PRIDjnew),rT3))) in
+ let B7 = h(con(B6,T4)) in
+ let xj = xjnew in
+ let PRIDj = PRIDjnew in
+ let M5 = (B7,T4) in
+ out(ch1,M5);
+ 0
+).
+
+ 
+(*------Server's process-------*)
+let SReg1 =
+  in(sch1,(SIDi:bitstring));
+  new x1new:bitstring;
+  let x1old = x1new in
+  new P1new:bitstring;
+  let P1old = P1new in
+  insert d1(SIDi,x1new,P1new,x1old,P1old);
+  out (sch1,(x1new,P1new)). 
+ 
+let SReg2 =
+   in(sch2,(SRIDj:bitstring));
+   new x2new:bitstring;
+   let x2old = x2new in
+   new P2new:bitstring;
+   let P2old = P2new in
+   insert d2(SRIDj,x2new,P2new,x2old,P2old);
+   out (sch2,(x2new,P2new)).
+ 
+let SAuth =
+  in(ch2,(sB1:bitstring,sB2:bitstring,sRr:bitstring,sRt:bitstring,sT1:bitstring,sT2:bitstring,sPIDi:bitstring,sPRIDj:bitstring));
+  new T3:bitstring;
+ (*
+ new x11:bitstring;
+	 new x12:bitstring;
+	 new P11:bitstring;
+	 new P12:bitstring;
+	 new x21:bitstring;
+	 new x22:bitstring;
+	 new P21:bitstring;
+	 new P22:bitstring;
+ 
+ *)  
+     
+   
+(
+     get d1(SIDi,x1new,=sPIDi,x1old,P1old) in
+ (
+   get d2(SRIDj,x2new,=sPRIDj,x2old,P2old) in
+  (
+   if sB1 = h(con(con(con(con(x1new,sRr),sRt),SIDi),sT1)) then
+   event TAGAuth(SIDi);
+    if sB2 = h(con(con(con(con(con(x2new,sRr),sRt),SRIDj),sT1),sT2)) then
+	 event ReaderAuth(SRIDj);
+	 
+	 let x11 = x1new in
+	 let P11 = sPIDi in
+	 let x12 = h(con(con(con(x11,sRt),sRr),SIDi)) in
+	 let P12 = h(con(con(con(x12,sRt),sRr),sPIDi)) in
+	 let x21 = x2new in
+	 let P21 = sPRIDj in
+	 let x22 = h(con(con(con(x21,sRt),sRr),RIDj)) in
+	 let P22 = h(con(con(con(x22,sRt),sRr),sPRIDj)) in
+	 insert d1(SIDi,x12,P12,x11,P11);
+	 insert d2(SRIDj,x22,P22,x21,P21);
+	 let B3 = xor(h(con(con(con(con(x11,x12),P11),P12),SIDi)),h(con(con(x22,P22),T3))) in
+     let B4 = xor(h(con(con(con(con(con(x21,x22),P21),P22),SRIDj),T3)),DATA) in
+     let B5 = h(con(con(con(con(x21,SRIDj),P21),DATA),T3)) in
+     let M4 = (B3,B4,B5,T3) in
+	  out(ch2,M4)
+  ) 
+ ) 
+   
+
+  else
+(
+  get d1(SIDi,x1new,P1new,x1old,=sPIDi) in
+ (
+   get d2(SRIDj,x2new,P2new,x2old,=sPRIDj) in
+   (
+    if sB1 = h(con(con(con(con(x1old,sRr),sRt),SIDi),sT1)) then
+   event TAGAuth(SIDi);
+    if sB2 = h(con(con(con(con(con(x2old,sRr),sRt),SRIDj),sT1),sT2)) then
+	 event ReaderAuth(SRIDj);
+	 
+	 let x11 = x1old in
+	 let x21 = x2old in
+	 let P11 = sPIDi in
+	 let P21 = sPRIDj in
+	 let x12 = h(con(con(con(x11,sRt),sRr),SIDi)) in
+	 let P12 = h(con(con(con(x12,sRt),sRr),sPIDi)) in
+	 let x22 = h(con(con(con(x21,sRt),sRr),SRIDj)) in
+	 let P22 = h(con(con(con(x22,sRt),sRr),sPRIDj)) in
+	 insert d1(SIDi,x12,P12,x11,P11);
+	 insert d2(SRIDj,x22,P22,x21,P21);
+	  let B3 = xor(h(con(con(con(con(x11,x12),P11),P12),SIDi)),h(con(con(x22,P22),T3))) in
+     let B4 = xor(h(con(con(con(con(con(x21,x22),P21),P22),SRIDj),T3)),DATA) in
+     let B5 = h(con(con(con(con(x21,SRIDj),P21),DATA),T3)) in
+     let M4 = (B3,B4,B5,T3) in
+     out(ch2,M4)
+
+   )
+ )
+  
+  else 
+ (
+  get d1(SIDi,x1new,P1new,x1old,=sPIDi) in
+ (
+  get d2(SRIDj,x2new,=sPRIDj,x2old,P2old) in
+   (
+   if sB1 = h(con(con(con(con(x1old,sRr),sRt),SIDi),sT1)) then
+   event TAGAuth(SIDi);
+    if sB2 = h(con(con(con(con(con(x2new,sRr),sRt),SRIDj),sT1),sT2)) then
+	 event ReaderAuth(SRIDj);
+ 
+	 let x11 = x1old in
+	 let P11 = sPIDi in
+	 let x22 = x2new in
+	 let P22 = sPRIDj in
+	 let x12 = h(con(con(con(x11,sRt),sRr),SIDi)) in
+	 let P12 = h(con(con(con(x12,sRt),sRr),sPIDi)) in
+	 let x21 = x22 in
+	 let P21 = sPRIDj in
+	 let x22 = h(con(con(con(x21,sRt),sRr),RIDj)) in
+	 let P22 = h(con(con(con(x22,sRt),sRr),sPRIDj)) in
+	 insert d1(SIDi,x12,P12,x11,P11);
+	 insert d2(SRIDj,x22,P22,x21,P21);
+	 let B3 = xor(h(con(con(con(con(x11,x12),P11),P12),SIDi)),h(con(con(x22,P22),T3))) in
+     let B4 = xor(h(con(con(con(con(con(x21,x22),P21),P22),SRIDj),T3)),DATA) in
+     let B5 = h(con(con(con(con(x21,SRIDj),P21),DATA),T3)) in
+     let M4 = (B3,B4,B5,T3) in
+     out(ch2,M4)
+
+   )
+  )
+ )
+)
+) .
+
+
+let Server = SReg1 | SReg2 | SAuth.
+process !TAG | !READER | !Server
+ 
+ 
+ 

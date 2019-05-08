@@ -13,10 +13,14 @@
 #include <time.h>
 #include <errno.h>
 
-#define TIME_BEFORE_ALARM 30
+#define TIME_BEFORE_ALARM 300
 
 #define STRING_BUFFER_SIZE 2048
 #define SMALL_BUFFER_SIZE 128
+
+#define PROVERIF_TRACE_STATEMENT   "A trace has been found"
+#define PROVERIF_NOPROOF_STATEMENT "cannot be proved"
+
 
 enum {
   SAFE,

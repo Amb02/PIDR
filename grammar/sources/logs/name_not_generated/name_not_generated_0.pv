@@ -1,0 +1,17 @@
+fun SharedKey(bitstring):bitstring.
+
+fun DHPub(bitstring):bitstring.
+fun DHKey(bitstring,bitstring):bitstring.
+equation forall x: bitstring, y:bitstring; DHKey(x,DHPub(y)) = DHKey(y,DHPub(x)).
+
+nounif attacker(new nonce153).
+
+query x:bitstring; attacker(SharedKey(x)).
+
+
+process
+new envelope127: bitstring;
+new t144: bitstring;
+if envelope127 = t144 then (
+new nonce153: bitstring;
+0)

@@ -1,6 +1,0 @@
-The following files did not end under 30 seconds :
-../sources/logs/choice/NeedhamSchroederPK-corr1/NeedhamSchroederPK-corr1_1.pv
-../sources/logs/choice/NeedhamSchroederPK-corr1/NeedhamSchroederPK-corr1_2.pv
-../sources/logs/choice/NeedhamSchroederPK-corr1-host-getkey/NeedhamSchroederPK-corr1-host-getkey_2.pv
-../sources/logs/choice/NeedhamSchroederPK-corr2-proba/NeedhamSchroederPK-corr2-proba_1.pv
-../sources/logs/choice/NeedhamSchroederPK-corr2-proba/NeedhamSchroederPK-corr2-proba_2.pv

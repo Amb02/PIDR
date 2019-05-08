@@ -1,0 +1,9 @@
+free c : channel.
+free d : bitstring [private].
+
+fun h(bitstring): bitstring.
+fun g(bitstring) : bitstring
+reduc forall x: bitstring; g(h(x)) = x.
+
+process
+  out(c, g(h(d)))

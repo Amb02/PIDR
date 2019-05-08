@@ -1,0 +1,7 @@
+table T(bitstring).
+
+free a, b, d: bitstring.
+free c: channel.
+
+process
+	insert T(a) | get T(=a) in 0 else out(c, choice[b,d])

@@ -1,0 +1,72 @@
+(*  This is an attempt to model GDH.1 protocol of Michael Steiner et al for 3 participants *)
+
+(*      p0 send {g^n0} to p1. 
+	p1 sends {g^n0, g^(n0*n1)} to p2.
+	p2 sets group key to g^(n0*n1*n2).
+	p2 sends {g^n2, g^(n2*n0)} to p1. p1 sets group key to g^(n0*n1*n2).
+	p1 sends {g^(n1*n2)} to p0. p0 sets group key to g^(n0*n1*n2). 
+*)
+
+
+free c. 
+
+private free m, success, fail, honest.
+
+
+(* Check if attacker can recover m*)
+ 
+ query attacker:m.
+
+ 
+ 
+(* Shared key cryptography *)
+
+fun enc/2.
+fun dec/2.
+equation dec(enc(x,y),y) = x.
+
+
+(* Diffie-Hellman functions *)
+(* Exponential and Diffie-Hellman *)
+
+data g/0.
+
+fun exp/2.
+
+equation exp(exp(g,x),y) = exp(exp(g,y),x).
+
+(* This equations seem to be the reason why ProVerif fails to prove! Reason: comment out the equation below and ProVerif succeeds in proving. *)
+  equation exp(exp(exp(g,y),z),x)=exp(exp(exp(g,y),x),z). 
+
+
+(* Is this last equation really neeeded?
+ equation exp(exp(exp(g,y),z),x)=exp(exp(exp(g,x),y),z). 
+ *)
+
+
+
+(* processes *)
+
+let p0 = new n0; 
+	(let gn0 = exp(g,n0) in
+         out(c01,gn0); in(c10,x1); let k = exp(x1,n0) in out(c01, enc(m,k))).
+
+let p1 = new n1; 
+         in(c01,x0); 
+         let k = exp(x0,n1) in 
+                         out(c12,(x0,k));
+			 in(c21,(v,w));
+			 out(c10,exp(v,n1)).
+
+			
+let p2 = new n2;
+	( in(c12,(t,u));
+		 out(c21,(exp(g,n2),exp(t,n2)));
+		 let comk2=exp(u,n2) in
+		 0).
+
+process  new c01; new c10; new c12; new c21;( p0 | p1 | p2 |
+  !(in(c01, x); out(c01, x); out(c, x) |
+    in(c10, x); out(c10, x); out(c, x) |
+    in(c12, x); out(c12, x); out(c, x) | 
+    in(c21, x); out(c21, x); out(c, x)))

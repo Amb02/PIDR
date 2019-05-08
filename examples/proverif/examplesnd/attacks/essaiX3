@@ -1,0 +1,56 @@
+fun sencrypt/2.
+reduc sdecrypt(sencrypt(x,y),y) = x.
+
+fun pencrypt/2.
+fun pk/1.
+reduc pdecrypt(pencrypt(x,pk(y)),y) = x.
+
+private free sA,sB,c.
+free e.
+
+query 	attacker : sA;
+	attacker : sB.
+
+let processA = 
+	in(e,xpkB);
+	new k;
+	out(e,pencrypt((k,pkA),xpkB));
+	in(e,z);
+	let (x,y) = pdecrypt(z,skA) in
+	if x = k then
+	(
+		if xpkB = pkA then
+		out(e,sencrypt(sA,y))
+	)
+	|
+	(
+		if xpkB = pkB then
+		out(e,sencrypt(sB,y))
+	).
+
+let processB =
+	in(e,z);
+	let (x,y) = pdecrypt(z,skB) in
+	new Kab;
+	out(e,pencrypt((x,Kab),y));
+	in(e,z2);
+	let s2 = sdecrypt(z2,Kab) in
+	0.
+
+let processBB =
+	in(e,z);
+	let (x,y) = pdecrypt(z,skA) in
+	new Kab;
+	out(e,pencrypt((x,Kab),y));
+	in(e,z2);
+	let s2 = sdecrypt(z2,Kab) in
+	0.
+
+process new skA;
+	new skB;
+	let pkA = pk(skA) in
+	let pkB = pk(skB) in
+	out(e,pkA);
+	out(e,pkB);
+	((!processB)|(!processBB)|(!processA))
+

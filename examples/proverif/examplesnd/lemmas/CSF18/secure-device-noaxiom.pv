@@ -1,0 +1,93 @@
+free c:channel.
+
+fun pk(bitstring):bitstring.
+fun aenc(bitstring,bitstring):bitstring.
+
+fun adec(bitstring,bitstring):bitstring
+reduc forall x:bitstring,y:bitstring; adec(aenc(x,pk(y)),y) = x.
+
+const init:bitstring.
+const left:bitstring.
+const right:bitstring.
+
+event Attack.
+
+type stamp.
+
+free id:stamp [private].
+
+event Counter(channel,stamp,stamp,nat).
+event VCell_bitstring(channel,bitstring).
+
+query i:nat,i1:nat,st:stamp,st1:stamp,st2:stamp,x:bitstring,x1:bitstring,d:channel;
+  event(Attack) ==>
+        event(VCell_bitstring(d,(i1,x1))) && event(VCell_bitstring(d,(i,x))) && i1 = i && (i1,x1) <> (i,x)
+    ||  event(Counter(d,st2,st,i1)) && event(Counter(d,st2,st,i)) && i1 <> i
+    ||  event(Counter(d,st2,st,i1)) && event(Counter(d,st2,st1,i1)) && st <> st1.
+
+process
+  !(
+  new cell:channel; (* Application of the process Device *)
+  new k:bitstring;
+  (
+    out(c,pk(k));
+    0
+  ) | (
+    out(cell,(0,init));
+    0
+  ) | (
+    !(  (* Application of the process Conf *)
+    in(c,x:bitstring);
+    in(cell,(i:nat,y:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+    event VCell_bitstring(cell,(i,y));
+    let test:bool = (y = init && (x = left || x = right)) in
+    if test
+    then
+      new st[]:stamp;
+      event Counter(cell,id,st,i);
+      event VCell_bitstring(cell,(i + 1,x));
+      out(cell,(i + 1,x));
+      0
+    else
+      out(cell,(i,y));
+      0
+    )  ) | (
+    !(  (* Application of the process Decrypt *)
+    in(c,x:bitstring);
+    let (xl:bitstring,xr:bitstring) = adec(x,k) in
+    in(cell,(i:nat,y:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+    event VCell_bitstring(cell,(i,y));
+    if y = left
+    then
+      out(c,xl);
+      out(cell,(i,y));
+      0
+    else
+      if y = right
+      then
+        out(c,xr);
+        out(cell,(i,y));
+        0
+      else
+        out(cell,(i,y));
+        0
+    )  ) | (
+    !(
+    in(cell,(i:nat,x:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+    event VCell_bitstring(cell,(i,x));
+    out(cell,(i,x));
+    0
+    )  ) | (
+    !(
+    new sl:bitstring;
+    new sr:bitstring;
+    (
+      out(c,aenc((sl,sr),pk(k)));
+      0
+    ) | (
+      in(c,(= sl,= sr));
+      event Attack();
+      0
+    )
+    )  )
+  )

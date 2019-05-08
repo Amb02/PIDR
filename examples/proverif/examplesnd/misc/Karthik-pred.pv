@@ -1,0 +1,12 @@
+pred A() [block].
+pred B().
+event ExpectB().
+
+query event(ExpectB()) ==> B().
+
+clauses
+   A() -> B().
+
+process
+        if A() then
+        event ExpectB()

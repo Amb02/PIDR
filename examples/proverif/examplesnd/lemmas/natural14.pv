@@ -1,0 +1,22 @@
+free c:channel.
+
+event A.
+event B.
+
+fun test(nat):bitstring.
+
+fun proj(bitstring):nat
+reduc forall i:nat; proj(test(i)) = i.
+
+equation test(0) = test(1).
+
+query event(A); event(B).
+
+
+
+process
+  in(c,(i:nat,x:bitstring));
+  in(c,(j:nat,y:bitstring));
+  if (i - 5) > j
+  then event A
+  else event B

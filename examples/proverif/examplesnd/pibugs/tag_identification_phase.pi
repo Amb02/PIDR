@@ -1,0 +1,81 @@
+(* The ACSP’s tag identification phase *)
+
+free C. (* Main channel for communication *)
+free SELECT. (* Command for selecting specific tag *)
+free QUERY. (* Query command *)
+free IDENT. (* Identification message from tag, containing TID information *)
+free AUTHEN. (* Authentication message *)
+free READER , TAG.(* Symbalic names for events *)
+private free initialReaderData, initialTagData. (* Channels to send initial Data *)
+private free SID,nTID.
+private free tagInfo.
+
+(* Constructors *)
+fun hash/2. (* One way hash function with two variables *)
+fun select_CRC/4.
+fun query_CRC/3.
+fun ident_CRC/3.
+fun authen_CRC/2.
+fun xor/2.
+
+(* Destructors *)
+reduc extract_TID(xor(t , s) , s) = t.
+
+query attacker: correct_operation_flag.
+query evinj:end(w , x , (y , z , u)) ==> evinj:begin(w , x , (y , z , u)).
+(* query evinj:end(w , x , (y , z , t , u)) ==> evinj:begin(w , x , (y , z , t , u)). *)
+
+(* Reader process *)
+let reader = in(initialReaderData , (readerSID , intended_TID));
+   new R3;
+   let reader_to_tag_select_crc = select_CRC(SELECT , R3 , hash(R3 , readerSID) , xor(intended_TID , readerSID)) in (* Compute CRC of the outgoing  message *)
+      out(C , (SELECT , R3 , hash(R3 , readerSID) , xor(intended_TID , readerSID) , reader_to_tag_select_crc));
+   new R4;
+   let reader_to_tag_query_crc = query_CRC(QUERY , R4 , hash(R4 , readerSID)) in (* Compute CRC of the outgoing  message *)
+      out(C , (QUERY , R4 , hash(R4 , readerSID) , reader_to_tag_query_crc));
+   in(C , (=IDENT , R5n , input_hash , input_CRC));
+   let expected_hash = hash(R4 , intended_TID) in
+      if expected_hash = input_hash then 
+         ( let expected_CRC = ident_CRC(IDENT , R5n , input_hash) in (* Compute expected CRC base on inputs *)
+              if expected_CRC = input_CRC then (* Check if CRC is corret *)
+                 ( event end(READER , TAG , (R4,hash(R4 , readerSID),reader_to_tag_query_crc));
+                   let reader_to_tag_authen_crc = authen_CRC(AUTHEN , hash(R5n , intended_TID)) in (* Compute CRC of the outgoing  message *)
+                      (* event begin(TAG , READER , (R5n , hash(R4 , intended_TID) , R4 , reader_to_tag_authen_crc)); *)
+                      out(C , (AUTHEN , hash(R5n , intended_TID) , reader_to_tag_authen_crc));
+                     out(initialReaderData , (SID , hash(xor(R4 , R5n) , intended_TID))))).
+
+(* Tag process *)
+let tag = in(initialTagData , (tagSID , TID));
+   in(C , (=SELECT , R3n , first_input_hash , input_xor , first_input_CRC));
+   let first_expected_hash = hash(R3n , tagSID) in 
+      if first_expected_hash = first_input_hash then 
+         ( let first_expected_CRC = select_CRC(SELECT , R3n , first_input_hash , input_xor) in (* Compute expected CRC base on inputs *)
+              if first_expected_CRC = first_input_CRC then (* Check if CRC is corret *)
+                 ( let recieved_TID = extract_TID(input_xor , tagSID) in
+                      if recieved_TID = TID then
+                         ( in(C , (=QUERY , R4n , sd_input_hash , sd_input_CRC));
+                           let sd_expected_hash = hash(R4n , tagSID) in
+                              if sd_expected_hash = sd_input_hash then
+                                 ( let sd_expectd_CRC = query_CRC(QUERY , R4n , sd_input_hash) in (* Compute expected CRC base on inputs *)
+                                      if sd_expectd_CRC = sd_input_CRC then (* Check if CRC is corret *)
+                                         ( new R5;
+                                           let tag_to_reader_ident_crc = ident_CRC(IDENT , R5 , hash(R4n , TID)) in
+                                              event begin(READER , TAG , (R4n , hash(R4n , tagSID), tag_to_reader_ident_crc));
+                                              out(C , (IDENT , R5 , hash(R4n , TID) , tag_to_reader_ident_crc));
+                                           in(C , (=AUTHEN , trd_input_hash , trd_input_CRC));
+                                           let trd_expected_hash = hash(R5 , TID) in (* Compute expected CRC base on inputs *)
+                                              if trd_expected_hash = trd_input_hash then (* Check if CRC is corret *)
+                                                 ( let trd_expected_CRC = authen_CRC(AUTHEN , trd_input_hash) in (* Compute expected CRC base on inputs *)
+                                                    if trd_expected_CRC = trd_input_CRC then
+                                                       ( (* event end(TAG , READER , (R5 , hash(R4n , TID) , R4n , tag_to_reader_ident_crc)); *)
+                                                         out(initialTagData , (SID , hash(xor(R4n , R5) , TID)));
+                                                         new correct_operation_flag; out(net , correct_operation_flag);tag))))))). (* Send flag to show correct exit *)
+
+
+(* Initializer process – initial data are sent over a trusted channel *)
+let initializer = 
+   out(initialReaderData , (SID , nTID));
+   out(initialTagData , (SID , nTID)).
+     
+
+process !reader | !tag | initializer 

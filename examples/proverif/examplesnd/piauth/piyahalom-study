@@ -1,0 +1,137 @@
+free c.
+Starting rules:
+
+        Server
+Rule 13: c:(host(v23),v24,encrypt((host(v25),v26),v23)) -> c:(v24,encrypt((host(v23),kab[(host(v23),v24,encrypt((host(v25),v26),v23)),v27],v26),v25),encrypt((host(v25),kab[(host(v23),v24,encrypt((host(v25),v26),v23)),v27],v24),v23))
+
+
+        AasB
+Rule 12: c:(v20,v21) -> c:(host(kas[]),Nb[(v20,v21),v22],encrypt((v20,v21),kas[]))
+        BasA
+Rule 11: c:(v15,encrypt((v16,v17,Na[v18]),kbs[]),v19) -> c:(v19,encrypt(v15,v17))
+Rule 10: c:(host(kbs[]),Na[v14])
+
+        B
+Rule 9: c:(v11,v12) -> c:(host(kbs[]),Nb[(v11,v12),v13],encrypt((v11,v12),kbs[])) ((begin:(v11) and out:(host(kbs[]),Nb[(v11,v12),v13],encrypt((v11,v12),kbs[]))))
+        A
+Rule 8: c:(v7,encrypt((host(kbs[]),v8,Na[v9]),kas[]),v10) -> end:(v9),(host(kas[]))
+Rule 7: c:(v2,encrypt((v3,v4,Na[v5]),kas[]),v6) -> c:(v6,encrypt(v2,v4))
+Rule 6: c:(host(kas[]),Na[v1])
+
+        attacker
+Rule 4: c:c[]
+Rule 2: c:encrypt(x,y) & c:y -> c:x
+Rule 1: c:any3 -> c:host(any3)
+Rule 0: c:any2 & c:any1 -> c:encrypt(any2,any1)
+
+
+The attack:
+
+rule 8 end:(v887),(host(kas[]))
+  3-tuple c:(v888,encrypt((host(kbs[]),kab[(host(kas[]),Na[v887],encrypt((host(kbs[]),v889),kas[])),v890],Na[v887]),kas[]),v891)
+    any c:v888
+    2-th c:encrypt((host(kbs[]),kab[(host(kas[]),Na[v887],encrypt((host(kbs[]),v889),kas[])),v890],Na[v887]),kas[])
+      rule 13 c:(Na[v887],encrypt((host(kas[]),kab[(host(kas[]),Na[v887],encrypt((host(kbs[]),v889),kas[])),v890],v889),kbs[]),encrypt((host(kbs[]),kab[(host(kas[]),Na[v887],encrypt((host(kbs[]),v889),kas[])),v890],Na[v887]),kas[]))
+        3-tuple c:(host(kas[]),Na[v887],encrypt((host(kbs[]),v889),kas[]))
+          0-th c:host(kas[])
+            rule 6 c:(host(kas[]),Na[v892])
+          1-th c:Na[v887]
+            rule 6 c:(host(kas[]),Na[v887])
+          2-th c:encrypt((host(kbs[]),v889),kas[])
+            rule 12 c:(host(kas[]),Nb[(host(kbs[]),v889),v893],encrypt((host(kbs[]),v889),kas[]))
+              2-tuple c:(host(kbs[]),v889)
+                0-th c:host(kbs[])
+                  rule 10 c:(host(kbs[]),Na[v894])
+                any c:v889
+    any c:v891
+
+1/ rule 10, BasA, first message: c:(host(kbs[]),Na[v894])
+   B -> ? (B, Na_as_B)
+
+2/ rule 12, AasB, first message: c:(host(kas[]),Nb[(host(kbs[]),v889),v893],encrypt((host(kbs[]),v889),kas[]))
+   after replacing the normal Na[v894] by any message v889.
+   ? -> A (B, Na_1)
+   A -> ? (A, Nb_as_A, {B, Na_1}_Kas)
+
+3/ rule 6, A, first message: c:(host(kas[]),Na[v887])
+   A -> ? (A, Na)
+
+4/ rule 13 Server: c:(Na[v887],encrypt((host(kas[]),kab[(host(kas[]),Na[v887],encrypt((host(kbs[]),v889),kas[])),v890],v889),kbs[]),encrypt((host(kbs[]),kab[(host(kas[]),Na[v887],encrypt((host(kbs[]),v889),kas[])),v890],Na[v887]),kas[]))
+   ? -> S (A, Na, {B, Na_1}_Kas)
+   S -> ? (Na, { A, Kab, Na_1 }_Kbs, { B, Kab, Na }_Kas)
+
+5/ rule 8, A completed
+   ? -> A (Ni, { B, Kab, Na }_Kas, M)
+   A -> completed
+
+That is:
+
+1   A -> ? (A, Na)
+                      1'  ? -> A (B, Na_1)
+                      2'  A -> ? (A, Nb_as_A, {B, Na_1}_Kas)
+                      2'' ? -> S (A, Na, {B, Na_1}_Kas)
+                      3'  S -> ? (Na, { A, Kab, Na_1 }_Kbs, { B, Kab, Na }_Kas)
+
+3   ? -> A (Ni, { B, Kab, Na }_Kas, M)
+    A -> completed
+
+We have found the attack of Syverson, A Taxonomy of Replay Attacks.
+(Even a slightly more general version, in which Na_1 is not
+necessarily equal to Na.)
+
+
+----------------------------------------------------------------------------------------
+
+-- AUTH Bkey
+Starting rules:
+Rule 10: c:(host(v13),v14,encrypt((host(v15),v16),v13)) -> c:(v14,encrypt((host(v13),kab[(host(v13),v14,encrypt((host(v15),v16),v13)),v17],v16),v15),encrypt((host(v15),kab[(host(v13),v14,encrypt((host(v15),v16),v13)),v17],v14),v13))
+Rule 9: c:(encrypt((host(kas[]),v10,Nb[(host(kas[]),v11),v12]),kbs[]),encrypt(Nb[(host(kas[]),v11),v12],v10)) & c:(host(kas[]),v11) -> end:(v12),(host(kas[]),v11,Nb[(host(kas[]),v11),v12],v10)
+Rule 8: c:(v7,v8) -> c:(host(kbs[]),Nb[(v7,v8),v9],encrypt((v7,v8),kbs[]))
+Rule 7: c:(v2,encrypt((v3,v4,Na[v5]),kas[]),v6) -> c:(v6,encrypt(v2,v4)) (begin:(host(kas[]),Na[v5],v2,v4))
+Rule 6: c:(host(kas[]),Na[v1])
+Rule 5: c:c & c:m -> private:c,m
+Rule 4: c:c[]
+Rule 3: private:c,m & c:c -> c:m
+Rule 2: c:encrypt(x,y) & c:y -> c:x
+Rule 1: c:any3 -> c:host(any3)
+Rule 0: c:any2 & c:any1 -> c:encrypt(any2,any1)
+
+No agreement on N_A
+
+rule 9 end:(v459),(A,v460,Nb01,kab01)
+  2-tuple c:(encrypt((A,kab01,Nb01),kbs[]),encrypt(Nb01,kab01))
+    2-th c:encrypt((A,kab01,Nb01),kbs[])
+      duplicate c:(Nb01,encrypt((B,kab01,Na01),kas[]),encrypt((A,kab01,Nb01),kbs[]))
+    1-th c:encrypt(Nb01,kab01)
+      rule 7 c:(v468,encrypt(Nb01,kab01))
+        3-tuple c:(Nb01,encrypt((B,kab01,Na01),kas[]),v468)
+          duplicate c:Nb01
+          1-th c:encrypt((B,kab01,Na01),kas[])
+            rule 10 c:(Nb01,encrypt((B,kab01,Na01),kas[]),encrypt((A,kab01,Nb01),kbs[]))
+              3-tuple c:(B,Nb01,encrypt((A,Na01),kbs[]))
+                c:B
+                1-th c:Nb01
+                  rule 8 c:(B,Nb01,encrypt((A,v460),kbs[]))
+                    duplicate c:(A,v460)
+                2-th c:encrypt((A,Na01),kbs[])
+                  rule 8 c:(B,Nb[(A,Na01),v472],encrypt((A,Na01),kbs[]))
+                    rule 6 c:(A,Na01)
+          any c:v468
+  2-tuple c:(A,v460)
+    c:A
+    hypothesis c:v460
+
+Non-injective agreement proof failed
+
+Na[v461] = Na01
+Nb[(A,v460),v459] = Nb01
+kab[(B,Nb[(A,v460),v459],encrypt((A,Na[v461]),kbs[])),v462] = kab01
+
+A -> B : A, N_A
+B -> S : B, N_B, { A, N_A }_Kbs
+
+I -> B : A, v460
+B -> S : intercepted
+S -> A : N_B, { B, K_ab, N_A }_Kas, { A, K_ab, N_B }_Kbs
+A -> B : { A, K_ab, N_B }_Kbs, { N_B }_Kab
+B completes the run with N_A = v460

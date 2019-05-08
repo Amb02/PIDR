@@ -1,0 +1,16 @@
+(* ProVerif should find a false attack:
+   it thinks that out(c,h(secret)) can be executed,
+   which leads to an attack because the input
+   in(c,=h(s)) can be executed iff secret = s,
+   which gives some information on the secret. *)
+
+free c.
+free s.
+
+private free secret.
+noninterf secret.
+
+private fun h/1.
+
+process
+   (new d; out(d, c); out(c,h(secret))) |  in(c,=h(s)); out(c,c)

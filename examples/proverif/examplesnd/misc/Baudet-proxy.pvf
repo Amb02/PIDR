@@ -1,0 +1,82 @@
+(* cryptographic symbols and equations *)
+
+fun senc/2.
+reduc sdec(senc(x,y),y) = x.
+
+(* channels *)
+free publicnet.
+
+(* private ? *) free confignet.
+private free intranet.
+
+private free secr.
+
+private free dbbasekeys.
+
+(* tags *)
+
+free NewProxy, NewClient.
+
+(* enciphering proxy *)
+
+let procproxy =
+	in(confignet, (myname, basekey));
+	new dbproxys;
+	new dbclients;
+	(!
+		in(intranet, (=myname, cmd));
+	   	let (=NewProxy, proxy, key) = sdec(cmd, basekey) in
+		out(dbproxys, (proxy, key))
+	) | (!
+		in(intranet, (=myname, cmd));
+	   	let (=NewClient, client, proxy) = sdec(cmd, basekey) in
+		out(dbclients, (client, proxy))
+	) | (!
+		in(intranet, (clientA, clientB, cleartext));
+		in(dbclients, (=clientB, proxy));
+		out(dbclients, (clientB, proxy));
+		in(dbproxys, (=proxy, key));
+		out(dbproxys, (proxy, key));
+		out(publicnet, (myname, proxy, senc((clientA, clientB, cleartext), key)))
+	) | (!
+		in(publicnet, (proxy, =myname, ciphertext));
+		in(dbproxys, (=proxy, key));
+		out(dbproxys, (proxy, key));
+		let (clientA, clientB, cleartext) = sdec(ciphertext, key) in
+		out(intranet, (clientA, clientB, cleartext))
+	).
+
+let procconfig =
+	in(publicnet, proxy);
+	new basekey;
+	out(confignet, (proxy, basekey));
+	out(dbbasekeys, (proxy, basekey)).
+
+let prockeyserver =
+	in(publicnet, (clientA, proxyA, proxyB, clientB));
+	new key;
+	in(dbbasekeys, (=proxyA, basekeyA));
+	out(dbbasekeys, (proxyA, basekeyA));
+	out(intranet, (proxyA, senc((NewProxy, proxyB, key), basekeyA)));
+	out(intranet, (proxyA, senc((NewClient, clientB, proxyB), basekeyA)));
+	in(dbbasekeys, (=proxyB, basekeyB));
+	out(dbbasekeys, (proxyB, basekeyB));
+	out(intranet, (proxyB, senc((NewProxy, proxyA, key), basekeyB)));
+	out(intranet, (proxyB, senc((NewClient, clientA, proxyA), basekeyB))).
+	
+let procclient =
+	in(publicnet, (clientA, clientB));
+	out(intranet, (clientA, clientB, secr)).
+
+let troyan =
+	(
+	  in(intranet, x); let (y, z, =secr) = x in 0 else out(publicnet, x)
+	)|(
+	  in(publicnet, x); out(intranet, x)
+	).
+
+query attacker:secr.
+(* query attacker:senc((X,Y,secr),Z). ? *)
+
+process 
+	! procproxy | procconfig | prockeyserver | procclient | troyan

@@ -1,0 +1,7 @@
+free c:channel.
+free d:channel [private].
+
+fun f(channel): bitstring.
+
+process
+	out(c, f(choice[c,d]))

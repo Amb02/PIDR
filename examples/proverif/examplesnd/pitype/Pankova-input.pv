@@ -1,0 +1,28 @@
+set ignoreTypes = false.
+
+free net : channel.
+free tls : channel [private].
+
+type t.
+
+event finished.
+
+let proc_A =
+    new x1 : t;
+    new x2 : t;
+    out(tls, (x1,x2));
+    out(tls, x2);
+    in(net, x3 : t);
+    0.
+
+let proc_B =
+    in(tls, (x1 : t, x2 : t));
+    out(net, x1);
+    in(net, =x1);
+    event finished;
+    0.
+
+query event(finished).
+
+process
+    proc_A | (!proc_B)

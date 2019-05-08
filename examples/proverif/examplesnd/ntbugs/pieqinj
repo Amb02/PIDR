@@ -1,0 +1,40 @@
+(* This is a bug against injective agreement.
+   The system should not prove injective agreement,
+   because the message send from A to B is in fact
+   equal to f(c1,g(c0)), so it does not depend on n.
+   Then an attacker gets encrypt(f(c1,g(c0)),k) from
+   B, and reuse this message in all future sessions of A
+   to trigger the end event many times without executing
+   the begin event. *)
+
+(* Handling of equation does not terminate.
+   Swap the sides of the equation to make it convergent *)
+
+fun encrypt/2.
+reduc decrypt(encrypt(x,y),y) = x.
+
+fun f/2.
+fun g/1.
+fun h/2.
+
+equation f(x,g(y)) = h(y,h(z,x)).
+
+free c,c0,c1.
+query evinj:endauth(x) ==> evinj:beginauth(x).
+
+let processA = 
+  new n;
+  out(c, h(c0,h(n,c1)));
+  in(c, x);
+  let y = decrypt(x,k) in
+  if y = h(c0,h(n,c1)) then
+  event endauth(h(c0,h(n,c1))).
+
+let processB =
+  in(c,x);
+  event beginauth(x);
+  out(c, encrypt(x,k)).
+
+process
+	new k;
+        ((!processA) | (!processB))

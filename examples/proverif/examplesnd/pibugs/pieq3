@@ -1,0 +1,32 @@
+(* 
+
+The system should find that secret may be output
+
+Equations not handled. Could be modified to make
+it convergent.
+
+*)
+
+query attacker:secret.
+
+fun c0/0.
+fun f/2.
+fun g/2.
+fun h/1.
+fun i/1.
+fun m/1.
+
+equation f(x,x) = g(x,x).
+equation h(x) = i(x).
+equation g(i(x),h(x)) = m(x).
+
+fun f2/2.
+fun g2/2.
+fun h2/1.
+fun i2/1.
+
+equation f2(x,x) = g2(x,x).
+equation h2(x) = i2(x).
+equation g2(i2(x),h2(x)) = m(x).
+
+process new secret; if f(h(c0),h(c0)) = f2(h2(c0),h2(c0)) then out(c,secret)

@@ -1,0 +1,19 @@
+type nonce.
+
+fun hash(nonce): nonce.
+fun f(nonce): channel.
+
+nounif y:nonce; attacker(choice[new n[x = hash(y)], hash(new n)]).
+nounif y:nonce; mess(f(new n[x = hash(y)]), hash(new n[x = hash(y)])).
+(*nounif attacker(new n).*)
+not x: sid; attacker(new n[!1 = x]).
+
+
+
+free c: channel.
+
+process !
+	in(c, x: nonce);
+	phase 1;
+	new n: nonce;
+	out(c, choice[n, hash(n)])

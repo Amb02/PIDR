@@ -1,0 +1,120 @@
+set movenew = true.
+
+fun empty():bitstring.
+fun hash(bitstring):bitstring.
+fun pk(bitstring):bitstring.
+fun sk(bitstring):bitstring.
+fun penc(bitstring,bitstring,bitstring):bitstring. (* penc(pk,msg,rand) *)
+reduc forall k:bitstring, m:bitstring, r:bitstring;
+       pdec(sk(k),penc(pk(k),m,r)) = m.
+reduc forall k:bitstring, m:bitstring, r:bitstring;
+      pkofsk(sk(k)) = pk(k).
+reduc forall p:bitstring, m:bitstring, r:bitstring;
+      pkofenc(penc(p,m,r)) = p.
+
+free B:bitstring.
+free netnsla:channel.
+free netnslb:channel.
+
+free iokb:channel.
+
+let run1 = new na:bitstring; new r1:bitstring; new r2:bitstring; new nb:bitstring; new r:bitstring; new ka:bitstring; new kb:bitstring; new netdela:bitstring; new netdelb:bitstring; new k:bitstring; let (xska:bitstring,xa:bitstring,xpkb:bitstring)=(sk(ka),pk(ka),pk(kb)) in (out(netnsla,penc(xpkb,na,r1)); in(netnsla,xca:bitstring); let (xskb:bitstring,xpka:bitstring,xb:bitstring)=(sk(kb),pk(ka),pk(kb)) in (in(netnslb,xcb:bitstring); let xna:bitstring=pdec(xskb,xcb) in (out(netnslb,penc(xpka,(xna,nb,B),r)); in(netnslb,xc2:bitstring); let (=na,xnb:bitstring,=B)=pdec(xska,xca) in (out(netnsla,penc(xpkb,xnb,r2)); if nb=pdec(xskb,xc2) then (out(iokb,hash((xna,nb))); 0))))).
+
+let run2 = new na:bitstring; new r1:bitstring; new r2:bitstring; new nb:bitstring; new r:bitstring; new ka:bitstring; new kb:bitstring; new netdela:bitstring; new netdelb:bitstring; new k:bitstring; out(netnsla,penc(pk(kb),na,r1)); in(netnsla,xca:bitstring); in(netnslb,xcb:bitstring); let xna:bitstring=pdec(sk(kb),xcb) in (out(netnslb,penc(pk(ka),(xna,nb,B),r)); in(netnslb,xc2:bitstring); let (=na,xnb:bitstring,=B)=pdec(sk(ka),xca) in (out(netnsla,penc(pk(kb),xnb,r2)); if nb=pdec(sk(kb),xc2) then (out(iokb,k); 0))).
+equivalence run1 run2
+
+(*
+
+{1}new na_360: bitstring;
+{2}new r1_361: bitstring;
+{3}new r2_362: bitstring;
+{4}new nb_363: bitstring;
+{5}new r_364: bitstring;
+{6}new ka_365: bitstring;
+{7}new kb_366: bitstring;
+{8}new netdela_367: bitstring;
+{9}new netdelb_368: bitstring;
+{10}new k_369: bitstring;
+{11}new na_370: bitstring;
+{12}new r1_371: bitstring;
+{13}new r2_372: bitstring;
+{14}new nb_373: bitstring;
+{15}new r_374: bitstring;
+{16}new ka_375: bitstring;
+{17}new kb_376: bitstring;
+{18}new netdela_377: bitstring;
+{19}new netdelb_378: bitstring;
+{20}new k_379: bitstring;
+{21}let v_380: bitstring = choice[(sk(ka_365),pk(ka_365),pk(kb_366)),never-fail] in
+{22}let v_381: bool = choice[is-true(success?(1-proj-3-tuple(v_380))),never-fail] in
+{23}out(netnsla, choice[penc(3-proj-3-tuple(v_380),na_360,r1_361),penc(pk(kb_376),na_370,r1_371)]);
+{24}in(netnsla, v_382: bitstring);
+{25}let v_383: bitstring = choice[(sk(kb_366),pk(ka_365),pk(kb_366)),never-fail] in
+{26}let v_384: bool = choice[is-true(success?(1-proj-3-tuple(v_383))),never-fail] in
+{27}in(netnslb, v_385: bitstring);
+{28}let v_386: bitstring = choice[pdec(1-proj-3-tuple(v_383),v_385),pdec(sk(kb_376),v_385)] in
+{29}out(netnslb, choice[penc(2-proj-3-tuple(v_383),(v_386,nb_363,B),r_364),penc(pk(ka_375),(v_386,nb_373,B),r_374)]);
+{30}in(netnslb, v_387: bitstring);
+{31}let v_388: bitstring = choice[pdec(1-proj-3-tuple(v_380),v_382),pdec(sk(ka_375),v_382)] in
+{32}let v_389: bool = choice[is-true((success?(1-proj-3-tuple(v_388)) && ((na_360 = 1-proj-3-tuple(v_388)) && (B = 3-proj-3-tuple(v_388))))),is-true((success?(1-proj-3-tuple(v_388)) && ((na_370 = 1-proj-3-tuple(v_388)) && (B = 3-proj-3-tuple(v_388)))))] in
+{33}out(netnsla, choice[penc(3-proj-3-tuple(v_380),2-proj-3-tuple(v_388),r2_362),penc(pk(kb_376),2-proj-3-tuple(v_388),r2_372)]);
+{34}let v_390: bool = choice[(nb_363 = pdec(1-proj-3-tuple(v_383),v_387)),(nb_373 = pdec(sk(kb_376),v_387))] in
+{35}let v_391: bool = is-true(v_390) in
+{36}out(iokb, choice[hash((v_386,nb_363)),k_379])
+
+
+clause 173 bad
+    clause 190 attacker2(hash((nb_357[],nb_357[])),k_373[])
+        duplicate attacker2(penc(pk(kb_360[]),nb_357[],r2_356[]),penc(pk(kb_370[]),nb_367[],r2_366[]))
+        duplicate attacker2(penc(pk(kb_360[]),nb_357[],r2_356[]),penc(pk(kb_370[]),nb_367[],r2_366[]))
+        duplicate attacker2(penc(pk(ka_359[]),(na_354[],nb_357[],B[]),r_358[]),penc(pk(ka_369[]),(na_364[],nb_367[],B[]),r_368[]))
+    clause 190 attacker2(hash((na_354[],nb_357[])),k_373[])
+        clause 194 attacker2(penc(pk(kb_360[]),nb_357[],r2_356[]),penc(pk(kb_370[]),nb_367[],r2_366[]))
+            any attacker2(v_123498,v_123499)
+            duplicate attacker2(penc(pk(kb_360[]),na_354[],r1_355[]),penc(pk(kb_370[]),na_364[],r1_365[]))
+            duplicate attacker2(penc(pk(ka_359[]),(na_354[],nb_357[],B[]),r_358[]),penc(pk(ka_369[]),(na_364[],nb_367[],B[]),r_368[]))
+        duplicate attacker2(penc(pk(kb_360[]),na_354[],r1_355[]),penc(pk(kb_370[]),na_364[],r1_365[]))
+        clause 214 attacker2(penc(pk(ka_359[]),(na_354[],nb_357[],B[]),r_358[]),penc(pk(ka_369[]),(na_364[],nb_367[],B[]),r_368[]))
+            clause 215 attacker2(penc(pk(kb_360[]),na_354[],r1_355[]),penc(pk(kb_370[]),na_364[],r1_365[]))
+            any attacker2(v_123512,v_123513)
+
+
+Clause 215: attacker2(penc(pk(kb_360[]),na_354[],r1_355[]),penc(pk(kb_370[]),na_364[],r1_365[]))
+(The message penc(pk(kb_360[]),na_354[],r1_355[]) (resp. penc(pk(kb_370[]),na_364[],r1_365[])) may be sent to the attacker at output {23}.)
+
+==> Corresponds to clause 224 in beta1
+Clause 224: attacker2(penc(pk(kb_366[]),na_360[],r1_361[]),penc(pk(kb_376[]),na_370[],r1_371[]))
+(The message penc(pk(kb_366[]),na_360[],r1_361[]) (resp. penc(pk(kb_376[]),na_370[],r1_371[])) may be sent to the attacker at output {23}.)
+
+Clause 214: attacker2(penc(pk(kb_360[]),m_120175,r_120176),penc(pk(kb_370[]),m_120177,r_120178)) && attacker2(v_120179,v_120180) -> attacker2(penc(pk(ka_359[]),(m_120175,nb_357[],B[]),r_358[]),penc(pk(ka_369[]),(m_120177,nb_367[],B[]),r_368[]))
+(If the message v_120179 (resp. v_120180) is received from the attacker at input {24},
+the message penc(pk(kb_360[]),m_120175,r_120176) (resp. penc(pk(kb_370[]),m_120177,r_120178)) is received from the attacker at input {27},
+then the message penc(pk(ka_359[]),(m_120175,nb_357[],B[]),r_358[]) (resp. penc(pk(ka_369[]),(m_120177,nb_367[],B[]),r_368[])) may be sent to the attacker at output {29}.)
+
+==> Corresponds to clause 223 in beta1
+Clause 223: attacker2(penc(pk(kb_366[]),m_14635,r_14636),penc(pk(kb_376[]),m_14637,r_14638)) && attacker2(v_14639,v_14640) -> attacker2(penc(pk(ka_365[]),(m_14635,nb_363[],B[]),r_364[]),penc(pk(ka_375[]),(m_14637,nb_373[],B[]),r_374[]))
+(If the message v_14639 (resp. v_14640) is received from the attacker at input {24},
+the message penc(pk(kb_366[]),m_14635,r_14636) (resp. penc(pk(kb_376[]),m_14637,r_14638)) is received from the attacker at input {27},
+then the message penc(pk(ka_365[]),(m_14635,nb_363[],B[]),r_364[]) (resp. penc(pk(ka_375[]),(m_14637,nb_373[],B[]),r_374[])) may be sent to the attacker at output {29}.)
+
+
+Clause 194: attacker2(v_16302,v_16303) && attacker2(penc(pk(kb_360[]),m_16304,r_16305),penc(pk(kb_370[]),m_16306,r_16307)) && attacker2(penc(pk(ka_359[]),(na_354[],v_16308,B[]),r_16309)
+,penc(pk(ka_369[]),(na_364[],v_16310,B[]),r_16311)) -> attacker2(penc(pk(kb_360[]),v_16308,r2_356[]),penc(pk(kb_370[]),v_16310,r2_366[]))
+(If the message penc(pk(ka_359[]),(na_354[],v_16308,B[]),r_16309) (resp. penc(pk(ka_369[]),(na_364[],v_16310,B[]),r_16311)) is received from the attacker at input {24},
+the message penc(pk(kb_360[]),m_16304,r_16305) (resp. penc(pk(kb_370[]),m_16306,r_16307)) is received from the attacker at input {27},
+the message v_16302 (resp. v_16303) is received from the attacker at input {30},
+then the message penc(pk(kb_360[]),v_16308,r2_356[]) (resp. penc(pk(kb_370[]),v_16310,r2_366[])) may be sent to the attacker at output {33}.)
+
+==> Clause missing beta1.
+
+Clause 190: attacker2(penc(pk(kb_360[]),nb_357[],r_14305),penc(pk(kb_370[]),nb_367[],r_14306)) && attacker2(penc(pk(kb_360[]),m_14307,r_14308),penc(pk(kb_370[]),m_14309,r_14310)) && att
+acker2(penc(pk(ka_359[]),(na_354[],v_14311,B[]),r_14312),penc(pk(ka_369[]),(na_364[],v_14313,B[]),r_14314)) -> attacker2(hash((m_14307,nb_357[])),k_373[])
+(If the message penc(pk(ka_359[]),(na_354[],v_14311,B[]),r_14312) (resp. penc(pk(ka_369[]),(na_364[],v_14313,B[]),r_14314)) is received from the attacker at input {24},
+the message penc(pk(kb_360[]),m_14307,r_14308) (resp. penc(pk(kb_370[]),m_14309,r_14310)) is received from the attacker at input {27},
+the message penc(pk(kb_360[]),nb_357[],r_14305) (resp. penc(pk(kb_370[]),nb_367[],r_14306)) is received from the attacker at input {30},
+then the message hash((m_14307,nb_357[])) (resp. k_373[]) may be sent to the attacker at output {36}.)
+
+Clause 173: v_913 <> v_914 && attacker2(v_913,v_912) && attacker2(v_914,v_912) -> bad
+(The attacker tests equality.)
+
+*)

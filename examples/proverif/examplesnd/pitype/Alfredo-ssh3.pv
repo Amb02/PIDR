@@ -1,0 +1,273 @@
+free net:channel.
+free control:channel.
+
+letfun Renegotiable() = true.
+
+type nonce.
+
+(* Diffie-Hellman, with bad grups and keys *)
+
+(* Private DH interface, only for good elements and good exponents *)
+type dhelt_int.
+type dhexp.
+const G:dhelt_int.
+fun E(dhelt_int,dhexp):dhelt_int.
+equation forall x:dhexp, y:dhexp;
+    E(E(G,x),y) = E(E(G,y),x).
+
+(* Public DH interface, with group and key corruption *)
+type dhgroup.
+type dhgid. (* Group identifier, to multiplex over the good internal constant group *)
+fun goodDHGroup(dhgid):dhgroup [data].
+const badDHGroup:dhgroup.
+type dhelt.
+fun goodDHElt(dhgroup,dhelt_int):dhelt [data].
+fun badDHElt(dhgroup):dhelt.
+fun DHExp(dhelt,dhexp):dhelt
+    reduc forall id:dhgid, x:dhelt_int, y:dhexp;
+        DHExp(goodDHElt(goodDHGroup(id),x),y) = goodDHElt(goodDHGroup(id),E(x,y))
+    otherwise forall x:dhelt_int, y:dhexp;
+        DHExp(goodDHElt(badDHGroup,x),y) = badDHElt(badDHGroup)
+    otherwise forall gr:dhgroup, y:dhexp;
+        DHExp(badDHElt(gr),y) = badDHElt(gr).
+
+const G1:dhgid.
+const G14:dhgid.
+letfun DHG1() = goodDHGroup(G1).
+letfun DHG14() = goodDHGroup(G14).
+letfun DHGEN(gr:dhgroup) = new x:dhexp; (x,DHExp(goodDHElt(gr,G),x)).
+reduc forall gid:dhgid;
+    isGoodDHGroup(goodDHGroup(gid)) = true.
+reduc forall gid:dhgid, x:dhelt_int;
+    isGoodDHElt(goodDHElt(goodDHGroup(gid),x)) = true.
+
+type pubkey.
+type privkey.
+
+fun pk(privkey): pubkey.
+fun aenc(pubkey,dhelt):bitstring.
+reduc forall x:dhelt, s:privkey; adec(s,aenc(pk(s),x)) = x.
+fun sign(privkey,bitstring):bitstring.
+reduc forall d:bitstring, s:privkey; check(pk(s),d,sign(s,d)) = true.
+
+fun h(bitstring, bitstring, nonce, nonce, dhgroup, pubkey, dhelt, dhelt, dhelt):bitstring.
+
+(* Session chaining *)
+type log.
+const emptyLog:log.
+fun addToLog(bitstring,log):log.
+
+type aekey.
+fun kdf(dhelt,bitstring,bitstring) : aekey.
+fun ae(aekey, bitstring) : bitstring.
+reduc forall k:aekey, b:bitstring; ad(k, ae(k,b)) = b.
+
+fun v_c(): bitstring [data].
+fun v_s(): bitstring [data].
+fun kexinit_c(nonce): bitstring [data].
+fun kexinit_s(nonce,dhgroup): bitstring [data].
+fun kexdh_init(dhelt):bitstring [data].
+fun kexdh_reply(pubkey,dhelt,bitstring):bitstring [data].
+fun newkeys(): bitstring [data].
+
+(* Additional message for key confirmation *)
+type direction.
+const CtoS:direction.
+const StoC:direction.
+fun key_confirm(direction): bitstring [data].
+
+(* SSH USER-AUTH *)
+type username.
+
+fun userauth_request(username,pubkey,bitstring): bitstring [data].
+fun userauth_success(): bitstring [data].
+fun userauth_failure(): bitstring [data].
+
+event AUTH_CBegin(username,pubkey,bitstring).
+event AUTH_SFinished(username,pubkey,bitstring).
+event COMPOUND_CBegin(username,pubkey,bitstring,pubkey).
+event COMPOUND_SFinished(username,pubkey,bitstring,pubkey).
+
+query u:username,s:privkey,b:bitstring;
+    event(AUTH_CBegin(u,pk(s),b));
+    event(AUTH_SFinished(u,pk(s),b));
+    inj-event(AUTH_SFinished(u,pk(s),b)) ==> inj-event(AUTH_CBegin(u,pk(s),b)) || attacker(s).
+
+query u:username,s:privkey,b:bitstring,p:pubkey;
+    event(COMPOUND_CBegin(u,pk(s),b,p));
+    event(COMPOUND_SFinished(u,pk(s),b,p));
+    inj-event(COMPOUND_SFinished(u,pk(s),b,p)) ==> inj-event(COMPOUND_CBegin(u,pk(s),b,p)) || attacker(s).
+
+let user(u:username,p:pubkey,s:privkey,bind:bitstring,aek:aekey,peer:pubkey) =
+    event AUTH_CBegin(u,p,bind);
+    event COMPOUND_CBegin(u,p,bind,peer);
+    let csign = sign(s,(bind,u,p)) in
+    out(net,ae(aek,userauth_request(u,p,csign)));
+    in (net,eresp:bitstring);
+    let resp = ad(aek,eresp) in
+    if resp = userauth_success() then
+        0.
+
+let auth(bind:bitstring,aek:aekey,self:pubkey) =
+    in (net,eauth_req:bitstring);
+    let userauth_request(u,p,csign) = ad(aek,eauth_req) in
+    if check(p,(bind,u,p),csign) = true then
+        event AUTH_SFinished(u,p,bind);
+        event COMPOUND_SFinished(u,p,bind,self);
+        out(net,ae(aek,userauth_success()))
+    else
+        out(net,ae(aek,userauth_failure())).
+
+event SFinished(bitstring,           bitstring,              log, pubkey, dhelt, aekey).
+             (* original session id, current exchange hash *)
+event CComplete(bitstring,           bitstring,              log, pubkey, dhelt, aekey).
+             (* original session id, current exchange hash *)
+event SFinishedR(bitstring,           bitstring,              log, pubkey, dhelt, aekey).
+             (* original session id, current exchange hash *)
+event CCompleteR(bitstring,           bitstring,              log, pubkey, dhelt, aekey).
+             (* original session id, current exchange hash *)
+event SFinishedChain(bitstring,           bitstring,              bitstring,              log, pubkey, dhelt, aekey).
+                  (* original session id, previous exchange hash, current exchange hash *)
+event CCompleteChain(bitstring,           bitstring,              bitstring,               log, pubkey, dhelt, aekey).
+                  (* original session id, previous exchange hash, current exchange hash *)
+
+query sid:bitstring, xh:bitstring, lg:log, s:privkey, sk:dhelt, aek:aekey;
+    event(SFinished(sid,xh,lg,pk(s),sk,aek));
+    event(CComplete(sid,xh,lg,pk(s),sk,aek));
+    inj-event(CComplete(sid,xh,lg,pk(s),sk,aek)) ==> inj-event(SFinished(sid,xh,lg,pk(s),sk,aek)) || attacker(s).
+
+query sid:bitstring, xh:bitstring, lg:log, s:privkey, sk:dhelt, aek:aekey;
+    event(CCompleteR(sid,xh,lg,pk(s),sk,aek));
+    event(SFinishedR(sid,xh,lg,pk(s),sk,aek));
+    inj-event(CCompleteR(sid,xh,lg,pk(s),sk,aek)) ==> inj-event(SFinishedR(sid,xh,lg,pk(s),sk,aek)) || attacker(s).
+
+table cconn(bitstring,bitstring,log,pubkey,dhelt,aekey).
+table sconn(bitstring,bitstring,log,pubkey,dhelt,aekey).
+nounif x:dhexp; attacker(E(G,x)).
+nounif a:bitstring, b:bitstring, c:log, d:pubkey, e:dhelt, f:aekey;
+    table(cconn( *a,*b,*c,*d,*e,*f)).
+nounif a:bitstring, b:bitstring, c:log, d:pubkey, e:dhelt, f:aekey;
+    table(sconn( *a,*b,*c,*d,*e,*f)).
+
+(* SSH TRANS *)
+let C(cp:pubkey,cs:privkey,u:username) = 
+   (out(net,v_c());
+    in (net,=v_s());
+    new ccookie: nonce;
+    out(net,kexinit_c(ccookie));
+    in (net,kexinit_s(scookie,dhG));
+    if isGoodDHGroup(dhG) then
+        let (dhC:dhexp,dhCP:dhelt) = DHGEN(dhG) in
+        out(net,kexdh_init(dhCP));
+        in (net,kexdh_reply(p,dhSP,ssign));
+        in (net,=newkeys());
+        if isGoodDHElt(dhSP) then
+            let sk = DHExp(dhSP,dhC) in
+            let xch_hash = h(
+                v_c(),v_s(),
+                ccookie, scookie, dhG,
+                p, dhCP, dhSP, sk) in
+            if check(p,xch_hash,ssign) = true then
+                let aek = kdf(sk,xch_hash,xch_hash) in
+                in (net,ekc:bitstring);
+                if ad(aek,ekc) = key_confirm(StoC) then
+                let lg = addToLog(xch_hash,emptyLog) in
+                event CComplete(xch_hash,xch_hash,lg,p,sk,aek);
+                insert cconn(xch_hash,xch_hash,lg,p,sk,aek);
+                out(net,newkeys());
+                out(net,ae(aek,key_confirm(CtoS)));
+                out(control,(xch_hash,aek)); (*** Uncomment this to enable dynamic session corruption. Makes ProVerif crash. ***)
+                user(u,cp,cs,xch_hash,aek,p))
+| ( if (Renegotiable() = true) then
+    get cconn(sid,prev_xch_hash,prev_lg,p',sk',aek') in
+    if aek' = kdf(sk',sid,prev_xch_hash) then
+    new ccookie: nonce;
+    out(net,ae(aek',kexinit_c(ccookie)));
+    in (net,ekexinit_c:bitstring);
+    let kexinit_s(scookie,dhG) = ad(aek',ekexinit_c) in
+    if isGoodDHGroup(dhG) then
+        let (dhC:dhexp,dhCP:dhelt) = DHGEN(dhG) in
+        out(net,ae(aek',kexdh_init(dhCP)));
+        in (net,ekexdh_reply:bitstring);
+        let kexdh_reply(p,dhSP,ssign) = ad(aek',ekexdh_reply) in
+        in (net,enewkeys:bitstring);
+        if newkeys() = ad(aek',enewkeys) then
+        if isGoodDHElt(dhSP) then
+            let sk = DHExp(dhSP,dhC) in
+            let xch_hash = h(
+                v_c(),v_s(),
+                ccookie, scookie, dhG,
+                p, dhCP, dhSP, sk) in
+            if check(p,xch_hash,ssign) = true then
+                let aek = kdf(sk,sid,xch_hash) in
+                in (net,ekc:bitstring);
+                if ad(aek,ekc) = key_confirm(StoC) then
+                let lg = addToLog(xch_hash,prev_lg) in
+                event CCompleteR(sid,xch_hash,lg,p,sk,aek);
+                insert cconn(sid,xch_hash,lg,p,sk,aek);
+                out(net,ae(aek',newkeys()));
+                out(net,ae(aek,key_confirm(CtoS)))).
+                            
+let S(p:pubkey,s:privkey) = 
+   (in (net,=v_c());
+    out(net,v_s());
+    in (net,kexinit_c(ccookie));
+    new scookie: nonce;
+    let dhG = DHG14() in (* Assume some negotiation here *)
+    out(net,kexinit_s(scookie,dhG));
+    in (net,kexdh_init(dhCP));
+    if isGoodDHElt(dhCP) then
+        let (dhS:dhexp,dhSP:dhelt) = DHGEN(dhG) in
+        let sk = DHExp(dhCP,dhS) in
+        let xch_hash = h(
+            v_c(), v_s(),
+            ccookie, scookie, dhG,
+            p, dhCP, dhSP, sk) in
+        let ssign = sign(s,xch_hash) in
+        let aek = kdf(sk,xch_hash,xch_hash) in
+        let lg = addToLog(xch_hash,emptyLog) in
+        event SFinished(xch_hash,xch_hash,lg,p,sk,aek);
+        insert sconn(xch_hash,xch_hash,lg,p,sk,aek);
+        out(net,kexdh_reply(p,dhSP,ssign));
+        out(net,newkeys());
+        out(net,ae(aek,key_confirm(StoC)));
+        in (net,=newkeys());
+        in (net,ekc:bitstring);
+        if ad(aek,ekc) = key_confirm(CtoS) then
+        auth(xch_hash,aek,p))
+| ( if (Renegotiable() = true) then
+    get sconn(sid,prev_xch_hash,prev_lg,p',sk',aek') in
+    if aek' = kdf(sk',sid,prev_xch_hash) then
+    in (net,ekexinit_c:bitstring);
+    let kexinit_c(ccookie) = ad(aek',ekexinit_c) in
+    new scookie: nonce;
+    let dhG = DHG14() in (* Assume some negotiation here *)
+    out(net,ae(aek',kexinit_s(scookie,dhG)));
+    in (net,ekexdh_init:bitstring);
+    let kexdh_init(dhCP) = ad(aek',ekexdh_init) in
+    if isGoodDHElt(dhCP) then
+        let (dhS:dhexp,dhSP:dhelt) = DHGEN(dhG) in
+        let sk = DHExp(dhCP,dhS) in
+        let xch_hash = h(
+            v_c(), v_s(),
+            ccookie, scookie, dhG,
+            p, dhCP, dhSP, sk) in
+        let ssign = sign(s,xch_hash) in
+        let aek = kdf(sk,sid,xch_hash) in
+        let lg = addToLog(xch_hash,prev_lg) in
+        (* We don't know yet whether the peer knows sid *)
+        event SFinishedR(sid,xch_hash,lg,p,sk,aek);
+        insert sconn(sid,xch_hash,lg,p,sk,aek);
+        out(net,ae(aek',kexdh_reply(p,dhSP,ssign)));
+        out(net,ae(aek',newkeys()));
+        out(net,ae(aek,key_confirm(StoC)));
+        in (net,enewkeys:bitstring);
+        if newkeys() = ad(aek',enewkeys) then
+        in (net,ekc:bitstring) (* ;
+        if ad(aek,ekc) = key_confirm(CtoS) then *) ).
+        
+process
+    new ss:privkey; let sp = pk(ss) in out(control,sp);
+    new cs:privkey; let cp = pk(cs) in out(control,cp);
+    new u:username; out(control,u);
+    (!C(cp,cs,u) | !S(sp,ss))

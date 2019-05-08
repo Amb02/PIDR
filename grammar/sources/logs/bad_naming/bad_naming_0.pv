@@ -1,0 +1,22 @@
+(* Naming problem in the display: x is renamed to x_5 causing
+confusion with the free x_5 (although internally ProVerif does
+correctly distinguish) *)
+
+free c:channel.
+
+free x_5:bitstring [private].
+free RSA:bitstring [private].
+
+event evCocks.
+event evRSA.
+
+query event(evCocks) ==> event(evRSA).
+
+process
+	out(c,RSA);
+	in(c,x:bitstring);
+	if x = x_5 then
+		event evCocks;
+		event evRSA
+	else
+		event evRSA

@@ -1,0 +1,267 @@
+fun pPKenc/3.  (*概率公钥加密*)
+fun pPKdec/2.  (*概率公钥解密*)
+
+fun sign/2.     (*私钥签名*)
+fun decsign/2.  (*公钥解签名*)
+
+
+fun TpPKenc/3.
+fun TpPKdec/2.   (*门限概率公钥解密*)
+
+fun SK/1.         (*产生私钥*)
+fun PK/1.          (*产生公钥*)
+
+fun checkciphertext/2.   (*明文相等测试*)
+fun add/2.                (*加法操作*)
+fun multi/2.               (*乘法操作*)
+fun equals/2.              (*相等测试*)
+fun selfblinding/2.         (*自盲*)
+fun projection1/1.            (*产生分量1*)
+fun projection2/1.            (*产生分量2*)
+
+fun zk/2.
+fun zkver/1.
+fun public1/1.
+
+fun NDAMAC/3.
+
+
+data true/0.
+
+equation  pPKdec(pPKenc(x,PK(y),z),SK(y))=x.
+equation  decsign(sign(x,SK(y)),PK(y))=x.
+
+equation  equals(x,x)=true.
+equation  add(projection1(x),projection2(x))=x.
+equation  add(projection2(x),projection1(x))=x.
+
+equation  multi(TpPKenc(a,PK(y),r),TpPKenc(b,PK(y),z))=TpPKenc(add(a,b),PK(y),r).      (*加法同态*)
+
+equation  TpPKdec(selfblinding(TpPKenc(x,PK(y),r),PK(y)),SK(y))=x.
+equation  TpPKdec(TpPKenc(x,PK(y),r),SK(y))=x.
+
+equation  checkciphertext(TpPKenc(x,PK(y),r1),TpPKenc(x,PK(z),r2))=true.
+
+equation  public1(zk(x,y))=y.
+equation  zkver(zk((cred,r1,r2),(TpPKenc(cred,PK(V),r1),TpPKenc(cred,PK(C),r2))))=true.
+
+equation  equals(NDAMAC(x,SK(y),PK(z)),NDAMAC(x,SK(z),PK(y)))=true.
+
+(*公共通道*)
+free pub,com.
+private free chvote,chRI1,chRI2,chVR,chRT.
+
+free va,vb.
+
+free n1,n2.
+query evinj:ENDVOTE(x) ==> ((evinj:BEGINVOTE(x,y) ==> evinj: STARTID(y)) | evinj:STARTCORID(z)). 
+
+(*投票者*)
+let votechooser = 
+    		out(chvote,va) | out(chvote,vb).
+
+let voter=
+	   new nonce;
+	   new nonce1;
+	   out(chVR,(n1,nonce,nonce1));
+	   in(chVR,(=n2,=nonce,id));event STARTID(id);
+	   in(chVR,(=n2,=nonce1,=id,kencNDAMAC)); 
+	   let (NDAMAC1,PK_R,(PEP1,PEP2))=pPKdec(kencNDAMAC,SK(keyV)) in	  
+	   if equals(NDAMAC((PEP1,PEP2),SK(keyV),PK_R),NDAMAC1)=true  then	  
+	   if zkver(PEP1)=true then
+	   if zkver(PEP2)=true then
+	   let (venccred1,cenccred1)=public1(PEP1) in
+	   let (venccred2,cenccred2)=public1(PEP2) in
+	   if checkciphertext(venccred1,cenccred1)=true then
+	   if checkciphertext(venccred2,cenccred2)=true then
+	   let cred=multi(venccred1,venccred2)  in
+	   new r;
+	   in(chvote,vote);event BEGINVOTE(vote,id);
+	   let vencvote=TpPKenc(vote,PK(V),r) in
+	   out(com,(cred,vencvote)).
+	   
+	   
+let corruptedvoter=
+           new nonce;
+           new nonce1;
+	   out(chVR,(n1,nonce,nonce1));
+	   in(chVR,(=n2,=nonce,id));event STARTCORID(id);
+	   in(chVR,(=n2,=nonce1,=id,kencNDAMAC)); 
+	   let (NDAMAC1,PK_R,(PEP1,PEP2))=pPKdec(kencNDAMAC,SK(keyV)) in	  
+	   if equals(NDAMAC((PEP1,PEP2),SK(keyV),PK_R),NDAMAC1)=true  then	  
+	   if zkver(PEP1)=true then
+	   if zkver(PEP2)=true then
+	   let (venccred1,cenccred1)=public1(PEP1) in
+	   let (venccred2,cenccred2)=public1(PEP2) in
+	   if checkciphertext(venccred1,cenccred1)=true then
+	   if checkciphertext(venccred2,cenccred2)=true then
+	   let cred=multi(venccred1,venccred2)  in
+	   out(pub,cred).
+	   
+	
+     
+
+
+(*权威机构*)
+	
+
+let tallying_authority=
+		new nonce;
+	 	out(chRT,(n1,nonce));
+		in(chRT,(=n2,=nonce,enccred1,enccred2));
+		let cenccred=multi(enccred1,enccred2) in 
+		in(com,res);
+		let (venccred,vencvote)=res in
+		let cred=TpPKdec(cenccred,SK(C)) in
+		let cred1=TpPKdec(venccred,SK(V)) in
+		if cred=cred1 then
+		let vote=TpPKdec(vencvote,SK(V)) in
+		event ENDVOTE(vote).
+		
+		
+
+		
+(***********************************************************************************************************************)
+		
+(*the fist model:let the registrar  process generate two credential shares and identity,
+and distribute them to the voter and the corrupted voter. the proverif give the detailed output of the traces less them 1s.*)
+
+
+let registration_authority=
+                in(chRT,(=n1,nonceT));
+		in(chVR,(=n1,nonceV,nonceV1));
+		new id; event NEWID(id);
+		out(chVR,(n2,nonceV,id));
+		out(pub,id);
+		new cred;
+		let cred1=projection1(cred) in
+		let cred2=projection2(cred) in
+		new r;new r1;new r2;
+		let PEP1=zk((cred1,r1,r2),(TpPKenc(cred1,PK(V),r1),TpPKenc(cred1,PK(C),r2))) in
+		let PEP2=zk((cred2,r1,r2),(TpPKenc(cred2,PK(V),r1),TpPKenc(cred2,PK(C),r2))) in
+		out(chVR,(n2,nonceV1,id,pPKenc((NDAMAC((PEP1,PEP2),SK(keyR),PK(keyV)),PK(keyR),(PEP1,PEP2)),PK(keyV),r)));		
+		out(chRT,(n2,nonceT,TpPKenc(cred1,PK(C),r1),TpPKenc(cred2,PK(C),r2))).			
+ 		
+		
+		
+		
+(***********************************************************************************************************************)
+      
+(*the second model: let  the registrar  process generate one  credential share and identity, 
+and distribute them to the voter and the corrupted voter. the issuer authority generate another 
+credential share --using the same code in first model for generating credential shares in pi calculus,  
+the proverif give the detailed output of the traces in 10s.*)
+
+
+
+(*let registration_authority=
+                in(chRT,(=n1,nonceT));
+		in(chVR,(=n1,nonceV,nonceV1));
+		new id; event NEWID(id);
+		out(chVR,(n2,nonceV,id));
+		out(pub,id);
+		new cred;new nonce1;
+		let cred2=projection2(cred) in
+		out(chRI1,(n1,nonce1,cred));
+		in(chRI1,(=n2,=nonce1,cred1));
+		new r;new r1;new r2;
+		let PEP1=zk((cred1,r1,r2),(TpPKenc(cred1,PK(V),r1),TpPKenc(cred1,PK(C),r2))) in
+		let PEP2=zk((cred2,r1,r2),(TpPKenc(cred2,PK(V),r1),TpPKenc(cred2,PK(C),r2))) in
+		out(chVR,(n2,nonceV1,id,pPKenc((NDAMAC((PEP1,PEP2),SK(keyR),PK(keyV)),PK(keyR),(PEP1,PEP2)),PK(keyV),r)));		
+		out(chRT,(n2,nonceT,TpPKenc(cred1,PK(C),r1),TpPKenc(cred2,PK(C),r2))).	*)	
+		
+
+
+
+
+
+(***********************************************************************************************************************)
+
+      
+(*the third model:let the  registrar  process only generate identity and distribute it to the voter
+and corrupted voter.and there are two issuer authority. each one generate one credential share and 
+send it to the registrar .and registrar distribute them to the voter . the proverif did not give me the detailed output of the traces in 2 minutes.*)
+
+(*let registration_authority=
+                in(chRT,(=n1,nonceT));
+		in(chVR,(=n1,nonceV,nonceV1));
+		new id; event NEWID(id);
+		out(chVR,(n2,nonceV,id));
+		out(pub,id);
+		new cred;new nonce1;new nonce2;
+		out(chRI1,(n1,nonce1,cred));
+		out(chRI2,(n2,nonce2,cred));  
+		in(chRI1,(=n2,=nonce1,cred1));
+		in(chRI2,(=n1,=nonce2,cred2));  
+		new r;new r1;new r2;
+		let PEP1=zk((cred1,r1,r2),(TpPKenc(cred1,PK(V),r1),TpPKenc(cred1,PK(C),r2))) in
+		let PEP2=zk((cred2,r1,r2),(TpPKenc(cred2,PK(V),r1),TpPKenc(cred2,PK(C),r2))) in
+		out(chVR,(n2,nonceV1,id,pPKenc((NDAMAC((PEP1,PEP2),SK(keyR),PK(keyV)),PK(keyR),(PEP1,PEP2)),PK(keyV),r)));		
+		out(chRT,(n2,nonceT,TpPKenc(cred1,PK(C),r1),TpPKenc(cred2,PK(C),r2))).	*)	      
+	     
+
+
+
+	     
+	     
+let issuer_authority1=
+		in(chRI1,(=n1,nonceR1,cred));
+		let cred1=projection1(cred) in
+		out(chRI1,(n2,nonceR1,cred1)).
+	(*	new r1;
+		out(pub,(sign(TpPKenc(cred1,PK(C),r1),SK(keyI1)),TpPKenc(cred1,PK(C),r1))).  *)
+
+		
+let issuer_authority2=
+		in(chRI2,(=n2,nonceR,cred));
+		let cred2=projection2(cred) in
+		out(chRI2,(n1,nonceR,cred2)).
+	(*	new r2;
+		out(pub,(sign(TpPKenc(cred2,PK(C),r2),SK(keyI2)),TpPKenc(cred2,PK(C),r2))).    *)
+
+
+process  new C;new V; 
+	 new keyV;
+	 new keyR;
+	 new keyI1;
+	 new keyI2;								
+	 out(pub,PK(C));
+	 out(pub,PK(V));
+	 out(pub,PK(keyV));
+	 out(pub,PK(keyR));
+	 out(pub,PK(keyI1));
+	 out(pub,PK(keyI2));
+	 ((!voter)|(!corruptedvoter)|(!tallying_authority)|(!registration_authority)|(!issuer_authority1)|(!issuer_authority2)|(!votechooser) )
+
+(* Bad version: slow for the second and third versions
+	 (!voter|!corruptedvoter|!tallying_authority|!registration_authority|!issuer_authority1|!issuer_authority2|!votechooser )
+*)
+
+
+	 
+
+
+
+
+
+
+
+
+ 
+ (*
+ let tallying_authority=
+ 		new nonce;
+ 	 	out(chRT,(n1,nonce));
+ 		in(chRT,(=n2,=nonce,enccred1,enccred2));
+ 		let cenccred=multi(enccred1,enccred2) in 
+ 		let bcenccred=selfblinding(cenccred,PK(C)) in
+ 		in(com,res);
+ 		let (venccred,vencvote)=res in
+ 		let bvenccred=selfblinding(venccred,PK(V)) in
+ 		let bvencvote=selfblinding(vencvote,PK(V)) in
+ 		let cred=TpPKdec(bcenccred,SK(C)) in
+ 		let cred1=TpPKdec(bvenccred,SK(V)) in
+ 		if cred=cred1 then
+ 		let vote=TpPKdec(bvencvote,SK(V)) in
+ 		event ENDVOTE(vote).
+*)	

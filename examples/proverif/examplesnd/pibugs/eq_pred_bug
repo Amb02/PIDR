@@ -1,0 +1,24 @@
+(* Equality facts should not be accepted in hypotheses of <-> or <=>
+   because they are going to generate C -> M = N *)
+
+pred p/2.
+fun f/1.
+clauses
+p:x,y & x = y <=> p:f(x),f(y).
+
+free c. 
+
+private free m.
+
+
+(* Check if attacker can recover m*)
+ 
+ query attacker:m.
+
+(* processes *)
+
+fun hostA/0.
+
+process  
+	 phase 1; in(c, =hostA); out(c, m)
+

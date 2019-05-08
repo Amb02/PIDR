@@ -1,0 +1,15 @@
+fun sencrypt/2.
+reduc sdecrypt(sencrypt(x,y),y) = x.
+
+private free secret.
+free c.
+
+query	attacker:secret.
+
+process	new cle;
+	new d;
+	out(c,cle);
+	out(c,sencrypt(d,cle));
+ 	in(c,x);
+	out(d,e);
+	out(c,secret)

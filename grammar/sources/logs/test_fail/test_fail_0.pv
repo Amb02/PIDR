@@ -1,0 +1,12 @@
+type nonce.
+
+channel c.
+
+fun f(nonce):bitstring.
+fun g(nonce):bitstring.
+
+reduc forall x: nonce; h(f(x)) = true.
+
+process
+	new a: nonce;
+	out(c, choice[f(a), g(a)])

@@ -1,0 +1,11 @@
+free a: bitstring.
+free c,d,e:channel.
+fun hash(bitstring):bitstring.
+
+equivalence
+   (let x = hash(a) in
+       out(c, x) | out(d, x)) | out(e, hash(a))
+
+   out(c, hash(a)) | let x = hash(a) in
+       (out(d, x) | out(e, x))
+ 

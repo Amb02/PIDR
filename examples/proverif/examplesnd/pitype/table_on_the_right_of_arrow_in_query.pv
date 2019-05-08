@@ -1,0 +1,14 @@
+free c:channel.
+
+table bb(bitstring,bitstring).
+
+free a:bitstring.
+
+event Cool(bitstring).
+
+query u:bitstring, v:bitstring; event(Cool(u)) ==> table(bb(u,v)).
+
+process
+  insert bb(a,a);
+  event Cool(a)
+

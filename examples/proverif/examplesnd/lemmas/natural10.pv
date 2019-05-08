@@ -1,0 +1,11 @@
+free c:channel.
+
+event A.
+event B(nat).
+
+query event(A).
+
+process
+  in(c,i:nat);
+  if is_nat(i+4) then
+  event A

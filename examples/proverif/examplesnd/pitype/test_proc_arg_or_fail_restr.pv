@@ -1,0 +1,11 @@
+channel c.
+
+let P(x: bitstring or fail) =
+   new a[x]: bitstring;
+   out(c, (a,x)).
+
+
+fun g(): bitstring
+reduc g() = fail.
+
+process P(g())

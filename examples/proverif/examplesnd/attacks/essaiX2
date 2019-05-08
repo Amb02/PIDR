@@ -1,0 +1,31 @@
+fun sencrypt/2.
+reduc sdecrypt(sencrypt(x,y),y) = x.
+
+fun pencrypt/2.
+fun pk/1.
+reduc pdecrypt(pencrypt(x,pk(y)),y) = x.
+
+private free sA,c.
+free e.
+
+query attacker : sA.
+
+let givesecret =
+	in(c,x);
+	if x = a1 then
+	out(e,sA).
+
+let mainprocess =
+	in(c,a);
+	if a = a1 then
+	out(c,a2) 
+	else if a = a2 then 
+	out(c,a3)
+	else if a = a3 then
+	givesecret
+	else 0.
+
+process new a1;
+	new a2;
+	new a3;
+	(!out(c,a1))|!mainprocess

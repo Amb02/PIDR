@@ -1,0 +1,19 @@
+type trapdoor.
+type rand.
+
+fun tdcommit(bitstring, rand, trapdoor): bitstring.
+fun open(bitstring, rand): bitstring.
+fun f(bitstring, rand, trapdoor, bitstring): rand.
+
+equation forall m: bitstring, r: rand, td: trapdoor;
+	 open(tdcommit(m,r,td),r) = m;
+	 forall m1: bitstring, m2: bitstring, r: rand, td: trapdoor;
+	 tdcommit(m2,f(m1,r,td,m2),td) = tdcommit(m1,r,td);
+	 forall m1: bitstring, m2: bitstring, r: rand, td: trapdoor;
+	 open(tdcommit(m1,r,td),f(m1,r,td,m2)) = m2;
+	 forall m: bitstring, m1: bitstring, m2: bitstring, r: rand, td: trapdoor;
+	 f(m1, f(m,r,td,m1), td, m2) = f(m, r, td, m2) [convergent].
+
+channel c.
+
+process 0

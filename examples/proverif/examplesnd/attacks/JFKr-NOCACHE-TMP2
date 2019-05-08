@@ -1,0 +1,117 @@
+(* JFKr 
+   Does not find a trace reaching the event connect.
+   The derivation does not correspond to a trace, because the
+   verifier thinks the adversary can cheat on the value of
+   grpinfoR, which is in fact not possible.
+*)
+
+(* param channels = names. *)
+param redundantHypElim = true.
+
+(* Exponential and Diffie-Hellman *)
+
+data g/0.
+fun exp/2.
+equation exp(exp(g,y),z) = exp(exp(g,z),y).
+
+(* Signature *)
+
+fun S/2.
+fun Pk/1.
+data true/0.
+fun V/3.
+fun RecoverKey/1.
+fun RecoverText/1.
+equation V(S(k,v), Pk(k),v) = true.
+
+(* Shared-key encryption *)
+
+fun E/2.
+fun D/2.
+equation D(k,E(k,v)) = v.
+
+(* Keyed hash function *)
+
+fun H/2.
+
+(* Tags *)
+
+data tagE/0. 
+
+(* Constructors for JFK's formatted messages
+   Selectors are implicit when using "data" *)
+
+data cons2/2. data cons3/2. 
+
+(* More constants *)
+
+data saR/0.
+
+(* Free names *)
+
+free c. (* Public channel *)
+free pub, grpinfoR, saI.
+
+(* Queries: properties to prove *)
+
+(* Correspondence assertions *)
+
+query ev:connect(XIDB, XIDRp, XsaI, XsaR, XKv, XgrpinfoR).
+
+(* Secrecy assumptions *)
+
+not kAminus phase 0.
+
+
+(* Initiator 
+   The process processI corresponds to I^A in the figure. *)
+
+let processI =
+  !
+  new NI; 
+  in(c, cons2(NR, grpinfoR));
+  let h = exp(xR, dI) in
+  let Ke = H(h, (NI, NR, tagE)) in
+  let sI = S(kAminus, (NI, NR, xI, xR, grpinfoR)) in
+  let eI = E(Ke, (IDA, IDA, saI, sI)) in
+  out(c, cons3(NI, eI));
+  in(c, eR);
+  let (IDRl, saR, sR) = D(Ke, eR) in
+  if V(sR, IDRl, (NI, NR, xI, xR)) = true then 
+      event connect(IDRl, IDA, saI, saR, Ke, grpinfoR).
+
+(* Responder
+   The process processR corresponds to R^A in the figure. *)
+
+let processR =
+  !
+  new NR;
+  out(c, cons2(NR, grpinfoR));
+  in(c, cons3(NI,eI));
+  let h = exp(xI,dR) in
+  let Ke = H(h, (NI, NR, tagE)) in
+  let (IDIl, IDA, saI, sI) = D(Ke,eI) in
+  if V(sI, IDIl, (NI, NR, xI, xR, grpinfoR)) = true then
+      let sR = S(kAminus, (NI, NR, xI, xR)) in
+      let eR = E(Ke, (IDA, saR, sR)) in
+      out(c, eR).
+
+(* Whole JFK system. *)
+
+process
+  new dR;
+  let xR = exp(g,dR) in
+  out(c, xR);
+  new dI;
+  let xI = exp(g,dI) in
+  out(c, xI);
+  new kAminus;
+  let IDA = Pk(kAminus) in
+  out(c, IDA);
+  (
+    processI
+  | processR
+  )
+
+
+

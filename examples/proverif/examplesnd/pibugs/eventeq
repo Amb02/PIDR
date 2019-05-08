@@ -1,0 +1,18 @@
+(* The given query is true.
+   The prover gives the correct result, but it is somewhat counter-intuitive.
+*)
+
+
+fun f/2.
+fun g/1.
+equation f(y,g(x)) = f(x, g(y)).
+
+
+free c.
+query ev:e2(f(x,g(y))) ==> ev:e1(y).
+
+process
+	in(c,x);
+	in(c,y);
+	event e1(x); event e2(f(x,g(y)))
+

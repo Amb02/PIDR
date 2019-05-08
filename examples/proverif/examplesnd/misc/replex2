@@ -1,0 +1,8 @@
+(* There is an attack here: two different values may be sent on channel d,
+   because there is a replication above "new k". *)
+
+free c, c1, c2.
+
+process
+	new d; ((!new k; !out(d, k)) | 
+                (in(d, x); in(d,y); if x = y then 0 else out(c, choice[c1,c2])))

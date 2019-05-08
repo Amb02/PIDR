@@ -1,0 +1,77 @@
+(* insecure version of ISO9378 *)
+(* unknown key-share attack: Bob shares the session key with Alice and Mallory*)
+
+free c.
+
+(* Host *) 
+
+fun host/1. 
+
+(* Secrecy assumptions *)
+
+not skA. 
+not skB. 
+
+(* Certification. *)
+
+data true/0.
+fun CERT_sign/2.
+reduc CERT_verify(host(sek), msg, CERT_sign(sek, msg)) = true.
+
+(* KEM *)
+fun KEM_pk/1. 
+fun KEM_encaps_to_ciphertext/1.
+fun KEM_encaps_to_key/2.
+reduc KEM_decaps(sk, KEM_encaps_to_ciphertext(same_nonce))
+ = KEM_encaps_to_key(same_nonce, KEM_pk(sk)).
+
+query ev:Bkey(a,b,d) ==> ev:Akey(a,b,d).
+
+
+(******* Process specification *******)
+
+let processA =
+event Aestablish(hostA,hostB);
+
+(* Message 1 *) 
+new x;
+let Agtothex = KEM_pk(x) in
+out(c, (hostA, Agtothex));
+(* Message 2 *) 
+in(c, m2); 
+let (AhostB, Agtothey, m2_signature) = m2 in
+if CERT_verify(AhostB, (Agtothex, Agtothey), m2_signature) = true then
+(* Message 3 *) 
+let gtothexy =  KEM_decaps(x, Agtothey) in
+(*OK*)
+if AhostB=hostB then
+let sigA = CERT_sign(skA, (Agtothex, Agtothey, AhostB)) in
+event Akey(hostA,hostB,gtothexy);
+out(c, sigA).
+
+let processB =
+event Bestablish(hostA,hostB);
+(* Message 1 *) 
+in(c, m1);
+let (BhostA, Bgtothex) = m1 in
+(* Message 2 *) 
+new y;
+let Bgtothey = KEM_encaps_to_ciphertext(y) in
+out(c, (hostB, Bgtothey, CERT_sign(skB, (Bgtothex, Bgtothey))));
+(* Message 3 *)
+in(c, m3);
+if CERT_verify(BhostA, (Bgtothex, Bgtothey, hostB), m3) = true then
+(* done *) 
+let gtothexy = KEM_encaps_to_key(y, Bgtothex) in
+if BhostA=hostA then
+event Bkey(hostA,hostB,gtothexy).
+
+process 
+new randomkey;
+new skA; 
+new skB;
+let hostA = host(skA) in
+let hostB = host(skB) in
+out(c, hostA);
+out(c, hostB);
+(processA | processB)

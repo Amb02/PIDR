@@ -1,0 +1,26 @@
+free c:channel.
+
+fun enc(bitstring,nat,bitstring):bitstring.
+fun dec(bitstring,bitstring):bitstring
+reduc forall i:nat, x:bitstring, y:bitstring; dec(enc(x,i+2,y),y) = x.
+fun get_i(bitstring):nat
+reduc forall i:nat,x:bitstring,y:bitstring; get_i(enc(x,i,y)) = i.
+
+free s:bitstring [private].
+free k:bitstring.
+event A(nat).
+event B(nat).
+
+axiom i:nat, j:nat; event(A(i)) ==> event(B(j)) && i < j [fullSat].
+
+query attacker(s).
+
+process
+  in(c,x:bitstring);
+  let i = get_i(x) in
+  let y = dec(x,k) in
+    0
+  else
+    if i >= 4 then
+    event A(i);
+    out(c,s)

@@ -1,0 +1,51 @@
+(* I can execute e2 and e3 twice but e1 only once, so the given query
+   is false.
+
+   Start 2 sessions of the 3rd process, outputting ni1 and ni2
+   Then start 2 sessions of the 1st process, receiving ni1 and ni2
+   and outputting n1 and n2 respectively.
+   Send (n1,n2) to the 2nd process, execute e1 once, and output
+   encrypt((n1,n2), k).
+   Send this message to both sessions of the 1st process, which execute
+   e2(n1, v1) and e2(n2, v2) and send encrypt((ni1, n1), k2)
+   and encrypt((ni2, n2), k2) respectively.
+   The 3rd process receiving these messages executes e3(ni1) and e3(ni2).
+
+*)
+
+
+fun encrypt/2.
+reduc decrypt(encrypt(x,y),y) = x.
+
+
+free c.
+query ev:e3(x) ==> (evinj:e2(y,z) ==> evinj:e1(t)).
+
+data v1/0.
+data v2/0.
+
+reduc or(x,y,x) = v1;
+      or(x,y,y) = v2.
+
+process
+	new k;
+	new k2;
+	(
+		!in(c, ni); new n; out(c,n); in(c,em);
+		let (x,y) = decrypt(em,k) in
+		let z = or(x,y,n) in
+		event e2(n,z);
+		out(c,encrypt((ni, n), k2))
+	)
+	|
+	(
+		!in(c,(n2,n3)); event e1(k); out(c, encrypt((n2,n3),k))
+	)
+	|
+	(
+		!new ni;
+		out(c, ni);
+		in(c, x);
+		let (=ni, x2) = decrypt(x, k2) in
+		event e3(ni)
+	)

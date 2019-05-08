@@ -1,0 +1,19 @@
+(* we should have h(g1(x)) = h(g2(x)) so the attacker has secret *)
+
+
+fun f/1.
+fun g/1.
+fun h/1.
+fun g1/1.
+fun g2/1.
+
+equation f(g(x)) = h(x).
+equation g(g1(x)) = g(g2(x)).
+
+free c.
+private free secret.
+query attacker:secret.
+
+
+process
+	if h(g1(c)) = h(g2(c)) then out(c, secret)

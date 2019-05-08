@@ -1,0 +1,47 @@
+(* 
+
+A -> B : A
+B -> A : B, N_1, N_2
+A -> B : A, { N_1, N_2, M }_pkB received as { N_1, X, Y }_pkB
+B -> A : N_1, X, { X, Y, N_1 }_pkB
+
+*)
+
+(* Public key cryptography *)
+
+fun pk/1.
+fun encrypt/2.
+reduc decrypt(encrypt(x,pk(y)),y) = x.
+
+(* Function from secrets to host names *)
+
+fun host/1.
+
+free c.
+private free M.
+
+query attacker:M.
+
+let processA = 
+	out(c, hostA);
+	in(c,(=hostB, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13, n14, n15, n16, n17, n18, n19, n20, n21, n22, n23, n24, n25, n26, n27, n28, n29, n30, n31, n32, n33, n34, n35, n36, n37, n38, n39, n40, n41, n42, n43, n44, n45, n46, n47, n48, n49, n50));
+	out(c, (hostA, encrypt(( n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13, n14, n15, n16, n17, n18, n19, n20, n21, n22, n23, n24, n25, n26, n27, n28, n29, n30, n31, n32, n33, n34, n35, n36, n37, n38, n39, n40, n41, n42, n43, n44, n45, n46, n47, n48, n49, n50, M ), pkB))).
+
+let processB = 
+	in(c, =hostA);
+	new n1; new n2; new n3; new n4; new n5; new n6; new n7; new n8; new n9; new n10; new n11; new n12; new n13; new n14; new n15; new n16; new n17; new n18; new n19; new n20; new n21; new n22; new n23; new n24; new n25; new n26; new n27; new n28; new n29; new n30; new n31; new n32; new n33; new n34; new n35; new n36; new n37; new n38; new n39; new n40; new n41; new n42; new n43; new n44; new n45; new n46; new n47; new n48; new n49; new n50;
+	out(c, (hostB, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13, n14, n15, n16, n17, n18, n19, n20, n21, n22, n23, n24, n25, n26, n27, n28, n29, n30, n31, n32, n33, n34, n35, n36, n37, n38, n39, n40, n41, n42, n43, n44, n45, n46, n47, n48, n49, n50));
+	in(c, (=hostA, mes));
+	let (=n1, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20, x21, x22, x23, x24, x25, x26, x27, x28, x29, x30, x31, x32, x33, x34, x35, x36, x37, x38, x39, x40, x41, x42, x43, x44, x45, x46, x47, x48, x49, x50) = decrypt(mes, skB) in
+	out(c, (n1, x1, encrypt((x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20, x21, x22, x23, x24, x25, x26, x27, x28, x29, x30, x31, x32, x33, x34, x35, x36, x37, x38, x39, x40, x41, x42, x43, x44, x45, x46, x47, x48, x49, x50, n1), pkB))).
+
+process 
+        new skB; let pkB = pk(skB) in
+        out(c, pkB);
+	let hostB = host(skB) in
+	out(c, hostB);
+        new skA; let pkA = pk(skA) in
+        out(c, pkA);
+	let hostA = host(skA) in
+	out(c, hostA);
+	((!processA) | (!processB))

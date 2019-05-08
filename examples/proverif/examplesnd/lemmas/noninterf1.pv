@@ -1,0 +1,9 @@
+free c:channel.
+free k1:bitstring [private].
+const ok:bitstring.
+
+noninterf k1,k2.
+
+process
+  new k2:bitstring;
+  out(c,ok)

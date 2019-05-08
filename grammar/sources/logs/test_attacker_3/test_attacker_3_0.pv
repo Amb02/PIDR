@@ -1,0 +1,15 @@
+(* This example illustrates a regression introduced by the extension
+   of queries by Vincent Cheval *)
+
+free c:channel.
+const a:bitstring.
+
+event e1(bitstring).
+
+query x:bitstring; event(e1(x)) ==> x <> a.
+
+process
+  in(c,y:bitstring);
+  if y <> a then
+  event e1(y);
+  out(c,y)

@@ -1,0 +1,38 @@
+(* Example by Ariel Cohen; Email of Nov 23, 2003 *)
+
+
+fun sencrypt/2.
+reduc sdecrypt(sencrypt(x,y),y) = x.
+
+fun pencrypt/2.
+fun pk/1.
+reduc pdecrypt(pencrypt(x,pk(y)),y) = x.
+
+private free secret,skA,skB.
+free e.
+
+query	attacker : secret.
+
+let processA = 
+	new Na;
+	out(e,pencrypt((pkA,Na),pkB));
+	in(e,x);
+	let (=Na,k) = pdecrypt(x,skA) in
+	out(e,sencrypt(secret,k)).
+
+let processB =
+	in(e,y);
+	let (=pkA,N) = pdecrypt(y,skB) in
+	new k;
+	out(e,pencrypt((N,k),pkA));
+	in(e,z);
+	let s = sdecrypt(z,k) in
+	out(e,N).
+
+process	new skA;
+	new skB;
+	let pkA = pk(skA) in
+	let pkB = pk(skB) in
+	out(e,pkA);
+	out(e,pkB);
+	(!processA)|processB

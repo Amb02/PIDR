@@ -1,0 +1,50 @@
+(* Example of the POPL 2002 paper *)
+
+(* Public key cryptography *)
+
+fun pk/1.
+fun pencrypt/2.
+reduc pdecrypt(pencrypt(m, pk(k)),k) = m.
+
+(* Shared key cryptography *)
+
+fun sencrypt/2.
+reduc sdecrypt(sencrypt(m,k),k) = m.
+
+(* We want to know whether s is secret or not *)
+
+query s.
+
+(* The processes *)
+
+let processA = new k; out(e, pencrypt((k,pKa),pKb)); in(e,z); 
+               let (x,y) = pdecrypt(z,sKa) in
+               if x = k then out(e,sencrypt(s,y)).
+
+let processB = in(e,z); let (x,y) = pdecrypt(z, sKb) in
+               new Kab; out(e, pencrypt((x, Kab), y));
+	       in(e,zz); let ss = sdecrypt(zz, Kab) in 0.
+
+process new s; (* s is a priori secret *)
+	new sKa; new sKb; let pKa = pk(sKa) in
+        let pKb = pk(sKb) in
+        out(e, pKa); out(e, pKb); (processA | processB)
+
+(* Generated rules:
+
+Rule 12: c:pencrypt((v2,v3),pk(sKb[])) -> c:pencrypt((v2,Kab[pencrypt((v2,v3),pk(sKb[]))]),v3)
+Rule 11: c:pencrypt((k[],v1),pk(sKa[])) -> c:sencrypt(s[],v1)
+Rule 10: c:pencrypt((k[],pk(sKa[])),pk(sKb[]))
+Rule 9: c:pk(sKb[])
+Rule 8: c:pk(sKa[])
+Rule 7: c:c & c:m -> private:c,m
+Rule 6: c:e[]
+Rule 5: private:c,m & c:c -> c:m
+
+Rule 4: c:any5 & c:any4 -> c:sencrypt(any5,any4)
+Rule 3: c:any3 -> c:pk(any3)
+Rule 2: c:pencrypt(m,pk(k)) & c:k -> c:m
+Rule 1: c:sencrypt(m,k) & c:k -> c:m
+Rule 0: c:any2 & c:any1 -> c:pencrypt(any2,any1)
+
+*)

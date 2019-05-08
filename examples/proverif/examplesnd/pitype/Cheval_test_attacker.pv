@@ -1,0 +1,28 @@
+free c : channel.
+free ev : channel [private].
+free bad : bitstring [private].
+
+fun enc(bitstring, bitstring) : bitstring.
+reduc forall x:bitstring, y:bitstring; dec(enc(x,y),y) = x.
+
+
+query attacker(bad).
+
+let protocolA(shared_k:bitstring) =
+  new n_A : bitstring;
+  out(c,n_A).
+
+let protocolB(shared_k:bitstring) =
+  in(c, n_A:bitstring);
+  new n_B : bitstring;
+  out(ev,(shared_k,n_A,n_B)).
+
+let test_event() =
+  in(ev,(sk_1:bitstring, n_A1:bitstring, n_B1:bitstring));
+  in(ev,(sk_2:bitstring, n_A2:bitstring, n_B2:bitstring));
+  if n_B1 = n_B2 then
+  if sk_1 <> sk_2 then
+  out(c,bad).
+
+
+process test_event() | ! new shared_k:bitstring; (protocolA(shared_k) | protocolB(shared_k))

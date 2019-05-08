@@ -1,0 +1,63 @@
+free c.
+(*
+
+WooLam shared-key auth protocol
+Corrections of Anderson, Needham, LNCS 1000
+
+A -> B : A
+B -> A : N (fresh)
+A -> B : { B, N }_kAS
+B -> S : A,{ B, N }_kAS
+S -> B : { N, A }_kBS
+B: verify { N, A }_kBS = the message from S
+
+Correct.
+
+Full agreement is wrong because the adversary can make B see something
+different from { m3, B, N }_kAS (even though the server and A correctly see it)
+so this is no real attack.
+
+*)
+
+(* Shared-key cryptography *)
+
+fun encrypt/2.
+reduc decrypt(encrypt(m,k),k) = m.
+
+(* Host name / key *)
+
+fun host/1.
+private reduc getkey(host(x)) = x.
+
+query ev:endBparam(h) ==> ev:beginBparam(h).
+query ev:endBfull(h1,h2,x,e) ==> ev:beginBfull(h1,h2,x,e).
+query evinj:endBparam(h) ==> evinj:beginBparam(h).
+query evinj:endBfull(h1,h2,x,e) ==> evinj:beginBfull(h1,h2,x,e).
+
+let processA = in(c, hostB2); (* Choose the B host *)
+	       event beginBparam(hostB2);
+               out(c,hostA); in(c,n); 
+	       event beginBfull(hostB2, hostA, n, encrypt((hostB2, n), kAS));
+               out(c, encrypt((hostB2, n), kAS)).
+
+let processB = in(c, hostA2); new N; out(c, N); in(c, m);
+               out(c, (hostA2, m));
+               in(c, m2);
+	       let (N3, hostA3) = decrypt(m2, kBS) in
+                   if hostA3 = hostA2 then
+                     if N3 = N then
+                        (* OK *)
+                        if hostA2 = hostA then 
+			  event endBparam(hostB);
+			  event endBfull(hostB, hostA2, N, m).
+
+let processS = in(c,m);
+               let (hostA1, m2) = m in
+                  let (hostB1, n) = decrypt(m2, getkey(hostA1)) in
+                        out(c, encrypt((n, hostA1), getkey(hostB1))).
+
+process new kAS; new kBS;
+        let hostA = host(kAS) in
+        let hostB = host(kBS) in
+	out(c, hostA); out(c, hostB);
+	((!processA) | (!processB) | (!processS))

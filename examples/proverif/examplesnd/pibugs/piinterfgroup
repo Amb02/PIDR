@@ -1,0 +1,19 @@
+(* 
+
+The system should prove strong secrecy by grouping 
+destructor applications.
+
+*)
+
+private free secret.
+noninterf secret.
+
+fun encrypt/2.
+reduc decrypt(encrypt(x,y),y) = x.
+
+free c.
+free c1.
+free c2.
+
+process let x = encrypt((c,c1), secret) in
+	let (=c1,y) = decrypt(x, c2) in out(c,c1) else out(c,c2)

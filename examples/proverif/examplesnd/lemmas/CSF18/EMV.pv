@@ -1,0 +1,210 @@
+free c:channel.
+
+fun of_nat(nat):bitstring [typeConverter].
+
+type id.
+type skey.
+
+fun skey_of(bitstring):skey [typeConverter].
+fun hmac(skey,bitstring):bitstring.
+fun senc(bitstring,skey):bitstring.
+
+reduc forall x:bitstring,k:skey; sdec(senc(x,k),k) = x.
+
+type priv_key.
+type pub_key.
+
+fun aenc(bitstring,pub_key):bitstring.
+fun pk(priv_key):pub_key.
+
+reduc forall x:bitstring,k:priv_key; adec(aenc(x,pk(k)),k) = x.
+
+type sign_key.
+type verif_key.
+
+fun verif_key_of(bitstring):verif_key [typeConverter].
+fun bitstring_of(verif_key):bitstring [typeConverter].
+fun sign(bitstring,sign_key):bitstring.
+fun vk(sign_key):verif_key.
+
+reduc forall m:bitstring,k:sign_key; verify(sign(m,k),vk(k)) = true.
+
+reduc forall m:bitstring,k:sign_key; get_sign(sign(m,k)) = m.
+
+const idval_request:bitstring.
+const payment_confirm:bitstring.
+
+event Request_Token_Packet(id,id,skey,nat).
+event Generate_Token_Packet(id,id,skey,nat,bitstring,nat).
+
+event User_Agrees_To_Transaction(id,id,bitstring,bitstring).
+event Counter_Validity_Approved(bitstring,bitstring).
+event TSP_Validates_Payment(id,bitstring,nat).
+event TSP_Validates_Transaction(id,bitstring,bitstring).
+event TSP_Validates_Token_Payment(bitstring).
+event User_Gets_Charged(id,bitstring,bitstring).
+event Merchand_Is_Notified(id,bitstring,bitstring).
+
+table storage_MobileApp(bitstring,bitstring).
+table storage_TSP(bitstring,bitstring,bitstring,nat).
+
+const cst_k:bitstring.
+const cst_tval:bitstring.
+
+type stamp.
+
+free id1:stamp [private].
+free id2:stamp [private].
+
+event Counter(channel,stamp,stamp,nat).
+event VCell_bitstring(channel,bitstring).
+event UAction_bitstring(stamp,bitstring).
+
+nounif i:nat,x:nat; mess(new c_pay,(i,x)).
+nounif i:nat,x:nat; mess(new c_TSP,(i,x)).
+
+axiom i:nat,i1:nat,i2:nat,i3:nat,st:stamp,st1:stamp,st2:stamp,x:bitstring,x1:bitstring,d:channel;
+  event(UAction_bitstring(st2,x1)) && event(UAction_bitstring(st2,x)) ==> x1 = x;
+  event(VCell_bitstring(d,(i3,i))) && event(VCell_bitstring(d,(i1,i))) ==> i3 = i1;
+  event(VCell_bitstring(d,(i1,i))) && event(VCell_bitstring(d,(i1,i2))) ==> i = i2;
+  event(Counter(d,st2,st,i3)) && event(Counter(d,st2,st,i)) ==> i3 = i;
+  event(Counter(d,st2,st,i3)) && event(Counter(d,st2,st1,i3)) ==> st = st1.
+
+query id_TE:id,id_CH:id,M:bitstring,p:bitstring;
+  event(User_Gets_Charged(id_TE,M,p)) ==> event(User_Agrees_To_Transaction(id_CH,id_TE,M,p)).
+
+query id_TE:id,id_TSP:id,k_id:skey,c1:nat,t1:bitstring,t2:bitstring,y:nat,y':nat;
+ event(Generate_Token_Packet(id_TE,id_TSP,k_id,c1,t1,y)) && event(Generate_Token_Packet(id_TE,id_TSP,k_id,c1,t2,y')) ==> y = y'.
+
+process
+  !(
+  new id_TSP:id;
+  new ssk_TSP:sign_key;
+  new prk_TSP:priv_key;
+  new ssk_CA:sign_key;
+  let cert:bitstring = sign(bitstring_of(vk(ssk_TSP)),ssk_CA) in
+  (
+    out(c,vk(ssk_TSP));
+    0
+  ) | (
+    out(c,pk(prk_TSP));
+    0
+  ) | (
+    out(c,vk(ssk_CA));
+    0
+  ) | (
+    out(c,cert);
+    0
+  ) | (
+    !(
+    new ID_val:bitstring;
+    new c_CH:channel;
+    new c_TSP:channel;
+    new c_tok:channel;
+    new c_pay:channel;
+    new K_pay:skey;
+    new K_ID:skey;
+    new TR_ID:bitstring;
+    new Data:bitstring;
+    new d_CH_TE_MA:channel;
+    new d_POS_TSP:channel;
+    new M_id:bitstring;
+    new price:bitstring;
+    new id_CH:id;
+    new id_TE:id;
+    new id_MA:id;
+    new id_POS:id;
+    (
+      !(
+      in(c_CH,x:nat);
+      new st[]:stamp;
+      event Counter(c_CH,id1,st,x);
+      event Request_Token_Packet(id_TE,id_TSP,K_ID,x + 1);
+      out(c,(hmac(K_ID,of_nat(x + 1)),x + 1));
+      in(c,x_s:bitstring);
+      new st1[]:stamp;
+      event UAction_bitstring(st1,x_s);
+      event User_Agrees_To_Transaction(id_CH,id_TE,M_id,price);
+      let k:bitstring = hmac(K_pay,(cst_k,x_s)) in
+      let t_val:bitstring = hmac(K_pay,(cst_tval,M_id,price,x_s)) in
+      out(c,(k,t_val));
+      out(c_CH,x + 1);
+      0
+      )    ) | (
+      out(c,TR_ID);
+      0
+    ) | (
+      out(c,(M_id,price));
+      0
+    ) | (
+      !(
+      in(c,x_M_tok:bitstring); (* Application of the process proc_TSP *)
+      new st[]:stamp;
+      event UAction_bitstring(st,x_M_tok);
+      let (= TR_ID,x_ch:nat,x_hid:bitstring) = adec(x_M_tok,prk_TSP) in
+      in(c_TSP,(i:nat,x:nat));
+      event VCell_bitstring(c_TSP,(i,x));
+      if x_hid = hmac(K_ID,of_nat(x_ch)) then
+      if x < x_ch
+      then
+        new st1[]:stamp;
+        event Counter(c_TSP,id2,st1,x);
+        event Counter(c_TSP,id1,st1,i);
+        event VCell_bitstring(c_TSP,(i + 1,x_ch));
+        new t:bitstring;
+        new s:bitstring;
+        in(c_tok,y:nat);
+        new st2[]:stamp;
+        event Counter(c_tok,id1,st2,y);
+        let emv:bitstring = sign((TR_ID,t,Data),ssk_TSP) in
+        let k:bitstring = hmac(K_pay,(cst_k,s)) in
+        let ciphT:bitstring = senc(emv,skey_of(k)) in
+        let t_res:bitstring = sign((TR_ID,(ciphT,s)),ssk_TSP) in
+        event Generate_Token_Packet(id_TE,id_TSP,K_ID,x_ch,t,y+1);
+        insert storage_TSP(TR_ID,emv,s,y + 1);
+        out(c,t_res);
+        out(c_tok,y + 1);
+        out(c_TSP,(i + 1,x_ch));
+        !(
+        in(c,(emv':bitstring,x_t_val:bitstring,x_M_id:bitstring,x_price:bitstring));
+        new st3[]:stamp;
+        event UAction_bitstring(st3,(emv',x_t_val,x_M_id,x_price));
+        get storage_TSP(= TR_ID,= emv',x_s:bitstring,x_c:nat) in
+        if x_t_val = hmac(K_pay,(cst_tval,x_M_id,x_price,x_s)) then
+        in(c_pay,(j:nat,z:nat));
+        event VCell_bitstring(c_pay,(j,z));
+        if z < x_c
+        then
+          new st4[]:stamp;
+          event Counter(c_pay,id2,st4,z);
+          event Counter(c_pay,id1,st4,j);
+          event VCell_bitstring(c_pay,(j + 1,x_c));
+          event Counter_Validity_Approved(TR_ID,emv');
+          event TSP_Validates_Payment(id_TSP,TR_ID,x_c);
+          event TSP_Validates_Transaction(id_TSP,x_M_id,x_price);
+          event TSP_Validates_Token_Payment(emv');
+          event User_Gets_Charged(id_TE,x_M_id,x_price);
+          out(c_pay,(j + 1,x_c));
+          out(c,payment_confirm);
+          0
+        else
+          out(c_pay,(j,z));
+          0
+        )      else
+        out(c_TSP,(i,x));
+        0
+      )    ) | (
+      out(c_pay,(0,0));
+      0
+    ) | (
+      out(c_tok,0);
+      0
+    ) | (
+      out(c_TSP,(0,0));
+      0
+    ) | (
+      out(c_CH,0);
+      0
+    )
+    )  )
+  )

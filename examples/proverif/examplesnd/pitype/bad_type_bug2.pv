@@ -1,0 +1,19 @@
+type nonce.
+type host.
+
+fun nonce2host(nonce):host [data, typeConverter].
+
+reduc forall x:host, y:nonce; choose(true,x,y) = x;
+      forall x:host, y:nonce; choose(false,x,y) = nonce2host(y).
+
+
+fun hash(nonce): nonce.
+
+free c: channel.
+
+process
+	in(c, (b:bool, xB: host)); 
+	new k: nonce; 
+	let x = choose(b, xB, k) in
+	new n: nonce; new m: nonce;
+	out(c, (m, choice[n, hash(m)]))

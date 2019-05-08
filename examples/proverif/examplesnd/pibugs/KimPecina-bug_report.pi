@@ -1,0 +1,32 @@
+param traceDisplay = long.
+(* the following parameter causes the error *)
+param attacker = passive.
+
+free c. (* channel *)
+free A,B.
+fun h/1.
+fun pk/1.
+private fun sk/1. 
+fun enca/2. 
+
+reduc deca(enca(x,pk(y)),sk(y)) = x.
+reduc swap(enca(enca(x,y),z))=enca(enca(x,z),y).
+
+(* Here A is initiator, B responder *)
+let initiator = 
+	out(c,enca(h(m),pk(A)));
+	in(c,x);
+	let s = swap(x) in
+	let s' = deca(s,sk(A)) in
+	out(c,s').
+
+let responder =
+	in(c,x);
+	out(c,enca(x,pk(B)));
+	in(c,=enca(h(m),pk(B))).
+	
+process
+new m;
+(initiator | responder | phase 1; new m'; out(c,choice[m',m]))
+
+

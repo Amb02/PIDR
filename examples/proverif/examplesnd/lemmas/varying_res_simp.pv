@@ -1,0 +1,12 @@
+
+event e(bitstring).
+
+const a,b: bitstring.
+
+lemma x: bitstring; event(e(x)) ==> false.
+
+channel c.
+
+equivalence
+(in(c, x: bitstring); event e(a); if x = a then out(c, a)) | (in(c, x: bitstring); event e(b); if x = b then out(c, a))
+(in(c, x: bitstring); event e(b); if x = b then out(c, a)) | (in(c, x: bitstring); event e(a); if x = a then out(c, a))

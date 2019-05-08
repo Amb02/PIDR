@@ -1,0 +1,20 @@
+(* BUG: the term g(c2) is included as argument of name a
+   in clause generation (because the destructor g has several
+   rewrite rules, so check_several_types returns true), 
+   but trace reconstruction does not expect it to be included. *)
+
+fun c1/0.
+fun c2/0.
+fun c3/0.
+
+reduc g(c1) = c2;
+      g(c2) = c3.
+
+free c.
+
+
+process
+	in(c, x);
+	let (y, =g(c2)) = x in
+	new a;
+	out(c, choice [c1,c2])

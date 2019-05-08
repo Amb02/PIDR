@@ -1,0 +1,219 @@
+set verboseRules = true.
+
+(*--------channels----------*)
+free ch1: channel.
+free ch2: channel.
+
+
+
+(*-----constants------------*)
+free IDi:bitstring [private]. 
+free RIDj:bitstring [private].
+free DATA:bitstring [private].
+
+table d1(bitstring,bitstring,bitstring,bitstring,bitstring).
+table d2(bitstring,bitstring,bitstring,bitstring,bitstring).
+
+(*-------functions----------*)
+fun h(bitstring):bitstring.  (*hash function*)
+fun xor(bitstring,bitstring):bitstring. 
+fun con(bitstring,bitstring):bitstring. (*string concatenation*)
+
+(*------equations-----------*)
+equation forall m:bitstring,n:bitstring; xor(xor(m,n),n)=m.
+
+(*----------queries---------*)
+query attacker(IDi).
+query attacker(RIDj).
+query attacker(DATA).
+
+(* There is no hope to have injectivity: since an element
+is never removed from the table, the adversary can always replay
+a message from the tag/reader to the server.
+  So I focus on non-injective properties. *)
+(*query id:bitstring; event(TAGAuth(id))==>event(TAGStart(id)).
+query id:bitstring; event(ReaderAuth(id))==>event(ReaderStart(id)).*)
+
+
+
+
+(*-----------event----------*)
+event TAGStart(bitstring).
+event TAGAuth(bitstring).
+event ReaderStart(bitstring).
+event ReaderAuth(bitstring).
+
+(*------TAG's process------*)
+let TAG=
+  (* Registration: done in place for simplicity, instead of
+     sending a message to the server *)
+  new x1new:bitstring;
+  new P1new:bitstring;
+  insert d1(IDi,x1new,P1new,x1new,P1new);
+  let xi = x1new in let PIDi = P1new in
+ 
+!
+(
+  new Rt:bitstring;
+  new T1:bitstring;
+  in(ch1,tRr:bitstring);
+  event TAGStart(IDi);
+  let B1 = h((xi,tRr,Rt,IDi,T1)) in
+  out(ch1,(B1,Rt,T1,PIDi))(* ;
+  *** Useless code (no output anyway) ***
+  in(ch1,(tB7:bitstring,tT4:bitstring));
+  new T5:bitstring;
+  let xinew = h(con(con(con(xi,Rt),tRr),IDi)) in
+  let PIDinew = h(con(con(con(xinew,Rt),tRr),PIDi)) in
+  if tB7 = h(con(h(con(con(con(con(xi,xinew),PIDi),PIDinew),IDi)),tT4)) then
+  let xi = xinew in
+  let PIDi = PIDinew in
+ 0 *)
+).
+ 
+(*-----Reader's process------*) 
+let READER=
+  (* Registration *)
+  new x2new:bitstring;
+  new P2new:bitstring;
+  insert d2(RIDj,x2new,P2new,x2new,P2new);
+  let xj = x2new in let PRIDj = P2new in
+  
+!
+(
+ event ReaderStart(RIDj);
+ new Rr:bitstring;
+ new T2:bitstring;
+ new T4:bitstring;
+ out(ch1,Rr);
+ in(ch1,(rB1:bitstring,rRt:bitstring,rT1:bitstring,rPIDi:bitstring));
+ let B2 = h((xj,Rr,rRt,RIDj,rT1,T2)) in
+ out(ch2,(rB1,B2,Rr,rRt,rT1,T2,rPIDi,PRIDj));
+ 
+ in(ch2,(rB3:bitstring,rB4:bitstring,rB5:bitstring,rT3:bitstring));
+ let xjnew = h((xj,rRt,Rr,RIDj)) in
+ let PRIDjnew = h((xjnew,rRt,Rr,PRIDj)) in
+ let rDATA = xor(rB4,h((xj,xjnew,PRIDj,PRIDjnew,RIDj,rT3))) in
+ if rB5 = h((xj,RIDj,PRIDj,rDATA,rT3)) then
+ let B6 = xor(rB3,h((xjnew,PRIDjnew,rT3))) in
+ let B7 = h((B6,T4)) in
+(* let xj = xjnew in
+ let PRIDj = PRIDjnew in *)
+ out(ch1,(B7,T4));
+ 0
+).
+
+ 
+(*------Server's process-------*)
+let SAuth =
+  new T3:bitstring;
+  in(ch2,(sB1:bitstring,sB2:bitstring,sRr:bitstring,sRt:bitstring,sT1:bitstring,sT2:bitstring,sPIDi:bitstring,sPRIDj:bitstring));
+ (*
+ new x11:bitstring;
+	 new x12:bitstring;
+	 new P11:bitstring;
+	 new P12:bitstring;
+	 new x21:bitstring;
+	 new x22:bitstring;
+	 new P21:bitstring;
+	 new P22:bitstring;
+ 
+ *)  
+     
+   
+(
+     get d1(SIDi,x1new,=sPIDi,x1old,P1old) in
+ (
+   get d2(SRIDj,x2new,=sPRIDj,x2old,P2old) in
+  (
+   if sB1 = h((x1new,sRr,sRt,SIDi,sT1)) then
+   event TAGAuth(SIDi);
+    if sB2 = h((x2new,sRr,sRt,SRIDj,sT1,sT2)) then
+	 event ReaderAuth(SRIDj);
+	 
+	 let x11 = x1new in
+	 let P11 = sPIDi in
+	 let x12 = h((x11,sRt,sRr,SIDi)) in
+	 let P12 = h((x12,sRt,sRr,sPIDi)) in
+	 let x21 = x2new in
+	 let P21 = sPRIDj in
+	 let x22 = h((x21,sRt,sRr,RIDj)) in
+	 let P22 = h((x22,sRt,sRr,sPRIDj)) in
+	 insert d1(SIDi,x12,P12,x11,P11);
+	 insert d2(SRIDj,x22,P22,x21,P21);
+	 let B3 = xor(h((x11,x12,P11,P12,SIDi)),h((x22,P22,T3))) in
+     let B4 = xor(h((x21,x22,P21,P22,SRIDj,T3)),DATA) in
+     let B5 = h((x21,SRIDj,P21,DATA,T3)) in
+	  out(ch2,(B3,B4,B5,T3))
+  ) 
+ ) 
+   
+
+  else
+(
+  get d1(SIDi,x1new,P1new,x1old,=sPIDi) in
+ (
+   get d2(SRIDj,x2new,P2new,x2old,=sPRIDj) in
+   (
+    if sB1 = h((x1old,sRr,sRt,SIDi,sT1)) then
+   event TAGAuth(SIDi);
+    if sB2 = h((x2old,sRr,sRt,SRIDj,sT1,sT2)) then
+	 event ReaderAuth(SRIDj);
+	 
+	 let x11 = x1old in
+	 let x21 = x2old in
+	 let P11 = sPIDi in
+	 let P21 = sPRIDj in
+	 let x12 = h((x11,sRt,sRr,SIDi)) in
+	 let P12 = h((x12,sRt,sRr,sPIDi)) in
+	 let x22 = h((x21,sRt,sRr,SRIDj)) in
+	 let P22 = h((x22,sRt,sRr,sPRIDj)) in
+	 insert d1(SIDi,x12,P12,x11,P11);
+	 insert d2(SRIDj,x22,P22,x21,P21);
+	  let B3 = xor(h((x11,x12,P11,P12,SIDi)),h((x22,P22,T3))) in
+     let B4 = xor(h((x21,x22,P21,P22,SRIDj,T3)),DATA) in
+     let B5 = h((x21,SRIDj,P21,DATA,T3)) in
+     out(ch2,(B3,B4,B5,T3))
+
+   )
+ )
+  
+  else 
+ (
+  get d1(SIDi,x1new,P1new,x1old,=sPIDi) in
+ (
+  get d2(SRIDj,x2new,=sPRIDj,x2old,P2old) in
+   (
+   if sB1 = h((x1old,sRr,sRt,SIDi,sT1)) then
+   event TAGAuth(SIDi);
+    if sB2 = h((x2new,sRr,sRt,SRIDj,sT1,sT2)) then
+	 event ReaderAuth(SRIDj);
+ 
+	 let x11 = x1old in
+	 let P11 = sPIDi in
+	 let x22 = x2new in
+	 let P22 = sPRIDj in
+	 let x12 = h((x11,sRt,sRr,SIDi)) in
+	 let P12 = h((x12,sRt,sRr,sPIDi)) in
+	 let x21 = x22 in
+	 let P21 = sPRIDj in
+	 let x22 = h((x21,sRt,sRr,RIDj)) in
+	 let P22 = h((x22,sRt,sRr,sPRIDj)) in
+	 insert d1(SIDi,x12,P12,x11,P11);
+	 insert d2(SRIDj,x22,P22,x21,P21);
+	 let B3 = xor(h((x11,x12,P11,P12,SIDi)),h((x22,P22,T3))) in
+     let B4 = xor(h((x21,x22,P21,P22,SRIDj,T3)),DATA) in
+     let B5 = h((x21,SRIDj,P21,DATA,T3)) in
+     out(ch2,(B3,B4,B5,T3))
+
+   )
+  )
+ )
+)
+) .
+
+
+process !TAG | !READER | !SAuth
+ 
+ 
+ 

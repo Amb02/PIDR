@@ -1,0 +1,13 @@
+(* ProVerif should find an attack:
+   in(c,=h(s)) can be executed iff secret = s *)
+
+free c.
+free s.
+
+private free secret.
+noninterf secret.
+
+private fun h/1.
+
+process
+   out(c,h(secret)); in(c,=h(s)); out(c,c)

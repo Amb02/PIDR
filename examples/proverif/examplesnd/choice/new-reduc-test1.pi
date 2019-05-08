@@ -1,0 +1,48 @@
+(* Private Authentication
+   Taken from Delaune, Jacquemard, CSFW'04 *)
+
+(* shared-key encryption as equation *)
+
+fun aenc/2.
+fun pk/1.
+
+reduc adec(aenc(x,pk(y)),y) = x.
+
+(* declaration of public name*)
+
+free c.
+
+fun true/0.
+fun false/0.
+reduc equal(x,x) = true
+      otherwise equal(x,y) = false.
+
+reduc test(true, x, y) = x where x, y can fail
+      otherwise test(false, x, y) = y where x,y can fail.
+
+(* declaration of biprocess *)
+
+let processA =
+	new n_a;
+	out(c, aenc((n_a,pk(sk_a)),pk(sk_b)));
+	in(c, x);
+	0.
+
+let processB =
+	in(c, x);
+	new n_b;
+
+	let (n_a,pub_a) = adec(x, sk_b) in
+	out(c, test(equal(pub_a, pk(sk_a)),
+	            aenc((n_a,n_b,pk(sk_b)),pk(sk_a)),
+	            aenc(n_b,pk(sk_b))))
+	else
+	  out(c,aenc(n_b,pk(sk_b))).
+	  
+let system = !processA | !processB.
+
+process
+	new sk_a0; new sk_b; new sk_c;
+	  !out(c,pk(sk_a0));out(c,pk(sk_b));out(c,pk(sk_c));
+	  let ska0 = choice[sk_a0,sk_c] in
+	  system

@@ -1,0 +1,108 @@
+(* Variantes de AKEP2 : 
+Bellare Rogaway 1993 : Entity Authentication and Key Distribution
+Attaque reflexive quand on enleve l'identité dans le deuxieme echange *)
+
+
+param attacker = active.
+param simplifyDerivation = true.
+
+(**** Header ****)
+free c.
+
+(* fonctions *)
+fun encrypt/2.
+reduc decrypt(encrypt(x,y),y) = x.
+
+(* 2 honest host names A and B *)
+
+free A, B.
+
+(* "eqor(x,A,B) = true" means "x = A or x = B" 
+   A more elegant syntax might be added in the future *)
+
+data true/0.
+reduc eqor(x,x,y) = true;
+      eqor(x,y,x) = true.
+
+(* the table host names/keys is sent on private channel keytable
+   The table consists of triples 
+   (first host, second host, key shared between them) *)
+private free keytable.
+
+(* Queries *)
+
+query evinj: InitAEnd(xA,xB,z,t) ==> evinj:RespABegin(xB).
+query evinj: InitAEnd(xA,xB,z,t) ==> evinj:RespASession(xB,xA,z,t).
+
+query ev:InitAEnd(xA,hostX,xra,xrb).
+query ev:RespAEnd(hostY,xA,xra,xrb).
+
+
+(* Processus *)
+
+let processInit = 
+    (* Start a honest initiator of identity xA (A or B) *)
+    in(c, xA);
+    if eqor(xA, A, B) = true then
+    (* Real start of the role *)
+    new ra;
+    let m1 = (ra,xA) in
+    out(c,m1);
+    in(c,(hostX,m2)); 
+    in(keytable, (=xA, =hostX, Kax));
+    (*if eqor(hostX, A, B) = true then 0
+    else*) 
+    let (=ra,=hostX,rb) = decrypt(m2,Kax) in
+    let m3 = encrypt((rb,xA),Kax)  in
+    if eqor(hostX, A, B) = true then
+    event InitAEnd(xA,hostX,ra,rb);
+    out(c,m3).
+
+let processResp = 
+    (* Start a honest responder of identity xB (A or B) *)
+    in(c, xB);
+    if eqor(xB, A, B) = true then
+    (* Real start of the role *)
+    in(c,m1);
+    let (ra,hostY) = m1 in
+    if eqor(hostY, A, B) = true then (* hostY is honest -- should hostY be honest already at this point? *)
+    in(keytable, (=xB, =hostY, Kay));
+    event RespABegin(xB);
+    new rb;
+    event RespASession(xB,hostY,ra,rb);
+    let m2 = encrypt((ra,xB,rb),Kay) in
+    out(c, (xB,m2));
+    in(c,m3);
+    let (=rb,=hostY)=decrypt(m3,Kay) in
+    event RespAEnd(xB,hostY,ra,rb).
+
+
+(* Key registration *)
+
+let processK =
+        in(c, (h,h',k));
+        if h = A then 
+	   if h' = A then (!out(keytable, (A, A, Kaa))) else
+	   if h' = B then (!out(keytable, (A, B, Kab))) else
+	   (!out(keytable, (h, h', k)))
+        else if h = B then
+	   if h' = A then (!out(keytable, (B, A, Kab))) else
+	   if h' = B then (!out(keytable, (B, B, Kbb))) else
+	   (!out(keytable, (h, h', k)))
+        else
+           (!out(keytable, (h, h', k))).
+ 
+
+(* Start process *)
+
+process 
+	new Kaa; new Kab; new Kbb;
+	(
+          (* Launch an unbounded number of sessions of the initiator *)
+          (!processInit) | 
+          (* Launch an unbounded number of sessions of the responder *)
+          (!processResp) |
+          (* Key registration process *)
+	  (!processK)
+        )
+	

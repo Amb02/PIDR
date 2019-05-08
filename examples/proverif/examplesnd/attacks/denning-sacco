@@ -1,0 +1,54 @@
+(* Denning-Sacco *)
+
+free c.
+
+(* Public key cryptography *)
+
+fun pk/1.
+fun encrypt/2.
+reduc decrypt(encrypt(x,pk(y)),y) = x.
+
+(* Signatures *)
+
+fun sign/2.
+reduc getmess(sign(m,k)) = m.
+reduc checksign(sign(m,k), pk(k)) = m.
+
+(* Host name / key 
+   The server has a table (host name, public key), which we
+   represent by the function getkey. *)
+
+fun host/1.
+private reduc getkey(host(x)) = x.
+
+(* Shared-key cryptography *)
+
+fun sencrypt/2.
+reduc sdecrypt(sencrypt(x,y),y) = x.
+
+(* Secrecy assumptions *)
+
+not skA.
+not skB.
+
+private free secretB.
+query attacker:secretB.
+
+let processA =
+	in(c, pk2);
+	new k;
+	out(c, encrypt(sign(k, skA), pk2)).
+
+let processB =
+	in(c, km);
+	let ks = decrypt(km,skB) in
+	let k = checksign(ks, pkA) in
+	out(c, sencrypt(secretB, k)).
+
+process new skA; 
+	let pkA = pk(skA) in
+        out(c, pkA);
+        new skB; 
+	let pkB = pk(skB) in
+        out(c, pkB);
+	((!processA) | (!processB))

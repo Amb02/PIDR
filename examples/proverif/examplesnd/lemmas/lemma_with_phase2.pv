@@ -1,0 +1,15 @@
+free c:channel.
+
+free k:bitstring [private].
+free k1:bitstring [private].
+
+event A.
+
+query attacker(k) phase 1 ==> event(A).
+query attacker(k) phase 0 ==> event(A).
+
+process
+  out(c,k);
+  event A;
+  phase 1;
+  out(c,k1)

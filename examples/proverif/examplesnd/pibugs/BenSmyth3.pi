@@ -1,0 +1,58 @@
+(* This file causes a bug:
+
+Internal error: unexpected link in copy_closed
+Please report bug to Bruno.Blanchet@ens.fr, including input file and output
+
+during attack reconstruction. The problem is that the equational theory
+leads to g(x) -> h(y,z)
+and      h(x,x') -> h(y,z)
+These rewrite rules introduce fresh variables, leading to open
+terms when applying equations to closed terms. Hence 
+copy_closed(_remove_syntactic) receives an open term, while it expects
+a closed term.
+
+The bug actually is triggered in find_io_rules:
+	    auto_cleanup (fun () ->
+	      match_modulo_list (fun () ->
+	        match_equiv_list (fun () -> 
+                  let new_found = List.map copy_closed_remove_syntactic var_list in
+Here, the variables in var_list may not be linked to a close_term,
+even though the clause is completely instantiated.
+This is because the clause gets rewritten modulo the equational theory
+by match_modulo_list/match_equiv_list, and this may introduce new variables.
+
+Two possible fixes:
+1/ Forbid equational theories that lead to variables in the RHS that
+do not occur in the LHS
+2/ Close the term by calling
+      List.iter close_term var_list;
+before calling copy_closed_remove_syntactic
+Let's do the first one.
+
+*)
+
+param verboseEq = true.
+
+private free a,b.
+free c.
+
+private free s.
+query attacker:s.
+
+fun f/1.
+private fun h/2.
+
+reduc g(f(x)) = h(f(x), x);
+          g(x) = h(x,x).
+
+equation h(z,x) = h(x,y).
+
+process
+        (
+                in (a,=g(s));
+                out(b,g(s))
+        ) | (
+                out(a,g(s));
+                in (b,=g(s));
+                out(c,s)
+        )

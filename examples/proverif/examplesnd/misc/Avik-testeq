@@ -1,0 +1,223 @@
+(* The query should be proved
+   It was not due to a bug in the handling of = in queries. *)
+
+(* Generated script of the protocol Plutus with 1 versions, corrected, private readfs *)
+
+param redundantHypElim = beginOnly.
+param traceBacktracking = false.
+
+fun e/2.
+fun d/2.
+fun N/1.
+fun sign/2.
+fun enc/2.
+fun hash/1.
+
+reduc crack(e(x,y),d(x,y),N(x)) = x.                              (* derive seed given RSA exponents and modulus *)
+reduc verify(sign(z,(d(x,y),N(x))),(e(x,y),N(x))) = z.            (* verify RSA signature *)
+reduc pubKey(y,N(x)) = e(x,y).                                    (* derive exponent from modulus and base *)
+reduc dec(enc(x,y),y) = x.                                        (* decrypt symmetric encryption *)
+
+data zero/0.
+data succ/1.
+
+free net.
+free newgroup, revoke.
+free rkeyreq, wkeyreq.
+free corrupt. 
+
+private fun rprivchannel/1.
+private fun wprivchannel/1.
+private fun tokenprivchannel/1.
+private fun writefs/0.
+private fun readfs/0.
+
+data consset/2.
+data emptyset/0.
+pred member/2.
+clauses
+  member:x,consset(x,y);
+  member:x,y -> member:x,consset(z,y).
+
+pred notbefore/2 refTransAtt.
+clauses
+        notbefore:x,x;
+	notbefore:x,y -> notbefore:succ(x),y.
+
+(* A good reader obtains content mx if earlier a good writer writes mx or earlier a writer is corrupt. *)
+query ev:gets(rx,mx,gx,vx,vz) ==> 
+                  (ev:isreader(rx,gx,vy) 
+                & ev:iswriter(wx,gx,vx) 
+                & ev:puts(wx,mx,gx,vx) 
+		& notbefore:vy,vx
+                & vx = vz)
+              |
+                  ev:isreader(rx,gx,vy) 
+                & ev:iswriter(wx,gx,vx) 
+                & ev:puts(wx,mx,gx,vx) 
+		& notbefore:vy,vx
+                & ev:iswriter(wz,gx,vz)
+                & ev:corrupt(wz,gx,vz)
+                & notbefore:vz,vx
+              |
+                  ev:isreader(rx,gx,vy)
+                & ev:iswriter(wx,gx,vx)
+                & ev:corrupt(wx,gx,vx)
+                & notbefore:vy,vx
+                & ev:iswriter(wz,gx,vz)
+                & ev:corrupt(wz,gx,vz)
+                & notbefore:vz,vx.
+
+let processOwr =
+    new seed1;
+    new seed2;
+    let ownerpubkey = (e(seed1,seed2),N(seed1)) in                (* owner creates a pair of private and public keys *)
+    let ownerprivkey = (d(seed1,seed2),N(seed1)) in
+    out(net,ownerpubkey);
+    (
+    ! in(net, (=newgroup,initreaderlist,initwriterlist));         (* create a new group *)
+      new g;
+      event isgroup(g);
+      out(net,g);
+      new currentversion;
+      (
+       ( new inittoken;                                           (* create initial token *)
+	 out(tokenprivchannel(g), (hash(inittoken),zero));               (* send initial token to server *)
+         new initlkey;                                            (* create initial lkey *)
+	 new seed3;
+	 let initwkey = (d(seed3,initlkey),N(seed3)) in           (* generate initial wkey *)
+	 event isversion(g,zero,initreaderlist,initwriterlist);
+	 event istoken(inittoken,g,zero);
+         out(currentversion, (zero,initreaderlist,initwriterlist,inittoken,initlkey,initwkey))
+                                                                  (* initial version = 0 *)
+       )
+      |
+       ( in(currentversion, (=zero,oldreaderlist,oldwriterlist,oldtoken,oldlkey,oldwkey));
+         in(net, (=revoke,=g,newreaderlist,newwriterlist));       (* receive revoke command from adversary *)
+	 in(tokenprivchannel(g), (hashx,vx)); 
+	 new newtoken;                                            (* create new token *)
+         out(tokenprivchannel(g), (hash(newtoken),succ(zero)));                (* send new token to server *)
+         let newlkey = sign(oldlkey,ownerprivkey) in              (* wind old lkey to obtain new lkey *)
+         new seed3;
+         let newwkey = (d(seed3,newlkey),N(seed3)) in             (* generate new wkey *)
+         event isversion(g,succ(zero),newreaderlist,newwriterlist);
+	 event istoken(newtoken,g,succ(zero));
+         out(currentversion, (succ(zero),newreaderlist,newwriterlist,newtoken,newlkey,newwkey))
+                                                                  (* increment version *)
+       )
+      |
+       (
+       ! in(net, (=rkeyreq,r,=g));                                (* receive read key request *)
+         in(currentversion, (v,readerlist,writerlist,token,lkey,wkey));
+         out(currentversion, (v,readerlist,writerlist,token,lkey,wkey));
+         if member:r,readerlist then                              (* check reader and send lkey, owner's pubkey, ... *)
+          (event isreader(r,g,v); 
+           out(rprivchannel(r), (lkey,ownerpubkey,g,v)) )
+       )
+      |
+       (
+       ! in(net, (=wkeyreq,w,=g));                                (* receive write key request *)
+         in(currentversion, (v,readerlist,writerlist,token,lkey,wkey));
+         out(currentversion, (v,readerlist,writerlist,token,lkey,wkey));
+         if member:w,writerlist then                              (* check writer and send token, lkey, wkey,
+                                                                       hashed header signed with owner's privkey, ... *)
+           ( let (dx,n) = wkey in
+	     let sn = sign(hash((n,g,v)),ownerprivkey) in
+	     event iswriter(w,g,v);
+             out(wprivchannel(w), (token,lkey,wkey,sn,n,g,v)) )
+       )
+      )
+    ).
+
+let processGoodRdr = 
+    in(net, (r,g));
+    out(net, (rkeyreq,r,g));                                      (* send read key request *)
+    in(rprivchannel(r), (lkey,ownerpubkey,=g,vx));                (* obtain lkey, public key of owner, ... *)
+    in(readfs, ((sn,n,=g,v,encx,crypt),=g,vz));                           (* obtain cryptographic header and contents from file system *)
+                                                                  (* verify signature/hash of header *)
+                                                                  (* unwind lkey, obtain rkey, decrypt and verify contents *)
+    if hash((n,g,v)) = verify(sn,ownerpubkey) then
+    (
+      if vx = succ(zero) then (
+         if v = zero then (
+            let lkey = verify(lkey,ownerpubkey) in
+            let ex = pubKey(lkey,n) in
+            if hash(encx) = verify(crypt,(ex,n)) then
+            let x = dec(encx,lkey) in
+            event gets(r,x,g,v,vz)
+         )
+        |
+         if v = succ(zero) then (
+            let ex = pubKey(lkey,n) in
+            if hash(encx) = verify(crypt,(ex,n)) then
+            let x = dec(encx,lkey) in
+            event gets(r,x,g,v,vz)
+         )
+      )
+      |
+      if vx = zero then (
+         if v = zero then (
+            let ex = pubKey(lkey,n) in
+            if hash(encx) = verify(crypt,(ex,n)) then
+            let x = dec(encx,lkey) in
+            event gets(r,x,g,v,vz)
+      ))
+    ).
+
+let processBadRdr =
+    in(net, (r,g));
+    out(net, (rkeyreq,r,g));                                      (* send read key request *)
+    in(rprivchannel(r), (lkey,ownerpubkey,=g,v));
+    in(net, =(corrupt,r));                                        (* receive corrupt command from adversary *)
+    event corrupt(r,g,v);
+    out(net,lkey).                                                (* leak lkey *)
+
+let processGoodWtr =
+    in(net, (w,g)); 
+    out(net, (wkeyreq,w,g));                                      (* send write key request *)
+    in(wprivchannel(w), (token,lkey,wkey,sn,n,=g,v));             (* obtain token, lkey, wkey, authenticated header, ... *) 
+                                                                  (* create content, encrypt, hash and sign, 
+								       and send to server with token *)
+    new m;
+    let encx = enc(m,lkey) in
+    event puts(w,m,g,v);
+    out(writefs, (token,(sn,n,g,v,encx,sign(hash(encx),wkey)))).
+
+let processBadWtr = 
+    in(net, (w,g));
+    out(net, (wkeyreq,w,g));                                      (* send write key request *)
+    in(wprivchannel(w), (token,lkey,wkey,sn,n,=g,v));            
+    in(net, =(corrupt,w));                                        (* receive corrupt command from adversary *)
+    event corrupt(w,g,v);
+    out(net, (token,lkey,wkey,sn,n)).                             (* leak token, lkey, wkey, authenticated header, and modulus *)
+
+let processAnyWtr =
+    ! in(net, (token, content));
+      out(writefs, (token,content)).                              (* forward content with token to server *)
+    
+let processServer = 
+    in(net, g);
+    (
+     (
+     ! in(tokenprivchannel(g), (hashx,vx));
+       out(tokenprivchannel(g), (hashx,vx))
+     )
+    |
+     (
+     ! in(writefs, (token,content));                              (* obtain content with token *)
+       out(net,content);                                          (* leak content *)
+       in(tokenprivchannel(g), (hashx,vx));
+       out(tokenprivchannel(g), (hashx,vx));
+       if hash(token) = hashx then                                (* check token *) 
+       event authwrite(g,token,vx);
+       ! out(readfs, (content,g,vx))                                     (* publish content on file system *)
+     )
+    ).
+
+
+process
+         ( processOwr | (! processServer) | processAnyWtr 
+         | (! processGoodRdr) | (! processBadRdr)  
+	 | (! processGoodWtr) | (! processBadWtr) 
+         ) 
+

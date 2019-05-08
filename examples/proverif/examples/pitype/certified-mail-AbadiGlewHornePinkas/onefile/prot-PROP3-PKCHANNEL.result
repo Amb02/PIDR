@@ -1,0 +1,381 @@
+Process 0 (that is, the initial process):
+{1}let TTPEncKey: pkey = pk(TTPDecKey) in
+{2}out(c, TTPEncKey);
+{3}let TTPVerKey: spkey = Spk(TTPSigKey) in
+{4}out(c, TTPVerKey);
+{5}let Rname: host = PasswdTable(Rpwd) in
+{6}out(c, Rname);
+(
+    {7}!
+    {8}in(c, recipient: host);
+    {9}in(c, (sauth: authtag,ttpauth: authtag));
+    {10}new msgid: messageid;
+    {11}let m: bitstring = Message(recipient,msgid,(sauth,ttpauth)) in
+    {12}new k: key;
+    {13}new qtmp: tquery;
+    {14}let q: tquery = getAuthQ(qtmp,sauth) in
+    {15}let r: reply = getAuthR(Reply(recipient,qtmp),sauth) in
+    {16}let em: bitstring = E(k,m) in
+    {17}let hs: key = H((cleartext,q,r,em)) in
+    {18}let S2TTP: bitstring = A(TTPEncKey,(Sname,(sauth,ttpauth),(Give,k,recipient,hs))) in
+    {19}event Shas(Sname,k,cleartext,q,r,m);
+    {20}out(recipient, (TTPname,em,(sauth,ttpauth),cleartext,q,S2TTP));
+    {21}!
+    {22}in(Sname, inmess4: tcertif);
+    {23}if (ttpauth = Auth) then
+    (
+        {24}let (=Released,=S2TTP,=recipient) = checkS(TTPVerKey,inmess4) in
+            {25}event SThinksRhas(m);
+            {26}out(Judgename, (inmess4,Sname,k,cleartext,q,r,em))
+        else
+            {27}out(Sname, inmess4)
+    )
+    else
+        {28}let (=Released,=S2TTP) = checkS(TTPVerKey,inmess4) in
+            {29}event SThinksRhas(m)
+        else
+            {30}out(Sname, inmess4)
+) | (
+    {31}!
+    0
+) | (
+    {32}!
+    {33}new shkey: key;
+    {34}out(TTPname, Rname);
+    {35}out(TTPname, A(TTPEncKey,(ChKey,shkey)));
+    {36}let idTTPtoR: idttpr = id_for_key(shkey) in
+    {37}new RsecchannelToTTP: channel;
+    {38}new RsecchannelFromTTP: channel;
+    (
+        {39}!
+        {40}in(RsecchannelToTTP, m_1: bitstring);
+        {41}out(TTPname, E(shkey,m_1))
+    ) | (
+        {42}!
+        {43}in(Rname, mR: bitstring);
+        {44}out(RsecchannelFromTTP, decE(shkey,mR))
+    ) | (
+        {45}out(c, RsecchannelToTTP);
+        {46}out(c, RsecchannelFromTTP);
+        (
+            {47}out(c, Rpwd)
+        ) | (
+            {48}in(c, m_2: bitstring);
+            {49}event Rreceived(m_2)
+        )
+    )
+) | (
+    {50}!
+    {51}in(TTPname, receivername: host);
+    {52}in(TTPname, m1: bitstring);
+    {53}let (=ChKey,shkey_1: key) = decA(TTPDecKey,m1) in
+    {54}let idTTPtoR_1: idttpr = id_for_key(shkey_1) in
+    {55}new TTPsecchannelToR: channel;
+    {56}new TTPsecchannelFromR: channel;
+    (
+        {57}!
+        {58}in(TTPsecchannelToR, m_3: bitstring);
+        {59}out(receivername, E(shkey_1,m_3))
+    ) | (
+        {60}!
+        {61}in(TTPname, mTTP: bitstring);
+        {62}out(TTPsecchannelFromR, decE(shkey_1,mTTP))
+    ) | (
+        {63}in(TTPsecchannelFromR, (S2TTP3: bitstring,(=Wants,RPwd3: passwd,hr3: key)));
+        {64}let (Sname3: host,(sauth3: authtag,ttpauth3: authtag),(=Give,k3: key,R3: host,=hr3)) = decA(TTPDecKey,S2TTP3) in
+        {65}if (R3 = receivername) then
+        {66}if ((ttpauth3,R3) = (Auth,PasswdTable(RPwd3))) then
+            {67}event TTPSendS(Sname3,S(TTPSigKey,(Released,S2TTP3,R3)));
+            {68}event TTPSendR(idTTPtoR_1,(Try,k3,hr3));
+            {69}out(TTPsecchannelToR, (Try,k3,hr3));
+            {70}out(Sname3, S(TTPSigKey,(Released,S2TTP3,R3)))
+        else
+            {71}if (ttpauth3 = NoAuth) then
+            {72}event TTPSendS2(Sname3,S(TTPSigKey,(Released,S2TTP3)));
+            {73}event TTPSendR2(idTTPtoR_1,(Try,k3,hr3));
+            {74}out(TTPsecchannelToR, (Try,k3,hr3));
+            {75}out(Sname3, S(TTPSigKey,(Released,S2TTP3)))
+    )
+)
+
+Translating the process into Horn clauses...
+COMPUTATIONTIME translation to clauses: 0.003381s
+NUMBERIMPLIES translation to clauses: 6194
+-- Query putbegin event:Shas,TTPSendS,TTPSendS2; not event(Rreceived(Message(x,y,z))) in process 0.
+Completing...
+200 rules inserted. The rule base contains 177 rules. 22 rules in the queue.
+400 rules inserted. The rule base contains 205 rules. 24 rules in the queue.
+COMPUTATIONTIME completion of rules: 0.058265s
+NUMBERIMPLIES completion of rules: 10613
+ok, secrecy assumption verified: fact unreachable attacker(TTPDecKey[])
+ok, secrecy assumption verified: fact unreachable attacker(TTPSigKey[])
+Starting query not event(Rreceived(Message(x,y,z)))
+goal reachable: begin(TTPSendS2(Sname[],S(TTPSigKey[],(Released,A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))))))) && begin(Shas(Sname[],k_1,cleartext[],qtmp_1,Reply(x,qtmp_1),Message(x,msgid_1,(Auth,NoAuth)))) && attacker(x) -> end(Rreceived(Message(x,msgid_1,(Auth,NoAuth))))
+Abbreviations:
+msgid_1 = msgid[ttpauth = NoAuth,sauth = Auth,recipient = x,!1 = @sid]
+k_1 = k[ttpauth = NoAuth,sauth = Auth,recipient = x,!1 = @sid]
+qtmp_1 = qtmp[ttpauth = NoAuth,sauth = Auth,recipient = x,!1 = @sid]
+
+Derivation:
+Abbreviations:
+msgid_1 = msgid[ttpauth = NoAuth,sauth = Auth,recipient = x,!1 = @sid]
+k_1 = k[ttpauth = NoAuth,sauth = Auth,recipient = x,!1 = @sid]
+qtmp_1 = qtmp[ttpauth = NoAuth,sauth = Auth,recipient = x,!1 = @sid]
+RsecchannelFromTTP_1 = RsecchannelFromTTP[!1 = @sid_1]
+shkey_2 = shkey[!1 = @sid_1]
+TTPsecchannelToR_1 = TTPsecchannelToR[m1 = A(pk(TTPDecKey[]),(ChKey,shkey_2)),receivername = x,!1 = @sid_2]
+TTPsecchannelFromR_1 = TTPsecchannelFromR[m1 = A(pk(TTPDecKey[]),(ChKey,shkey_2)),receivername = x,!1 = @sid_2]
+RsecchannelToTTP_1 = RsecchannelToTTP[!1 = @sid_1]
+
+1. We assume as hypothesis that
+attacker(x).
+
+2. Using the function NoAuth the attacker may obtain NoAuth.
+attacker(NoAuth).
+
+3. Using the function Auth the attacker may obtain Auth.
+attacker(Auth).
+
+4. By 3, the attacker may know Auth.
+By 2, the attacker may know NoAuth.
+Using the function 2-tuple the attacker may obtain (Auth,NoAuth).
+attacker((Auth,NoAuth)).
+
+5. The message x that the attacker may have by 1 may be received at input {8}.
+The message (Auth,NoAuth) that the attacker may have by 4 may be received at input {9}.
+The event Shas(Sname[],k_1,cleartext[],qtmp_1,Reply(x,qtmp_1),Message(x,msgid_1,(Auth,NoAuth))) may be executed at {19}.
+So the message (TTPname[],E(k_1,Message(x,msgid_1,(Auth,NoAuth))),(Auth,NoAuth),cleartext[],qtmp_1,A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))))) may be sent on channel x at output {20}.
+mess(x,(TTPname[],E(k_1,Message(x,msgid_1,(Auth,NoAuth))),(Auth,NoAuth),cleartext[],qtmp_1,A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))))).
+
+6. By 1, the attacker may have the channel x.
+By 5, the message (TTPname[],E(k_1,Message(x,msgid_1,(Auth,NoAuth))),(Auth,NoAuth),cleartext[],qtmp_1,A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))))) may be sent on this channel.
+So the attacker may obtain the message (TTPname[],E(k_1,Message(x,msgid_1,(Auth,NoAuth))),(Auth,NoAuth),cleartext[],qtmp_1,A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))))) by listening on this channel.
+attacker((TTPname[],E(k_1,Message(x,msgid_1,(Auth,NoAuth))),(Auth,NoAuth),cleartext[],qtmp_1,A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))))).
+
+7. By 6, the attacker may know (TTPname[],E(k_1,Message(x,msgid_1,(Auth,NoAuth))),(Auth,NoAuth),cleartext[],qtmp_1,A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))))).
+Using the function 2-proj-6-tuple the attacker may obtain E(k_1,Message(x,msgid_1,(Auth,NoAuth))).
+attacker(E(k_1,Message(x,msgid_1,(Auth,NoAuth)))).
+
+8. The message RsecchannelFromTTP_1 may be sent to the attacker at output {46}.
+attacker(RsecchannelFromTTP_1).
+
+9. The message A(pk(TTPDecKey[]),(ChKey,shkey_2)) may be sent to the attacker at output {35}.
+attacker(A(pk(TTPDecKey[]),(ChKey,shkey_2))).
+
+10. By 6, the attacker may know (TTPname[],E(k_1,Message(x,msgid_1,(Auth,NoAuth))),(Auth,NoAuth),cleartext[],qtmp_1,A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))))).
+Using the function 5-proj-6-tuple the attacker may obtain qtmp_1.
+attacker(qtmp_1).
+
+11. By 1, the attacker may know x.
+By 10, the attacker may know qtmp_1.
+Using the function Reply the attacker may obtain Reply(x,qtmp_1).
+attacker(Reply(x,qtmp_1)).
+
+12. The attacker initially knows cleartext[].
+attacker(cleartext[]).
+
+13. By 12, the attacker may know cleartext[].
+By 10, the attacker may know qtmp_1.
+By 11, the attacker may know Reply(x,qtmp_1).
+By 7, the attacker may know E(k_1,Message(x,msgid_1,(Auth,NoAuth))).
+Using the function 4-tuple the attacker may obtain (cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))).
+attacker((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))).
+
+14. By 13, the attacker may know (cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))).
+Using the function H the attacker may obtain H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))).
+attacker(H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))).
+
+15. The attacker has some term RPwd3_1.
+attacker(RPwd3_1).
+
+16. Using the function Wants the attacker may obtain Wants.
+attacker(Wants).
+
+17. By 16, the attacker may know Wants.
+By 15, the attacker may know RPwd3_1.
+By 14, the attacker may know H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))).
+Using the function 3-tuple the attacker may obtain (Wants,RPwd3_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))).
+attacker((Wants,RPwd3_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))).
+
+18. By 6, the attacker may know (TTPname[],E(k_1,Message(x,msgid_1,(Auth,NoAuth))),(Auth,NoAuth),cleartext[],qtmp_1,A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))))).
+Using the function 6-proj-6-tuple the attacker may obtain A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))).
+attacker(A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))))).
+
+19. By 18, the attacker may know A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))).
+By 17, the attacker may know (Wants,RPwd3_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))).
+Using the function 2-tuple the attacker may obtain (A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))),(Wants,RPwd3_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))).
+attacker((A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))),(Wants,RPwd3_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))).
+
+20. The message RsecchannelToTTP_1 may be sent to the attacker at output {45}.
+attacker(RsecchannelToTTP_1).
+
+21. By 20, the attacker may have the channel RsecchannelToTTP_1.
+By 19, the attacker may have the message (A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))),(Wants,RPwd3_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))).
+So the attacker may send this message on this channel.
+mess(RsecchannelToTTP_1,(A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))),(Wants,RPwd3_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))).
+
+22. The message (A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))),(Wants,RPwd3_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))) that may be sent on channel RsecchannelToTTP_1 by 21 may be received at input {40}.
+So the message E(shkey_2,(A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))),(Wants,RPwd3_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))) may be sent to the attacker at output {41}.
+attacker(E(shkey_2,(A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))),(Wants,RPwd3_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))))).
+
+23. The message x that the attacker may have by 1 may be received at input {51}.
+The message A(pk(TTPDecKey[]),(ChKey,shkey_2)) that the attacker may have by 9 may be received at input {52}.
+The message E(shkey_2,(A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))),(Wants,RPwd3_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))) that the attacker may have by 22 may be received at input {61}.
+So the message (A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))),(Wants,RPwd3_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))) may be sent on channel TTPsecchannelFromR_1 at output {62}.
+mess(TTPsecchannelFromR_1,(A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))),(Wants,RPwd3_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))).
+
+24. The message x that the attacker may have by 1 may be received at input {51}.
+The message A(pk(TTPDecKey[]),(ChKey,shkey_2)) that the attacker may have by 9 may be received at input {52}.
+The message (A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))),(Wants,RPwd3_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))) that may be sent on channel TTPsecchannelFromR_1 by 23 may be received at input {63}.
+The event TTPSendS2(Sname[],S(TTPSigKey[],(Released,A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))))))) may be executed at {72}.
+So the message (Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))) may be sent on channel TTPsecchannelToR_1 at output {74}.
+mess(TTPsecchannelToR_1,(Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))).
+
+25. The message x that the attacker may have by 1 may be received at input {51}.
+The message A(pk(TTPDecKey[]),(ChKey,shkey_2)) that the attacker may have by 9 may be received at input {52}.
+The message (Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))) that may be sent on channel TTPsecchannelToR_1 by 24 may be received at input {58}.
+So the message E(shkey_2,(Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))) may be sent on channel x at output {59}.
+mess(x,E(shkey_2,(Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))).
+
+26. By 1, the attacker may have the channel x.
+By 25, the message E(shkey_2,(Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))) may be sent on this channel.
+So the attacker may obtain the message E(shkey_2,(Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))) by listening on this channel.
+attacker(E(shkey_2,(Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))).
+
+27. The message PasswdTable(Rpwd[]) may be sent to the attacker at output {6}.
+attacker(PasswdTable(Rpwd[])).
+
+28. By 27, the attacker may have the channel PasswdTable(Rpwd[]).
+By 26, the attacker may have the message E(shkey_2,(Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))).
+So the attacker may send this message on this channel.
+mess(PasswdTable(Rpwd[]),E(shkey_2,(Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))).
+
+29. The message E(shkey_2,(Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))) that may be sent on channel PasswdTable(Rpwd[]) by 28 may be received at input {43}.
+So the message (Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))) may be sent on channel RsecchannelFromTTP_1 at output {44}.
+mess(RsecchannelFromTTP_1,(Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))).
+
+30. By 8, the attacker may have the channel RsecchannelFromTTP_1.
+By 29, the message (Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))) may be sent on this channel.
+So the attacker may obtain the message (Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))) by listening on this channel.
+attacker((Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth))))))).
+
+31. By 30, the attacker may know (Try,k_1,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))).
+Using the function 2-proj-3-tuple the attacker may obtain k_1.
+attacker(k_1).
+
+32. By 31, the attacker may know k_1.
+By 7, the attacker may know E(k_1,Message(x,msgid_1,(Auth,NoAuth))).
+Using the function decE the attacker may obtain Message(x,msgid_1,(Auth,NoAuth)).
+attacker(Message(x,msgid_1,(Auth,NoAuth))).
+
+33. The message Message(x,msgid_1,(Auth,NoAuth)) that the attacker may have by 32 may be received at input {48}.
+So event Rreceived(Message(x,msgid_1,(Auth,NoAuth))) may be executed at {49}.
+end(Rreceived(Message(x,msgid_1,(Auth,NoAuth)))).
+
+34. By 33, end(Rreceived(Message(x,msgid_1,(Auth,NoAuth)))).
+The goal is reached, represented in the following fact:
+end(Rreceived(Message(x,msgid_1,(Auth,NoAuth)))).
+
+
+A more detailed output of the traces is available with
+  set traceDisplay = long.
+
+out(c, ~M) with ~M = pk(TTPDecKey) at {2}
+
+out(c, ~M_1) with ~M_1 = Spk(TTPSigKey) at {4}
+
+out(c, ~M_2) with ~M_2 = PasswdTable(Rpwd) at {6}
+
+new shkey: key creating shkey_2 at {33} in copy a
+
+out(TTPname, ~M_3) with ~M_3 = PasswdTable(Rpwd) at {34} in copy a
+
+out(TTPname, ~M_4) with ~M_4 = A(pk(TTPDecKey),(ChKey,shkey_2)) at {35} in copy a
+
+new RsecchannelToTTP: channel creating RsecchannelToTTP_1 at {37} in copy a
+
+new RsecchannelFromTTP: channel creating RsecchannelFromTTP_1 at {38} in copy a
+
+out(c, ~M_5) with ~M_5 = RsecchannelToTTP_1 at {45} in copy a
+
+out(c, ~M_6) with ~M_6 = RsecchannelFromTTP_1 at {46} in copy a
+
+out(c, ~M_7) with ~M_7 = Rpwd at {47} in copy a
+
+new shkey: key creating shkey_3 at {33} in copy a_1
+
+out(TTPname, ~M_8) with ~M_8 = PasswdTable(Rpwd) at {34} in copy a_1
+
+out(TTPname, ~M_9) with ~M_9 = A(pk(TTPDecKey),(ChKey,shkey_3)) at {35} in copy a_1
+
+new RsecchannelToTTP: channel creating RsecchannelToTTP_2 at {37} in copy a_1
+
+new RsecchannelFromTTP: channel creating RsecchannelFromTTP_2 at {38} in copy a_1
+
+out(c, ~M_10) with ~M_10 = RsecchannelToTTP_2 at {45} in copy a_1
+
+out(c, ~M_11) with ~M_11 = RsecchannelFromTTP_2 at {46} in copy a_1
+
+out(c, ~M_12) with ~M_12 = Rpwd at {47} in copy a_1
+
+in(c, a_2) at {8} in copy a_3
+
+in(c, (Auth,NoAuth)) at {9} in copy a_3
+
+new msgid: messageid creating msgid_1 at {10} in copy a_3
+
+new k: key creating k_1 at {12} in copy a_3
+
+new qtmp: tquery creating qtmp_1 at {13} in copy a_3
+
+event Shas(Sname,k_1,cleartext,qtmp_1,Reply(a_2,qtmp_1),Message(a_2,msgid_1,(Auth,NoAuth))) at {19} in copy a_3
+
+out(a_2, (~M_13,~M_14,(Auth,NoAuth),~M_15,~M_16,~M_17)) with ~M_13 = TTPname, ~M_14 = E(k_1,Message(a_2,msgid_1,(Auth,NoAuth))), ~M_15 = cleartext, ~M_16 = qtmp_1, ~M_17 = A(pk(TTPDecKey),(Sname,(Auth,NoAuth),(Give,k_1,a_2,H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth)))))))) at {20} in copy a_3
+
+in(RsecchannelToTTP_2, (~M_17,(Wants,a_4,H((cleartext,~M_16,Reply(a_2,~M_16),~M_14))))) with ~M_17 = A(pk(TTPDecKey),(Sname,(Auth,NoAuth),(Give,k_1,a_2,H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth)))))))), H((cleartext,~M_16,Reply(a_2,~M_16),~M_14)) = H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth))))) at {40} in copy a_1, a_5
+
+out(TTPname, ~M_18) with ~M_18 = E(shkey_3,(A(pk(TTPDecKey),(Sname,(Auth,NoAuth),(Give,k_1,a_2,H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth)))))))),(Wants,a_4,H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth)))))))) at {41} in copy a_1, a_5
+
+in(TTPname, a_2) at {51} in copy a_6
+
+in(TTPname, ~M_9) with ~M_9 = A(pk(TTPDecKey),(ChKey,shkey_3)) at {52} in copy a_6
+
+new TTPsecchannelToR: channel creating TTPsecchannelToR_1 at {55} in copy a_6
+
+new TTPsecchannelFromR: channel creating TTPsecchannelFromR_1 at {56} in copy a_6
+
+in(TTPname, ~M_18) with ~M_18 = E(shkey_3,(A(pk(TTPDecKey),(Sname,(Auth,NoAuth),(Give,k_1,a_2,H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth)))))))),(Wants,a_4,H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth)))))))) at {61} in copy a_6, a_7
+
+out(TTPsecchannelFromR_1, (A(pk(TTPDecKey),(Sname,(Auth,NoAuth),(Give,k_1,a_2,H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth)))))))),(Wants,a_4,H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth)))))))) at {62} in copy a_6, a_7 received at {63} in copy a_6
+
+event TTPSendS2(Sname,S(TTPSigKey,(Released,A(pk(TTPDecKey),(Sname,(Auth,NoAuth),(Give,k_1,a_2,H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth))))))))))) at {72} in copy a_6
+
+event TTPSendR2(id_for_key(shkey_3),(Try,k_1,H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth))))))) at {73} in copy a_6
+
+out(TTPsecchannelToR_1, (Try,k_1,H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth))))))) at {74} in copy a_6 received at {58} in copy a_6, a_8
+
+out(Sname, ~M_19) with ~M_19 = S(TTPSigKey,(Released,A(pk(TTPDecKey),(Sname,(Auth,NoAuth),(Give,k_1,a_2,H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth)))))))))) at {75} in copy a_6
+
+out(a_2, ~M_20) with ~M_20 = E(shkey_3,(Try,k_1,H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth))))))) at {59} in copy a_6, a_8
+
+in(PasswdTable(Rpwd), ~M_20) with ~M_20 = E(shkey_3,(Try,k_1,H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth))))))) at {43} in copy a_1, a_9
+
+out(RsecchannelFromTTP_2, (Try,~M_21,~M_22)) with ~M_21 = k_1, ~M_22 = H((cleartext,qtmp_1,Reply(a_2,qtmp_1),E(k_1,Message(a_2,msgid_1,(Auth,NoAuth))))) at {44} in copy a_1, a_9
+
+in(c, decE(~M_21,~M_14)) with decE(~M_21,~M_14) = Message(a_2,msgid_1,(Auth,NoAuth)) at {48} in copy a
+
+event Rreceived(Message(a_2,msgid_1,(Auth,NoAuth))) at {49} in copy a (goal)
+
+The event Rreceived(Message(a_2,msgid_1,(Auth,NoAuth))) is executed at {49} in copy a.
+A trace has been found.
+RESULT not event(Rreceived(Message(x,y,z))) is false.
+COMPUTATIONTIME solving_queries (include completion): 0.061433s
+NUMBERIMPLIES solving_queries (include completion): 1776
+
+--------------------------------------------------------------
+Verification summary:
+
+Query not event(Rreceived(Message(x,y,z))) is false.
+
+--------------------------------------------------------------
+

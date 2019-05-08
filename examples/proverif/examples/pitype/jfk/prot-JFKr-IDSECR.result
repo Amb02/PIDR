@@ -1,0 +1,354 @@
+File "prot-JFKr-IDSECR.pv", line 240, characters 12-13:
+Warning: identifier xI rebound.
+File "prot-JFKr-IDSECR.pv", line 235, characters 25-26:
+Warning: identifier xI rebound.
+File "prot-JFKr-IDSECR.pv", line 263, character 7:
+Warning: identifier c rebound.
+Linear part:
+exp(exp(g,y),z) = exp(exp(g,z),y)
+Completing equations...
+Completed equations:
+exp(exp(g,y),z) = exp(exp(g,z),y)
+Convergent part:
+V(S(k,v),Pk(k),v) = true
+RecoverKey(S(k_1,v_1)) = Pk(k_1)
+RecoverText(S(k_2,v_2)) = v_2
+D(k_3,E(k_3,v_3)) = v_3
+Completing equations...
+Completed equations:
+D(k_3,E(k_3,v_3)) = v_3
+RecoverText(S(k_2,v_2)) = v_2
+RecoverKey(S(k_1,v_1)) = Pk(k_1)
+V(S(k,v),Pk(k),v) = true
+Process 0 (that is, the initial process):
+{1}new exponent: channel;
+{2}new honestC: channel;
+(
+    {3}!
+    {4}new d: texponent;
+    {5}let x: G = exp(g,d) in
+    {6}out(getexponential, x);
+    {7}!
+    {8}out(exponent, (d,x))
+) | (
+    {9}new c_1: channel;
+    (
+        {10}!
+        {11}in(c_1, x_1: bitstring);
+        {12}out(pub, x_1);
+        {13}out(c_1, x_1)
+    ) | (
+        {14}let kminus1: skey = honest(hminus1) in
+        {15}let ID1: pkey = Pk(kminus1) in
+        {16}let kminus2: skey = honest(hminus2) in
+        {17}let ID2: pkey = Pk(kminus2) in
+        {18}out(pub, ID1);
+        {19}out(pub, ID2);
+        (
+            {20}in(channelSIAR1, SIA0: idset);
+            {21}let kRminus0: skey = honest(hRminus0) in
+            {22}let IDR0: pkey = Pk(kRminus0) in
+            {23}new accept0: channel;
+            (
+                {24}!
+                {25}in(accept0, x_2: bitstring)
+            ) | (
+                {26}new KR: key;
+                {27}!
+                {28}in(exponent, (dR: texponent,xR: G));
+                {29}!
+                {30}in(c_1, cons1(NI: nonce,xI: G));
+                {31}event mess1rec(IDR0,NI,xI);
+                {32}new NR: nonce;
+                {33}new tR: key;
+                {34}event mess2(IDR0,NI,NR,xI,xR,grpinfoR,tR);
+                {35}out(c_1, cons2(NI,NR,xR,grpinfoR,tR));
+                {36}new l: channel;
+                (
+                    {37}!
+                    {38}in(c_1, cons3(=NI,=NR,xI_1: G,=xR,=tR,eI: bitstring,hI: key));
+                    {39}out(l, (xI_1,eI,hI))
+                ) | (
+                    {40}in(l, (xI_2: G,eI_1: bitstring,hI_1: key));
+                    {41}event mess3rec(IDR0,NI,NR,xI_2,xR,tR,eI_1,hI_1);
+                    {42}event enddosr(IDR0,NI,NR);
+                    {43}let h: key = exp(xI_2,dR) in
+                    {44}let Ka: key = H(h,(NI,NR,tagA)) in
+                    {45}let Ke: key = H(h,(NI,NR,tagE)) in
+                    {46}let Kv: key = H(h,(NI,NR,tagV)) in
+                    {47}if (H(Ka,(constI,eI_1)) = hI_1) then
+                    {48}let (IDIl: pkey,IDRp: pkey,saI: sainfo,sI: bitstring) = D(Ke,eI_1) in
+                    {49}if ishonest(IDIl) then
+                    {50}if V(sI,IDIl,(NI,NR,xI_2,xR,grpinfoR)) then
+                    {51}event acceptev(accept0,IDIl,IDRp,saI,saR,Kv);
+                    {52}out(accept0, (IDIl,IDRp,saI,saR,Kv));
+                    {53}let sR: bitstring = S(kRminus0,(NI,NR,xI_2,xR)) in
+                    {54}let eR: bitstring = E(Ke,(IDR0,saR,sR)) in
+                    {55}let hR: key = H(Ka,(constR,eR)) in
+                    {56}event mess4(IDR0,IDIl,eR,hR,NI,NR,xI_2,xR,tR,eI_1,hI_1);
+                    {57}out(c_1, cons4(eR,hR))
+                )
+            )
+        ) | (
+            {58}in(channelSIAR2, SIA3: idset);
+            {59}let kRminus3: skey = honest(hRminus3) in
+            {60}let IDR3: pkey = Pk(kRminus3) in
+            {61}new accept3: channel;
+            (
+                {62}!
+                {63}in(accept3, x_3: bitstring)
+            ) | (
+                {64}new KR_1: key;
+                {65}!
+                {66}in(exponent, (dR_1: texponent,xR_1: G));
+                {67}!
+                {68}in(c_1, cons1(NI_1: nonce,xI_3: G));
+                {69}event mess1rec(IDR3,NI_1,xI_3);
+                {70}new NR_1: nonce;
+                {71}new tR_1: key;
+                {72}event mess2(IDR3,NI_1,NR_1,xI_3,xR_1,grpinfoR,tR_1);
+                {73}out(c_1, cons2(NI_1,NR_1,xR_1,grpinfoR,tR_1));
+                {74}new l_1: channel;
+                (
+                    {75}!
+                    {76}in(c_1, cons3(=NI_1,=NR_1,xI_4: G,=xR_1,=tR_1,eI_2: bitstring,hI_2: key));
+                    {77}out(l_1, (xI_4,eI_2,hI_2))
+                ) | (
+                    {78}in(l_1, (xI_5: G,eI_3: bitstring,hI_3: key));
+                    {79}event mess3rec(IDR3,NI_1,NR_1,xI_5,xR_1,tR_1,eI_3,hI_3);
+                    {80}event enddosr(IDR3,NI_1,NR_1);
+                    {81}let h_1: key = exp(xI_5,dR_1) in
+                    {82}let Ka_1: key = H(h_1,(NI_1,NR_1,tagA)) in
+                    {83}let Ke_1: key = H(h_1,(NI_1,NR_1,tagE)) in
+                    {84}let Kv_1: key = H(h_1,(NI_1,NR_1,tagV)) in
+                    {85}if (H(Ka_1,(constI,eI_3)) = hI_3) then
+                    {86}let (IDIl_1: pkey,IDRp_1: pkey,saI_1: sainfo,sI_1: bitstring) = D(Ke_1,eI_3) in
+                    {87}if ishonest(IDIl_1) then
+                    {88}if V(sI_1,IDIl_1,(NI_1,NR_1,xI_5,xR_1,grpinfoR)) then
+                    {89}event acceptev(accept3,IDIl_1,IDRp_1,saI_1,saR,Kv_1);
+                    {90}out(accept3, (IDIl_1,IDRp_1,saI_1,saR,Kv_1));
+                    {91}let sR_1: bitstring = S(kRminus3,(NI_1,NR_1,xI_5,xR_1)) in
+                    {92}let eR_1: bitstring = E(Ke_1,(IDR3,saR,sR_1)) in
+                    {93}let hR_1: key = H(Ka_1,(constR,eR_1)) in
+                    {94}event mess4(IDR3,IDIl_1,eR_1,hR_1,NI_1,NR_1,xI_5,xR_1,tR_1,eI_3,hI_3);
+                    {95}out(c_1, cons4(eR_1,hR_1))
+                )
+            )
+        ) | (
+            {96}let kIminus0: skey = honest(hIminus0) in
+            {97}let IDI0: pkey = Pk(kIminus0) in
+            {98}new connect0: channel;
+            {99}new init0: channel;
+            {100}out(pub, init0);
+            (
+                {101}!
+                {102}in(connect0, x_4: bitstring)
+            ) | (
+                {103}!
+                {104}in(exponent, (dI: texponent,xI_6: G));
+                {105}!
+                {106}in(init0, (IDRp_2: pkey,saI_2: sainfo));
+                {107}event initev(init0,IDRp_2,saI_2);
+                {108}new NI_2: nonce;
+                {109}event mess1(IDI0,NI_2,xI_6,init0,IDRp_2,saI_2);
+                {110}out(c_1, cons1(NI_2,xI_6));
+                {111}in(c_1, cons2(=NI_2,NR_2: nonce,xR_2: G,grpinfoR_1: grpinfo,tR_2: key));
+                {112}event mess2rec(IDI0,NI_2,NR_2,xR_2,grpinfoR_1,tR_2,xI_6,IDRp_2,saI_2);
+                {113}event enddosi(IDI0,NI_2);
+                {114}let h_2: key = exp(xR_2,dI) in
+                {115}let Ka_2: key = H(h_2,(NI_2,NR_2,tagA)) in
+                {116}let Ke_2: key = H(h_2,(NI_2,NR_2,tagE)) in
+                {117}let Kv_2: key = H(h_2,(NI_2,NR_2,tagV)) in
+                {118}let sI_2: bitstring = S(kIminus0,(NI_2,NR_2,xI_6,xR_2,grpinfoR_1)) in
+                {119}let eI_4: bitstring = E(Ke_2,(IDI0,IDRp_2,saI_2,sI_2)) in
+                {120}let hI_4: key = H(Ka_2,(constI,eI_4)) in
+                {121}event mess3(IDI0,NI_2,NR_2,xI_6,xR_2,tR_2,eI_4,hI_4,grpinfoR_1,IDRp_2,saI_2,Kv_2);
+                {122}out(c_1, cons3(NI_2,NR_2,xI_6,xR_2,tR_2,eI_4,hI_4));
+                {123}in(c_1, cons4(eR_2: bitstring,hR_2: key));
+                {124}if (H(Ka_2,(constR,eR_2)) = hR_2) then
+                {125}let (IDRl: pkey,saR_1: sainfo,sR_2: bitstring) = D(Ke_2,eR_2) in
+                {126}if V(sR_2,IDRl,(NI_2,NR_2,xI_6,xR_2)) then
+                {127}event mess4rec(IDI0,eR_2,hR_2,connect0,IDRl,IDRp_2,saI_2,saR_1,Kv_2);
+                {128}event connectev(connect0,IDRl,IDRp_2,saI_2,saR_1,Kv_2);
+                {129}out(connect0, (IDRl,IDRp_2,saI_2,saR_1,Kv_2))
+            )
+        ) | (
+            {130}let kIminus3: skey = honest(hIminus3) in
+            {131}let IDI3: pkey = Pk(kIminus3) in
+            {132}new connect3: channel;
+            {133}new init3: channel;
+            {134}out(pub, init3);
+            (
+                {135}!
+                {136}in(connect3, x_5: bitstring)
+            ) | (
+                {137}!
+                {138}in(exponent, (dI_1: texponent,xI_7: G));
+                {139}!
+                {140}in(init3, (IDRp_3: pkey,saI_3: sainfo));
+                {141}event initev(init3,IDRp_3,saI_3);
+                {142}new NI_3: nonce;
+                {143}event mess1(IDI3,NI_3,xI_7,init3,IDRp_3,saI_3);
+                {144}out(c_1, cons1(NI_3,xI_7));
+                {145}in(c_1, cons2(=NI_3,NR_3: nonce,xR_3: G,grpinfoR_2: grpinfo,tR_3: key));
+                {146}event mess2rec(IDI3,NI_3,NR_3,xR_3,grpinfoR_2,tR_3,xI_7,IDRp_3,saI_3);
+                {147}event enddosi(IDI3,NI_3);
+                {148}let h_3: key = exp(xR_3,dI_1) in
+                {149}let Ka_3: key = H(h_3,(NI_3,NR_3,tagA)) in
+                {150}let Ke_3: key = H(h_3,(NI_3,NR_3,tagE)) in
+                {151}let Kv_3: key = H(h_3,(NI_3,NR_3,tagV)) in
+                {152}let sI_3: bitstring = S(kIminus3,(NI_3,NR_3,xI_7,xR_3,grpinfoR_2)) in
+                {153}let eI_5: bitstring = E(Ke_3,(IDI3,IDRp_3,saI_3,sI_3)) in
+                {154}let hI_5: key = H(Ka_3,(constI,eI_5)) in
+                {155}event mess3(IDI3,NI_3,NR_3,xI_7,xR_3,tR_3,eI_5,hI_5,grpinfoR_2,IDRp_3,saI_3,Kv_3);
+                {156}out(c_1, cons3(NI_3,NR_3,xI_7,xR_3,tR_3,eI_5,hI_5));
+                {157}in(c_1, cons4(eR_3: bitstring,hR_3: key));
+                {158}if (H(Ka_3,(constR,eR_3)) = hR_3) then
+                {159}let (IDRl_1: pkey,saR_2: sainfo,sR_3: bitstring) = D(Ke_3,eR_3) in
+                {160}if V(sR_3,IDRl_1,(NI_3,NR_3,xI_7,xR_3)) then
+                {161}event mess4rec(IDI3,eR_3,hR_3,connect3,IDRl_1,IDRp_3,saI_3,saR_2,Kv_3);
+                {162}event connectev(connect3,IDRl_1,IDRp_3,saI_3,saR_2,Kv_3);
+                {163}out(connect3, (IDRl_1,IDRp_3,saI_3,saR_2,Kv_3))
+            )
+        ) | (
+            {164}!
+            {165}new hAminus: harg;
+            {166}let kAminus: skey = honest(hAminus) in
+            {167}let IDA: pkey = Pk(kAminus) in
+            {168}new connect: channel;
+            {169}new accept: channel;
+            {170}new init: channel;
+            {171}new channelSIA: channel;
+            {172}out(getprinc, (IDA,init,channelSIA));
+            {173}in(channelSIA, SIA: idset);
+            (
+                {174}!
+                {175}in(accept, x_6: bitstring)
+            ) | (
+                {176}!
+                {177}in(connect, x_7: bitstring)
+            ) | (
+                {178}!
+                {179}in(exponent, (dI_2: texponent,xI_8: G));
+                {180}!
+                {181}in(init, (IDRp_4: pkey,saI_4: sainfo));
+                {182}event initev(init,IDRp_4,saI_4);
+                {183}new NI_4: nonce;
+                {184}event mess1(IDA,NI_4,xI_8,init,IDRp_4,saI_4);
+                {185}out(c_1, cons1(NI_4,xI_8));
+                {186}in(c_1, cons2(=NI_4,NR_4: nonce,xR_4: G,grpinfoR_3: grpinfo,tR_4: key));
+                {187}event mess2rec(IDA,NI_4,NR_4,xR_4,grpinfoR_3,tR_4,xI_8,IDRp_4,saI_4);
+                {188}event enddosi(IDA,NI_4);
+                {189}let h_4: key = exp(xR_4,dI_2) in
+                {190}let Ka_4: key = H(h_4,(NI_4,NR_4,tagA)) in
+                {191}let Ke_4: key = H(h_4,(NI_4,NR_4,tagE)) in
+                {192}let Kv_4: key = H(h_4,(NI_4,NR_4,tagV)) in
+                {193}let sI_4: bitstring = S(kAminus,(NI_4,NR_4,xI_8,xR_4,grpinfoR_3)) in
+                {194}let eI_6: bitstring = E(Ke_4,(IDA,IDRp_4,saI_4,sI_4)) in
+                {195}let hI_6: key = H(Ka_4,(constI,eI_6)) in
+                {196}event mess3(IDA,NI_4,NR_4,xI_8,xR_4,tR_4,eI_6,hI_6,grpinfoR_3,IDRp_4,saI_4,Kv_4);
+                {197}out(c_1, cons3(NI_4,NR_4,xI_8,xR_4,tR_4,eI_6,hI_6));
+                {198}in(c_1, cons4(eR_4: bitstring,hR_4: key));
+                {199}if (H(Ka_4,(constR,eR_4)) = hR_4) then
+                {200}let (IDRl_2: pkey,saR_3: sainfo,sR_4: bitstring) = D(Ke_4,eR_4) in
+                {201}if V(sR_4,IDRl_2,(NI_4,NR_4,xI_8,xR_4)) then
+                {202}event mess4rec(IDA,eR_4,hR_4,connect,IDRl_2,IDRp_4,saI_4,saR_3,Kv_4);
+                {203}event connectev(connect,IDRl_2,IDRp_4,saI_4,saR_3,Kv_4);
+                {204}out(connect, (IDRl_2,IDRp_4,saI_4,saR_3,Kv_4))
+            ) | (
+                {205}new KR_2: key;
+                {206}!
+                {207}in(exponent, (dR_2: texponent,xR_5: G));
+                {208}!
+                {209}in(c_1, cons1(NI_5: nonce,xI_9: G));
+                {210}event mess1rec(IDA,NI_5,xI_9);
+                {211}new NR_5: nonce;
+                {212}new tR_5: key;
+                {213}event mess2(IDA,NI_5,NR_5,xI_9,xR_5,grpinfoR,tR_5);
+                {214}out(c_1, cons2(NI_5,NR_5,xR_5,grpinfoR,tR_5));
+                {215}new l_2: channel;
+                (
+                    {216}!
+                    {217}in(c_1, cons3(=NI_5,=NR_5,xI_10: G,=xR_5,=tR_5,eI_7: bitstring,hI_7: key));
+                    {218}out(l_2, (xI_10,eI_7,hI_7))
+                ) | (
+                    {219}in(l_2, (xI_11: G,eI_8: bitstring,hI_8: key));
+                    {220}event mess3rec(IDA,NI_5,NR_5,xI_11,xR_5,tR_5,eI_8,hI_8);
+                    {221}event enddosr(IDA,NI_5,NR_5);
+                    {222}let h_5: key = exp(xI_11,dR_2) in
+                    {223}let Ka_5: key = H(h_5,(NI_5,NR_5,tagA)) in
+                    {224}let Ke_5: key = H(h_5,(NI_5,NR_5,tagE)) in
+                    {225}let Kv_5: key = H(h_5,(NI_5,NR_5,tagV)) in
+                    {226}if (H(Ka_5,(constI,eI_8)) = hI_8) then
+                    {227}let (IDIl_2: pkey,IDRp_5: pkey,saI_5: sainfo,sI_5: bitstring) = D(Ke_5,eI_8) in
+                    {228}if ishonest(IDIl_2) then
+                    {229}if V(sI_5,IDIl_2,(NI_5,NR_5,xI_11,xR_5,grpinfoR)) then
+                    {230}event acceptev(accept,IDIl_2,IDRp_5,saI_5,saR,Kv_5);
+                    {231}out(accept, (IDIl_2,IDRp_5,saI_5,saR,Kv_5));
+                    {232}let sR_5: bitstring = S(kAminus,(NI_5,NR_5,xI_11,xR_5)) in
+                    {233}let eR_5: bitstring = E(Ke_5,(IDA,saR,sR_5)) in
+                    {234}let hR_5: key = H(Ka_5,(constR,eR_5)) in
+                    {235}event mess4(IDA,IDIl_2,eR_5,hR_5,NI_5,NR_5,xI_11,xR_5,tR_5,eI_8,hI_8);
+                    {236}out(c_1, cons4(eR_5,hR_5))
+                )
+            )
+        )
+    )
+)
+
+Translating the process into Horn clauses...
+COMPUTATIONTIME translation to clauses: 0.020425s
+NUMBERIMPLIES translation to clauses: 49626
+-- Non-interference hRminus0 among (hminus1[], hminus2[], hminus3[], hminus4[]), hRminus3 among (hminus1[], hminus2[], hminus3[], hminus4[]), hIminus0 among (hminus1[], hminus2[], hminus3[], hminus4[]), hIminus3 among (hminus1[], hminus2[], hminus3[], hminus4[]) in process 0.
+Warning: using "noninterf" in the presence of equations may yield many
+false attacks. If you observe false attacks, try to code the desired
+property using "choice" instead.
+nounif member(*x_8,y_1)/-5000
+nounif memberid(*x_8,y_1)/-5000
+Completing...
+200 rules inserted. The rule base contains 192 rules. 163 rules in the queue.
+400 rules inserted. The rule base contains 372 rules. 154 rules in the queue.
+600 rules inserted. The rule base contains 557 rules. 149 rules in the queue.
+800 rules inserted. The rule base contains 734 rules. 163 rules in the queue.
+1000 rules inserted. The rule base contains 882 rules. 165 rules in the queue.
+1200 rules inserted. The rule base contains 1021 rules. 233 rules in the queue.
+1400 rules inserted. The rule base contains 1180 rules. 267 rules in the queue.
+1600 rules inserted. The rule base contains 1353 rules. 268 rules in the queue.
+1800 rules inserted. The rule base contains 1489 rules. 249 rules in the queue.
+2000 rules inserted. The rule base contains 1630 rules. 250 rules in the queue.
+2200 rules inserted. The rule base contains 1784 rules. 295 rules in the queue.
+2400 rules inserted. The rule base contains 1915 rules. 215 rules in the queue.
+2600 rules inserted. The rule base contains 2039 rules. 196 rules in the queue.
+2800 rules inserted. The rule base contains 2146 rules. 137 rules in the queue.
+3000 rules inserted. The rule base contains 2234 rules. 140 rules in the queue.
+3200 rules inserted. The rule base contains 2366 rules. 195 rules in the queue.
+3400 rules inserted. The rule base contains 2493 rules. 158 rules in the queue.
+3600 rules inserted. The rule base contains 2611 rules. 154 rules in the queue.
+3800 rules inserted. The rule base contains 2717 rules. 98 rules in the queue.
+4000 rules inserted. The rule base contains 2877 rules. 105 rules in the queue.
+4200 rules inserted. The rule base contains 3038 rules. 109 rules in the queue.
+4400 rules inserted. The rule base contains 3171 rules. 36 rules in the queue.
+COMPUTATIONTIME completion of rules: 1.952216s
+NUMBERIMPLIES completion of rules: 611889
+ok, secrecy assumption verified: fact unreachable attacker(hminus1[])
+ok, secrecy assumption verified: fact unreachable attacker(hminus2[])
+ok, secrecy assumption verified: fact unreachable attacker(hminus3[])
+ok, secrecy assumption verified: fact unreachable attacker(hminus4[])
+ok, secrecy assumption verified: fact unreachable attacker(honest(hminus1[]))
+ok, secrecy assumption verified: fact unreachable attacker(honest(hminus2[]))
+ok, secrecy assumption verified: fact unreachable attacker(honest(hminus3[]))
+ok, secrecy assumption verified: fact unreachable attacker(honest(hminus4[]))
+ok, secrecy assumption verified: fact unreachable attacker(hAminus[!1 = v_4])
+ok, secrecy assumption verified: fact unreachable attacker(honest(hAminus[!1 = v_4]))
+ok, secrecy assumption verified: fact unreachable attacker(d[!1 = v_4])
+RESULT Non-interference hRminus0 among (hminus1[], hminus2[], hminus3[], hminus4[]), hRminus3 among (hminus1[], hminus2[], hminus3[], hminus4[]), hIminus0 among (hminus1[], hminus2[], hminus3[], hminus4[]), hIminus3 among (hminus1[], hminus2[], hminus3[], hminus4[]) is true.
+COMPUTATIONTIME solving_queries (include completion): 1.966408s
+NUMBERIMPLIES solving_queries (include completion): 3808
+
+--------------------------------------------------------------
+Verification summary:
+
+Non-interference hRminus0 among (hminus1[], hminus2[], hminus3[], hminus4[]), hRminus3 among (hminus1[], hminus2[], hminus3[], hminus4[]), hIminus0 among (hminus1[], hminus2[], hminus3[], hminus4[]), hIminus3 among (hminus1[], hminus2[], hminus3[], hminus4[]) is true.
+
+--------------------------------------------------------------
+

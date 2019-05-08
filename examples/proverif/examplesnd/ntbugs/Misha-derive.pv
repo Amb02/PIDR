@@ -1,0 +1,53 @@
+
+param verboseRules = true. 
+
+param verboseClauses = short.
+
+(* param maxDepth = 5. *)
+
+(* doesn't help: *)
+(* param selFun = Nounifset. *)
+
+fun hash/2.
+
+(* data garbage/2. *)
+
+free c.
+
+pred derive/2.
+
+clauses
+  derive: x, x; 
+  derive: x, (y, z) -> derive: x, y; 
+  derive: x, (y, z) -> derive: x, z.
+  (* derive: x, y & derive: x, z -> derive: x, garbage(y, z). *)
+  (* derive: x, y & derive: y, z -> derive: x, z. *)
+
+nounif derive: x2, (y, z).
+(* 
+The problem was that if you write
+nounif derive: x, (y, z).
+x is taken to be the name created by "new x" in the process,
+and not a variable....!!!!
+*)
+
+
+query ev:server(x).
+
+query ev:server(x) ==> ev:client(x).
+
+let A =
+  new x;
+  event client(x);
+  out(c, (x, hash(x, k))).
+  
+let B =
+  in(c, x);
+  in(c, hx);
+  let x' suchthat derive: x, x' in
+  if hx = hash(x', k) then
+  event server(x').
+  
+process
+  new k;
+  (A | B)

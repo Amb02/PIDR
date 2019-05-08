@@ -1,0 +1,121 @@
+(*!Indinstinguabilit� RoR  de la cl�  Ks de A !*)
+(*!INDRORDYNKsA !*)
+
+(* ok sans processRegister 
+
+Tried several simplifications:
+- removed processRegister, replaced with a public pks
+- take types into account.
+Then it terminates quickly, but with a false attack...
+     Two sessions of A with the same ra (in fact impossible) and m1 (replayed), 
+     but once with B and once with the adversary.
+     Tried to have ra depend on pkY but the false attack seems to remain...
+     The adversary creates keys pks(his secret, A) and pks(same secret, ADV_ID)!
+Putting back processRegister.
+Now works (but the adversary is assumed to preserve types...). 
+24/11/2011: After fixing bug in selection function, works even if the
+adversary is not assumed to preserve types.
+*)
+
+(*header*)
+(* set ignoreTypes=false. *)
+free c: channel.
+type Pkey.
+type pkey.
+type skey.
+type G.
+type exponent.
+type host.
+free A, B: host.
+
+(* Secrecy assumptions *)
+not attacker(new skA).
+not attacker(new skB).
+
+(*functions*)
+
+(* Chiffrement symetrique integre *)
+fun senc(bitstring,skey):bitstring.
+reduc forall x: bitstring, y: skey; sdec(senc(x,y),y) = x.
+
+(* Diffie-Hellman *)
+const g: G [data].
+fun exp(G, exponent): G.
+equation forall x: exponent, y: exponent; exp(exp(g, x), y) = exp(exp(g, y), x).
+
+(* Hachage *)
+fun hash(bitstring):bitstring.
+
+(* Signature *)
+fun sign(bitstring, pkey): bitstring.
+fun pks(pkey,host):Pkey [private].
+
+reduc forall m:pkey, h:host; gethost(pks(m,h))=h.
+reduc forall m: bitstring, k: pkey; getmess(sign(m,k)) = m.
+reduc forall m: bitstring, k: pkey, h:host; checksign(sign(m,k), pks(k,h)) = m.
+
+(* util clés publique *)
+reduc forall x1:host, x2:host, sk1:pkey, sk2:pkey; choosekey(x1,x1,x2,sk1,sk2) = sk1;
+      forall x1:host, x2:host, sk1:pkey, sk2:pkey;choosekey(x2,x1,x2,sk1,sk2) = sk2 [private].
+
+
+(* Convertion *)
+fun G_to_bitstring(G): bitstring [data, typeConverter].
+fun Pkey_to_bitstring(Pkey): bitstring [data, typeConverter].
+fun host_to_bitstring(host): bitstring [data, typeConverter].
+fun bitstring_to_skey(bitstring): skey [data, typeConverter].
+reduc forall x: Pkey; bitstring_to_Pkey(Pkey_to_bitstring(x)) = x.
+
+(*tests*)
+(*Process specifications*)
+
+let processA(skA: pkey, skB: pkey) =
+    in (c, X: host);
+    (*if X = A || X = B then
+    let skX = if X = A then skA else skB in*)
+    let skX=choosekey(X,A,B,skA,skB) in
+    let pkX=pks(skX,X) in
+    in(c, pkY: Pkey);
+    new ra: exponent;  
+    out(c,(pkX,exp(g,ra)));
+
+    in (c,((=pkY, m1: G), m2: bitstring));  
+    let ((=G_to_bitstring(exp(g,ra)), =G_to_bitstring(m1)), =host_to_bitstring(X)) = checksign(m2, pkY) in
+    let hY=gethost(pkY) in
+    (*if hY <> X then*)
+    let Ks = hash(G_to_bitstring(exp(m1,ra))) in
+    let  m3=sign(((G_to_bitstring(m1), G_to_bitstring(exp(g,ra))), host_to_bitstring(hY)),skX) in
+    out(c,m3);  
+    
+    if (hY = A || hY = B) then   new R:bitstring; out(c,choice[R,Ks]) else out(c,Ks). 	
+
+
+let processB(skA: pkey, skB: pkey) = 
+    in (c, Y: host);
+    (*if Y = A || Y = B then
+    let skY = if Y = A then skA else skB in*)
+    let skY=choosekey(Y,A,B,skA,skB) in
+    let pkY=pks(skY,Y) in
+    
+    in(c,(pkX: Pkey,m1: G));
+    new rb: exponent;  
+    let hX=gethost(pkX) in 
+    (*if hX <> Y then*)
+    out(c,(sign(((G_to_bitstring(m1), G_to_bitstring(exp(g,rb))), host_to_bitstring(hX)),skY))); 
+    in(c,m2:bitstring);
+    let ((=G_to_bitstring(exp(g,rb)), =G_to_bitstring(m1)), =host_to_bitstring(Y)) = checksign(m2, pkX) in
+    let Ks =  hash(G_to_bitstring(exp(m1,rb))) in
+    if hX<>A && hX<>B  then out(c,Ks) else 
+    0.  
+
+let processRegister()=
+    in(c,(h:host, k:pkey));
+    if h<>A && h<>B then out(c,pks(k,h)).
+
+process new skA: pkey; let pkA = pks(skA,A) in
+	new skB: pkey; let pkB = pks(skB,B) in
+	out(c, pkA);
+	out(c, pkB);	
+	((!processA(skA, skB)) | (!processB(skA, skB)) | (!(processRegister())))
+  
+    

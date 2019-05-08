@@ -1,0 +1,110 @@
+free usb : channel.
+(* Definitions for key signature and mac *)
+
+type id.
+type pkey.
+type skey.
+type stamp.
+
+type side.
+
+free counter1:channel [private].
+free counter2:channel [private].
+free lock:channel [private].
+free st0:stamp.
+
+fun pk(skey) :  pkey.
+
+not attacker(lock) .
+not attacker(counter1).
+not attacker(counter2).
+
+set verboseLemmas = true.
+set verboseCompleted = true.
+
+nounif st:stamp,st':stamp, i:nat,i':nat; mess(lock,(choice[i,i'],choice[*st,*st'])) [inductionVerif].
+nounif st:stamp,st':stamp, i:nat,i':nat; mess(counter1,(choice[i,i'],choice[*st,*st'])) [inductionVerif].
+nounif st:stamp,st':stamp, i:nat,i':nat; mess(counter2,(choice[i,i'],choice[*st,*st'])) [inductionVerif].
+
+event Counter(channel,stamp,nat).
+
+set inductionLemmas = true.
+
+(* Axiom of Lock *)
+axiom i:nat,i1:nat,i2:nat,st:stamp,st1:stamp,st2:stamp, d:channel,x:stamp,x':stamp,j1:nat,j2:nat;
+  event(Counter(lock,choice[st,x],choice[i1,j1])) && event(Counter(lock,choice[st,x'],choice[i2,j2])) ==> i1 = i2;
+  event(Counter(lock,choice[x,st],choice[j1,i1])) && event(Counter(lock,choice[x',st],choice[j2,i2])) ==> i1 = i2;
+  event(Counter(lock,choice[st1,x],choice[i,j1])) && event(Counter(lock,choice[st2,x'],choice[i,j2])) ==> st1 = st2;
+  event(Counter(lock,choice[x,st1],choice[j1,i])) && event(Counter(lock,choice[x',st2],choice[j2,i])) ==> st1 = st2;
+  event(Counter(lock,choice[st1,st2],choice[i1,i2])) ==> is_nat(i1) && is_nat(i2) [fullSat].
+
+(* Axiom of counter1 *)
+axiom i:nat,i1:nat,i2:nat,st:stamp,st1:stamp,st2:stamp, d:channel,x:stamp,x':stamp,j1:nat,j2:nat;
+  event(Counter(counter1,choice[st,x],choice[i1,j1])) && event(Counter(counter1,choice[st,x'],choice[i2,j2])) ==> i1 = i2;
+  event(Counter(counter1,choice[st1,x],choice[i,j1])) && event(Counter(counter1,choice[st2,x'],choice[i,j2])) ==> st1 = st2;
+  event(Counter(counter1,choice[st1,st2],choice[i1,i2])) ==> is_nat(i1) && is_nat(i2) [fullSat].
+
+(* Axiom of counter2 *)
+axiom i:nat,i1:nat,i2:nat,st:stamp,st1:stamp,st2:stamp, d:channel,x:stamp,x':stamp,j1:nat,j2:nat;
+event(Counter(counter2,choice[x,st],choice[j1,i1])) && event(Counter(counter2,choice[x',st],choice[j2,i2])) ==> i1 = i2;
+event(Counter(counter2,choice[x,st1],choice[j1,i])) && event(Counter(counter2,choice[x',st2],choice[j2,i])) ==> st1 = st2;
+event(Counter(counter2,choice[st1,st2],choice[i1,i2])) ==> is_nat(i1) && is_nat(i2) [fullSat].
+
+lemma l:nat,i:nat,j:nat,st:stamp,st1:stamp,st2:stamp,st3:stamp, d:channel;
+attacker(lock);
+attacker(counter1);
+attacker(counter2);
+event(Counter(lock,st,choice[i,j])) ==> i = j;
+mess(lock,(i,choice[st1,st2])) ==> st1 = st2;
+event(Counter(lock,st,i)) && event(Counter(counter1,st,choice[j,l])) ==> i = j;
+event(Counter(lock,st,i)) && event(Counter(counter2,st,choice[l,j])) ==> i = j.
+
+let T_auth( ) =
+    	   in(lock,(l:nat,st':stamp));
+	   new st[]:stamp;
+	   event Counter(lock,st,l+1);
+
+	   in(counter1,(i:nat,=st'));
+    	   event Counter(counter1,st,i+1);
+	   out(counter1,(i+1,st));
+
+	   out(lock,(l+1,st));
+
+	   out(usb,i).
+
+let T_auth2( ) =
+    	   in(lock,(l:nat,st':stamp));
+	   new st[]:stamp;
+	   event Counter(lock,st,l+1);
+
+	   in(counter1,(i:nat,=st'));
+	   event Counter(counter1,st,choice[i+1,i]);
+	   out(counter1,(choice[i+1,i],st));
+
+           in(counter2,(j:nat,=st'));
+	   event Counter(counter2,st,choice[j,j+1]);
+	   out(counter2,(choice[j,j+1],st));
+
+	   out(lock,(l+1,st));
+
+           out(usb,choice[i,j]).
+
+process
+(
+new st:stamp;
+out(counter1, (0,st));
+out(counter2, (0,st));
+out(lock, (0,st));
+  (
+          !T_auth () |
+   !T_auth2( )
+  )
+)
+
+(*
+ski is the master key of yubikey_i
+we associate the counteri to yubikey_i
+
+Check whether two accounts (id1, id2) on the same yubikey sk1 with the same counter
+is distinguishable from two accounts (id1, id2) on two different yubikeys (with different counters)
+*)

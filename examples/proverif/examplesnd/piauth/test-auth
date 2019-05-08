@@ -1,0 +1,99 @@
+#!/bin/sh
+
+output=auth`date '+%d.%m.%y-%H:%M:%S'`
+
+(
+if [ -x ../../xtime ]
+then
+    if [ .$1 = . ]
+    then
+	PROG=../../xtime
+    else
+	PROG="../../xtime -repeat 10 -o /dev/null"
+    fi
+else
+    PROG=
+fi
+
+# I should program 4 authentication specifications for each protocol
+# {A,B}{param,full}
+# A,B indicate which principal has the "end" signal
+# param = only authenticate the name of the principal that has the "end" sig.
+# full = full agreement (agreement on atomic values)
+#
+# The injective specifs are built automatically from the non-injective ones
+# by makeinj.
+
+echo PROTOCOL Needham-Schroeder public key
+echo -- noninj
+$PROG ../../proverif -in pi pineedham-orig
+echo -- inj
+$PROG ../../proverif -in pi -inj pineedham-orig
+
+echo PROTOCOL Needham-Schroeder public key corrected
+echo -- noninj
+$PROG ../../proverif -in pi pineedham-corr-orig
+echo -- inj
+$PROG ../../proverif -in pi -inj pineedham-corr-orig
+
+echo PROTOCOL Otway-Rees
+echo -- noninj
+$PROG ../../proverif -in pi piotwayrees
+echo -- inj
+$PROG ../../proverif -in pi -inj piotwayrees
+
+echo PROTOCOL Otway-Rees abadi
+echo -- noninj
+$PROG ../../proverif -in pi piotwayreesabadi
+echo -- inj
+$PROG ../../proverif -in pi -inj piotwayreesabadi
+
+echo PROTOCOL Simplified Yahalom, unidirectional
+echo -- noninj
+$PROG ../../proverif -in pi piyahalom
+echo -- inj
+$PROG ../../proverif -in pi -inj piyahalom
+
+echo PROTOCOL Simplified Yahalom, bidirectional
+echo -- noninj
+$PROG ../../proverif -in pi piyahalom-bid
+echo -- inj
+$PROG ../../proverif -in pi -inj piyahalom-bid
+
+echo PROTOCOL Woo Lam public key "(1992)"
+# This protocol only authenticates A to B, so no "A" specif.
+echo -- noninj
+$PROG ../../proverif -in pi piwoolampk-orig
+echo -- inj
+$PROG ../../proverif -in pi -inj piwoolampk-orig
+
+echo PROTOCOL Woo Lam public key "(1997)"
+# This protocol only authenticates A to B, so no "A" specif.
+echo -- noninj
+$PROG ../../proverif -in pi piwoolampk
+echo -- inj
+$PROG ../../proverif -in pi -inj piwoolampk
+
+echo PROTOCOL Woo Lam shared key "(GJorig)"
+# This protocol only authenticates A to B, so no "A" specif.
+echo -- noninj
+$PROG ../../proverif -in pi piwoolam-orig2
+echo -- inj
+$PROG ../../proverif -in pi -inj piwoolam-orig2
+
+echo PROTOCOL Woo Lam shared key "(GJcorr)"
+# This protocol only authenticates A to B, so no "A" specif.
+echo -- noninj
+$PROG ../../proverif -in pi piwoolam-corr3
+echo -- inj
+$PROG ../../proverif -in pi -inj piwoolam-corr3
+
+echo PROTOCOL Skeme
+echo -- noninj
+$PROG ../../proverif -in pi piskeme
+echo -- inj
+$PROG ../../proverif -in pi -inj piskeme
+
+) > ../../tests/$output 2>&1
+
+egrep \(PROTOCOL\|--\|Agreement\|user\) ../../tests/$output > ../../tests/sum-$output

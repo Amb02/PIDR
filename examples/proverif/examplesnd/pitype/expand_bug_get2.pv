@@ -1,0 +1,106 @@
+free c:channel.
+(* 
+A -> S : A, { c0, B, Kab }_{Kas}
+S -> B : { c1, A, Kab }_{Kbs}
+I added tags to distinguish the two encryptions.
+*)
+
+type coins.
+type key.
+type host.
+type tag.
+type pid.
+
+(* Shared key encryption *)
+
+fun encrypt(bitstring, key, coins):bitstring.
+reduc forall x:bitstring, y:key, r:coins; decrypt(encrypt(x,y,r),y) = x.
+
+(* Host names *)
+free A, B: host.
+
+(* Tags to distinguish the first from the second encryption *)
+free c0, c1:tag.
+
+event beginBkey(host,host,key).
+event endBkey(host,host,key).
+
+query xA:host, xB:host, xkAB: key; event(endBkey(xA, xB, xkAB)) ==> event(beginBkey(xA, xB, xkAB)).
+
+(* Tests if the first argument is the equal to the second or third one
+   Hubert: "eqor(x,A,B) = true" can be coded by a unary predicate;
+   Similarly, "if x <> A then if x <> B then" can also be coded by 
+   a unary predicate.  *)
+reduc forall x:host, y:host; eqor(x,x,y) = true;
+      forall x:host, y:host; eqor(x,y,x) = true.
+
+
+table Thonest(host).
+
+free secretInit, secretResp: bitstring [private].
+
+noninterf secretInit.
+noninterf secretResp.
+
+(* Initiator *)
+
+let processInit(xA: host, Kas:key) = 
+        new pid: pid; out(c, pid); (* process identifier; for computational soundness *)
+        in(c, (=pid, xB: host));
+	get Thonest(yB) suchthat (if xA = xB then true else false) in
+	new Kab: key;
+	event beginBkey(xA, xB, Kab);
+	new r: coins;
+        out(c, (xA, encrypt((c0, xB, Kab), Kas, r)));
+	(* OK *)
+	if eqor(xB, A, B) = true then 
+	new r: coins;
+	out(c, encrypt(secretInit, Kab, r)).
+
+
+(* Server *)
+
+let processSHH(xA: host, Kas:key, xB:host, Kbs:key) = 
+        new pid: pid; out(c, pid); (* process identifier; for computational soundness *)
+	in(c, (=pid, (=xA, m: bitstring)));
+ 	let (=c0, =xB, kab:key) = decrypt(m,Kas) in
+	new r: coins;
+	out(c, encrypt((c1, xA, kab), Kbs, r)).
+
+let processSHOther(xA:host, Kas:key) = 
+        new pid: pid; out(c, pid); (* process identifier; for computational soundness *)
+	in(c, (=pid, (=xA, m: bitstring)));
+ 	let (=c0, b:host, kab:key) = decrypt(m,Kas) in
+	if b <> A then if b <> B then 
+        in(c, (=pid, kbs:key));
+	new r: coins;
+	out(c, encrypt((c1, xA, kab), kbs, r)).
+
+let processSOtherH(xB: host, Kbs: key) = 
+        new pid: pid; out(c, pid); (* process identifier; for computational soundness *)
+	in(c, (=pid, (a:host, m:bitstring)));
+	if a <> A then if a <> B then
+	in(c, (=pid, kas:key));
+ 	let (=c0, =xB, kab:key) = decrypt(m,kas) in
+	new r: coins;
+	out(c, encrypt((c1, a, kab), Kbs, r)).
+
+(* Responder *)
+
+let processResp(xB: host, Kbs: key) =
+        new pid: pid; out(c, pid); (* process identifier; for computational soundness *)
+	in(c, (=pid, m:bitstring)); 
+	let (=c1, a:host, kab:key) = decrypt(m, Kbs) in
+	(* OK *)
+	if eqor(a, A, B) = true then
+	event endBkey(a, xB, kab);
+	new r: coins;
+	out(c, encrypt(secretResp, kab, r)).
+
+process 
+	new Kas: key; new Kbs:key; 
+	((!processInit(A, Kas)) | (!processInit(B, Kbs)) | 
+	 (!processResp(A, Kas)) | (!processResp(B, Kbs)) | 
+	 (!processSHH(A, Kas, A, Kas)) | (!processSHH(A, Kas, B, Kbs)) | (!processSHOther(A, Kas)) | 
+	 (!processSHH(B, Kbs, A, Kas)) | (!processSHH(B, Kbs, B, Kbs)) | (!processSHOther(B, Kbs)) | 
+	 (!processSOtherH(A, Kas)) | (!processSOtherH(B, Kbs)))

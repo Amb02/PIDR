@@ -1,0 +1,58 @@
+free c:channel.
+
+event HasVoted(channel,bitstring,bitstring).
+
+table VoterTbl(bitstring,bitstring,bitstring).
+
+type stamp.
+
+free st0:stamp [private].
+
+event Counter(channel,stamp,stamp,nat).
+event Not_in_VoterTbl(nat,bitstring,bitstring).
+event In_VoterTbl(nat,bitstring).
+event VCell_bitstring(channel,bitstring).
+event UAction_bitstring(stamp,bitstring).
+
+event CheckNat(nat).
+
+nounif x:nat; event(CheckNat(x)) [conclusion].
+
+axiom i:nat,i1:nat,st:stamp,st1:stamp,st2:stamp,x:bitstring,x1:bitstring,x2:bitstring,x3:bitstring,d1:channel;
+  event(UAction_bitstring(st2,x3)) && event(UAction_bitstring(st2,x)) ==> x3 = x;
+  event(VCell_bitstring(d1,(i,x3))) && event(VCell_bitstring(d1,(i,x))) ==> x3 = x;
+  event(In_VoterTbl(i,(x3,x,x1))) && event(Not_in_VoterTbl(i1,x3,x)) ==> i > i1;
+  event(Counter(d1,st2,st,i1)) && event(Counter(d1,st2,st,i)) ==> i1 = i;
+  event(Counter(d1,st2,st,i1)) && event(Counter(d1,st2,st1,i1)) ==> st = st1.
+
+lemma i:nat; event(CheckNat(i)) ==> is_nat(i).
+
+query a:bitstring, v1:bitstring, v2:bitstring, d:channel;
+  event(HasVoted(d,a,v1)) && event(HasVoted(d,a,v2)) ==> v1 <> v2.
+
+let S(d:channel,id:bitstring) =
+  in(c,(x_a:bitstring,x_v:bitstring));
+  new st[]:stamp;
+  event UAction_bitstring(st,(x_a,x_v));
+  in(d,(i:nat,x:bitstring));
+  event CheckNat(i);
+  event VCell_bitstring(d,(i,x));
+  get VoterTbl(=id,=x_a,x_v') in
+    new st1[]:stamp;
+    event UAction_bitstring(st1,(id,x_a,x_v'));
+    event In_VoterTbl(i,(id,x_a,x_v'));
+    out(d,(i,x))
+  else
+    event Not_in_VoterTbl(i,id,x_a);
+    new st1[]:stamp;
+    event Counter(d,st0,st1,i);
+    event VCell_bitstring(d,(i + 1,x));
+    event In_VoterTbl(i + 1,(id,x_a,x_v));
+    insert VoterTbl(id,x_a,x_v);
+    event HasVoted(d,x_a,x_v);
+    out(d,(i+1,x)).
+
+process
+  ! new d:channel; new id:bitstring; ! S(d,id)
+  |
+  (new a:bitstring; out(d,(0,a))) | ! in(d,(i:nat,x:bitstring)); event CheckNat(i); event VCell_bitstring(d,(i,x)); out(d,(i,x))

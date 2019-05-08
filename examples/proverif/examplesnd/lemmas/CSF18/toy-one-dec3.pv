@@ -1,0 +1,18 @@
+free c:channel.
+free s,k1,k2,k:bitstring [private].
+
+fun enc(bitstring,bitstring):bitstring.
+reduc forall x:bitstring,y:bitstring; dec(enc(x,y),y) = x.
+
+query attacker(s).
+
+let A =
+  out(c,enc(k1,k));
+  out(c,enc(k2,k));
+  out(c,enc(s,(k1,k2))).
+
+let B =
+  in(c,y:bitstring) [precise];
+  out(c,dec(y,k)).
+
+process A | B

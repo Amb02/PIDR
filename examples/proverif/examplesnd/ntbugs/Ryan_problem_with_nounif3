@@ -1,0 +1,22 @@
+param verboseRules=true.
+param verboseRedundant=true.
+param verboseCompleted=true.
+param verboseEq=true.
+param verboseTerm=true.
+
+
+pred attacker/2. 
+pred extend/2.
+
+nounif extend:u,v.
+nounif attacker:x,y.
+
+query attacker:u,a[].
+
+reduc
+attacker:u,x & extend:u,v -> attacker:v,x.
+
+(* Result:
+   Proverif appears to hang during saturation phase; no output.
+   Even with "-test".
+*)

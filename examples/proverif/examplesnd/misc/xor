@@ -1,0 +1,4 @@
+fun xor/2.
+equation xor(xor(x,y),y) = x.
+
+process 0

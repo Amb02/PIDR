@@ -1,0 +1,33 @@
+free c:channel.
+free d:bitstring.
+
+fun sk(bitstring):bitstring[private].
+fun pk(bitstring):bitstring.
+fun enc(bitstring,bitstring):bitstring.
+fun dec(bitstring,bitstring):bitstring
+reduc forall x:bitstring,y:bitstring; dec(enc(x,pk(y)),sk(y)) = x.
+
+event Compromise(bitstring).
+event Secret(bitstring,bitstring).
+
+let compromise =
+  in(c,x:bitstring);
+  event Compromise(x);
+  out(c,sk(x)).
+
+let A =
+  in(c,id:bitstring);
+  new s:bitstring;
+  event Secret(s,id);
+  out(c,enc(s,pk(id))).
+
+let B =
+  in(c,id:bitstring);
+  new s:bitstring;
+  event Secret(s,id);
+  out(c,enc(s,pk(d))).
+
+query s:bitstring,id:bitstring; event(Secret(s,id)) && attacker(s) ==> event(Compromise(id)).
+
+process
+  ! A | ! compromise | B

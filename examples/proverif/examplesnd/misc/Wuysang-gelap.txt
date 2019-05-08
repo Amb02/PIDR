@@ -1,0 +1,186 @@
+(*
+model1
+29092010.1930 done full
+14102010 modif: replication of inputs, done & saved on next modif, checked!
+02112010 modif: phases for querying published result
+15112010 modif: events
+		edit results for secrecy verification
+25112010 modif: mutual authentication
+*)
+
+(* param explainDerivation = true.
+param reconstructTrace = true.
+param traceDisplay = long. *)
+
+free c, c1, c2, c2n, c3, cD.
+free A3, An.
+private free sR1, sR2, sF2, sRF3, sR3, sF3.
+
+fun pk/1.
+fun enc/2.
+reduc dec(enc(x, pk(y)), y) = x.
+
+fun sign/2.
+reduc checksign(pk(y), sign(x, y)) = x.
+
+fun syenc/2.
+reduc sydec(syenc(x, y), y) = x.
+
+fun kenc/1.
+fun kdec/1.
+fun asenc/2.
+reduc asdec(asenc(x, kenc(y)), kdec(y)) = x.
+
+query	
+	ev: e1(x); ev: e2(); ev: e3();
+	attacker: typoflag; attacker: typoflag2.
+(*query evinj:end3n(x, y, z) ==> evinj:begin3n(x, y, z).
+query evinj:endn3(x, y, z) ==> evinj:beginn3(x, y, z).*)
+
+let process1 =
+	in(skCh1, seck1); 
+	in(pkCh2, pubk2);
+	in(pkChDC, pubkDC);
+
+	new R0;	(* in(c0, R0); *)
+	out(cD, enc(R0, pubkDC));
+
+	new result1;
+	out(c1, enc((pk(seck1), sign(result1, seck1)), pubk2));
+	out(cD, enc(result1, pubkDC)).
+
+let process2 =
+	in(skCh2, seck2);
+	in(pkCh1, pubk1);
+	in(pkCh3, pubk3);
+	in(pkChn, pubkn);
+	in(pkChDC, pubkDC);
+
+	!in(c1, m1); !in(cD, t1);
+
+	let (pubkey1, signed1) = dec(m1, seck2) in
+	if pubkey1 = pubk1 then
+	let R1 = checksign(pubkey1, signed1) in
+	out(c, syenc(sR1, R1));
+
+	let D1 = dec(t1, seck2) in
+	if R1 = D1 then
+	event e3();
+	new result2; new final2;
+	out(c2, enc((pk(seck2), sign(result2, seck2)), pubk3));
+	out(c2n, enc((pk(seck2), sign(final2, seck2)), pubkn));
+	out(cD, enc(result2, pubkDC)).
+
+let process3 =
+	in(skCh3, seck3);
+	in(pkCh2, pubk2);
+	in(pkChn, pubkn);
+	in(pkChDC, pubkDC);
+
+	!in(c2, m2); !in(cD, t2);
+
+	let (pubkey2, signed2) = dec(m2, seck3) in
+	if pubkey2 = pubk2 then
+	let R2 = checksign(pubkey2, signed2) in
+	out(c, syenc(sR2, R2));
+
+	let D2 = dec(t2, seck3) in
+	if R2 = D2 then
+
+	new n3;
+	out(c3, (A3, An, n3));
+	in(c3, authn);
+	event e1(authn); (* Reachable *)
+	let (=An, xnn, =n3) = dec(authn, seck3) in
+	event e2(); (* Unreachable -> bug! *)
+	new result3; new final3;
+	let msg3 = enc(((pk(seck3), A3), sign((result3, final3), seck3), xnn), pubkn) in
+	out(c3, msg3);
+	event endn3(An, A3, xnn);
+	event begin3n(A3, An, msg3);
+	out(cD, enc(result3, pubkDC));
+
+	new typoflag; out(c, typoflag).
+
+let processn =
+	in(skChn, seckn);
+	in(pkCh2, pubk2);
+	in(pkCh3, pubk3);
+	in(pkChDC, pubkDC);
+
+	phase 1; (* starting last process *)
+
+	!in(c2n, m2);
+	let (pubkey2, signed2) = dec(m2, seckn) in
+	if pubkey2 = pubk2 then
+	let F2 = checksign(pubkey2, signed2) in
+	out(c, syenc(sF2, F2));
+
+	!in(c3, (rA3, rAn, rn3));
+	event beginn3(rAn, rA3, rn3);
+	new nn;
+	out(c3, enc((rAn, nn, rn3), pubk3));
+
+	!in(c3, m3); !in(cD, t3);
+
+	let (cert3, signed3, =nn) = dec(m3, seckn) in
+	let (pubkey3, =rA3) = cert3 in
+	if pubkey3 = pubk3 then
+	let RF3 = checksign(pubkey3, signed3) in
+	out(c, syenc(sRF3, RF3));
+
+	let (R3, F3) = RF3 in
+	out(c, syenc(sR3, R3));
+	out(c, syenc(sF3, F3));
+
+	let D3 = dec(t3, seckn) in
+	if R3 = D3 then
+	event end3n(A3, An, m3);
+
+	new resultn;
+	phase 2; (* end of the protocol, before publishing outcome *)
+	out(c, (F2, F3, resultn));
+
+	new typoflag2; out(c, typoflag2).
+
+let processDC =
+	in(skChDC, seckDC);
+	in(pkCh2, pubk2);
+	in(pkCh3, pubk3);
+	in(pkChn, pubkn);
+
+	!in(cD, server0);
+
+	!in(cD, server1);
+	let pre1 = dec(server1, seckDC) in
+	out(cD, enc(pre1, pubk2));
+
+	!in(cD, server2);
+	let pre2 = dec(server2, seckDC) in
+	out(cD, enc(pre2, pubk3));
+	
+	!in(cD, server3);
+	let pre3 = dec(server3, seckDC) in
+	out(cD, enc(pre3, pubkn)).
+
+let processK =
+	new sk1; new sk2; new sk3; new skn; new skDC;
+	(
+	(let pk1 = pk(sk1) in !out(pkCh1, pk1)) |
+	(let pk2 = pk(sk2) in !out(pkCh2, pk2)) |
+	(let pk3 = pk(sk3) in !out(pkCh3, pk3)) |
+	(let pkn = pk(skn) in !out(pkChn, pkn)) |
+	(let pkDC = pk(skDC) in !out(pkChDC, pkDC)) |
+
+	(!out(skCh1, sk1)) |
+	(!out(skCh2, sk2)) |
+	(!out(skCh3, sk3)) |
+	out(skChn, skn) |
+	out(skChDC, skDC)
+	).
+
+process
+	new pkCh1; new pkCh2; new pkCh3; new pkChn; new pkChDC;
+	new skCh1; new skCh2; new skCh3; new skChn; new skChDC;
+
+	(processK | (!process1) | (!process2) | (!process3) | processn | processDC)

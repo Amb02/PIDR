@@ -1,0 +1,116 @@
+(* Disable Trace *)
+(* param traceDisplay = none. *)
+
+(* Free communication channel between client(s) and server *)
+free c.
+
+(* Communication channel between compromised TPM and possible attacker(s) *)
+free u.
+
+(* Adversary mode *)
+param attacker = active.
+
+(* Public key cryptography *)
+fun pk/1.
+fun penc/2.
+reduc pdec(y, penc(pk(y),x)) = x.
+
+(* Symmetric key cryptography *)
+fun senc/2.
+reduc sdec(y, senc(y,x)) = x.
+
+not TOMpriv.
+not EKpriv.
+not EKprivC.
+
+(* EK always in TPM *)
+
+private fun tpmek/1.
+reduc getkey(tpmek(k)) = k.
+
+
+(* Hash Function *)
+fun hash/1.
+
+(* Signatures *)
+
+fun sign/2.
+reduc getmsg(sign(k,m)) = m.
+reduc checksign(pk(k), sign(k,m)) = m.
+
+query attacker:secretM.
+
+data MAKEIDENTITY/0.
+data ACTIVATEIDENTITY/0.
+data AIKQUOTE/0.
+data PCRSIG/0.
+data SYMMKEY/0.
+data NOARGS/0.
+data GOOD/0.
+data BAD/0.
+
+let TOM =
+	in(c, (ekpub, ekev, aikpub));
+	(* Check EKpub registered here *)
+	if tpmek(ekpub) = ekev then (
+		new K;
+		new Nonce;
+		event startKeyExchange(ekpub, aikpub, K);
+		out(c, (penc(ekpub, (K,aikpub)), senc((K,Nonce), sign(TOMpriv, aikpub)), Nonce));
+		in(c, (AIKsig, PCRsig));
+		new secretM;
+		(* The wrong version: *)
+		(* if checksign(pk(TOMpriv), AIKsig) = getmsg(AIKsig) then
+		if checksign(getmsg(AIKsig), PCRsig) = hash((GOOD, Nonce)) then *)
+		(* The correct version: *)
+		if checksign(pk(TOMpriv), AIKsig) = aikpub then
+		if checksign(aikpub, PCRsig) = hash((GOOD, Nonce)) then
+			out(c, senc(K, secretM))
+	) else 0.
+
+let TPM = 
+	in(t, (=MAKEIDENTITY, =NOARGS));
+	new AIKpriv;
+	out(t, (pk(EKpriv), tpmek(pk(EKpriv)), pk(AIKpriv)));
+	in(t, (=ACTIVATEIDENTITY, ct));
+	let (k,AIKCred) = pdec(EKpriv, ct) in
+		if AIKCred = pk(AIKpriv) then (
+			out(t, (SYMMKEY, k));
+			in(t, (=AIKQUOTE, Nonce));
+			out(t, (PCRSIG, sign(AIKpriv, hash((GOOD, Nonce)))))
+		) else 0.
+
+
+let Client =
+	out(t, (MAKEIDENTITY, NOARGS)); 
+	in(t, (ekpub,ekev,aikpub));
+	out(c, (ekpub,ekev, aikpub));
+	in(c, (encKAIK, encAIKsig, Nonce));
+	out(t, (ACTIVATEIDENTITY, encKAIK));
+	in(t, (=SYMMKEY, k));
+	out(t, (AIKQUOTE, Nonce));
+	in(t, (=PCRSIG, PCRsig));
+	out(c, (sdec((k,Nonce), encKAIK), PCRsig));
+	in(c, secretCT);
+	event endKeyExchange(ekpub, aikpub, k);
+	0.
+
+let CompromisedTPM = 
+	new EKprivC;
+	in(u, (=MAKEIDENTITY, =NOARGS));
+	(new AIKprivC; out(u, (pk(EKprivC), tpmek(pk(EKprivC)), pk(AIKprivC))); CompromisedTPMwithIdentity).
+
+let CompromisedTPMwithIdentity =
+	in(u, (=ACTIVATEIDENTITY, ct));
+	let (k,AIKCred) = pdec(EKprivC, ct) in 
+		if AIKCred = pk(AIKprivC) then
+			(out(u, (SYMMKEY, k)); !CompromisedTPMwithAIK)
+		else 0.
+
+let CompromisedTPMwithAIK =
+	in(u, (=AIKQUOTE, Nonce));
+	out(u, (PCRSIG, sign(AIKprivC, hash((GOOD, Nonce)))));
+	0.
+
+process 
+	(!(new t; ((new EKpriv; TPM) | Client))) | (new TOMpriv; !TOM) | !CompromisedTPM

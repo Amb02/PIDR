@@ -1,0 +1,13 @@
+(* Test non-name channels
+   The system does not find the attack because the derivation
+   does not justify that c() is added to the knowledge of the
+   attacker.
+ *)
+
+data c/0.
+
+private free a.
+query mess:c,a.
+
+process 
+  out(c,a)

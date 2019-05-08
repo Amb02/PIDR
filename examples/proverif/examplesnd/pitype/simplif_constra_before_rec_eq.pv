@@ -1,0 +1,21 @@
+(* ProVerif should find that event e(a) is unreachable:
+   a <> b is wrong, so p(x) is always false and event e
+   in unreachable. *)
+
+const a: bitstring.
+const b: bitstring.
+
+equation a = b.
+
+pred p(bitstring).
+
+clauses
+	a <> b -> p(a).
+
+event e(bitstring).
+
+query event(e(a)).
+
+process
+        let x: bitstring suchthat p(x) in
+	event e(x)

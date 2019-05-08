@@ -1,0 +1,10 @@
+query ev:e2(x) ==> ev:e1(x).
+(*query evinj:e2(x) ==> evinj:e1(x).*)
+
+process 
+	new a;
+	new b;
+	new c;
+	(out(b, a) | 
+	 in(b, x); event e1(x); out(c, x) | 
+	 in(c, x); event e2(x))

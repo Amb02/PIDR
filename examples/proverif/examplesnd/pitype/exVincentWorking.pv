@@ -1,0 +1,16 @@
+event Bob.
+
+query event(Bob).
+
+let Cellule(c:channel) =
+  in(c,x:bitstring);
+  event Bob;
+  new b:bitstring;
+  out(c,x).
+
+process
+  new c:channel;
+  (
+      new a:bitstring; out(c,a)
+    | ! Cellule(c)
+  )

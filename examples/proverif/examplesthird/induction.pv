@@ -1,0 +1,35 @@
+free c:channel.
+free d:channel[private].
+
+fun enc(nat,bitstring):bitstring.
+fun dec(bitstring,bitstring):nat
+reduc forall x:nat,y:bitstring; dec(enc(x,y),y) = x.
+
+event Record(nat,bitstring).
+event Public(nat,bitstring).
+
+
+query i:nat, i':nat, k:bitstring, k':bitstring;
+  event(Record(i,k)) ==>  event(Public(i,k)).
+
+table Nonce(bitstring).
+process
+  (new k:bitstring;
+    insert Nonce(k);
+    event Public(0,k);
+    out(c,enc(0,k));
+  out(d,0))
+  |
+  !
+  in(d,j:nat);
+  in(c,i:nat);
+  in(c,y:bitstring);
+  get Nonce(k) in
+  let i' = dec(y,k) in
+  if i' <= j && i > j then
+  new k'[]:bitstring;
+  event Record(i',k);
+  insert Nonce(k');
+  event Public(i,k');
+  out(c,enc(i,k'));
+  out(d,i)

@@ -1,0 +1,41 @@
+free c:channel.
+free d:channel [private].
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+event A(bitstring).
+event B(bitstring).
+
+const ok,ko:bitstring[private].
+
+axiom x:bitstring,y:bitstring; event(A(choice[x,y])) ==> x = a for { secret x [real_or_random] }[fullSat].
+
+(*nounif x:bitstring, y:bitstring;
+  mess(d,choice[x,*y]).
+*)
+
+nounif x:bitstring; mess(c,(new k[x = choice[a,b]],x)).
+nounif x:bitstring,y:bitstring; mess(c,(new k[x = a;y=b],choice[x,h(y)])).
+
+not x:bitstring; attacker((new k[x = choice[a,b]],x)).
+not x:bitstring, y:bitstring; attacker((new k[x = a;y=b],choice[h(x),y])).
+
+query x:bitstring; event(A(x)) ==> event(B(a)) public_vars x; attacker(x) public_vars x.
+noninterf d.
+weaksecret d.
+query secret x [real_or_random].
+
+process
+  !(in(c,x:bitstring);
+  in(c,y:bitstring);
+  if x = a
+  then
+    new k:bitstring;
+    event A(a);
+    out(d,b)
+  else
+    out(c,ko))
+
+  | in(d,x:bitstring); out(c,ok)

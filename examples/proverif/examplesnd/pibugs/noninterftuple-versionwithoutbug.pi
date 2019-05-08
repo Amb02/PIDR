@@ -1,0 +1,21 @@
+(* BUG: in file noninterftuple.pi,
+   ProVerif thinks non-interference is true, because the
+   clauses to test whether a term is a tuple are omitted. 
+
+   This file is essentially the same example, but with
+   an explicit pair function symbol instead of the built-in
+   tuples. This makes the bug disappear because a clause
+   to test whether the term is a pair is now generated. *)
+
+private free a.
+private free a1, a2.
+private free b.
+free c.
+
+fun pair/2.
+reduc fst(pair(x,y)) = x.
+reduc snd(pair(x,y)) = y.
+
+noninterf a among (pair(a1,a2), b).
+
+process out(c, a)

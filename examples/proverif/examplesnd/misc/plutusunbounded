@@ -1,0 +1,152 @@
+(* Plutus 
+   To use with rulesAvik.ml (otherwise does not terminate).
+   rulesAvik.ml takes into account transitivity of notbefore: to replace
+   notbefore:x,y & notbefore:y,z with notbefore:x,z when
+   y does not appear elsewhere. Might be done by adding
+   a specific simplification for transitive predicates in 
+   rules.ml *)
+
+(*...
+param traceDisplay = long.
+*)
+param verboseRules = true.
+
+(* _kgen(group,version,secret key) *)
+
+fun skgen/3.
+fun pkgen/3.
+
+data zero/0.
+data succ/1.
+
+(* w is group, x is version, y is secret key *)
+
+(*reduc unwind(skgen(w,succ(x),y)) = skgen(w,x,y).*)
+private reduc decomposskgen(skgen(w,x,y)) = (w,x,y).
+
+(* write(filename,term,writerkey) *)
+
+fun write/3.
+
+(* read(filename,crypt,readerkey) *)
+
+reduc read(z,write(z,u,pkgen(w,x,y)),skgen(w,x,y)) = u.
+
+free c,f.
+free newgroup, revoke.
+free rkeyreq, wkeyreq.
+free corrupt. 
+
+(* grp(secret key) *)
+
+fun grp/1.
+
+(* rprivchannel(rdr) and wprivchannel(wtr) *)
+
+private fun rprivchannel/1.
+private fun wprivchannel/1.
+
+(* rdr(grp(secret key),version) *)
+
+data rdr/2.
+data wtr/1.
+
+(*...
+
+data nil/0.
+data cons/2.
+
+pred member/2.
+clauses
+	member:x,cons(x,y);
+	member:x,y -> member:x,cons(z,y).
+*)
+
+pred notbefore/2 refTransAtt.
+clauses
+	notbefore:x,x;
+	notbefore:x,y -> notbefore:succ(x),y.
+
+nounif notbefore:*x,*y.
+
+query let mx = m; 
+      attacker:mx ==> 
+      	      	  ev:isreader(gx, rx, vx) 
+		& ev:corrupt(rx,vx) 
+		& ev:writem(wx, mx, vy)
+		& notbefore:vx,vy
+		& ev:iswriter(gx, wx).
+
+(* -------- Proved to be true *)
+query ev:gets(rx, mx, vx) ==> 
+      		  ev:isreader(gx, rx, vx) 
+		& ev:writem(wx, mx, vx) 
+		& ev:iswriter(gx, wx) 
+		& ev:isgroup(gx).
+
+
+(* group is grp(secret key) *)
+
+(* reader is rdr(group,version) *)
+
+(* writer is wtr(group) *)
+
+let processOwr =
+    in(c, =newgroup); 
+    new sk;
+    let g = grp(sk) in
+    event isgroup(g);
+    out(c,g);
+    (
+     (
+     !in(c, (=rkeyreq, rdr(=g,vx)));
+     in(currentversion, v);
+     if notbefore:vx,v then
+     let r = rdr(g,vx) in
+     event isreader(g, r, v); 
+     out(rprivchannel(r), (skgen(g, v, sk), v))
+     )
+    |
+     (
+     !in(c, =(wkeyreq, wtr(g)));
+     in(currentversion, v);
+     let w = wtr(g) in
+     event iswriter(g, w);
+     out(wprivchannel(w), (pkgen(g, v, sk), v))
+     )
+     ).
+
+let processGoodRdr = 
+    in(c,r);
+    out(c, (rkeyreq, r));
+    in(rprivchannel(r), (rkey, v));
+    in(f,crypt);
+    let n = read(f,crypt,rkey) in
+    event gets(r, n, v).
+
+let processBadRdr =
+    in(c,r);
+    out(c, (rkeyreq, r));
+    in(rprivchannel(r), (rkey, v));
+    in(corrupt, =r);
+    event corrupt(r,v);
+    out(c, rkey).
+
+let processWtr =
+    in(c, w); 
+    out(c, (wkeyreq, w));
+    in(wprivchannel(w), (wkey,v));
+    new m; 
+    event writem(w, m, v);
+    !out(f,write(f,m,wkey)).
+ 
+let processUnwind =
+    in(c, (sk, x2));
+    let (w,x,y) = decomposskgen(sk) in
+    if notbefore:x,x2 then
+    out(c, skgen(w,x2,y)).
+
+
+process
+	((!processOwr) | (! processGoodRdr) | (!processBadRdr)  | (! processWtr) | (!processUnwind)) 
+	

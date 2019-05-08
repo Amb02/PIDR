@@ -1,0 +1,43 @@
+free c:channel.
+free s:bitstring [private].
+
+fun enc(bitstring,bitstring):bitstring.
+
+reduc forall x:bitstring,y:bitstring; dec(enc(x,y),y) = x.
+
+type stamp.
+
+event UComm(stamp,stamp).
+
+axiom st:stamp,st1:stamp,st2:stamp;
+  event(UComm(st2,st)) && event(UComm(st2,st1)) ==> st = st1;
+  event(UComm(st,st2)) && event(UComm(st1,st2)) ==> st = st1.
+
+query st:stamp,st1:stamp,st2:stamp;
+  attacker(s).
+
+process
+  !
+  new d:channel;
+  new k1:bitstring;
+  new k2:bitstring;
+  (
+    new st[]:stamp;
+    out(d,(st,s));
+    0
+  ) | (
+    in(d,(st:stamp,x:bitstring));
+    new st1[]:stamp;
+    event UComm(st1,st);
+    out(c,k1);
+    0
+  ) | (
+    in(d,(st:stamp,x:bitstring));
+    new st1[]:stamp;
+    event UComm(st1,st);
+    out(c,k2);
+    0
+  ) | (
+    out(c,enc(s,(k1,k2)));
+    0
+  )

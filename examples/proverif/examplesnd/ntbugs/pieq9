@@ -1,0 +1,31 @@
+(* we should have g1(c) = g2(c) so the attacker has secret 
+   Indeed, g1(c) = f(g(g1(c))) = f(g(g2(c))) = g2(c)
+
+   Note that a simpler presentation of the same equational theory is
+   f(x) = x, g(x) = x, g1(x) = g2(x) -- which the verifier easily
+   handles. (Indeed, f(f(g(x))) = f(x) and f(f(g(x))) = f(g(x)) = x
+   so f(x) = x.)
+
+Equations not handled (the closure does not terminate). 
+The modification above makes it work.
+
+ *)
+
+
+fun f/1.
+fun g/1.
+fun h/1.
+fun g1/1.
+fun g2/1.
+
+equation f(f(x)) = f(x).
+equation f(g(x)) = x.
+equation g(g1(x)) = g(g2(x)).
+
+free c.
+private free secret.
+query attacker:secret.
+
+
+process
+	if g1(c) = g2(c) then out(c, secret)

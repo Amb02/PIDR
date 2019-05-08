@@ -1,0 +1,203 @@
+(* run this script with option -TulaFale 1 *)
+(* param displayDerivation = false. *)
+param redundantHypElim = beginOnly.
+param traceBacktracking = no.
+
+(* param attacker = passive. *)
+(* param predicatesImplementable = nocheck.*) 
+data cons/2.
+data nil/0.
+data emptyTuple/0.
+reduc hd(cons(a,b))=a.
+reduc tl(cons(a,b))=b.
+data Element/3.
+reduc ElementAtt(Element(x,y,z))=y.
+reduc ElementBody(Element(x,y,z))=z.
+data Attribute/2.
+reduc AttributeParm(Attribute(x,y))=y.
+
+data UsrTAG/0.
+ data PasswordTAG/0.
+ data UsrnameTokenTAG/0.
+ data UsrnameTAG/0.
+ data NonceTAG/0.
+ data CreatedTAG/0.
+ data ReferenceTAG/0.
+ data DigestValueTAG/0.
+ data SignedInfoTAG/0.
+ data OtherTAG/0.
+ data SignatureMethodTAG/0.
+ data AlgorithmTAG/0.
+ data SignatureTAG/0.
+ data SignatureValueTAG/0.
+ data hmacsha1STRING/0.
+ data RSSTRING/0.
+ data RCSTRING/0.
+ data envTAG/0.
+ data SSSTRING/0.
+ data rsasha1STRING/0.
+ data listTAG/0.
+ data concat/2.
+ data c14n/1.
+ data utf8/1.
+ data base64/1.
+ fun sha1/1.
+ fun psha1/2.
+ fun hmacsha1/2.
+ fun pk/1.
+ fun rsasha1/2.
+ fun x509/4.
+ pred isUsr/3.
+ pred isUsrTokenKey/5.
+ pred isX509Cert/5.
+ pred isSigVal/4.
+ pred mkSigVal/4.
+ pred ref/2.
+ pred mkRef/2.
+ pred isRefs/2.
+ pred mkRefs/2.
+ pred isSigInfo/3.
+ pred mkSigInfo/3.
+ pred isSignature/4.
+ pred mkSignature/4.
+ data Message1/4.
+ data Message2/4.
+ data Message3/2.
+ data Message4/2.
+ data Message5/3.
+ data Message6/3.
+ data Message7/3.
+ data Message8/3.
+ data Message9/3.
+ data UName/2.
+ data FileKey/1.
+ data MessageID/2.
+ free SSchan.
+ free RSchan.
+ free publish.
+ free RCchan.
+ pred mkMsg1/9.
+ pred isMsg1/8.
+ pred mkMsg2/7.
+ pred isMsg2/6.
+ pred mkMsg3/6.
+ pred isMsg3/4.
+ pred mkMsg4/6.
+ pred isMsg4/4.
+ pred mkMsg5/6.
+ pred isMsg5/5.
+ pred mkMsg6/7.
+ pred isMsg6/5.
+ pred mkMsg7/6.
+ pred isMsg7/5.
+ pred mkFedtoken/3.
+ pred isFedtoken/4.
+ pred mkMsg8/6.
+ pred isMsg8/6.
+ pred mkMsg9/5.
+ pred isMsg9/5.
+ private free pSCinit.
+ private free pSSinit.
+ private free pRSinit.
+ private free pRCinit.
+ reduc x509key(x509(s,u,a,k)) = k.
+ reduc checkx509(x509(s,u,a,k),pk(s)) = pk(s).
+ reduc checkrsasha1(pk(k),x,rsasha1(k,x)) = pk(k).
+ reduc x509usr(x509(s,u,a,k)) = u.
+ reduc x509alg(x509(s,u,a,k)) = a.
+ clauses U = Element(UsrTAG,nil,cons(Element(UsrnameTAG,nil,cons(u,nil)),cons(Element(PasswordTAG,nil,cons(pwd,nil)),nil))) -> isUsr:U,u,pwd.
+ clauses isUsr:U,u,pwd & tok = Element(UsrnameTokenTAG,nil,cons(Element(UsrnameTAG,nil,cons(u,nil)),cons(Element(NonceTAG,nil,cons(base64(n),nil)),cons(Element(CreatedTAG,nil,cons(t,nil)),nil)))) & k = psha1(pwd,concat(n,utf8(t))) -> isUsrTokenKey:tok,U,n,t,k.
+ clauses kr = checkx509(xcert,kr) & u = x509usr(xcert) & k = x509key(xcert) & a = x509alg(xcert) -> isX509Cert:xcert,kr,u,a,k.
+ clauses hmacsha1STRING = a & sv = hmacsha1(k,c14n(si)) -> isSigVal:sv,si,k,a; 
+  rsasha1STRING = a & p = checkrsasha1(p,c14n(si),sv) -> isSigVal:sv,si,p,a.
+ clauses hmacsha1STRING = a & sv = hmacsha1(k,c14n(si)) -> mkSigVal:sv,si,k,a; 
+  rsasha1STRING = a & sv = rsasha1(k,c14n(si)) -> mkSigVal:sv,si,k,a.
+ clauses r = Element(ReferenceTAG,nil,cons(dummyl143c19,cons(dummyl143c21,cons(Element(DigestValueTAG,nil,cons(base64(sha1(c14n(t))),nil)),nil)))) -> ref:t,r.
+ clauses r = Element(ReferenceTAG,nil,cons(Element(OtherTAG,nil,nil),cons(Element(OtherTAG,nil,nil),cons(Element(DigestValueTAG,nil,cons(base64(sha1(c14n(t))),nil)),nil)))) -> mkRef:t,r.
+ clauses ts = Element(listTAG,nil,cons(t1,nil)) & rs = Element(listTAG,nil,cons(r1,nil)) & ref:t1,r1 -> isRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,nil))) & rs = Element(listTAG,nil,cons(r1,cons(r2,nil))) & ref:t1,r1 & ref:t2,r2 -> isRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,nil)))) & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,nil)))) & ref:t1,r1 & ref:t2,r2 & ref:t3,r3 -> isRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,cons(t4,nil))))) & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,cons(r4,nil))))) & ref:t1,r1 & ref:t2,r2 & ref:t3,r3 & ref:t4,r4 -> isRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,cons(t4,cons(t5,nil)))))) & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,cons(r4,cons(r5,nil)))))) & ref:t1,r1 & ref:t2,r2 & ref:t3,r3 & ref:t4,r4 & ref:t5,r5 -> isRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,cons(t4,cons(t5,cons(t6,nil))))))) & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,cons(r4,cons(r5,cons(r6,nil))))))) & ref:t1,r1 & ref:t2,r2 & ref:t3,r3 & ref:t4,r4 & ref:t5,r5 & ref:t6,r6 -> isRefs:ts,rs.
+ clauses ts = Element(listTAG,nil,cons(t1,nil)) & mkRef:t1,r1 & rs = Element(listTAG,nil,cons(r1,nil)) -> mkRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,nil))) & mkRef:t1,r1 & mkRef:t2,r2 & rs = Element(listTAG,nil,cons(r1,cons(r2,nil))) -> mkRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,nil)))) & mkRef:t1,r1 & mkRef:t2,r2 & mkRef:t3,r3 & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,nil)))) -> mkRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,cons(t4,nil))))) & mkRef:t1,r1 & mkRef:t2,r2 & mkRef:t3,r3 & mkRef:t4,r4 & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,cons(r4,nil))))) -> mkRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,cons(t4,cons(t5,nil)))))) & mkRef:t1,r1 & mkRef:t2,r2 & mkRef:t3,r3 & mkRef:t4,r4 & mkRef:t5,r5 & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,cons(r4,cons(r5,nil)))))) -> mkRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,cons(t4,cons(t5,cons(t6,nil))))))) & mkRef:t1,r1 & mkRef:t2,r2 & mkRef:t3,r3 & mkRef:t4,r4 & mkRef:t5,r5 & mkRef:t6,r6 & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,cons(r4,cons(r5,cons(r6,nil))))))) -> mkRefs:ts,rs.
+ clauses si = Element(SignedInfoTAG,nil,cons(dummyl242c21,cons(Element(SignatureMethodTAG,cons(Attribute(AlgorithmTAG,a),nil),nil),refs))) & rs = Element(listTAG,nil,refs) & isRefs:ts,rs -> isSigInfo:si,a,ts.
+ clauses mkRefs:ts,rs & rs = Element(listTAG,nil,refs) & si = Element(SignedInfoTAG,nil,cons(Element(OtherTAG,nil,nil),cons(Element(SignatureMethodTAG,cons(Attribute(AlgorithmTAG,a),nil),nil),refs))) -> mkSigInfo:si,a,ts.
+ clauses sig = Element(SignatureTAG,nil,cons(si,cons(Element(SignatureValueTAG,nil,cons(base64(sv),nil)),dummyl255c58))) & isSigInfo:si,a,ts & isSigVal:sv,si,k,a -> isSignature:sig,a,k,ts.
+ clauses mkSigInfo:si,a,ts & mkSigVal:sv,si,k,a & sig = Element(SignatureTAG,nil,cons(si,cons(Element(SignatureValueTAG,nil,cons(base64(sv),nil)),nil))) -> mkSignature:sig,a,k,ts.
+ clauses destUsrAtDomain = UName(TOusr,TOdom) & isUsrTokenKey:TokSC,SC,nonce,creation,KeySC & Msg1 = Message1(TokSC,attachment,email,destUsrAtDomain) & mkSignature:Sig,hmacsha1STRING,KeySC,Element(listTAG,nil,cons(Msg1,nil)) & Msg1Signed = Element(envTAG,nil,cons(Sig,cons(Msg1,nil))) -> mkMsg1:SC,nonce,creation,attachment,email,TOusr,TOdom,Msg1,Msg1Signed.
+ clauses Msg1Signed = Element(envTAG,nil,cons(Sig,cons(Msg1,nil))) & Msg1 = Message1(TokSC,attachment,email,destUsrAtDomain) & isUsrTokenKey:TokSC,SC,nonce,creation,KeySC & isSignature:Sig,hmacsha1STRING,KeySC,Element(listTAG,nil,cons(Msg1,nil)) & destUsrAtDomain = UName(TOusr,TOdom) -> isMsg1:Msg1Signed,SC,TOdom,TOusr,attachment,email,destUsrAtDomain,Msg1.
+ clauses fk = FileKey(attachment) & Msg2 = Message2(SScert,email,destUsrAtDomain,fk) & mkSignature:Sig,rsasha1STRING,SSx509,Element(listTAG,nil,cons(Msg2,nil)) & Msg2Signed = Element(envTAG,nil,cons(Sig,cons(Msg2,nil))) -> mkMsg2:SScert,SSx509,email,destUsrAtDomain,attachment,Msg2,Msg2Signed.
+ clauses Msg2Signed = Element(envTAG,nil,cons(Sig,cons(Msg2,nil))) & Msg2 = Message2(SScert,email,destUsrAtDomain,fk) & destUsrAtDomain = UName(TOusr,TOdom) & isX509Cert:SScert,pCA,SSSTRING,rsasha1STRING,SSpubkey & isSignature:Sig,rsasha1STRING,SSpubkey,Element(listTAG,nil,cons(Msg2,nil)) -> isMsg2:Msg2Signed,pCA,Msg2,TOusr,email,fk.
+ clauses msgid = MessageID(email,filekey) & Msg3 = Message3(RScert,msgid) & mkSignature:Sig,rsasha1STRING,RSx509,Element(listTAG,nil,cons(Msg3,nil)) & Msg3Signed = Element(envTAG,nil,cons(Sig,cons(Msg3,nil))) -> mkMsg3:RScert,RSx509,email,filekey,Msg3,Msg3Signed.
+ clauses Msg3Signed = Element(envTAG,nil,cons(Sig,cons(Msg3,nil))) & Msg3 = Message3(RScert,msgid) & isX509Cert:RScert,pCA,RSSTRING,rsasha1STRING,RSpubkey & isSignature:Sig,rsasha1STRING,RSpubkey,Element(listTAG,nil,cons(Msg3,nil)) -> isMsg3:Msg3Signed,pCA,Msg3,msgid.
+ clauses isUsrTokenKey:TokRC,RC,nonce,creation,KeyRC & Msg4 = Message4(TokRC,msgid) & mkSignature:Sig,hmacsha1STRING,KeyRC,Element(listTAG,nil,cons(Msg4,nil)) & Msg4Signed = Element(envTAG,nil,cons(Sig,cons(Msg4,nil))) -> mkMsg4:RC,nonce,creation,msgid,Msg4,Msg4Signed.
+ clauses Msg4Signed = Element(envTAG,nil,cons(Sig,cons(Msg4,nil))) & Msg4 = Message4(TokRC,msgid) & isUsrTokenKey:TokRC,RC,nonce,creation,KeyRC & isSignature:Sig,hmacsha1STRING,KeyRC,Element(listTAG,nil,cons(Msg4,nil)) -> isMsg4:Msg4Signed,RC,msgid,Msg4.
+ clauses Msg5 = Message5(RScert,msgid,Msg2Signed) & mkSignature:Sig,rsasha1STRING,RSx509,Element(listTAG,nil,cons(Msg5,nil)) & Msg5Signed = Element(envTAG,nil,cons(Sig,cons(Msg5,nil))) -> mkMsg5:RScert,RSx509,msgid,Msg2Signed,Msg5,Msg5Signed.
+ clauses Msg5Signed = Element(envTAG,nil,cons(Sig,cons(Msg5,nil))) & Msg5 = Message5(RScert,msgid,Msg2Signed) & isX509Cert:RScert,pCA,RSSTRING,rsasha1STRING,RSpubkey & isSignature:Sig,rsasha1STRING,RSpubkey,Element(listTAG,nil,cons(Msg5,nil)) -> isMsg5:Msg5Signed,pCA,msgid,Msg2Signed,Msg5.
+ clauses isUsrTokenKey:TokRC,RC,nonce,creation,KeyRC & Msg6 = Message6(TokRC,container,pubkey) & mkSignature:Sig,hmacsha1STRING,KeyRC,Element(listTAG,nil,cons(Msg6,nil)) & Msg6Signed = Element(envTAG,nil,cons(Sig,cons(Msg6,nil))) -> mkMsg6:RC,nonce,creation,container,pubkey,Msg6,Msg6Signed.
+ clauses Msg6Signed = Element(envTAG,nil,cons(Sig,cons(Msg6,nil))) & Msg6 = Message6(TokRC,container,pubkey) & isUsrTokenKey:TokRC,RC,nonce,creation,KeyRC & isSignature:Sig,hmacsha1STRING,KeyRC,Element(listTAG,nil,cons(Msg6,nil)) -> isMsg6:Msg6Signed,RC,container,pubkey,Msg6.
+ clauses Msg7 = Message7(RScert,fedtoken,granted) & mkSignature:Sig,rsasha1STRING,RSx509,Element(listTAG,nil,cons(Msg7,nil)) & Msg7Signed = Element(envTAG,nil,cons(Sig,cons(Msg7,nil))) -> mkMsg7:RScert,RSx509,granted,fedtoken,Msg7,Msg7Signed.
+ clauses Msg7Signed = Element(envTAG,nil,cons(Sig,cons(Msg7,nil))) & Msg7 = Message7(RScert,fedtoken,granted) & isX509Cert:RScert,pCA,RSSTRING,rsasha1STRING,RSpubkey & isSignature:Sig,rsasha1STRING,RSpubkey,Element(listTAG,nil,cons(Msg7,nil)) -> isMsg7:Msg7Signed,pCA,fedtoken,granted,Msg7.
+ clauses fedtoken = x509(RSx509,RCSTRING,rsasha1STRING,RCpubkey) -> mkFedtoken:RSx509,RCpubkey,fedtoken.
+ clauses isX509Cert:RScert,pCA,RSSTRING,rsasha1STRING,RSpubkey & isX509Cert:fedtoken,RSpubkey,RCSTRING,rsasha1STRING,RCpubkey & RCpubkey = pk(RCx509) -> isFedtoken:fedtoken,pCA,RScert,RCx509.
+ clauses Msg8 = Message8(fedtoken,RCname,filekey) & mkSignature:Sig,rsasha1STRING,RCx509,Element(listTAG,nil,cons(Msg8,nil)) & Msg8Signed = Element(envTAG,nil,cons(Sig,cons(Msg8,nil))) -> mkMsg8:fedtoken,RCx509,RCname,filekey,Msg8,Msg8Signed.
+ clauses Msg8Signed = Element(envTAG,nil,cons(Sig,cons(Msg8,nil))) & Msg8 = Message8(fedtoken,RCname,filekey) & isX509Cert:RScert,pCA,RSSTRING,rsasha1STRING,RSpubkey & isX509Cert:fedtoken,RSpubkey,RCSTRING,rsasha1STRING,RCpubkey & isSignature:Sig,rsasha1STRING,RCpubkey,Element(listTAG,nil,cons(Msg8,nil)) -> isMsg8:Msg8Signed,RScert,pCA,RCname,filekey,Msg8.
+ clauses filekey = FileKey(attachment) & Msg9 = Message9(SScert,attachment,filekey) & mkSignature:Sig,rsasha1STRING,SSx509,Element(listTAG,nil,cons(Msg9,nil)) & Msg9Signed = Element(envTAG,nil,cons(Sig,cons(Msg9,nil))) -> mkMsg9:SScert,SSx509,filekey,Msg9,Msg9Signed.
+ clauses Msg9Signed = Element(envTAG,nil,cons(Sig,cons(Msg9,nil))) & Msg9 = Message9(SScert,attachment,filekey) & isX509Cert:SScert,pCA,SSSTRING,rsasha1STRING,SSpubkey & isSignature:Sig,rsasha1STRING,SSpubkey,Element(listTAG,nil,cons(Msg9,nil)) & filekeyIN = FileKey(attachment) & filekeyIN = filekey -> isMsg9:Msg9Signed,pCA,filekeyIN,attachment,Msg9.
+
+ let pSC = !in (pSCinit,(SC));
+ new nonce;new creation;new attachment;new email;new TOusr;new TOdom;let Msg1,Msg1Signed suchthat mkMsg1:SC,nonce,creation,attachment,email,TOusr,TOdom,Msg1,Msg1Signed in 
+  (event SentMsg1(Msg1); event SentAttachment(attachment); event SentEmail(email); out (SSchan,(Msg1Signed));0).
+
+ let pSS = !in (pSSinit,(SC,RScert,SScert,SSx509,pCA));
+ in (SSchan,(Msg1S));let TOusr,TOdom,attachment,email,destUsrAtDomain,Msg1 suchthat isMsg1:Msg1S,SC,TOusr,TOdom,attachment,email,destUsrAtDomain,Msg1 in 
+  (event ReceivedMsg1(Msg1); let Msg2,Msg2Signed suchthat mkMsg2:SScert,SSx509,email,destUsrAtDomain,attachment,Msg2,Msg2Signed in 
+  (event SentMsg2(Msg2); out (RSchan,(Msg2Signed));in (SSchan,(Msg8Signed));let RCname,filekey,Msg8 suchthat isMsg8:Msg8Signed,RScert,pCA,RCname,filekey,Msg8 in 
+  (event ReceivedMsg8(Msg8); let Msg9,Msg9Signed suchthat mkMsg9:SScert,SSx509,filekey,Msg9,Msg9Signed in 
+  (event SentMsg9(Msg9); out (RCchan,(Msg9Signed));0)))).
+
+ let pRS = !in (pRSinit,(RScert,RSx509,SScert,pCA,RC));
+ in (RSchan,(Msg2Signed));let Msg2,TOusr,email,fk suchthat isMsg2:Msg2Signed,pCA,Msg2,TOusr,email,fk in 
+  (event ReceivedMsg2(Msg2); let Msg3,Msg3Signed suchthat mkMsg3:RScert,RSx509,email,fk,Msg3,Msg3Signed in 
+  (event SentMsg3(Msg3); out (RCchan,(Msg3Signed));in (RSchan,(Msg4Signed));let msgid,Msg4 suchthat isMsg4:Msg4Signed,RC,msgid,Msg4 in 
+  (event ReceivedMsg4(Msg4); let Msg5,Msg5Signed suchthat mkMsg5:RScert,RSx509,msgid,Msg2Signed,Msg5,Msg5Signed in 
+  (event SentMsg5(Msg5); out (RCchan,(Msg5Signed));in (RSchan,(Msg6Signed));let container,RCpubkey,Msg6 suchthat isMsg6:Msg6Signed,RC,container,RCpubkey,Msg6 in 
+  (event ReceivedMsg6(Msg6); let fedtoken suchthat mkFedtoken:RSx509,RCpubkey,fedtoken in 
+  (event MadeFedtoken(fedtoken); out (publish,(base64(fedtoken)));new granted;let Msg7,Msg7Signed suchthat mkMsg7:RScert,RSx509,granted,fedtoken,Msg7,Msg7Signed in 
+  (event SentMsg7(Msg7); out (RCchan,(Msg7Signed));0))))))).
+
+ let pRC = !in (pRCinit,(RC,RCx509,RCpubkey,RScert,pCA));
+ new nonce2;new creation2;new container;in (RCchan,(Msg3Signed));let Msg3,msgid suchthat isMsg3:Msg3Signed,pCA,Msg3,msgid in 
+  (event ReceivedMsg3(Msg3); new nonce;new creation;let Msg4,Msg4Signed suchthat mkMsg4:RC,nonce,creation,msgid,Msg4,Msg4Signed in 
+  (event SentMsg4(Msg4); out (RSchan,(Msg4Signed));in (RCchan,(Msg5Signed));let Msg2Signed,Msg5 suchthat isMsg5:Msg5Signed,pCA,msgid,Msg2Signed,Msg5 in 
+  (let Msg2,TOusr,email,fk suchthat isMsg2:Msg2Signed,pCA,Msg2,TOusr,email,fk in 
+  (event ReceivedMsg5(Msg5); event ReceivedEmail(email); let Msg6,Msg6Signed suchthat mkMsg6:RC,nonce2,creation2,container,RCpubkey,Msg6,Msg6Signed in 
+  (event SentMsg6(Msg6); out (RSchan,(Msg6Signed));in (RCchan,(Msg7Signed));let fedtoken,granted,Msg7 suchthat isMsg7:Msg7Signed,pCA,fedtoken,granted,Msg7 in 
+  (event ReceivedMsg7(Msg7); if isFedtoken:fedtoken,pCA,RScert,RCx509 then (event ReceivedFedtoken(fedtoken); let RCname,RCpwd suchthat isUsr:RC,RCname,RCpwd in 
+  (let Msg8,Msg8Signed suchthat mkMsg8:fedtoken,RCx509,RCname,fk,Msg8,Msg8Signed in 
+  (event SentMsg8(Msg8); out (SSchan,(Msg8Signed));in (RCchan,(Msg9Signed));let attachment,Msg9 suchthat isMsg9:Msg9Signed,pCA,fk,attachment,Msg9 in 
+  (event ReceivedMsg9(Msg9); event ReceivedAttachment(attachment); 0)))))))))).
+
+(*  query ev:ReceivedAttachment(attachment). *)
+query ev:ReceivedAttachment(attachment) ==> ev:SentAttachment(attachment).
+
+ process 
+  new SCname;new SCpwd;new RCname;new RCpwd;
+  let SC suchthat isUsr:SC,SCname,SCpwd in 
+  (let RC suchthat isUsr:RC,RCname,RCpwd in 
+  new CAx509;let pCA = pk(CAx509) in 
+  new SSx509;let SScert = x509(CAx509,SSSTRING,rsasha1STRING,pk(SSx509)) in 
+  new RSx509;let RScert = x509(CAx509,RSSTRING,rsasha1STRING,pk(RSx509)) in 
+  new RCx509;let RCpubkey = pk(RCx509) in 
+  out (publish,(base64(pCA)));out (publish,(base64(SScert)));out (publish,(base64(RScert)));
+   (! out (pSCinit,(SC)))|
+   (! out (pSSinit,(SC,RScert,SScert,SSx509,pCA)))|
+   (! out (pRSinit,(RScert,RSx509,SScert,pCA,RC)))|
+   (! out (pRCinit,(RC,RCx509,RCpubkey,RScert,pCA)))
+  ) | pSC | pSS | pRS | pRC

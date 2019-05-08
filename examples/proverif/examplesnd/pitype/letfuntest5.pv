@@ -1,0 +1,10 @@
+fun g(bitstring, bitstring):bitstring.
+
+letfun f(x:bitstring or fail,y:bitstring or fail) = g(x,y).
+
+channel c.
+free a, b, d: bitstring.
+
+
+
+process out(c, f(f(a,b),d)); out(c, f(a,f(b,d)))

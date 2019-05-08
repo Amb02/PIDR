@@ -1,0 +1,119 @@
+(*---------------------------- ProVerif internal flags ----------------------------*)
+
+set attacker = active.
+set reconstructTrace = false.
+set simplifyDerivation = true.
+set unifyDerivation = true.
+set predicatesImplementable=nocheck.
+set redundantHypElim=true.
+
+
+
+(*---------------------------- Flags determining attacker power ----------------------------*)
+
+letfun NetworkSetup() = true.
+letfun NetworkAttackers() = false.
+letfun MaliciousUsers() = false.
+letfun UntrustedJavaScript() = false.
+letfun HttpRedirectors() = false.
+letfun MaliciousServers() = false. (* Use with care: This option may cause ProVerif to use up all your memory. *)
+letfun UntrustedWebsites() = false. (* try this with redirector => *)
+letfun DynamicCompromise() = false. 
+
+
+
+(*---------------------------- Auxiliary functions ----------------------------*)
+
+letfun AND(b1:bool,b2:bool) =  if b1 = true && b2 = true then true else false.
+
+
+
+
+
+(*---------------------------- Attacker capabilities ----------------------------*)
+
+type Command.
+type AppCommand.
+type Principal.
+type Host.
+type XDR.
+type Id.
+type Browser.
+type Uri.
+type HttpRequest.
+type Page.
+type CookiePair.
+type Data.
+type Ajax.
+type Headers.
+
+channel pub.
+channel admin.
+channel config.
+
+fun createServer(Principal, Host, XDR): Command [data].
+fun createUser(Principal, Host, Id, bitstring): Command [data].
+fun surf(Browser,Uri): Command [data].
+fun appCommand(AppCommand): Command [data].
+fun openBrowser(Principal): Command [data].
+fun initRequest(Browser,Uri,HttpRequest) : Command [data].
+fun initPageClick(Browser,Page,Uri,HttpRequest) : Command [data].
+fun initAjaxRequest(Browser,Page,Uri,HttpRequest) : Command [data].
+fun fetchCookieStorage(Browser,Page) : Command [data].
+fun injectCookieStorage(Browser,Page,CookiePair,Data) : Command [data].
+fun forceUpgradeDomain(Browser,Page) : Command [data].
+fun createMaliciousUser(Principal, Host, Id, bitstring): Command [data].
+fun createMaliciousServer(Principal, XDR): Command [data].
+fun compromiseServer(Host): Command [data].
+fun compromiseUser(Id, Host): Command [data]. 
+fun compromiseConnection(Uri,Uri): Command [data].
+fun injectMessage(Uri,Uri,bitstring): Command [data].
+fun interceptMessage(Uri,Uri): Command [data].
+fun startUntrustedApp(Uri): Command [data].
+fun getServerRequest(Uri): Command [data].
+fun sendServerResponse(Uri,bitstring): Command [data].
+fun getClientResponse(Browser,Uri): Command [data].
+fun sendClientRequest(Browser,Uri,Uri,HttpRequest,Uri,Page,Ajax): Command [data].
+fun startRedirector(Uri,Uri): Command[data].
+fun httpRequestResponse(Headers,Uri,HttpRequest): Command[data].
+
+letfun commandEnabled(c:Command) =
+   let createServer(p,h,x) = c in NetworkSetup() else
+   let createUser(p,h,i,ck) = c in NetworkSetup() else
+   let openBrowser(p) = c in NetworkSetup() else
+   let surf(b,r) = c in NetworkSetup() else
+   let appCommand(ac) = c in NetworkSetup() else
+   let initRequest(b,u,r) = c in UntrustedJavaScript() else
+   let initPageClick(b,p,u,r) = c in UntrustedJavaScript() else
+   let initAjaxRequest(b,p,u,r) = c in UntrustedJavaScript() else
+   let fetchCookieStorage(b,p) = c in UntrustedJavaScript() else
+   let injectCookieStorage(b,p,ck,s) = c in UntrustedJavaScript() else
+   let forceUpgradeDomain(b,p) = c in UntrustedJavaScript() else
+   let createMaliciousServer(p,x) = c in MaliciousServers() else
+   let createMaliciousUser(p,h,a,x) = c in MaliciousUsers() else
+   let compromiseServer(h) = c in DynamicCompromise() else
+   let compromiseUser(i,h) = c in DynamicCompromise() else
+   let compromiseConnection(e1,e2) = c in NetworkAttackers() else
+   let injectMessage(e1,e2,x) = c in NetworkAttackers() else
+   let interceptMessage(e1,e2) = c in NetworkAttackers() else
+   let startUntrustedApp(a) = c in UntrustedWebsites() else
+   let getServerRequest(a) = c in UntrustedWebsites() else
+   let sendServerResponse(a,x) = c in UntrustedWebsites() else
+   let httpRequestResponse(hdr,u,r) = c in UntrustedWebsites() else
+   let getClientResponse(b,a) = c in AND(UntrustedWebsites(),UntrustedJavaScript()) else
+   let sendClientRequest(b,u1,u2,req,ref,pId,aj) = c in AND(UntrustedWebsites(),UntrustedJavaScript()) else
+   let startRedirector(a,b) = c in HttpRedirectors() else 
+   false.
+
+event End.
+
+query event(End).
+
+(* ---------------------------- Attacker proxy --------------- *)
+
+process
+   in (pub,x:Command);
+    if commandEnabled(x) = true then
+    out(admin,x);
+    in (config,(=x,y:bitstring));
+    event End

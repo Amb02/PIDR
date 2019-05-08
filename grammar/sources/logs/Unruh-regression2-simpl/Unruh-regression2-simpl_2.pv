@@ -1,0 +1,26 @@
+set movenew = true.
+
+fun empty():bitstring.
+fun hash(bitstring):bitstring.
+fun pk(bitstring):bitstring.
+fun sk(bitstring):bitstring.
+fun penc(bitstring,bitstring,bitstring):bitstring. (* penc(pk,msg,rand) *)
+reduc forall k:bitstring, m:bitstring, r:bitstring;
+       pdec(sk(k),penc(pk(k),m,r)) = m.
+reduc forall k:bitstring, m:bitstring, r:bitstring;
+      pkofsk(sk(k)) = pk(k).
+reduc forall p:bitstring, m:bitstring, r:bitstring;
+      pkofenc(penc(p,m,r)) = p.
+
+free B:bitstring.
+free netnsla:channel.
+free netnslb:channel.
+
+free iokb:channel.
+
+let run1 = new na:bitstring; new r1:bitstring; new r2:bitstring; new nb:bitstring; new r:bitstring; new ka:bitstring; new kb:bitstring; new netdela:bitstring; new netdelb:bitstring; new k:bitstring;  (out(netnsla,penc(pk(kb),na,r1)); in(netnsla,xca:bitstring); (in(netnslb,xcb:bitstring); let xna:bitstring=pdec(sk(kb),xcb) in (out(netnslb,penc(pk(ka),((xna, nb), B),r)); in(netnslb,xc2:bitstring); let ((=na, xnb:bitstring), =B)=pdec(sk(ka),xca) in (out(netnsla,penc(pk(kb),xnb,r2)); if nb=pdec(sk(kb),xc2) then (out(iokb,hash((xna,nb))); 0))))).
+
+let run2 = new na:bitstring; new r1:bitstring; new r2:bitstring; new nb:bitstring; new r:bitstring; new ka:bitstring; new kb:bitstring; new netdela:bitstring; new netdelb:bitstring; new k:bitstring; out(netnsla,penc(pk(kb),na,r1)); in(netnsla,xca:bitstring); in(netnslb,xcb:bitstring); let xna:bitstring=pdec(sk(kb),xcb) in (out(netnslb,penc(pk(ka),((xna, nb), B),r)); in(netnslb,xc2:bitstring); let ((=na, xnb:bitstring), =B)=pdec(sk(ka),xca) in (out(netnsla,penc(pk(kb),xnb,r2)); if nb=pdec(sk(kb),xc2) then (out(iokb,k); 0))).
+
+equivalence run1 run2
+

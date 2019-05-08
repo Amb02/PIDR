@@ -1,0 +1,21 @@
+free c:channel.
+free d:channel[private].
+
+type GroupElem.
+type Exponent.
+
+(* Diffie-Hellman functions and equations *)
+const g: GroupElem.
+fun exp(GroupElem,Exponent): GroupElem.
+equation forall x: Exponent, y: Exponent; exp(exp(g,x),y) = exp(exp(g,y),x).
+
+event Test(GroupElem).
+event Test2(GroupElem).
+
+query x:GroupElem; event(Test2(x)) ==> event(Test(x)).
+
+process
+  new k:Exponent;
+  in(c,y:Exponent);
+  event Test(exp(exp(g,y),k));
+  event Test2(exp(exp(g,y),k))

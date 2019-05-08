@@ -1,0 +1,68 @@
+free c.
+(*
+
+WooLam shared-key auth protocol (1992, computer)
+Version of Gordon, Jeffrey, CSFW 2001
+
+A -> B : A
+B -> A : N (fresh)
+A -> B : { m3, N }_kAS
+B -> S : { m4, A,{ m3, N }_kAS }_kBS
+S -> B : { m5, N }_kBS
+B: verify { m5, N }_kBS = the message from S
+
+Terminates with attack.
+
+*)
+
+(* Tags *)
+
+fun m3/0.
+fun m4/0.
+fun m5/0.
+
+(* Shared-key cryptography *)
+
+fun encrypt/2.
+reduc decrypt(encrypt(m,k),k) = m.
+
+(* Host name / key *)
+
+fun host/1.
+private reduc getkey(host(x)) = x.
+
+query ev:endBparam(h) ==> ev:beginBparam(h).
+query ev:endBfull(h1,h2,x) ==> ev:beginBfull(h1,h2,x).
+query evinj:endBparam(h) ==> evinj:beginBparam(h).
+query evinj:endBfull(h1,h2,x) ==> evinj:beginBfull(h1,h2,x).
+
+let processA = in(c, hostB2); (* Choose the B host *)
+	       event beginBparam(hostB2);
+               out(c,hostA); in(c,n); 
+	       event beginBfull(hostB2, hostA, n);
+               out(c, encrypt((m3, n), kAS)).
+
+let processB = in(c, hostA2); new N; out(c, N); in(c, m);
+               out(c, encrypt((m4, hostA2, m), kBS));
+               in(c, m2);
+	       let (m5x, N3) = decrypt(m2, kBS) in
+		  if m5x = m5 then
+                     if N3 = N then
+                        (* OK *)
+                        if hostA2 = hostA then 
+			  event endBparam(hostB);
+			  event endBfull(hostB, hostA2, N).
+
+let processS = in(c, hostB0);(* Choose the B host *)
+               in(c,m);
+               let (m4x, hostA1, m2) = decrypt(m, getkey(hostB0)) in
+		  if m4x = m4 then
+                  let (m3x, n) = decrypt(m2, getkey(hostA1)) in
+	             if m3x = m3 then
+                        out(c, encrypt((m5, n), getkey(hostB0))).
+
+process new kAS; new kBS;
+        let hostA = host(kAS) in
+        let hostB = host(kBS) in
+	out(c, hostA); out(c, hostB);
+	((!processA) | (!processB) | (!processS))

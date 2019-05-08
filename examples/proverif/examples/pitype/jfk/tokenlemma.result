@@ -1,0 +1,34 @@
+Biprocess 0 (that is, the initial process):
+{1}new KR: key;
+{2}!
+{3}in(c, V: nonce_G);
+{4}new N: nonce;
+{5}new t: key;
+{6}out(c, choice[t,H(KR,(N,V))])
+
+Translating the process into Horn clauses...
+COMPUTATIONTIME translation to clauses: 0.004056s
+NUMBERIMPLIES translation to clauses: 8302
+-- Observational equivalence in biprocess 0.
+Termination warning: v ≠ v_1 && attacker2(v_2,v) && attacker2(v_2,v_1) -> bad
+Selecting 0
+Termination warning: v ≠ v_1 && attacker2(v,v_2) && attacker2(v_1,v_2) -> bad
+Selecting 0
+Completing...
+Termination warning: v ≠ v_1 && attacker2(v_2,v) && attacker2(v_2,v_1) -> bad
+Selecting 0
+Termination warning: v ≠ v_1 && attacker2(v,v_2) && attacker2(v_1,v_2) -> bad
+Selecting 0
+COMPUTATIONTIME completion of rules: 0.000452s
+NUMBERIMPLIES completion of rules: 460
+RESULT Observational equivalence is true.
+COMPUTATIONTIME solving_queries (include completion): 0.000767s
+NUMBERIMPLIES solving_queries (include completion): 354
+
+--------------------------------------------------------------
+Verification summary:
+
+Observational equivalence is true.
+
+--------------------------------------------------------------
+
