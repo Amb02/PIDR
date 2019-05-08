@@ -1,0 +1,128 @@
+(*****  ZRTP protocol - Draft 15  *****)
+
+(* param traceDisplay = long. *)
+(* param allVarsInNames = true. *)
+
+param redundantHypElim = true.
+(************************* D E C L A R A T I O N S ***********************)
+
+(* Diffie-Hellman exponentials *)
+data g/0.
+fun exp/2.
+equation exp(exp(g,y),z)=exp(exp(g,z),y).
+
+(* Hash and HMAC *)
+fun hash/1.
+fun hmac/2.
+fun kdf/2.
+
+(* Encryption and Decryption *)
+fun encrypt/2.
+reduc decrypt(encrypt(x,y),y) = x.
+
+(* Channels *)
+free hellor,helloackr,helloi,helloacki,commit,dhpart1,dhpart2,confirm1,confirm2,conf2ack.
+free blah.
+
+(* Constants *)
+data conf/0.
+data confirmi/0.
+data confirmr/0.
+data hellostringr/0.
+data hellostringi/0.
+data helloack/0.
+data commitstring/0.
+data responder/0.
+data initiator/0.
+data zrtpr/0.
+data zrtpi/0.
+
+
+(* Encrypted blocks for Confirm messages *)
+private free SECR,SECI.
+
+
+(***************************** Q U E R I E S *****************************)
+
+(***** Secrecy *****)
+query attacker: SECI; attacker: SECR.
+
+
+(***************************** P R O C E S S *****************************)
+
+let Responder=
+	new H0R;
+	let H1R=hash(H0R) in
+	let H2R=hash(H1R) in
+	let H3R=hash(H2R) in
+	out(hellor,(hellostringr,H3R));
+	in(helloackr,HELLOACKIR);
+	in(helloi,(HELLOSTRINGIR,H3IR));
+	out(helloacki,helloack);
+	in(commit,(COMMITSTRINGIR,HVIR,H2IR));
+	if H3IR=hash(H2IR) then   (*HERE IT BLOCKS THE ANALYSIS*)
+	(
+	  new SVR;
+	  let PVR=exp(g,SVR) in
+	  let SECRETSIDR=hmac(secrets,responder) in
+	  out(dhpart1,(PVR,SECRETSIDR,H1R));
+	  in(dhpart2,(PVIR,SECRETSIDIR,H1IR));
+	  (*if H3IR=hash(H2IR) then*) (   (*WORKAROUND TO VERIFY MSG CONSISTENCY LATER - fine anyway, draft doesn't say when to do it *)
+	  if H2IR=hash(H1IR) then (
+	  if SECRETSIDIR=hmac(secrets,initiator) then (
+	  if HVIR=hash((PVIR,SECRETSIDIR,H1IR,hellostringr,H3R)) then
+	  (
+		let MHR=hash((hellostringr,COMMITSTRINGIR,HVIR,H2IR,PVR,SECRETSIDR,H1R,PVIR,SECRETSIDIR,H1IR)) in
+		let S0R=hash((exp(PVIR,SVR),secrets,MHR)) in
+		let ZRTPKEYR=kdf(S0R,zrtpr) in
+		out(confirm1,(confirmr,hmac((S0R,H0R,SECR),ZRTPKEYR),encrypt(H0R,ZRTPKEYR),encrypt(SECR,ZRTPKEYR)));
+		in(confirm2,(CONFIRMIR,HMACSECIR,ENCH0IR,ENCSECIR));
+		let ZRTPKEYIR=kdf(S0R,zrtpi) in
+		let H0IR=decrypt(ENCH0IR,ZRTPKEYIR) in
+		let SECIR=decrypt(ENCSECIR,ZRTPKEYIR) in
+		if H1IR=hash(H0IR) then (
+		if hmac((S0R,H0IR,SECIR),ZRTPKEYIR)=HMACSECIR then
+		(
+		  out(conf2ack,conf)
+		))
+	  ))))
+	).
+
+let Initiator=
+	in(hellor,(HELLOSTRINGRI,H3RI));
+	out(helloackr,helloack);
+	new H0I;
+	let H1I=hash(H0I) in
+	let H2I=hash(H1I) in
+	let H3I=hash(H2I) in
+	out(helloi,(hellostringi,H3I));
+	in(helloacki,HELLOACKRI);
+	new SVI;
+	let PVI=exp(g,SVI) in
+	let SECRETSIDI=hmac(secrets,initiator) in
+	let HVI=hash((PVI,SECRETSIDI,H1I,HELLOSTRINGRI,H3RI)) in
+	out(commit,(commitstring,HVI,H2I));
+	in(dhpart1,(PVRI,SECRETSIDRI,H1RI));
+	if H3RI=hash(hash(H1RI)) then (
+	if SECRETSIDRI=hmac(secrets,responder) then (
+	  out(dhpart2,(PVI,SECRETSIDI,H1I));
+	  in(confirm1,(CONFIRMRI,HMACSECRI,ENCH0RI,ENCSECRI));
+	  let MHI=hash((HELLOSTRINGRI,commitstring,HVI,H2I,PVRI,SECRETSIDRI,H1RI,PVI,SECRETSIDI,H1I)) in
+	  let S0I=hash((exp(PVRI,SVI),secrets,MHI)) in
+	  let ZRTPKEYI=kdf(S0I,zrtpi) in
+	  let ZRTPKEYRI=kdf(S0I,zrtpr) in
+	  let H0RI=decrypt(ENCH0RI,ZRTPKEYRI) in
+	  let SECRI=decrypt(ENCSECRI,ZRTPKEYRI) in
+	  if H1RI=hash(H0RI) then (
+	  if hmac((S0I,H0RI,SECRI),ZRTPKEYRI)=HMACSECRI then
+	  (
+	    out(confirm2,(confirmi,hmac((S0I,H0I,SECI),ZRTPKEYI),encrypt(H0I,ZRTPKEYI),encrypt(SECI,ZRTPKEYI)));
+	    in(conf2ack,CONF)
+	  ))
+	)).
+
+
+(* Main *)
+process 
+	!(new secrets;             (* generate the shared secrets *)
+	((!Responder)|(!Initiator)))

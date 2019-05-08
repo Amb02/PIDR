@@ -1,0 +1,3 @@
+free c,a,b.
+process
+  new d; ( (in(d,x); 0) | (out(d,a); out(c,choice[a,b])) )

@@ -1,0 +1,11 @@
+fun g(bitstring):bitstring.
+
+const gc:bitstring.
+equation forall x:bitstring; g(x)=gc.
+reduc forall x:bitstring; ung(g(x)) = x.
+
+free c:channel.
+free a:bitstring.
+free b:bitstring.
+
+process out(c,choice[g(a),g(b)])

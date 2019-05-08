@@ -1,0 +1,149 @@
+(* General timing model with a time manager - simple Version*)
+
+data true/0.
+
+free c. (* communication with the other process *)
+private free t. (* PRIVATE channel for communication with the time manager *) 
+
+(* Timestamps (ordered) *)
+data zero/0. (* introduce a beginning *)
+data succ/1. (* get the successor of one value *)
+
+
+(* Modelling private/public key pairs *)
+fun pk/1. (* get the public key belonging to a secret key *) 
+
+(* Signing *)
+fun sign/2.
+fun verifySign/3.
+equation verifySign(m, sign(m,sk), pk(sk)) = true.
+
+
+(* public process ID's *)
+data p1id/0.
+data p2id/0.
+
+(* semaphore operations *)
+data lock/2. (* send a lock with public id + a some random session value *)
+data release/2. (* send release message with public id + same value with which the lock was sent *)
+
+(* initial handshake operations *)
+data req/1.
+data ack/1.
+
+(* Initial secrecy assumptions *)
+not sk1.
+not sk2.
+
+
+(* Queries for reachability and injectivity *)
+
+
+query evinj:receivedm1(m) ==> evinj:sentm1(m).
+
+
+query ev:verify().
+query ev:received().
+
+
+let P1 = 
+    (* initialize communication *)
+    out (c, req(p2id));
+    in (c, ack(=p2id));
+
+    (* here p2 now has locked the time manager, also lock now to obtain synchronization *)    
+    new sid1;
+    out (t, lock(p1id,sid1));
+    in(t, (=sid1,t1));
+
+    event sentm1(t1);
+    out(c, (t1, sign(t1,sk1)));
+
+    out (t, release(p1id,sid1)). (* release lock on time manager *)
+
+let P2 = 
+    in (c, req(=p2id)); (* receive communication request, then log the time *)
+    
+    new sid2;
+    out (t, lock(p2id,sid2));
+    out (c, ack(p2id)); (* tell p1 that it is ready *)
+
+    in (t, (=sid2,t2));
+
+    in(c, (rt1, s));
+    event received();
+    if rt1 = t2 then
+    event verify();
+    if verifySign(rt1,s,pk1) = true then
+    event receivedm1(rt1);
+ 
+    out (t, release(p2id,sid2)). (* release lock on time manager *)
+
+
+let TM =
+    let ts = zero in (* initial value *)
+    let ts = succ(ts) in
+    (* wait to obtain two locks *)
+    in (t, lock(=p2id,psid2));
+    in (t, lock(=p1id,psid1));
+    (* send out to the two participants the timestamp *)
+    out (t, (psid1,ts));
+    out (t, (psid2,ts));
+    (* wait for two releases *)
+    in (t, release(=p1id,=psid1));
+    in (t, release(=p2id,=psid2));
+
+    let ts = succ(ts) in
+    (* wait to obtain two locks *)
+    in (t, lock(=p2id,psid2));
+    in (t, lock(=p1id,psid1));
+    (* send out to the two participants the timestamp *)
+    out (t, (psid1,ts));
+    out (t, (psid2,ts));
+    (* wait for two releases *)
+    in (t, release(=p1id,=psid1));
+    in (t, release(=p2id,=psid2));
+
+    let ts = succ(ts) in
+    (* wait to obtain two locks *)
+    in (t, lock(=p2id,psid2));
+    in (t, lock(=p1id,psid1));
+    (* send out to the two participants the timestamp *)
+    out (t, (psid1,ts));
+    out (t, (psid2,ts));
+    (* wait for two releases *)
+    in (t, release(=p1id,=psid1));
+    in (t, release(=p2id,=psid2));
+
+    let ts = succ(ts) in
+    (* wait to obtain two locks *)
+    in (t, lock(=p2id,psid2));
+    in (t, lock(=p1id,psid1));
+    (* send out to the two participants the timestamp *)
+    out (t, (psid1,ts));
+    out (t, (psid2,ts));
+    (* wait for two releases *)
+    in (t, release(=p1id,=psid1));
+    in (t, release(=p2id,=psid2));
+
+    let ts = succ(ts) in
+    (* wait to obtain two locks *)
+    in (t, lock(=p2id,psid2));
+    in (t, lock(=p1id,psid1));
+    (* send out to the two participants the timestamp *)
+    out (t, (psid1,ts));
+    out (t, (psid2,ts));
+    (* wait for two releases *)
+    in (t, release(=p1id,=psid1));
+    in (t, release(=p2id,=psid2)).
+
+ 
+process
+    new sk1;
+    let pk1 = pk(sk1) in
+    out (c, pk1);
+    new sk2;
+    let pk2 = pk(sk2) in 
+    out (c, pk2);
+    ((!P1) | (!P2)) | TM
+    

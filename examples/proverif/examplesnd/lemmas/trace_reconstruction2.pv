@@ -1,0 +1,20 @@
+free c:channel.
+free d:channel [private].
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+event A(bitstring).
+event B(bitstring).
+
+
+const ok,ko,k:bitstring[private].
+
+query x:bitstring; attacker(ok) ==> event(A(x)) && x = a.
+
+process
+  (in(c,x:bitstring);
+   event A(x);
+   out(d,k))
+  | in(d,x:bitstring); out(c,ok)

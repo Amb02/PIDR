@@ -1,0 +1,83 @@
+(* Key Registration protocol.
+  Found in "Set-Pi: Set Membership p-Calculus", Computer Security Foundations Symposium (CSF), 2015 IEEE 28th
+*)
+
+free c:channel.
+type agent.
+
+fun sign(bitstring,bitstring):bitstring.
+fun pk(bitstring):bitstring.
+
+fun checksign(bitstring,bitstring):bitstring
+reduc forall x:bitstring, y:bitstring; checksign(sign(x,y),pk(y)) = x.
+
+table db_server_valid(bitstring,agent,bitstring).
+table db_server_revoked(bitstring,agent,bitstring).
+
+const renew:bitstring.
+const confirm:bitstring.
+const Error:bitstring.
+
+event Revoked(bitstring). (* Event pour la query *)
+event Honest(bitstring).  (* Event pour la query *)
+
+(* Server *)
+
+let Server(skS:bitstring) =
+  in(c,(A:agent,pkA:bitstring));
+  in(c,sig:bitstring);
+  get db_server_valid(=skS,=A,=pkA) in (* The server checks that the key is valid. *)
+  let (=renew,=A,new_pkA:bitstring) = checksign(sig,pkA) in
+  get db_server_valid(=skS,=A,=new_pkA) in
+    out(c,Error)
+  else
+    get db_server_revoked(=skS,=A,=new_pkA) in
+      out(c,Error)
+    else
+      get db_server_revoked(=skS,=A,=pkA) in
+        out(c,Error)
+      else
+        event Revoked(pkA);
+        insert db_server_revoked(skS,A,pkA);
+        event Honest(new_pkA);
+        insert db_server_valid(skS,A,new_pkA);
+        out(c,sign((confirm,sig),skS)).
+
+(* Out of band registration *)
+
+let Register(A:agent,cellA:channel,skS:bitstring) =
+  new k:bitstring;
+  out(cellA,k); (* Initialisation of the agent's cell *)
+  event Honest(pk(k));
+  insert db_server_valid(skS,A,pk(k));
+  out(c,pk(k)).
+
+(* Revocation from client *)
+
+let Client(A:agent,cellA:channel,pkS:bitstring) =
+  new k':bitstring;
+  in(cellA,k:bitstring);
+  out(c,(A,pk(k)));
+  let sig:bitstring = sign((renew,A,pk(k')),k) in
+  out(c,sig);
+  in(c,sig':bitstring);
+  let (=confirm,=sig) = checksign(sig',pkS) in
+  out(c,k);
+  out(cellA,k').
+
+query
+  let sk = new k' in attacker(sk) ==> event(Honest(pk(sk))) && event(Revoked(pk(sk)));
+  let sk = new k in attacker(sk) ==> event(Honest(pk(sk))) && event(Revoked(pk(sk))).
+
+  query ky:bitstring;
+    attacker(ky) && event(Honest(pk(ky))) ==> event(Revoked(pk(ky)));
+    event(Honest(pk(ky))) ==> ky = new k || ky = new k'.
+
+process
+  ! new skS:bitstring; out(c,pk(skS));
+  (
+    ! Server(skS))
+  | new A:agent;
+    new cellA:channel;
+    (out(c,A) | Register(A,cellA,skS) | ! Client(A,cellA,pk(skS))
+  )

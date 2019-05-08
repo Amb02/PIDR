@@ -1,0 +1,86 @@
+(* Reported by Mark Ryan *)
+
+param verboseRules = true.
+param traceDisplay = long.
+param unifyDerivation = true.
+
+free null.
+free c.
+free one, two.
+
+fun hmac/2.
+fun enc/2. fun dec/2.
+fun senc/2. fun sdec/2.
+fun pk/1. 
+fun kdf/2.
+fun handle/1.
+
+equation dec(sk, enc(pk(sk), m)) = m.
+equation sdec(k, senc(k, m)) = m.
+
+
+query ev:successU() ==> ev:successT().  
+
+
+
+
+let User = 
+        (* request an OSAP session *)
+        new no;
+	new noOSAP;
+	out(c, (kh, noOSAP));
+	in(c, (ah, ne, neOSAP) );
+	let K = hmac(authdata, (neOSAP, noOSAP)) in
+	
+	(* request execution of a command, e.g. TPM_CreateWrapKey *)
+	new newauth;
+     
+    (* Here is where it matters whether you output (X,Y,Z) or X, Y, Z separately *)
+
+	out(c,  no);
+	out(c,  senc(K,newauth) );
+        out(c,  hmac(K,(ne,no)) ); 
+    (*   out(c, ( no, senc(K,newauth), hmac(K,(ne,no)) ) );  *)
+
+
+        (* receive the response from the TPM, and check it *)
+	in(c, (r, hm) );
+	if hm = hmac( K , r) then
+	
+        (* check that the TPM has newauth *)
+	new n;
+	out(c, n);
+	in(c, hm2);
+	if hm2=hmac(newauth,n) then
+	event  successU(  ).
+
+let TPM =
+        (* handle the request for an OSAP session *)
+	new ne;
+	new neOSAP;
+	in(c, noOSAP );
+	out(c, (ne, neOSAP) );
+	let K = hmac(authdata, (neOSAP, noOSAP)) in
+
+	(* execute a command from the user, e.g. TPM_CreateWrapKey *)
+	in(c, (no, encNewAuth, hm));
+	if hm = hmac(K, (ne,no)) then
+	let newauth = sdec(K, encNewAuth) in
+
+        (* return a response to the user *)
+	new response;
+	out(c, ( response, hmac( K , response) ));
+	event successT();
+
+        (* if asked, prove knowledge of newauth *)
+	in(c, n);
+	out(c, hmac(newauth,n)).
+
+process 
+        new skTPM; (* secret part of a TPM key *)
+	let pkTPM = pk(skTPM) in  (* public part of a TPM key *)
+	new authdata;   (* the shared authdata *)
+	let kh = handle(pkTPM) in
+	out(c, (pkTPM, authdata, kh) );
+
+	( !User | !TPM )

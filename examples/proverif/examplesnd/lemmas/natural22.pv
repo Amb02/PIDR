@@ -1,0 +1,28 @@
+free c:channel.
+
+event A.
+event B.
+
+free a:bitstring[private].
+free b:bitstring[private].
+
+free d:bitstring.
+free e:bitstring.
+
+process
+  in(c,(i:nat,x:bitstring));
+  in(c,(j:nat,y:bitstring));
+  if x = e
+  then
+    (if is_nat(i) then
+    if i > j -5
+    then out(c,choice[a,b])
+    else out(c,choice[e,d])
+    )
+  else
+  (if is_nat(i) then
+  if is_nat(j) then
+  if j > i + 3
+  then out(c,choice[e,a])
+  else out(c,choice[b,d])
+  )

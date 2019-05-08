@@ -1,0 +1,5 @@
+free c : channel.
+free d : bitstring [private].
+
+process
+  out(c, choice[(d,d), d])

@@ -1,0 +1,103 @@
+free c.
+(* TO DO check that this is the real protocol
+I use a different set of keys for A -> S and S -> B.
+
+A -> S : A, { tA, B, Kab }_{Kas}
+S -> B : { tS, A, Kab }_{Ksb}
+
+*)
+
+(* Table of host names/keys shared with the server 
+   The private constructor key1 maps host names to keys from host to server.
+   The private constructor key2 maps host names to keys from server to host.
+   The destructors gethost1,gethost2 map keys to host names. *)
+
+private fun key1/1.
+private fun key2/1.
+reduc gethost1(key1(x)) = x. (* Could probably be removed *)
+reduc gethost2(key2(x)) = x.
+
+(* Shared key cryptography *)
+
+fun encrypt/2.
+reduc decrypt(encrypt(x,y),y) = x.
+
+(*** Handle timestamps ***)
+
+(* Channel on which the current time is sent *)
+free clock.
+
+(* Uninterpreted predicate, whose semantics is 
+   issmaller:t1,t2,delta <=> t1 <= t2 + delta *)
+pred issmaller/3 block.
+
+(* Values of delta for the server and for B *)
+free delta,delta2.
+
+(*** End timestamps ***)
+
+(* Channel on which the names of honest participants are sent *)
+private free honestParticipants.
+
+private free secretA, secretB.
+query attacker:secretA;
+      attacker:secretB.
+query ev:endBkey(xA, xB, xtB, xkAB) ==> ev:beginBkey(xA, xB, xtA, xkAB) &
+   issmaller:xtB,xtS,delta2 & issmaller:xtS,xtA,delta.
+
+let processA = 
+        in(c, B);
+	in(clock, tA);
+	new Kab;
+	event beginBkey(A, B, tA, Kab);
+        out(c, (A, encrypt((tA, B, Kab), Kas)));
+	(* OK 
+           If the interlocutor is honest, send a secret encrypted under Kab
+           to check that Kab is secret *)
+	in(honestParticipants, =B);
+	out(c, encrypt(secretA, Kab)).
+
+let processS = 
+	in(c, (a, m));
+	let kas = key1(a) in
+        let (ta, b, kab) = decrypt(m,kas) in
+	in(clock, tS);
+	if issmaller:tS,ta,delta then
+        let kbs = key2(b) in
+	out(c, encrypt((tS, a, kab), kbs)).
+                         
+let processB = 
+	in(c, m); 
+	let (ts, a, kab) = decrypt(m, Ksa) in
+	(* This is not what is really done in WMF. B should check that ts
+ 	   is later than all previously received timestamps,
+           which implies that a given key is accepted at most once.
+	   ProVerif probably cannot do that. *)
+	in(clock, tB);
+	if issmaller:tB,ts,delta2 then
+	(* OK
+           If the interlocutor is honest, send a secret encrypted under kab
+           to check that kab is secret *)
+	in(honestParticipants, =a);
+	event endBkey(a, A, tB, kab);
+	out(c, encrypt(secretB, kab)).
+
+
+
+process 
+(
+(* Create honest principals *)
+   !
+   new A; let Kas = key1(A) in let Ksa = key2(A) in
+   (
+      (!out(honestParticipants, A)) | out(c, A) | 
+      (!processA) | (!processB)
+   )
+)
+|
+(* Launch an unbounded number of sessions of the server *)
+(!processS)
+|
+(* Create dishonest principals *)
+(! new I; let Kis = key1(I) in let Ksi = key2(I) in
+   out(c, (I, Kis, Ksi)))

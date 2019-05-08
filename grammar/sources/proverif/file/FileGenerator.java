@@ -14,7 +14,7 @@ public class FileGenerator {
 	public static final String LOG_DIRECTORY_PATH = "logs/";
 
 	public static void newLogFile (String name_, String path) {
-		name = name_.substring(0, name_.indexOf('.'));
+		if (name_.indexOf('.') != -1) name = name_.substring(0, name_.indexOf('.'));
 		logFile = new File(path);
 		try {
 			fileContent = new StringBuilder();

@@ -1,0 +1,9 @@
+free a: bitstring.
+free c,d,e:channel.
+fun hash(bitstring):bitstring.
+
+equivalence
+   in(c, x:bitstring); in(c, y:bitstring); ! new a: bitstring; new b: bitstring; (out(c,(x,a)) | out(c,(y,b)) | ! in(c,z:bitstring); out(c,(a,y)))
+
+   in(c, x:bitstring); in(c, y:bitstring); ! new a: bitstring; new b: bitstring; (! (out(c,(x,a)) | ! in(c,z:bitstring); out(c,(a,y)))) | out(c,(y,b)) 
+

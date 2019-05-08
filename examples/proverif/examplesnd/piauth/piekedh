@@ -1,0 +1,33 @@
+free c.
+(* EKE Diffie-Hellman
+
+A -> B : A, g(x)
+B -> A : { g(y) }_K_P, { N_B }_f(y, g(x))
+A -> B : { N_A, N_B }_f(x, g(y))
+B -> A : { N_A }_f(y, g(x)) 
+
+*)
+
+(* Shared-key cryptography *)
+
+fun encrypt/2.
+reduc decrypt(encrypt(m,k),k) = m.
+
+(* Diffie-Hellman *)
+(* equation f(x,g(y)) = f(y,g(x)). *)
+
+fun g/1.
+fun h1/2.
+fun h0/2.
+reduc f(y, g(x)) = h1(x,y);
+      f(x, g(y)) = h1(x,y);
+      f(x, y) = h0(x,y).
+
+let processA =
+
+
+
+let processB =
+
+
+process new 

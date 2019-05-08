@@ -1,0 +1,145 @@
+(* Bellovin, Merritt, Oakland 92, section 2.1
+   Version in which A and B talk to anybody 
+   was coded by B. Blanchet *)
+
+(* We propose the following modeling:
+ A -> B : {Ea}_Kab        |    Key exchange part
+ B -> A : {{K}_Ea}_Kab    |
+ A -> B : {Ca}_K          |
+ B -> A : {Ca,Cb}_K       |    Challenge/Response
+ A -> B : {Cb}_K          |    Authentication part
+*)
+
+(* param verboseRules = true. *)
+nounif attacker:wsenc(x,*y).  (* For termination *)
+
+(* c is the normal network, insecure *)
+free c.
+(* p is a special channel used to store the names of trusted agents *)
+private free p.
+
+fun host/1.
+private reduc getkey(host(x)) = x.
+
+(* Symmetric cryptography
+   One does not know whether decryption succeeds or not
+   For use with weak secrets *)
+
+fun wsenc/2.
+fun wsdec/2.
+equation wsdec(wsenc(x,y),y) = x.
+equation wsenc(wsdec(x,y),y) = x.
+
+(* Symmetric cryptography
+   One knows whether decryption succeeds or not *)
+
+fun senc/2.
+reduc sdec(senc(x,y),y) = x.
+
+(* Symmetry of Kab = Kba *)
+ fun sym/2.
+ equation sym(x,host(y)) = sym(y,host(x)). 
+
+(* Public key cryptography *)
+
+ fun penc/2.
+ fun pk/1.
+ reduc pdec(penc(x,pk(y)),y) = x.
+
+(* Secrecy assumptions *)
+not kas.
+
+(* Effectively the claim signals *)
+private free secretACa, secretACb, secretBCa, secretBCb, secretBk, secretAk, secretAskea, secretApkea, secretBpkea.
+
+(* Security claims to verify *)
+query attacker:secretACa;
+      attacker:secretACb;
+      attacker:secretAk;
+      attacker:secretAskea;
+      attacker:secretApkea;
+      attacker:secretBCa;
+      attacker:secretBCb;
+      attacker:secretBk;
+      attacker:secretBpkea.
+
+let processI =
+	(* choose the other principal *)
+ 	in(c,hostB);
+
+	(* Generate a new public key *) 
+	new sEA;
+	let EA = pk(sEA) in
+	
+	(* First hostA is just for more readability *)
+	out(c, (hostA, wsenc(EA, sym(kas, hostB)))); 
+
+	in(c,m2);
+	let K = pdec(wsdec(m2,sym(kas, hostB)),sEA) in
+
+	new challengeA;
+	out(c, senc((challengeA), K));
+
+	in(c, m4);
+	let (=challengeA, challengeB) = sdec(m4, K) in
+
+	out(c, senc((challengeB), K));
+
+        (* If I am talking to an honest principal *)	
+	in(p,m);
+        if m  = hostB  then 
+	out(c, senc(secretACa, challengeA));
+	out(c, senc(secretACb, challengeB));
+	out(c, senc(secretAk, K));
+	out(c, senc(secretAskea, sEA));
+	out(c, senc(secretApkea, EA)).
+
+
+let processR =
+	(* choose initiator *)
+ 	in(c,hostB);
+
+	in(c, (=hostB, m));
+	let EA = wsdec(m, sym(kas,hostB) ) in
+	new K;
+
+	(* event Bsays(hostX, hostB, K); *)
+
+	out(c, wsenc(penc(K, EA), sym(kas,hostB)));
+	       (* Bruno: there is a loop between message 
+	       	  	m = wsenc(EA, sym(kas,hostB))
+	          and
+			wsenc(penc(K, EA), sym(kas,hostB))
+		  penc(K,EA) can be taken for EA, thus generating
+		  	wsenc(penc(K, penc(K, ... penc(K, EA))), sym(kas,hostB))
+	          which leads to non-termination.
+		  This could be avoided if the language were typed, with
+		  a type of public keys disjoint from the type of
+		  plaintexts encrypted with public keys. *)
+	
+	in(c,m3);
+	let (challengeA) = sdec(m3, K) in
+	new challengeB;
+	out(c, senc((challengeA, challengeB), K));
+
+	in(c, m5);
+	if sdec(m5, K) = (challengeB) then
+
+	(* If I am talking to an honest principal *)	
+	in(p,m);
+        if m  = hostB  then 
+	out(c, senc(secretBCa, challengeA));
+	out(c, senc(secretBCb, challengeB));
+	out(c, senc(secretBk, K));
+	out(c, senc(secretBpkea, EA)).
+
+process 
+!(
+    (* Generic Generation of principals *)
+    new kas;   
+    let hostA= host(kas) in
+    out(c,hostA);
+
+    ((!processI) | (!processR)) | ! (out(p,hostA))
+)
+

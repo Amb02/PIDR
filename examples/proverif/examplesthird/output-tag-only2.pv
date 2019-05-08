@@ -1,0 +1,115 @@
+free c:channel.
+free ct:channel.
+free cr:channel.
+
+const g:bitstring.
+
+free ok:bitstring.
+free tokenR:bitstring.
+free tokenP:bitstring.
+
+fun exp(bitstring,bitstring):bitstring.
+
+equation forall x:bitstring,y:bitstring; exp(exp(g,x),y) = exp(exp(g,y),x).
+
+fun enc(bitstring,bitstring):bitstring.
+fun dec(bitstring,bitstring):bitstring.
+
+equation forall x:bitstring,y:bitstring; dec(enc(x,y),y) = x.
+
+fun mac(bitstring,bitstring):bitstring.
+fun kdf(bitstring,bitstring):bitstring.
+
+event Rin_1(bitstring,bitstring,bitstring).
+event Rout_1(bitstring,bitstring,bitstring,bitstring).
+event Rin_2(bitstring,bitstring,bitstring,bitstring,bitstring).
+event Rout_2(bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+event Rin_3(bitstring,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+event Rtest_1(bitstring,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+event Rout_3(bitstring,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+event Iout_1(bitstring,bitstring,bitstring).
+event Iin_1(bitstring,bitstring,bitstring,bitstring).
+event Iout_2(bitstring,bitstring,bitstring,bitstring,bitstring).
+event Iin_2(bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+event Itest_1(bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+event Iout_3(bitstring,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+event Iin_3(bitstring,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+
+
+event VCell_bitstring(channel,bitstring).
+
+query k:bitstring,n1:bitstring,n2:bitstring,m1:bitstring,m2:bitstring,m3:bitstring,m4:bitstring,m5:bitstring,i:nat,i1:nat,x:bitstring,x1:bitstring,d:channel;
+  event(Rtest_1(k,n2,m1,m2,m3,m4,m5)) ==>
+        (event(Rin_3(k,n2,m1,m2,m3,m4,m5)) ==> (event(Iout_3(k,n1,m1,m2,m3,m4,m5)) ==> (event(Iin_2(k,n1,m1,m2,m3,m4)) ==> (event(Rout_2(k,n2,m1,m2,m3,m4)) ==> (event(Rin_2(k,n2,m1,m2,m3)) ==> (event(Iout_2(k,n1,m1,m2,m3)) ==> (event(Iin_1(k,n1,m1,m2)) ==> (event(Rout_1(k,n2,m1,m2)) ==> (event(Rin_1(k,n2,m1)) ==> (event(Iout_1(k,n1,m1)))))))))))).
+
+        query k:bitstring, n1:bitstring, n2:bitstring,
+             m1:bitstring, m2:bitstring, m3:bitstring, m4:bitstring, m5:bitstring;
+          (event(Rtest_1(k,n2,m1,m2,m3,m4,m5))  ==>
+          (event(Rin_3(k,n2,m1,m2,m3,m4,m5))  ==>
+          (event(Iout_3(k,n1,m1,m2,m3,m4,m5))  ==>
+          (event(Iin_2(k,n1,m1,m2,m3,m4))  ==>
+          (event(Rout_2(k,n2,m1,m2,m3,m4))  ==>
+          (event(Rin_2(k,n2,m1,m2,m3))  ==>
+          (event(Iout_2(k,n1,m1,m2,m3))  ==>
+          (event(Iin_1(k,n1,m1,m2)) ==>
+          (event(Rout_1(k,n2,m1,m2)) ==>
+          (event(Rin_1(k,n2,m1)) ==>
+          (event(Iout_1(k,n1,m1))))))))))))).
+
+query k:bitstring,n1:bitstring,n2:bitstring,m1:bitstring,m2:bitstring,m3:bitstring,m4:bitstring,i:nat,i1:nat,x:bitstring,x1:bitstring,d:channel;
+  event(Itest_1(k,n2,m1,m2,m3,m4)) ==>
+        (event(Iin_2(k,n2,m1,m2,m3,m4)) ==> (event(Rout_2(k,n1,m1,m2,m3,m4)) ==> (event(Rin_2(k,n1,m1,m2,m3)) ==> (event(Iout_2(k,n2,m1,m2,m3)) ==> (event(Iin_1(k,n2,m1,m2)) ==> (event(Rout_1(k,n1,m1,m2)) ==> (event(Rin_1(k,n1,m1)) ==> (event(Iout_1(k,n2,m1))))))))))
+    ||  (event(VCell_bitstring(d,(i1,x1))) && event(VCell_bitstring(d,(i,x))) && i1 = i && (i1,x1) <> (i,x)).
+
+process
+  !  (* Application of the process SYSTEM *)
+  new k:bitstring;
+  new dP:channel;
+  (
+    out(dP,(0,tokenP));
+    0
+  ) | (
+    !
+    (
+      in(dP,(i:nat,= tokenP)); (* The first nat variable has been added due to the cell parameter *)
+      event VCell_bitstring(dP,(i,tokenP));
+      new sess_I:bitstring;
+      new s:bitstring;
+      event Iout_1(k,sess_I,enc(s,k));
+      out(ct,enc(s,k));
+      in(ct,x1:bitstring);
+      event Iin_1(k,sess_I,enc(s,k),x1);
+      new nI:bitstring;
+      event Iout_2(k,sess_I,enc(s,k),x1,exp(g,nI));
+      out(ct,exp(g,nI));
+      in(ct,x2:bitstring);
+      event Iin_2(k,sess_I,enc(s,k),x1,exp(g,nI),x2);
+      let (xk:bitstring) = kdf(s,exp(x1,nI)) in
+      if mac(exp(g,nI),xk) = x2 then
+      event Itest_1(k,sess_I,enc(s,k),x1,exp(g,nI),x2);
+      event Iout_3(k,sess_I,enc(s,k),x1,exp(g,nI),x2,mac(x1,xk));
+      out(ct,mac(x1,xk));
+      out(dP,(i,tokenP));
+      0
+    ) | (
+      in(cr,y1:bitstring);
+      new sess_R:bitstring;
+      event Rin_1(k,sess_R,y1);
+      new nR:bitstring;
+      event Rout_1(k,sess_R,y1,exp(g,nR));
+      out(cr,exp(g,nR));
+      in(cr,y2:bitstring);
+      event Rin_2(k,sess_R,y1,exp(g,nR),y2);
+      let yk:bitstring = kdf(dec(y1,k),exp(y2,nR)) in
+      if y2 <> exp(g,nR) then
+      event Rout_2(k,sess_R,y1,exp(g,nR),y2,mac(y2,yk));
+      out(cr,mac(y2,yk));
+      in(cr,y3:bitstring);
+      event Rin_3(k,sess_R,y1,exp(g,nR),y2,mac(y2,yk),y3);
+      if mac(exp(g,nR),yk) = y3 then
+      event Rtest_1(k,sess_R,y1,exp(g,nR),y2,mac(y2,yk),y3);
+      event Rout_3(k,sess_R,y1,exp(g,nR),y2,mac(y2,yk),y3,ok);
+      out(cr,ok);
+      0
+    )
+  )

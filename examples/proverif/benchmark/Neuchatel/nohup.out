@@ -1,0 +1,367 @@
+Biprocess 0 (that is, the initial process):
+{1}out(c, pube(ske(election)));
+{2}out(c, pubs(sks(signature)));
+{3}out(c, deltaId(svka));
+{4}out(c, pube(ske(deltaId(svka))));
+{5}out(c, deltaId(svkb));
+{6}out(c, pube(ske(deltaId(svkb))));
+(
+    {7}if (((choice[ja1,jb1] = choice[ja1,jb1]) && (a1 ≠ a1)) || (((choice[ja1,jb1] = choice[ja2,jb2]) && (a1 ≠ a2)) || (((choice[ja1,jb1] = choice[ja3,jb3]) && (a1 ≠ a3)) || ((choice[ja1,jb1] = choice[ja4,jb4]) && (a1 ≠ a4))))) then
+        0
+    else
+        {8}if (((choice[ja2,jb2] = choice[ja1,jb1]) && (a2 ≠ a1)) || (((choice[ja2,jb2] = choice[ja2,jb2]) && (a2 ≠ a2)) || (((choice[ja2,jb2] = choice[ja3,jb3]) && (a2 ≠ a3)) || ((choice[ja2,jb2] = choice[ja4,jb4]) && (a2 ≠ a4))))) then
+            0
+        else
+            {9}if (((choice[ja3,jb3] = choice[ja1,jb1]) && (a3 ≠ a1)) || (((choice[ja3,jb3] = choice[ja2,jb2]) && (a3 ≠ a2)) || (((choice[ja3,jb3] = choice[ja3,jb3]) && (a3 ≠ a3)) || ((choice[ja3,jb3] = choice[ja4,jb4]) && (a3 ≠ a4))))) then
+                0
+            else
+                {10}if (((choice[ja4,jb4] = choice[ja1,jb1]) && (a4 ≠ a1)) || (((choice[ja4,jb4] = choice[ja2,jb2]) && (a4 ≠ a2)) || (((choice[ja4,jb4] = choice[ja3,jb3]) && (a4 ≠ a3)) || ((choice[ja4,jb4] = choice[ja4,jb4]) && (a4 ≠ a4))))) then
+                    0
+                else
+                    {11}let (SVK: password,sRC1: bitstring,sRC2: bitstring,sRC3: bitstring,sRC4: bitstring,CCid: int,sFCid: bitstring) = GetVoterData(VoterData(svka,ska),choice[ja1,jb1],choice[ja2,jb2],choice[ja3,jb3],choice[ja4,jb4]) in
+                    {12}let Id: agentId = deltaId(SVK) in
+                    {13}out(c, Id);
+                    {14}in(c, Ks: bitstring);
+                    {15}let v_1: bitstring = catch-fail(dec(deltaKey(SVK),Ks)) in
+                    {16}let Skid: ekey = (if (not-caught-fail(v_1) && success?(is-true(success?(1-proj-t_ekey(v_1))))) then 1-proj-t_ekey(v_1) else fail-ekey) in
+                    {17}let v_2: bitstring = catch-fail((t_int(v(choice[ja1,jb1])),t_int(v(choice[ja2,jb2])),t_int(v(choice[ja3,jb3])),t_int(v(choice[ja4,jb4])))) in
+                    {18}new R: int;
+                    {19}let v_3: bitstring = catch-fail((aenc1(R),aenc2(pube(ske(election)),v_2,R))) in
+                    {20}let v_4: bitstring = catch-fail(ZKP(pube(ske(election)),pube(Skid),v_3,pRC(Skid,v(choice[ja1,jb1])),pRC(Skid,v(choice[ja2,jb2])),pRC(Skid,v(choice[ja3,jb3])),pRC(Skid,v(choice[ja4,jb4])),R,Skid)) in
+                    {21}out(c, (if not-caught-fail(v_2) then (if not-caught-fail(v_3) then (if not-caught-fail(v_4) then (v_3,pRC(Skid,v(choice[ja1,jb1])),pRC(Skid,v(choice[ja2,jb2])),pRC(Skid,v(choice[ja3,jb3])),pRC(Skid,v(choice[ja4,jb4])),pube(Skid),v_4) else fail-bitstring) else fail-bitstring) else fail-bitstring));
+                    {22}in(c, (sRC'1: bitstring,sRC'2: bitstring,sRC'3: bitstring,sRC'4: bitstring));
+                    {23}if (((sRC'1 = sRC1) || ((sRC'2 = sRC1) || ((sRC'3 = sRC1) || (sRC'4 = sRC1)))) && (((sRC'1 = sRC2) || ((sRC'2 = sRC2) || ((sRC'3 = sRC2) || (sRC'4 = sRC2)))) && (((sRC'1 = sRC3) || ((sRC'2 = sRC3) || ((sRC'3 = sRC3) || (sRC'4 = sRC3)))) && ((sRC'1 = sRC4) || ((sRC'2 = sRC4) || ((sRC'3 = sRC4) || (sRC'4 = sRC4))))))) then
+                    {24}event Confirmed(SVK,choice[ja1,jb1],choice[ja2,jb2],choice[ja3,jb3],choice[ja4,jb4]);
+                    {25}out(c, pRC(Skid,CCid));
+                    {26}in(c, =sFCid);
+                    {27}event HappyUser(SVK,choice[ja1,jb1],choice[ja2,jb2],choice[ja3,jb3],choice[ja4,jb4])
+) | (
+    {28}if (((choice[jb1,ja1] = choice[jb1,ja1]) && (a1 ≠ a1)) || (((choice[jb1,ja1] = choice[jb2,ja2]) && (a1 ≠ a2)) || (((choice[jb1,ja1] = choice[jb3,ja3]) && (a1 ≠ a3)) || ((choice[jb1,ja1] = choice[jb4,ja4]) && (a1 ≠ a4))))) then
+        0
+    else
+        {29}if (((choice[jb2,ja2] = choice[jb1,ja1]) && (a2 ≠ a1)) || (((choice[jb2,ja2] = choice[jb2,ja2]) && (a2 ≠ a2)) || (((choice[jb2,ja2] = choice[jb3,ja3]) && (a2 ≠ a3)) || ((choice[jb2,ja2] = choice[jb4,ja4]) && (a2 ≠ a4))))) then
+            0
+        else
+            {30}if (((choice[jb3,ja3] = choice[jb1,ja1]) && (a3 ≠ a1)) || (((choice[jb3,ja3] = choice[jb2,ja2]) && (a3 ≠ a2)) || (((choice[jb3,ja3] = choice[jb3,ja3]) && (a3 ≠ a3)) || ((choice[jb3,ja3] = choice[jb4,ja4]) && (a3 ≠ a4))))) then
+                0
+            else
+                {31}if (((choice[jb4,ja4] = choice[jb1,ja1]) && (a4 ≠ a1)) || (((choice[jb4,ja4] = choice[jb2,ja2]) && (a4 ≠ a2)) || (((choice[jb4,ja4] = choice[jb3,ja3]) && (a4 ≠ a3)) || ((choice[jb4,ja4] = choice[jb4,ja4]) && (a4 ≠ a4))))) then
+                    0
+                else
+                    {32}let (SVK_1: password,sRC1_1: bitstring,sRC2_1: bitstring,sRC3_1: bitstring,sRC4_1: bitstring,CCid_1: int,sFCid_1: bitstring) = GetVoterData(VoterData(svkb,ska),choice[jb1,ja1],choice[jb2,ja2],choice[jb3,ja3],choice[jb4,ja4]) in
+                    {33}let Id_1: agentId = deltaId(SVK_1) in
+                    {34}out(c, Id_1);
+                    {35}in(c, Ks_1: bitstring);
+                    {36}let v_5: bitstring = catch-fail(dec(deltaKey(SVK_1),Ks_1)) in
+                    {37}let Skid_1: ekey = (if (not-caught-fail(v_5) && success?(is-true(success?(1-proj-t_ekey(v_5))))) then 1-proj-t_ekey(v_5) else fail-ekey) in
+                    {38}let v_6: bitstring = catch-fail((t_int(v(choice[jb1,ja1])),t_int(v(choice[jb2,ja2])),t_int(v(choice[jb3,ja3])),t_int(v(choice[jb4,ja4])))) in
+                    {39}new R_1: int;
+                    {40}let v_7: bitstring = catch-fail((aenc1(R_1),aenc2(pube(ske(election)),v_6,R_1))) in
+                    {41}let v_8: bitstring = catch-fail(ZKP(pube(ske(election)),pube(Skid_1),v_7,pRC(Skid_1,v(choice[jb1,ja1])),pRC(Skid_1,v(choice[jb2,ja2])),pRC(Skid_1,v(choice[jb3,ja3])),pRC(Skid_1,v(choice[jb4,ja4])),R_1,Skid_1)) in
+                    {42}out(c, (if not-caught-fail(v_6) then (if not-caught-fail(v_7) then (if not-caught-fail(v_8) then (v_7,pRC(Skid_1,v(choice[jb1,ja1])),pRC(Skid_1,v(choice[jb2,ja2])),pRC(Skid_1,v(choice[jb3,ja3])),pRC(Skid_1,v(choice[jb4,ja4])),pube(Skid_1),v_8) else fail-bitstring) else fail-bitstring) else fail-bitstring));
+                    {43}in(c, (sRC'1_1: bitstring,sRC'2_1: bitstring,sRC'3_1: bitstring,sRC'4_1: bitstring));
+                    {44}if (((sRC'1_1 = sRC1_1) || ((sRC'2_1 = sRC1_1) || ((sRC'3_1 = sRC1_1) || (sRC'4_1 = sRC1_1)))) && (((sRC'1_1 = sRC2_1) || ((sRC'2_1 = sRC2_1) || ((sRC'3_1 = sRC2_1) || (sRC'4_1 = sRC2_1)))) && (((sRC'1_1 = sRC3_1) || ((sRC'2_1 = sRC3_1) || ((sRC'3_1 = sRC3_1) || (sRC'4_1 = sRC3_1)))) && ((sRC'1_1 = sRC4_1) || ((sRC'2_1 = sRC4_1) || ((sRC'3_1 = sRC4_1) || (sRC'4_1 = sRC4_1))))))) then
+                    {45}event Confirmed(SVK_1,choice[jb1,ja1],choice[jb2,ja2],choice[jb3,ja3],choice[jb4,ja4]);
+                    {46}out(c, pRC(Skid_1,CCid_1));
+                    {47}in(c, =sFCid_1);
+                    {48}event HappyUser(SVK_1,choice[jb1,ja1],choice[jb2,ja2],choice[jb3,ja3],choice[jb4,ja4])
+) | (
+    {49}!
+    {50}new svki: password;
+    {51}out(c, svki);
+    {52}out(c, pube(ske(deltaId(svki))));
+    {53}out(c, VoterData(svki,ska))
+) | (
+    {54}out(c, ServData(pube(ske(election)),ska,sks(signature)))
+) | (
+    {55}in(c, (=deltaId(svka),B1: bitstring,sFC1: bitstring,CRF1: bitstring));
+    {56}in(c, (=deltaId(svkb),B2: bitstring,sFC2: bitstring,CRF2: bitstring));
+    {57}let v_9: bitstring = catch-fail(B1) in
+    {58}let v_10: bool = catch-fail(VerifP(pube(ske(election)),pube(ske(deltaId(svka))),1-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9),2-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9),3-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9),4-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9),5-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9),7-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9))) in
+    {59}let Ok1: bool = (if (not-caught-fail(v_9) && success?(is-true(((pube(ske(deltaId(svka))) = 6-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9)) && success?(1-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9)))))) then (if not-caught-fail(v_10) then true else fail-bool) else fail-bool) in
+    {60}let Ok1b: bool = Verify(pubs(sks(signature)),sFC1,CRF1) in
+    {61}let v_11: bitstring = catch-fail(B2) in
+    {62}let v_12: bool = catch-fail(VerifP(pube(ske(election)),pube(ske(deltaId(svkb))),1-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11),2-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11),3-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11),4-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11),5-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11),7-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11))) in
+    {63}let Ok2: bool = (if (not-caught-fail(v_11) && success?(is-true(((pube(ske(deltaId(svkb))) = 6-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11)) && success?(1-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11)))))) then (if not-caught-fail(v_12) then true else fail-bool) else fail-bool) in
+    {64}let Ok2b: bool = Verify(pubs(sks(signature)),sFC2,CRF2) in
+    {65}if (deltaId(svka) ≠ deltaId(svkb)) then
+    {66}let (E1: bitstring,W11: int,W12: int,W13: int,W14: int,=pube(ske(deltaId(svka))),P1: bitstring) = B1 in
+    {67}let (E2: bitstring,W21: int,W22: int,W23: int,W24: int,=pube(ske(deltaId(svkb))),P2: bitstring) = B2 in
+    (
+        {68}out(mix, choice[E1,E2])
+    ) | (
+        {69}out(mix, choice[E2,E1])
+    ) | (
+        {70}in(mix, ME1: bitstring);
+        {71}in(mix, ME2: bitstring);
+        {72}let (t_int(v(J11: int)),t_int(v(J12: int)),t_int(v(J13: int)),t_int(v(J14: int))) = adec(ske(election),ME1) in
+        {73}let (t_int(v(J21: int)),t_int(v(J22: int)),t_int(v(J23: int)),t_int(v(J24: int))) = adec(ske(election),ME2) in
+        {74}out(c, (J11,J12,J13,J14));
+        {75}out(c, (J21,J22,J23,J24))
+    )
+) | (
+    {76}!
+    {77}in(c, (Id3: agentId,B3: bitstring,sFC3: bitstring,CRF3: bitstring));
+    {78}let v_13: bitstring = catch-fail(B3) in
+    {79}let v_14: bool = catch-fail(VerifP(pube(ske(election)),pube(ske(Id3)),1-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13),2-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13),3-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13),4-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13),5-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13),7-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13))) in
+    {80}let Ok3: bool = (if (not-caught-fail(v_13) && success?(is-true(((pube(ske(Id3)) = 6-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13)) && success?(1-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13)))))) then (if not-caught-fail(v_14) then true else fail-bool) else fail-bool) in
+    {81}let Ok3b: bool = Verify(pubs(sks(signature)),sFC3,CRF3) in
+    {82}if ((deltaId(svka) ≠ Id3) && (deltaId(svkb) ≠ Id3)) then
+    {83}let (E3: bitstring,W31: int,W32: int,W33: int,W34: int,=pube(ske(Id3)),P3: bitstring) = B3 in
+    {84}let (t_int(v(J31: int)),t_int(v(J32: int)),t_int(v(J33: int)),t_int(v(J34: int))) = adec(ske(election),E3) in
+    {85}out(c, (J31,J32,J33,J34))
+)
+
+Internal error: May-fail variables forbidden in inequalities (1)
+Please report bug to Bruno.Blanchet@inria.fr, including input file and output
+      189.85 real       186.74 user         1.00 sys
+Biprocess 0 (that is, the initial process):
+{1}out(c, pube(ske(election)));
+{2}out(c, pubs(sks(signature)));
+{3}out(c, deltaId(svka));
+{4}out(c, pube(ske(deltaId(svka))));
+{5}out(c, deltaId(svkb));
+{6}out(c, pube(ske(deltaId(svkb))));
+(
+    {7}if (((choice[ja1,jb1] = choice[ja1,jb1]) && (a1 ≠ a1)) || (((choice[ja1,jb1] = choice[ja2,jb2]) && (a1 ≠ a2)) || (((choice[ja1,jb1] = choice[ja3,jb3]) && (a1 ≠ a3)) || ((choice[ja1,jb1] = choice[ja4,jb4]) && (a1 ≠ a4))))) then
+        0
+    else
+        {8}if (((choice[ja2,jb2] = choice[ja1,jb1]) && (a2 ≠ a1)) || (((choice[ja2,jb2] = choice[ja2,jb2]) && (a2 ≠ a2)) || (((choice[ja2,jb2] = choice[ja3,jb3]) && (a2 ≠ a3)) || ((choice[ja2,jb2] = choice[ja4,jb4]) && (a2 ≠ a4))))) then
+            0
+        else
+            {9}if (((choice[ja3,jb3] = choice[ja1,jb1]) && (a3 ≠ a1)) || (((choice[ja3,jb3] = choice[ja2,jb2]) && (a3 ≠ a2)) || (((choice[ja3,jb3] = choice[ja3,jb3]) && (a3 ≠ a3)) || ((choice[ja3,jb3] = choice[ja4,jb4]) && (a3 ≠ a4))))) then
+                0
+            else
+                {10}if (((choice[ja4,jb4] = choice[ja1,jb1]) && (a4 ≠ a1)) || (((choice[ja4,jb4] = choice[ja2,jb2]) && (a4 ≠ a2)) || (((choice[ja4,jb4] = choice[ja3,jb3]) && (a4 ≠ a3)) || ((choice[ja4,jb4] = choice[ja4,jb4]) && (a4 ≠ a4))))) then
+                    0
+                else
+                    {11}let (SVK: password,sRC1: bitstring,sRC2: bitstring,sRC3: bitstring,sRC4: bitstring,CCid: int,sFCid: bitstring) = GetVoterData(VoterData(svka,ska),choice[ja1,jb1],choice[ja2,jb2],choice[ja3,jb3],choice[ja4,jb4]) in
+                    {12}let Id: agentId = deltaId(SVK) in
+                    {13}out(c, Id);
+                    {14}in(c, Ks: bitstring);
+                    {15}let v_1: bitstring = catch-fail(dec(deltaKey(SVK),Ks)) in
+                    {16}let Skid: ekey = (if (not-caught-fail(v_1) && success?(is-true(success?(1-proj-t_ekey(v_1))))) then 1-proj-t_ekey(v_1) else fail-ekey) in
+                    {17}let v_2: bitstring = catch-fail((t_int(v(choice[ja1,jb1])),t_int(v(choice[ja2,jb2])),t_int(v(choice[ja3,jb3])),t_int(v(choice[ja4,jb4])))) in
+                    {18}new R: int;
+                    {19}let v_3: bitstring = catch-fail((aenc1(R),aenc2(pube(ske(election)),v_2,R))) in
+                    {20}let v_4: bitstring = catch-fail(ZKP(pube(ske(election)),pube(Skid),v_3,pRC(Skid,v(choice[ja1,jb1])),pRC(Skid,v(choice[ja2,jb2])),pRC(Skid,v(choice[ja3,jb3])),pRC(Skid,v(choice[ja4,jb4])),R,Skid)) in
+                    {21}out(c, (if not-caught-fail(v_2) then (if not-caught-fail(v_3) then (if not-caught-fail(v_4) then (v_3,pRC(Skid,v(choice[ja1,jb1])),pRC(Skid,v(choice[ja2,jb2])),pRC(Skid,v(choice[ja3,jb3])),pRC(Skid,v(choice[ja4,jb4])),pube(Skid),v_4) else fail-bitstring) else fail-bitstring) else fail-bitstring));
+                    {22}in(c, (sRC'1: bitstring,sRC'2: bitstring,sRC'3: bitstring,sRC'4: bitstring));
+                    {23}if (((sRC'1 = sRC1) || ((sRC'2 = sRC1) || ((sRC'3 = sRC1) || (sRC'4 = sRC1)))) && (((sRC'1 = sRC2) || ((sRC'2 = sRC2) || ((sRC'3 = sRC2) || (sRC'4 = sRC2)))) && (((sRC'1 = sRC3) || ((sRC'2 = sRC3) || ((sRC'3 = sRC3) || (sRC'4 = sRC3)))) && ((sRC'1 = sRC4) || ((sRC'2 = sRC4) || ((sRC'3 = sRC4) || (sRC'4 = sRC4))))))) then
+                    {24}event Confirmed(SVK,choice[ja1,jb1],choice[ja2,jb2],choice[ja3,jb3],choice[ja4,jb4]);
+                    {25}out(c, pRC(Skid,CCid));
+                    {26}in(c, =sFCid);
+                    {27}event HappyUser(SVK,choice[ja1,jb1],choice[ja2,jb2],choice[ja3,jb3],choice[ja4,jb4])
+) | (
+    {28}if (((choice[jb1,ja1] = choice[jb1,ja1]) && (a1 ≠ a1)) || (((choice[jb1,ja1] = choice[jb2,ja2]) && (a1 ≠ a2)) || (((choice[jb1,ja1] = choice[jb3,ja3]) && (a1 ≠ a3)) || ((choice[jb1,ja1] = choice[jb4,ja4]) && (a1 ≠ a4))))) then
+        0
+    else
+        {29}if (((choice[jb2,ja2] = choice[jb1,ja1]) && (a2 ≠ a1)) || (((choice[jb2,ja2] = choice[jb2,ja2]) && (a2 ≠ a2)) || (((choice[jb2,ja2] = choice[jb3,ja3]) && (a2 ≠ a3)) || ((choice[jb2,ja2] = choice[jb4,ja4]) && (a2 ≠ a4))))) then
+            0
+        else
+            {30}if (((choice[jb3,ja3] = choice[jb1,ja1]) && (a3 ≠ a1)) || (((choice[jb3,ja3] = choice[jb2,ja2]) && (a3 ≠ a2)) || (((choice[jb3,ja3] = choice[jb3,ja3]) && (a3 ≠ a3)) || ((choice[jb3,ja3] = choice[jb4,ja4]) && (a3 ≠ a4))))) then
+                0
+            else
+                {31}if (((choice[jb4,ja4] = choice[jb1,ja1]) && (a4 ≠ a1)) || (((choice[jb4,ja4] = choice[jb2,ja2]) && (a4 ≠ a2)) || (((choice[jb4,ja4] = choice[jb3,ja3]) && (a4 ≠ a3)) || ((choice[jb4,ja4] = choice[jb4,ja4]) && (a4 ≠ a4))))) then
+                    0
+                else
+                    {32}let (SVK_1: password,sRC1_1: bitstring,sRC2_1: bitstring,sRC3_1: bitstring,sRC4_1: bitstring,CCid_1: int,sFCid_1: bitstring) = GetVoterData(VoterData(svkb,ska),choice[jb1,ja1],choice[jb2,ja2],choice[jb3,ja3],choice[jb4,ja4]) in
+                    {33}let Id_1: agentId = deltaId(SVK_1) in
+                    {34}out(c, Id_1);
+                    {35}in(c, Ks_1: bitstring);
+                    {36}let v_5: bitstring = catch-fail(dec(deltaKey(SVK_1),Ks_1)) in
+                    {37}let Skid_1: ekey = (if (not-caught-fail(v_5) && success?(is-true(success?(1-proj-t_ekey(v_5))))) then 1-proj-t_ekey(v_5) else fail-ekey) in
+                    {38}let v_6: bitstring = catch-fail((t_int(v(choice[jb1,ja1])),t_int(v(choice[jb2,ja2])),t_int(v(choice[jb3,ja3])),t_int(v(choice[jb4,ja4])))) in
+                    {39}new R_1: int;
+                    {40}let v_7: bitstring = catch-fail((aenc1(R_1),aenc2(pube(ske(election)),v_6,R_1))) in
+                    {41}let v_8: bitstring = catch-fail(ZKP(pube(ske(election)),pube(Skid_1),v_7,pRC(Skid_1,v(choice[jb1,ja1])),pRC(Skid_1,v(choice[jb2,ja2])),pRC(Skid_1,v(choice[jb3,ja3])),pRC(Skid_1,v(choice[jb4,ja4])),R_1,Skid_1)) in
+                    {42}out(c, (if not-caught-fail(v_6) then (if not-caught-fail(v_7) then (if not-caught-fail(v_8) then (v_7,pRC(Skid_1,v(choice[jb1,ja1])),pRC(Skid_1,v(choice[jb2,ja2])),pRC(Skid_1,v(choice[jb3,ja3])),pRC(Skid_1,v(choice[jb4,ja4])),pube(Skid_1),v_8) else fail-bitstring) else fail-bitstring) else fail-bitstring));
+                    {43}in(c, (sRC'1_1: bitstring,sRC'2_1: bitstring,sRC'3_1: bitstring,sRC'4_1: bitstring));
+                    {44}if (((sRC'1_1 = sRC1_1) || ((sRC'2_1 = sRC1_1) || ((sRC'3_1 = sRC1_1) || (sRC'4_1 = sRC1_1)))) && (((sRC'1_1 = sRC2_1) || ((sRC'2_1 = sRC2_1) || ((sRC'3_1 = sRC2_1) || (sRC'4_1 = sRC2_1)))) && (((sRC'1_1 = sRC3_1) || ((sRC'2_1 = sRC3_1) || ((sRC'3_1 = sRC3_1) || (sRC'4_1 = sRC3_1)))) && ((sRC'1_1 = sRC4_1) || ((sRC'2_1 = sRC4_1) || ((sRC'3_1 = sRC4_1) || (sRC'4_1 = sRC4_1))))))) then
+                    {45}event Confirmed(SVK_1,choice[jb1,ja1],choice[jb2,ja2],choice[jb3,ja3],choice[jb4,ja4]);
+                    {46}out(c, pRC(Skid_1,CCid_1));
+                    {47}in(c, =sFCid_1);
+                    {48}event HappyUser(SVK_1,choice[jb1,ja1],choice[jb2,ja2],choice[jb3,ja3],choice[jb4,ja4])
+) | (
+    {49}!
+    {50}new svki: password;
+    {51}out(c, svki);
+    {52}out(c, pube(ske(deltaId(svki))));
+    {53}out(c, VoterData(svki,ska))
+) | (
+    {54}out(c, ServData(pube(ske(election)),ska,sks(signature)))
+) | (
+    {55}in(c, (=deltaId(svka),B1: bitstring,sFC1: bitstring,CRF1: bitstring));
+    {56}in(c, (=deltaId(svkb),B2: bitstring,sFC2: bitstring,CRF2: bitstring));
+    {57}let v_9: bitstring = catch-fail(B1) in
+    {58}let v_10: bool = catch-fail(VerifP(pube(ske(election)),pube(ske(deltaId(svka))),1-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9),2-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9),3-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9),4-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9),5-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9),7-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9))) in
+    {59}let Ok1: bool = (if (not-caught-fail(v_9) && success?(is-true(((pube(ske(deltaId(svka))) = 6-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9)) && success?(1-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_9)))))) then (if not-caught-fail(v_10) then true else fail-bool) else fail-bool) in
+    {60}let Ok1b: bool = Verify(pubs(sks(signature)),sFC1,CRF1) in
+    {61}let v_11: bitstring = catch-fail(B2) in
+    {62}let v_12: bool = catch-fail(VerifP(pube(ske(election)),pube(ske(deltaId(svkb))),1-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11),2-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11),3-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11),4-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11),5-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11),7-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11))) in
+    {63}let Ok2: bool = (if (not-caught-fail(v_11) && success?(is-true(((pube(ske(deltaId(svkb))) = 6-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11)) && success?(1-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_11)))))) then (if not-caught-fail(v_12) then true else fail-bool) else fail-bool) in
+    {64}let Ok2b: bool = Verify(pubs(sks(signature)),sFC2,CRF2) in
+    {65}if (deltaId(svka) ≠ deltaId(svkb)) then
+    {66}let (E1: bitstring,W11: int,W12: int,W13: int,W14: int,=pube(ske(deltaId(svka))),P1: bitstring) = B1 in
+    {67}let (E2: bitstring,W21: int,W22: int,W23: int,W24: int,=pube(ske(deltaId(svkb))),P2: bitstring) = B2 in
+    (
+        {68}out(mix, choice[E1,E2])
+    ) | (
+        {69}out(mix, choice[E2,E1])
+    ) | (
+        {70}in(mix, ME1: bitstring);
+        {71}in(mix, ME2: bitstring);
+        {72}let (t_int(v(J11: int)),t_int(v(J12: int)),t_int(v(J13: int)),t_int(v(J14: int))) = adec(ske(election),ME1) in
+        {73}let (t_int(v(J21: int)),t_int(v(J22: int)),t_int(v(J23: int)),t_int(v(J24: int))) = adec(ske(election),ME2) in
+        {74}out(c, (J11,J12,J13,J14));
+        {75}out(c, (J21,J22,J23,J24))
+    )
+) | (
+    {76}!
+    {77}in(c, (Id3: agentId,B3: bitstring,sFC3: bitstring,CRF3: bitstring));
+    {78}let v_13: bitstring = catch-fail(B3) in
+    {79}let v_14: bool = catch-fail(VerifP(pube(ske(election)),pube(ske(Id3)),1-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13),2-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13),3-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13),4-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13),5-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13),7-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13))) in
+    {80}let Ok3: bool = (if (not-caught-fail(v_13) && success?(is-true(((pube(ske(Id3)) = 6-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13)) && success?(1-proj-bitstring-int-int-int-int-epkey-bitstring-tuple(v_13)))))) then (if not-caught-fail(v_14) then true else fail-bool) else fail-bool) in
+    {81}let Ok3b: bool = Verify(pubs(sks(signature)),sFC3,CRF3) in
+    {82}if ((deltaId(svka) ≠ Id3) && (deltaId(svkb) ≠ Id3)) then
+    {83}let (E3: bitstring,W31: int,W32: int,W33: int,W34: int,=pube(ske(Id3)),P3: bitstring) = B3 in
+    {84}let (t_int(v(J31: int)),t_int(v(J32: int)),t_int(v(J33: int)),t_int(v(J34: int))) = adec(ske(election),E3) in
+    {85}out(c, (J31,J32,J33,J34))
+)
+
+-- Observational equivalence in biprocess 0.
+Termination warning: v_15 ≠ v_16 && attacker2_symkey(v_17,v_15) && attacker2_symkey(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_symkey(v_15,v_17) && attacker2_symkey(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_spkey(v_17,v_15) && attacker2_spkey(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_spkey(v_15,v_17) && attacker2_spkey(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_skey(v_17,v_15) && attacker2_skey(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_skey(v_15,v_17) && attacker2_skey(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_password(v_17,v_15) && attacker2_password(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_password(v_15,v_17) && attacker2_password(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_nat(v_17,v_15) && attacker2_nat(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_nat(v_15,v_17) && attacker2_nat(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_int(v_17,v_15) && attacker2_int(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_int(v_15,v_17) && attacker2_int(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_epkey(v_17,v_15) && attacker2_epkey(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_epkey(v_15,v_17) && attacker2_epkey(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_ekey(v_17,v_15) && attacker2_ekey(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_ekey(v_15,v_17) && attacker2_ekey(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_channel(v_17,v_15) && attacker2_channel(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_channel(v_15,v_17) && attacker2_channel(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_bool(v_17,v_15) && attacker2_bool(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_bool(v_15,v_17) && attacker2_bool(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_bitstring(v_17,v_15) && attacker2_bitstring(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_bitstring(v_15,v_17) && attacker2_bitstring(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_agentId(v_17,v_15) && attacker2_agentId(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_agentId(v_15,v_17) && attacker2_agentId(v_16,v_17) -> bad
+Selecting 0
+Completing...
+200 rules inserted. The rule base contains 200 rules. 1243 rules in the queue.
+400 rules inserted. The rule base contains 400 rules. 1047 rules in the queue.
+Termination warning: v_15 ≠ v_16 && attacker2_symkey(v_17,v_15) && attacker2_symkey(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_symkey(v_15,v_17) && attacker2_symkey(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_spkey(v_17,v_15) && attacker2_spkey(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_spkey(v_15,v_17) && attacker2_spkey(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_skey(v_17,v_15) && attacker2_skey(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_skey(v_15,v_17) && attacker2_skey(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_password(v_17,v_15) && attacker2_password(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_password(v_15,v_17) && attacker2_password(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_nat(v_17,v_15) && attacker2_nat(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_nat(v_15,v_17) && attacker2_nat(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_int(v_17,v_15) && attacker2_int(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_int(v_15,v_17) && attacker2_int(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_epkey(v_17,v_15) && attacker2_epkey(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_epkey(v_15,v_17) && attacker2_epkey(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_ekey(v_17,v_15) && attacker2_ekey(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_ekey(v_15,v_17) && attacker2_ekey(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_channel(v_17,v_15) && attacker2_channel(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_channel(v_15,v_17) && attacker2_channel(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_bool(v_17,v_15) && attacker2_bool(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_bool(v_15,v_17) && attacker2_bool(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_bitstring(v_17,v_15) && attacker2_bitstring(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_bitstring(v_15,v_17) && attacker2_bitstring(v_16,v_17) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_agentId(v_17,v_15) && attacker2_agentId(v_17,v_16) -> bad
+Selecting 0
+Termination warning: v_15 ≠ v_16 && attacker2_agentId(v_15,v_17) && attacker2_agentId(v_16,v_17) -> bad
+Selecting 0
+600 rules inserted. The rule base contains 594 rules. 1001 rules in the queue.
+800 rules inserted. The rule base contains 794 rules. 801 rules in the queue.
+1000 rules inserted. The rule base contains 994 rules. 613 rules in the queue.
+1200 rules inserted. The rule base contains 1194 rules. 413 rules in the queue.
+1400 rules inserted. The rule base contains 1394 rules. 247 rules in the queue.
+1600 rules inserted. The rule base contains 1592 rules. 127 rules in the queue.
+1800 rules inserted. The rule base contains 1762 rules. 242 rules in the queue.
+2000 rules inserted. The rule base contains 1836 rules. 168 rules in the queue.
+2200 rules inserted. The rule base contains 1949 rules. 151 rules in the queue.
+2400 rules inserted. The rule base contains 2087 rules. 279 rules in the queue.
+2600 rules inserted. The rule base contains 2259 rules. 249 rules in the queue.
+2800 rules inserted. The rule base contains 2386 rules. 305 rules in the queue.
+3000 rules inserted. The rule base contains 2530 rules. 344 rules in the queue.
+3200 rules inserted. The rule base contains 2666 rules. 298 rules in the queue.
+3400 rules inserted. The rule base contains 2829 rules. 302 rules in the queue.
+3600 rules inserted. The rule base contains 3011 rules. 255 rules in the queue.
+3800 rules inserted. The rule base contains 3189 rules. 213 rules in the queue.
+4000 rules inserted. The rule base contains 3337 rules. 235 rules in the queue.
+4200 rules inserted. The rule base contains 3500 rules. 143 rules in the queue.
+4400 rules inserted. The rule base contains 3579 rules. 376 rules in the queue.
+4600 rules inserted. The rule base contains 3745 rules. 304 rules in the queue.
+4800 rules inserted. The rule base contains 3927 rules. 243 rules in the queue.
+5000 rules inserted. The rule base contains 4096 rules. 240 rules in the queue.
+5200 rules inserted. The rule base contains 4249 rules. 167 rules in the queue.
+5400 rules inserted. The rule base contains 4415 rules. 78 rules in the queue.
+5600 rules inserted. The rule base contains 4447 rules. 74 rules in the queue.
+RESULT Observational equivalence is true.
+
+--------------------------------------------------------------
+Verification summary:
+
+Observational equivalence is true.
+
+--------------------------------------------------------------
+
+      390.93 real       385.71 user         1.13 sys

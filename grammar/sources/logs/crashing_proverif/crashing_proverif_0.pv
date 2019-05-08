@@ -1,0 +1,23 @@
+type nonce.
+
+const cf: channel [private].
+
+event connection().
+
+set ignoreTypes = false.
+
+let client () =
+    new n : nonce;
+    out (cf, n);
+    in  (cf, b: bitstring);
+    event connection().
+
+let server() =
+    in (cf, n1: nonce);
+    new ret : bitstring;
+    out (cf, ret).
+
+query event(connection()).
+
+process !client() | !server()
+

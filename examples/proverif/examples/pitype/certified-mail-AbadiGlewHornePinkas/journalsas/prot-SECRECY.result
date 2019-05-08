@@ -1,0 +1,122 @@
+Process 0 (that is, the initial process):
+{1}let TTPEncKey: pkey = pk(TTPDecKey) in
+{2}out(c, TTPEncKey);
+{3}let TTPVerKey: spkey = Spk(TTPSigKey) in
+{4}out(c, TTPVerKey);
+{5}let Rname: host = PasswdTable(Rpwd) in
+{6}out(c, Rname);
+{7}new ChannelToTTP: channel;
+(
+    {8}!
+    {9}in(c, recipient: host);
+    {10}in(c, (sauth: authtag,ttpauth: authtag));
+    {11}new msgid: messageid;
+    {12}let m: bitstring = Message(recipient,msgid,(sauth,ttpauth)) in
+    {13}new k: key;
+    {14}new qtmp: tquery;
+    {15}let q: tquery = getAuthQ(qtmp,sauth) in
+    {16}let r: reply = getAuthR(Reply(recipient,qtmp),sauth) in
+    {17}let em: bitstring = E(k,m) in
+    {18}let hs: key = H((cleartext,q,r,em)) in
+    {19}let S2TTP: bitstring = A(TTPEncKey,(Sname,(sauth,ttpauth),(Give,k,recipient,hs))) in
+    {20}event Shas(Sname,k,cleartext,q,r,m);
+    {21}out(recipient, (TTPname,em,(sauth,ttpauth),cleartext,q,S2TTP));
+    {22}!
+    {23}in(Sname, inmess4: tcertif);
+    {24}if (ttpauth = Auth) then
+    (
+        {25}let (=Released,=S2TTP,=recipient) = checkS(TTPVerKey,inmess4) in
+            {26}event SThinksRhas(m)
+        else
+            {27}out(Sname, inmess4)
+    )
+    else
+        {28}let (=Released,=S2TTP) = checkS(TTPVerKey,inmess4) in
+            {29}event SThinksRhas(m)
+        else
+            {30}out(Sname, inmess4)
+) | (
+    {31}!
+    0
+) | (
+    {32}!
+    {33}in(Rname, (=TTPname,em2: bitstring,(sauth_1: authtag,ttpauth_1: authtag),cleartext2: bitstring,q2: tquery,S2TTP2: bitstring));
+    {34}let r2: reply = getAuthR(Reply(Rname,q2),sauth_1) in
+    {35}let hr: key = H((cleartext2,q2,r2,em2)) in
+    {36}new secchannel: channel;
+    {37}out(ChannelToTTP, Rname);
+    {38}out(ChannelToTTP, secchannel);
+    {39}let outchannel: channel = channel_with_host(TTPname,secchannel) in
+    {40}let inchannel: channel = channel_with_host(Rname,secchannel) in
+    {41}event Rhas(secchannel,em2,hr);
+    {42}out(outchannel, (S2TTP2,(Wants,getAuthP(Rpwd,ttpauth_1),hr)));
+    {43}!
+    {44}in(inchannel, (=Try,k3: key,=hr));
+    {45}let m3: bitstring = decE(k3,em2) in
+    {46}event Rreceived(m3)
+) | (
+    {47}!
+    {48}in(ChannelToTTP, receivername: host);
+    {49}in(ChannelToTTP, secchannel_1: channel);
+    {50}let inchannel_1: channel = channel_with_host(TTPname,secchannel_1) in
+    {51}let outchannel_1: channel = channel_with_host(receivername,secchannel_1) in
+    {52}in(inchannel_1, (S2TTP3: bitstring,(=Wants,RPwd3: passwd,hr3: key)));
+    {53}let (Sname3: host,(sauth3: authtag,ttpauth3: authtag),(=Give,k3_1: key,R3: host,=hr3)) = decA(TTPDecKey,S2TTP3) in
+    {54}if (R3 = receivername) then
+    {55}if ((ttpauth3,R3) = (Auth,PasswdTable(RPwd3))) then
+        {56}event TTPSendS(Sname3,S(TTPSigKey,(Released,S2TTP3,R3)));
+        {57}event TTPSendR(outchannel_1,(Try,k3_1,hr3));
+        {58}out(outchannel_1, (Try,k3_1,hr3));
+        {59}out(Sname3, S(TTPSigKey,(Released,S2TTP3,R3)))
+    else
+        {60}if (ttpauth3 = NoAuth) then
+        {61}event TTPSendS2(Sname3,S(TTPSigKey,(Released,S2TTP3)));
+        {62}event TTPSendR2(outchannel_1,(Try,k3_1,hr3));
+        {63}out(outchannel_1, (Try,k3_1,hr3));
+        {64}out(Sname3, S(TTPSigKey,(Released,S2TTP3)))
+) | (
+    {65}!
+    {66}in(c, m_1: bitstring);
+    {67}out(ChannelToTTP, m_1)
+)
+
+Translating the process into Horn clauses...
+COMPUTATIONTIME translation to clauses: 0.002730s
+NUMBERIMPLIES translation to clauses: 3788
+-- Query not attacker(Message(PasswdTable(Rpwd[]),x,(Auth,z))) in process 0.
+Completing...
+200 rules inserted. The rule base contains 138 rules. 35 rules in the queue.
+400 rules inserted. The rule base contains 176 rules. 45 rules in the queue.
+COMPUTATIONTIME completion of rules: 0.069862s
+NUMBERIMPLIES completion of rules: 9160
+ok, secrecy assumption verified: fact unreachable attacker(TTPDecKey[])
+ok, secrecy assumption verified: fact unreachable attacker(TTPSigKey[])
+Starting query not attacker(Message(PasswdTable(Rpwd[]),x,(Auth,z)))
+RESULT not attacker(Message(PasswdTable(Rpwd[]),x,(Auth,z))) is true.
+COMPUTATIONTIME solving_queries (include completion): 0.070955s
+NUMBERIMPLIES solving_queries (include completion): 745
+Translating the process into Horn clauses...
+COMPUTATIONTIME translation to clauses: 0.002223s
+NUMBERIMPLIES translation to clauses: 3788
+-- Query not attacker(Message(PasswdTable(Rpwd[]),x,(z,Auth))) in process 0.
+Completing...
+200 rules inserted. The rule base contains 138 rules. 35 rules in the queue.
+400 rules inserted. The rule base contains 176 rules. 45 rules in the queue.
+COMPUTATIONTIME completion of rules: 0.064283s
+NUMBERIMPLIES completion of rules: 9160
+ok, secrecy assumption verified: fact unreachable attacker(TTPDecKey[])
+ok, secrecy assumption verified: fact unreachable attacker(TTPSigKey[])
+Starting query not attacker(Message(PasswdTable(Rpwd[]),x,(z,Auth)))
+RESULT not attacker(Message(PasswdTable(Rpwd[]),x,(z,Auth))) is true.
+COMPUTATIONTIME solving_queries (include completion): 0.064988s
+NUMBERIMPLIES solving_queries (include completion): 745
+
+--------------------------------------------------------------
+Verification summary:
+
+Query not attacker(Message(PasswdTable(Rpwd[]),x,(Auth,z))) is true.
+
+Query not attacker(Message(PasswdTable(Rpwd[]),x,(z,Auth))) is true.
+
+--------------------------------------------------------------
+

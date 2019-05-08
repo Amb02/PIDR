@@ -1,0 +1,18 @@
+(* This crashes proverif with error message:
+
+Internal error: bound vars should be cleaned up (simplify_constra)
+Please report bug to Bruno.Blanchet@ens.fr, including input file and output
+
+*)
+
+
+fun f/1. 
+equation f((x,y)) = y.
+
+free n,pub.
+
+query ev:EVENT(x).
+
+process
+	let comm = pub in in(comm,x); out(comm,(x)) |
+	in(pub,x); if n = f(x) then 0 else event EVENT(f(x))

@@ -1,0 +1,15 @@
+free c:channel.
+
+event A.
+event B(nat).
+
+query event(A).
+query i:nat; event(B(i)).
+
+process
+  in(c,i:nat);
+  let j:nat suchthat j <= i in
+    0
+  else
+    event A;
+    event B(i)

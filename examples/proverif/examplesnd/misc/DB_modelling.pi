@@ -1,0 +1,60 @@
+(* Example by  Maider Huarte Arrayago <maider.huarte@ehu.es> *)
+
+
+(***** Free names *****)
+free net.
+
+private free valNOT,valDONE. (*Two possible values for the cell*)
+private free valDONESetDB. (*channel for asking to write valDONE on cell*)
+private free valReqDB. (*channel for asking cell's value*)
+
+(***** Queries *****) 
+query ev : repetition().
+query ev : cellTurnedToValDONE().
+query ev : cellValueReceived().
+query ev : cellTurnedToValNOT().
+
+
+(***** Processes *****)
+
+
+let DB =
+  new cell;
+  (
+    event cellTurnedToValNOT(); (*Flag: cell is initiated to valNOT*)
+    out(cell,valNOT)
+  )
+  |
+  (
+    in(valDONESetDB,=()); in(cell,z); out(cell,valDONE) (*writing*)
+  )
+  |
+  (
+    !
+    in(valReqDB,ch);in(cell,z);(out(ch,z)|out(cell,z)) (*reading*)
+  )
+  .
+
+
+let lookupPermitDB =
+  new ch;
+  out(valReqDB,ch);
+  in(ch,perstate);
+  if perstate=valNOT then (
+    event cellValueReceived(); (*Flag: cell value is received and it's valNOT*)
+    out(valDONESetDB,());
+    event cellTurnedToValDONE() (*Flag: cell value is asked to turn to valDONE*)
+  )
+  else 
+    if perstate=valDONE then (
+    event repetition() (*Flag: cell value is received and it's valDONE*)
+    )  
+  .
+
+
+process 
+  DB
+  |
+  !lookupPermitDB
+
+

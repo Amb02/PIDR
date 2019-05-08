@@ -1,0 +1,22 @@
+(* Smaller version of Unruh's regression bug. 
+
+   No clause is generated for the final output
+   This is related to the missing rewrite rule in the definition of &&
+       (v && v') => false if v' <> true
+   due to the bug in TermsEq.close_destr_eq:
+   Hence, true && M reduces only when M is true (true && M = true) or fail (true && M = fail)
+   The second component of true && (na_360 = v_388) never reduces because (na_360 = v_388),
+   which prevents choice[true && (na_360 = v_388),true && (na_370 = v_388)] from reducing...
+*)
+
+free netnsla:channel.
+
+process
+new na_360: bitstring;
+new nb_363: bitstring;
+new na_370: bitstring;
+let v_388: bitstring = choice[na_360,na_370] in
+let v_389: bool = choice[true && (na_360 = v_388),true && (na_370 = v_388)] in
+out(netnsla, nb_363)
+
+

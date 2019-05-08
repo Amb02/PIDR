@@ -1,0 +1,3 @@
+type nonce.
+free n:nonce.
+process new n:nonce;0

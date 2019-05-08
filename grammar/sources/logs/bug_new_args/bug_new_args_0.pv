@@ -1,0 +1,21 @@
+(* When movenew is not set, ProVerif gives the expected result:
+   the attacker cannot have new a[x = b], it gets a[x = d].
+   However, when movenew is set, ProVerif transforms the process
+   into
+   let x = d in let x = b in new a: bitstring; out(c, a)
+   thus the attacker gets a[x = b]. 
+   My feeling is that this behavior is unexpected: movenew should
+   not change the semantics of the query.
+   An easy workaround is to name variables with a different name,
+   so that there is no confusion between the definition of x
+   above new a and the definition of x under new a. *)
+
+set movenew = true.
+
+free b,d: bitstring.
+free c: channel.
+
+query attacker(new a[x = b]).
+
+process
+	let x = d in new a: bitstring; let x = b in out(c, a)

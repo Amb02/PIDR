@@ -1,0 +1,50 @@
+type key.
+
+fun sencrypt (bitstring, key): bitstring.
+reduc forall x: bitstring, k: key; sdecrypt (sencrypt (x, k), k) = x.
+
+(* Channel *)
+free ch: channel.
+
+free sk: key [private].
+free sk2: key [private].
+
+(* Authenticity *)
+event sendingMessage(bitstring, bitstring).
+event secretDataReceived(bitstring, bitstring, bitstring).
+event nonceCreated (bitstring).
+event nonceCreated2 (bitstring, bitstring).
+event nonceReceived (bitstring, bitstring).
+query m: bitstring, n1: bitstring, n2: bitstring; inj-event(secretDataReceived (m,n1,n2)) ==> event(sendingMessage (m,n1)) && inj-event(nonceReceived(n1,n2)) && inj-event(nonceCreated2(n1,n2)).
+query m: bitstring, m':bitstring; inj-event(nonceReceived (m,m')) ==> inj-event(nonceCreated2 (m,m')).
+query m: bitstring, n1: bitstring, n2: bitstring; inj-event(secretDataReceived (m,n1,n2)) ==> inj-event(sendingMessage (m,n1)).
+
+let A =
+        new nonce1: bitstring;
+        event nonceCreated (nonce1);
+        out (ch, nonce1);
+
+        in (ch, nonce2: bitstring);
+        event nonceCreated2 (nonce1, nonce2);
+        out (ch, sencrypt ((nonce1, nonce2), sk2)).
+
+let B =
+        new nonce2: bitstring;
+        out (ch, nonce2);
+	in (ch, encryptedNonce: bitstring);
+	let (nonce1: bitstring, =nonce2) = sdecrypt (encryptedNonce, sk2) in
+        event nonceReceived (nonce1, nonce2);
+
+        in (ch, encryptedSecret: bitstring);
+        let (secretData: bitstring, =nonce1) = sdecrypt (encryptedSecret, sk) in
+        event secretDataReceived (secretData, nonce1, nonce2).
+
+let C = 
+	new secretData: bitstring;
+        in (ch, nonce1: bitstring);
+
+        event sendingMessage (secretData, nonce1);
+        out (ch, sencrypt ((secretData, nonce1), sk)).
+
+process
+        A | !B | C

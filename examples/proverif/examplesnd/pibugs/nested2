@@ -1,0 +1,23 @@
+(* The query is wrong: e1 and e5 are executed with different arguments.
+   
+   The system does not realize that because it splits the query.
+   It should check that variables shared between different hypotheses 
+   of a nested query also occur in the root event of these hypotheses.
+*)
+
+
+
+free c.
+query ev:e3(x) ==> (ev:e2(y,z) ==> ev:e1(t)) & (ev:e4(y,z) ==> ev:e5(t)).
+
+process
+	new a;
+	new b;
+	new c;
+	new d;
+	new e;
+	event e1(a);
+	event e5(b);
+	event e4(c,d);
+	event e2(c,d);
+	event e3(e)

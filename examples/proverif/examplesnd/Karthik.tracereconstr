@@ -1,0 +1,10 @@
+ param unifyDerivation = true.
+
+ private free d.  private free u. private free c.
+
+ let D = !in (c,x); new u; out (d,u); out (d,u).
+
+ query ev:L(s).
+
+ process (D | out (c,()) | (in (d,u);in (d,v);event L(u)))
+

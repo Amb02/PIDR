@@ -1,0 +1,16 @@
+(* Should find that observational equivalence is wrong *)
+
+param verboseRules = yes.
+
+data true/0.
+fun pk/1.
+reduc ispk(pk(x))  = true.
+
+free c, n1, n2.
+private free autorR.
+noninterf autorR among (pk(n1), pk(n2)).
+
+
+
+process
+	if ispk(autorR) = true then out(c, autorR)

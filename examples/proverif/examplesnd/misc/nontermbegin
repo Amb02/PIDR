@@ -1,0 +1,30 @@
+param verboseRules = true.
+(*param selFun = Nounifset.*)
+
+(* Shared-key cryptography *)
+
+fun encrypt/2.
+reduc decrypt(encrypt(m,k),k) = m.
+
+query attacker:x ==> ev:h((c4,x,y)) & ev:h((c3,x)).
+
+free kSA.
+free c0, c1, c2, c3, c4, C0.
+free c.
+
+let processS = in(c,y);
+	       let z = encrypt((c0, y), kSB) in
+	       out(c, encrypt((c2, encrypt((c1, z), kSA)), kSB));
+	       event h((c3,y));
+	       out(c, z).
+
+let processB = in(c, z2);
+	       in(c, z);
+	       let (=c0, y) = decrypt(z, kSB) in
+               let (=c2, y2) = decrypt(z2, kSB) in
+               event h((c4,y,y2));
+               out(c, y2).
+
+process new kSB;
+	out(c, C0);
+	((!processS) | (!processB))

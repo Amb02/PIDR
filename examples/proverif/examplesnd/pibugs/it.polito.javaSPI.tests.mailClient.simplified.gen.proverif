@@ -1,0 +1,15 @@
+fun SharedKey/1.
+
+fun DHPub/1.
+fun DHKey/2.
+equation DHKey(x,DHPub(y)) = DHKey(y,DHPub(x)).
+
+query attacker:SharedKey(nonce153).
+
+
+process
+new envelope127;
+new t144;
+if envelope127 = t144 then (
+new nonce153;
+0)

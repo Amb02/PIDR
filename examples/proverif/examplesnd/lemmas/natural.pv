@@ -1,0 +1,14 @@
+free c:channel.
+
+event Test(nat,nat).
+
+query i:nat, j:nat;
+  event(Test(i,j)) ==> i = j + 3.
+
+process
+  in(c,i:nat);
+  in(c,j:nat);
+  if j + 4 >= i then
+  if i >= j + 3 then
+  if i <> j + 4 then
+  event Test(i,j)

@@ -1,0 +1,24 @@
+free c:channel.
+free d:channel.
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+event A(bitstring).
+event B(bitstring).
+
+fun enc(bitstring,bitstring):bitstring.
+fun dec(bitstring,bitstring):bitstring
+reduc forall x:bitstring,y:bitstring; dec(enc(x,y),y) = x.
+
+const ok,ko,k,k1:bitstring[private].
+
+query x:bitstring; attacker(ok) ==> event(A(x)) && x = a.
+
+process
+  (in(c,x:bitstring);
+   event A(x);
+   out(d,k);
+   out(d,k1))
+  | in(d,=k1); out(c,ok)

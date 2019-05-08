@@ -1,0 +1,26 @@
+set ignoreTypes = false.
+type host.
+free c:channel[private] .
+(* fun f(channel):channel.*)
+free d:channel.
+free B: channel [private].
+free A:channel [private].
+free F:channel [private].
+free bit:bitstring.
+reduc forall x: channel; f(x) = x.
+table keys(channel, channel).
+
+
+let processA = 
+    !new x:bitstring.
+
+let processB =
+    in(c,x:bitstring).
+(* process !((new x:bitstring) | (processB)) *)
+
+(* process ((out(d, A)) | ((out(c, A)) | (in(c, y:channel)))) *)
+
+process
+        (out(c, A); in(c, y:channel)) | (in(c,z:channel))
+(*          (((out(c, A); out(c, B)) | (in (c, x: bitstring)))) *)
+(* !(insert keys(f(d),f(c)); insert keys(f(d), f(d)); get keys(x, sb))  *)

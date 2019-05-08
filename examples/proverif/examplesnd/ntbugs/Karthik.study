@@ -1,0 +1,27 @@
+Adding 
+
+isMsg11:v_280,v_281,id1_282,t1_283,b1_284,ac_285,Auri_286 & 
+isSCT:SecurityContextTAG(sctid[v_287,v_288,v_289,v_290,v_291,v_292,v_293,v_294,v_295,v_296,v_297,sid_298,sid_299],sctkey[v_287,v_288,v_289,v_290,v_291,v_292,v_293,v_294,v_295,v_296,v_297,sid_298,sid_299],cons(v_287,pwd[v_287,v_288,v_289,v_290,v_291,v_292,v_293,v_294,v_295,v_296,v_297,sid_298,sid_299]),v_297,x509(sr[],STSSTRING(),rsasha1STRING(),pk(sx[]))),sctid2_300,sctkey2_301,U2_302,Auri_286,v_303 & 
+isSCT:v_281,sctid1_304,sctkey1_305,U_306,Auri_286,v_303 & 
+attacker:v_287 & attacker:v_288 & attacker:v_289 & attacker:v_290 & attacker:v_291 & attacker:v_292 & attacker:v_293 & attacker:v_294 & attacker:v_295 & attacker:v_296 & attacker:v_297 & 
+mess:anySCTService[],(v_281) & 
+attacker:v_280 & 
+isService:v_307,Auri_286,Aac_308,Asubj_309 & 
+attacker:v_303 & attacker:v_307 -> end:endC3()
+
+subsumed by 
+
+isMsg11:v_152,v_153,id1_154,t1_155,b1_156,ac_157,Auri_158 & 
+isSCT:v_159,sctid2_160,sctkey2_161,U2_162,Auri_158,v_163 & 
+isSCT:v_153,sctid1_164,sctkey1_165,U_166,Auri_158,v_163 & 
+mess:anySCTService[],(v_159) & 
+mess:anySCTService[],(v_153) & 
+attacker:v_152 & 
+isService:v_167,Auri_158,Aac_168,Asubj_169 &
+attacker:v_163 & attacker:v_167 -> end:endC3()
+
+Not added because subsumed!
+
+In fact, this rule should not be subsumed. It should be added...
+Probleme theorique: le test de subsumption non-lineaire n'est
+complet en general...

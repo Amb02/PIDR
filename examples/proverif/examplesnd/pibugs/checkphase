@@ -1,0 +1,19 @@
+(* This file causes an internal error 
+   The problem is the construct let (x, ...) = x  with twice
+   the same variable x.
+*)
+
+(* channels *)
+free publicnet.
+
+private free intranet.
+private free secr.
+
+(* enciphering proxy *)
+
+let troyan =
+	  in(intranet, x); let (x, z, =secr) = x in 0 else out(publicnet, x).
+
+query attacker:secr phase 20.
+
+process ! troyan

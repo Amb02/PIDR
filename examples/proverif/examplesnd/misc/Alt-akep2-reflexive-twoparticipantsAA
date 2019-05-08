@@ -1,0 +1,54 @@
+(* Variantes de AKEP2 : 
+Bellare Rogaway 1993 : Entity Authentication and Key Distribution
+Attaque reflexive quand on enleve l'identité dans le deuxieme echange *)
+
+
+param attacker = active.
+param simplifyDerivation = true.
+
+(**** Header ****)
+free c.
+private free honestParticipants.
+
+(* fonctions *)
+fun encrypt/2.
+reduc decrypt(encrypt(x,y),y) = x.
+
+(* Hypotheses *)
+
+private free K. (* The key K is shared between A and itself *)
+free A.
+
+query evinj: InitAEnd(A,A,z,t) ==> evinj:RespABegin(A).
+query evinj: InitAEnd(A,A,z,t) ==> evinj:RespASession(A,A,z,t).
+
+query ev:InitAEnd(xA,hostX,xra,xrb).
+query ev:RespAEnd(hostY,xA,xra,xrb).
+
+
+(* Processus *)
+let processInitA = 
+    new ra;
+    let m1 = (ra,A) in
+    out(c,m1);
+    in(c,(=A,m2)); 
+    let (=ra,=A,rb) = decrypt(m2,K) in
+    let m3 = encrypt((rb,A),K)  in
+    event InitAEnd(A,A,ra,rb);
+    out(c,m3).
+
+let processRespA = 
+    in(c,m1);
+    let (ra,=A) = m1 in
+    event RespABegin(A);
+    new rb;
+    event RespASession(A,A,ra,rb);
+    let m2 = encrypt((ra,A,rb),K) in
+    out(c, (A,m2));
+    in(c,m3);
+    let (=rb,=A)=decrypt(m3,K) in
+    event RespAEnd(A,A,ra,rb).
+
+process 
+        (!processInitA) |
+        (!processRespA) 

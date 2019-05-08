@@ -1,0 +1,12 @@
+(* False attack. 
+   Uses private channels *)
+
+private free secret.
+free pub.
+
+query	attacker : secret.
+
+process new k;
+	new c; 
+	(out(c,k) | in(c,x); in(c,y); out(pub, secret) )
+

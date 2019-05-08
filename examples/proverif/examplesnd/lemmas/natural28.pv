@@ -1,0 +1,23 @@
+free c:channel.
+
+fun enc(nat,nat,bitstring):bitstring.
+fun dec(bitstring,bitstring):bitstring
+reduc forall i:nat, j:nat, y:bitstring; dec(enc(i+4,i+2,y),y) = y.
+fun get_i(bitstring):bitstring
+reduc forall i:nat,j:nat,y:bitstring; get_i(enc(j,i,y)) = (j,i,y).
+
+set verboseClauses = short.
+
+free s:bitstring [private].
+free k:bitstring.
+
+query attacker(s).
+
+process
+  in(c,x:bitstring);
+  let (j:nat,i:nat,=k) = get_i(x) in
+  let y = dec(x,k) in
+    0
+  else
+    if i >= 2 && j >= 4 then
+    out(c,s)

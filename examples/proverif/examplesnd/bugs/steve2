@@ -1,0 +1,43 @@
+(* Needham Shroeder Lowe public key protocol. *)
+
+pred c/1 elimVar, decompData.
+nounif c:x.
+
+
+fun pk/1.
+fun encrypt/2.
+fun decrypt/2.
+
+param verboseRules = yes.
+
+equation decrypt(encrypt(y,pk(x)),x)=y.
+equation encrypt(decrypt(y,x),pk(x))=y.
+
+
+not c:sA[].
+not c:sB[].
+
+query c:Na[pk(sB[])].
+
+reduc
+
+	
+(* Initialization *)
+
+c:c[];
+c:pk(sA[]);
+c:pk(sB[]);
+
+(* The attacker *)
+
+c:x & c:encrypt(m,pk(x)) -> c:m;
+c:x -> c:pk(x);
+c:x & c:y -> c:encrypt(x,y);
+
+(* The protocol *)
+(* A *)
+c:pk(x) -> c:encrypt((Na[pk(x)],pk(sA[])), pk(x));
+c:pk(x) & c:encrypt((Na[pk(x)], (y, pk(x))), pk(sA[])) -> c:encrypt(y, pk(x));
+
+(* B *) 
+c:encrypt((x,y), pk(sB[])) -> c:encrypt((x, (Nb[x,y], pk(sB[]))), y).

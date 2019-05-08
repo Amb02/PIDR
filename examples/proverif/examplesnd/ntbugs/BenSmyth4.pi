@@ -1,0 +1,10 @@
+fun F/1.
+fun g/2.
+
+param verboseRules = true.
+
+reduc h(x,F(y)) = F((y,x)).
+reduc hh(x,g(y,F(z))) = g((y,x),F(z)).
+
+free a,b,c.
+process out(c,choice[a,a])

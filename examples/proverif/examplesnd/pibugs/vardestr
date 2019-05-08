@@ -1,0 +1,16 @@
+(* 
+
+The system should reject destructors that introduce new variables on the
+right-hand side
+
+*)
+
+fun g/2.
+reduc f(x) = g(x,y).
+
+private free secret.
+noninterf secret.
+
+process 
+	new d;
+	out(d, secret)

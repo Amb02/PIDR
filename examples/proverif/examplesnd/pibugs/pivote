@@ -1,0 +1,77 @@
+(* Naive vote protocol
+   Taken from Delaune, Jacquemard, LSV-04-1 *)
+
+(* Should not prove non-interference:
+   the attacker can built encrypt(z, pkS) and test equality
+   with encrypt(v, pkS) to determine whether z = v *)
+
+(* param channels = names. *)
+
+param verboseRules = yes.
+
+(* public key encryption *)
+
+fun pk/1.
+fun encrypt/2.
+reduc decrypt(encrypt(x,pk(y)), y) = x.
+
+free c.
+private free v.
+private free w.
+private free z.
+noninterf z among (w,v).
+
+let processA = 
+	out(c, encrypt(v, pkS)). 
+
+process 
+	(new skS;
+	let pkS = pk(skS) in
+	out(c, pkS);
+	!processA) 
+	|
+	(phase 1;
+	out(c, z))
+
+
+(*
+
+attacker:v_129 & attacker_p1:v_130 & testunif:v_129,v_130 -> bad:
+attacker:encrypt(v[],pk(skS[]))
+yields:
+attacker_p1:v_130 & testunif:encrypt(v[],pk(skS[])),v_130 -> bad:
+after simplification:
+attacker_p1:encrypt(v_222,v_223) & testunif:(v_223,v_222),(pk(skS[]),v[]) -> bad:
+
+Rule 10: attacker_p1:v_29 & attacker_p1:v_28 -> attacker_p1:encrypt(v_29,v_28)
+should yield:
+attacker_p1:v_29 & attacker_p1:v_28 & testunif:(v_29,v_28),(pk(skS[]),v[]) -> bad:
+forgotten because instantiation instantiates v_28 to v[].
+It should also try instantiating v28 to z[].
+More generally, when !Param.comm_on_names_only = false, instantiate
+(Noninterf.inst_elim)
+should instantiate variables to all secrets that have "among" limitations,
+in addition to the function symbol that matches the variable in testunif.
+
+When !Param.comm_on_names_only = true, could we do better than having the 
+clauses com(x) -> bad for x \in Secr ? When the "among" information for
+x shows that x is always or never a name, this clause is too restrictive.
+* When x is never a name, an input/output on x always fails, so gives
+no information on x. We can remove the clause com(x) -> bad.
+* When x is always a name, an input/output on x can give information
+on egality of x with other channels. We need the same clauses as in the
+case !Param.comm_on_names_only = false in this case, instead of the
+clause com(x) -> bad.
+* In both cases (when x is either never a name or always a name), if we
+apply the ideas above, we need to modify instantiate as in the case
+!Param.comm_on_names_only = false.
+
+attacker:v_45 -> attacker_p1:v_45
+should yield
+attacker:v_29 & attacker_p1:v_28 & testunif:(v_29,v_28),(pk(skS[]),v[]) -> bad:
+
+attacker_p1:z[]
+attacker:pk(skS[])
+which yields bad!!!
+
+*)

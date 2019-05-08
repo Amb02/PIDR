@@ -1,0 +1,5 @@
+table T(bitstring, bitstring).
+
+const A: bitstring.
+
+process new true: bitstring; get T(=A, x) in 0

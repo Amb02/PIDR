@@ -1,0 +1,31 @@
+(*
+
+The system should find that c:secret[] is reachable
+
+*)
+
+pred c/1 elimVar, decompData.
+nounif c:x.
+
+fun f/2.
+fun g/1.
+fun h/2.
+fun c0/0.
+fun c1/0.
+
+query c:secret[].
+
+equation f(x,g(y)) = f(y,g(x)).
+
+reduc
+(* Initialization *)
+
+c:f(c0,g(c1));
+
+(* The attacker *)
+
+c:x -> c:h(x,x);
+
+(* The protocol *)
+
+c:h(f(c0,g(c1)), f(c1, g(c0))) -> c:secret[].

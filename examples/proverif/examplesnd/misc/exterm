@@ -1,0 +1,44 @@
+(* 
+
+? -> A : pkB
+Message 1: A -> B : { N_A, pkA }_pkB
+Message 2: B -> A : { N_A, N_B, pkB }_pkA
+Message 3: A -> B : { N_B }_pkB
+
+pkB omitted in message 2 here (erroneous version)
+
+*)
+
+(* Public key cryptography *)
+
+param injectiveAg = false.
+fun pk/1.
+fun encrypt/2.
+reduc decrypt(encrypt(x,pk(y)),y) = x.
+
+query Na.
+query Nb.
+
+let processA = in(c,pkX); new Na; 
+               out(c, encrypt((Na, pkA), pkX));
+               in(c, m); let (Na2, NX2) = decrypt(m, skA) in
+                          if Na2 = Na then
+                               out(c, encrypt(NX2, pkX));
+			       if pkX = pkB then 
+				0.
+
+let processB = in(c, m); let (NY, pkY) = decrypt(m, skB) in
+			 new Nb;
+			 out(c, encrypt((NY, Nb), pkY));
+			  in(c, m3);
+                          let Nb2 = decrypt(m3, skB) in
+                          if Nb2 = Nb then
+			    if pkY = pkA then
+				0.
+
+
+process new skA; let pkA = pk(skA) in
+        out(c, pkA);
+        new skB; let pkB = pk(skB) in
+        out(c, pkB);
+	((!processA) | (!processB))

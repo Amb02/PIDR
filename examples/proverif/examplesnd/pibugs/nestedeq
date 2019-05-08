@@ -1,0 +1,21 @@
+(* The given query is false.
+
+   The system wrongly proved it, because it thinks the event e2
+   e2(decrypt(encrypt(y,x),x)) determines the value of x,
+   which is not true for the given equational theory.
+
+*)
+
+
+fun encrypt/2.
+fun decrypt/2.
+equation decrypt(encrypt(x,y),y) = x.
+
+
+free c, m1, m2.
+query ev:e3(x) ==> (ev:e2(decrypt(encrypt(y,x),x)) ==> ev:e1(x)).
+
+process
+	in(c,z);
+	event e1(m1); event e2(m2); event e3(z)
+

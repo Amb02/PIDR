@@ -1,0 +1,17 @@
+fun f(bitstring):bitstring.
+fun g(bitstring):bitstring.
+fun h(bitstring):bitstring.
+
+const g0:bitstring.
+const gc:bitstring.
+const c0:bitstring.
+const c1:bitstring.
+
+equation forall x:bitstring; g(f(x)) = g(h(x)).
+reduc forall x:bitstring; ung(g(x)) = x.
+
+free c:channel.
+free a:bitstring.
+free b:bitstring.
+
+process 0

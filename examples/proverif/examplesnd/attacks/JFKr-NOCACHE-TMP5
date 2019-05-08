@@ -1,0 +1,152 @@
+(* JFKr 
+   Does not find a trace to the accept event
+*)
+
+(* param channels = names. *)
+param redundantHypElim = true.
+
+(* Exponential and Diffie-Hellman *)
+
+data g/0.
+fun exp/2.
+equation exp(exp(g,y),z) = exp(exp(g,z),y).
+
+(* Signature *)
+
+fun S/2.
+fun Pk/1.
+data true/0.
+fun V/3.
+fun RecoverKey/1.
+fun RecoverText/1.
+equation V(S(k,v), Pk(k),v) = true.
+
+(* Shared-key encryption *)
+
+fun E/2.
+fun D/2.
+equation D(k,E(k,v)) = v.
+
+(* Keyed hash function *)
+
+fun H/2.
+
+(* Sets *)
+
+data consset/2.
+data emptyset/0.
+pred member/2.
+clauses
+  member:x,consset(x,y);
+  member:x,y -> member:x,consset(z,y).
+
+(* Tags *)
+
+data tagE/0. data tagA/0. data tagV/0.
+
+(* Constructors for JFK's formatted messages
+   Selectors are implicit when using "data" *)
+
+data cons1/2. data cons2/5. data cons3/7. data cons4/2.
+
+(* More constants *)
+
+data constI/0. data constR/0. data saR/0.
+
+(* Free names *)
+
+free c. (* Public channel *)
+free pub, genprinc, getexponential, grpinfoR, channelSIAR1, channelSIAR2.
+
+(* Queries: properties to prove *)
+
+(* Correspondence assertions *)
+
+query ev:accept(XacceptB, XIDA, XIDRp, XsaI, XasR, XKv).
+
+(* Secrecy assumptions *)
+
+not kAminus phase 0.
+not d.
+
+
+(* Initiator 
+   The process processI corresponds to I^A in the figure. *)
+
+let processI =
+  !
+  in(exponent, (dI, xI));
+  !
+  in(init, (IDRp, saI));    (* Init message *)
+  new NI; 
+  out(c, cons1(NI, xI));
+  in(c, cons2(=NI, NR, xR, grpinfoR, tR));
+  let h = exp(xR, dI) in
+  let Ka = H(h, (NI, NR, tagA)) in
+  let Ke = H(h, (NI, NR, tagE)) in
+  let Kv = H(h, (NI, NR, tagV)) in
+  let sI = S(kAminus, (NI, NR, xI, xR, grpinfoR)) in
+  let eI = E(Ke, (IDA, IDRp, saI, sI)) in
+  let hI = H(Ka, (constI, eI)) in
+  out(c, cons3(NI, NR, xI, xR, tR, eI, hI)).
+
+(* Responder
+   The process processR corresponds to R^A in the figure. *)
+
+let processR =
+  new KR;
+  !
+  in(exponent, (dR, xR));
+  !
+  in(c, cons1(NI, xI));
+  new NR;
+  new tR;
+  out(c, cons2(NI, NR, xR, grpinfoR, tR));
+  in(c, cons3(=NI,=NR,xI,=xR,=tR,eI,hI));
+  let h = exp(xI,dR) in
+  let Ka = H(h, (NI, NR, tagA)) in
+  let Ke = H(h, (NI, NR, tagE)) in
+  let Kv = H(h, (NI, NR, tagV)) in
+  if H(Ka, (constI, eI)) = hI then
+  let (IDIl, IDRp, saI, sI) = D(Ke,eI) in
+
+  if member:IDIl,SIA then
+
+  if V(sI, IDIl, (NI, NR, xI, xR, grpinfoR)) = true then
+  event accept(accept, IDIl, IDRp, saI, saR, Kv).
+
+
+(* Whole JFK system. *)
+
+process
+
+  new exponent;
+  ( ! new d; let x = exp(g,d) in out(getexponential, x); ! out(exponent, (d,x)) )
+  |
+  !
+  new kAminus;
+  let IDA = Pk(kAminus) in
+  new connect; new accept; new init; new channelSIA;
+out(getprinc, (IDA, init, accept, connect, channelSIA));
+  in(channelSIA, SIA);
+  (
+    processI
+  | processR
+  )
+
+
+
+(*
+
+The trace involves outputting two messages cons3, that differ only by
+their value of xI (v8342 in the first message below, v_8345 in the
+second one, and this is clearly impossible... (Only one message cons3
+is output for each value of NI.)
+
+This is similar to what happens with accepthonest in JFKr-NOCACHE-TMP3.
+
+rule 80 attacker:cons3(NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],NR[NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],v_8337,sid_8338,d[sid_8332],exp(g(),d[sid_8332]),sid_8339,v_8340,sid_8328],exp(g(),d[sid_8333]),exp(g(),d[sid_8332]),v_8342,E(H(exp(exp(g(),d[sid_8332]),d[sid_8333]),(NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],NR[NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],v_8337,sid_8338,d[sid_8332],exp(g(),d[sid_8332]),sid_8339,v_8340,sid_8328],tagE())),(Pk(kAminus[sid_8329]),XIDRp_8330,XsaI_8331,S(kAminus[sid_8329],(NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],NR[NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],v_8337,sid_8338,d[sid_8332],exp(g(),d[sid_8332]),sid_8339,v_8340,sid_8328],exp(g(),d[sid_8333]),exp(g(),d[sid_8332]),grpinfoR[])))),H(H(exp(exp(g(),d[sid_8332]),d[sid_8333]),(NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],NR[NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],v_8337,sid_8338,d[sid_8332],exp(g(),d[sid_8332]),sid_8339,v_8340,sid_8328],tagA())),(constI(),E(H(exp(exp(g(),d[sid_8332]),d[sid_8333]),(NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],NR[NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],v_8337,sid_8338,d[sid_8332],exp(g(),d[sid_8332]),sid_8339,v_8340,sid_8328],tagE())),(Pk(kAminus[sid_8329]),XIDRp_8330,XsaI_8331,S(kAminus[sid_8329],(NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],NR[NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],v_8337,sid_8338,d[sid_8332],exp(g(),d[sid_8332]),sid_8339,v_8340,sid_8328],exp(g(),d[sid_8333]),exp(g(),d[sid_8332]),grpinfoR[])))))))
+
+rule 80 attacker:cons3(NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],NR[NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],v_8337,sid_8338,d[sid_8332],exp(g(),d[sid_8332]),sid_8339,v_8340,sid_8328],exp(g(),d[sid_8333]),exp(g(),d[sid_8332]),v_8345,E(H(exp(exp(g(),d[sid_8332]),d[sid_8333]),(NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],NR[NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],v_8337,sid_8338,d[sid_8332],exp(g(),d[sid_8332]),sid_8339,v_8340,sid_8328],tagE())),(Pk(kAminus[sid_8329]),XIDRp_8330,XsaI_8331,S(kAminus[sid_8329],(NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],NR[NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],v_8337,sid_8338,d[sid_8332],exp(g(),d[sid_8332]),sid_8339,v_8340,sid_8328],exp(g(),d[sid_8333]),exp(g(),d[sid_8332]),grpinfoR[])))),H(H(exp(exp(g(),d[sid_8332]),d[sid_8333]),(NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],NR[NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],v_8337,sid_8338,d[sid_8332],exp(g(),d[sid_8332]),sid_8339,v_8340,sid_8328],tagA())),(constI(),E(H(exp(exp(g(),d[sid_8332]),d[sid_8333]),(NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],NR[NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],v_8337,sid_8338,d[sid_8332],exp(g(),d[sid_8332]),sid_8339,v_8340,sid_8328],tagE())),(Pk(kAminus[sid_8329]),XIDRp_8330,XsaI_8331,S(kAminus[sid_8329],(NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],NR[NI[XIDRp_8330,XsaI_8331,sid_8334,d[sid_8333],exp(g(),d[sid_8333]),sid_8335,v_8336,sid_8329],v_8337,sid_8338,d[sid_8332],exp(g(),d[sid_8332]),sid_8339,v_8340,sid_8328],exp(g(),d[sid_8333]),exp(g(),d[sid_8332]),grpinfoR[])))))))
+
+*)

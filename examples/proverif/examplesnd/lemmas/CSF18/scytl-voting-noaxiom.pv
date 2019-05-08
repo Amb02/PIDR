@@ -1,0 +1,223 @@
+free c:channel.
+
+type agent_id.
+
+fun t_agent_id(agent_id):bitstring [data,typeConverter].
+
+type private_key.
+
+fun t_private_key(private_key):bitstring [data,typeConverter].
+
+type public_key.
+
+fun t_public_key(public_key):bitstring [data,typeConverter].
+
+type mynat.
+
+fun t_mynat(mynat):bitstring [data,typeConverter].
+
+free election:agent_id.
+free signature:agent_id.
+free globalCGKP:agent_id.
+
+fun w(private_key,mynat):mynat.
+fun pub(private_key):public_key.
+fun sk(agent_id):private_key [private].
+
+letfun pk(Id:agent_id) = pub(sk(Id)).
+
+letfun ske = sk(election).
+
+letfun pke = pk(election).
+
+letfun sks = sk(signature).
+
+letfun pks = pk(signature).
+
+letfun k = sk(globalCGKP).
+
+fun h(bitstring):bitstring.
+fun f(private_key,mynat):bitstring.
+fun phi(mynat):bitstring [data].
+fun v(mynat):mynat [data].
+fun cc(agent_id):mynat [private].
+fun cut(bitstring):mynat.
+
+table bb(agent_id,bitstring).
+table cb(agent_id,bitstring,bitstring).
+
+free j1:mynat.
+free j2:mynat.
+free j3:mynat.
+free j4:mynat.
+free j5:mynat.
+
+fun honest(agent_id):agent_id [private].
+
+free a1:mynat.
+free empty_value:bitstring.
+free vlocktb:bitstring [private].
+free locktb:channel [private].
+
+fun enc(public_key,bitstring,mynat):bitstring.
+fun sign(private_key,bitstring):bitstring.
+
+reduc forall Skey:private_key,M:bitstring,R:mynat; dec(Skey,enc(pub(Skey),M,R)) = M.
+
+reduc forall Skey:private_key,M:bitstring; get_message(sign(Skey,M)) = M.
+
+reduc forall Skey:private_key,M:bitstring; check(pub(Skey),sign(Skey,M)) = M.
+
+reduc forall Id:agent_id; get_id(pub(sk(Id))) = Id.
+
+reduc forall Skey:private_key,V:mynat; get_w(w(Skey,V),Skey) = V.
+
+letfun fc(K:private_key,Id:agent_id) = f(K,w(sk(Id),cc(Id))).
+
+letfun crf(K:private_key,Id:agent_id,Sks:private_key) = sign(Sks,fc(K,Id)).
+
+letfun rc(K:private_key,Id:agent_id,J:mynat) = f(K,w(sk(Id),v(J))).
+
+letfun rf(K:private_key,Id:agent_id,J:mynat) = h(rc(K,Id,J)).
+
+reduc forall pkey:public_key,m:bitstring,r:mynat; verifE(pkey,enc(pkey,m,r)) = true.
+
+reduc forall skey:private_key,m:bitstring; verifS(pub(skey),m,sign(skey,m)) = true.
+
+fun zkp(public_key,public_key,bitstring,mynat,mynat,mynat,private_key):bitstring.
+
+fun verifP(public_key,public_key,bitstring,mynat,mynat,bitstring):bool
+reduc forall Pke:public_key,Skid:private_key,v1:mynat,R:mynat,ECid:mynat; verifP(Pke,pub(Skid),enc(Pke,phi(v1),R),w(Skid,cut(enc(Pke,phi(v1),R))),w(Skid,v1),zkp(Pke,pub(Skid),enc(Pke,phi(v1),R),w(Skid,cut(enc(Pke,phi(v1),R))),w(Skid,v1),R,Skid)) = true
+   otherwise forall Pke:public_key,Skid:private_key,v1:mynat,R:mynat,ECid:mynat; verifP(Pke,pub(Skid),enc(Pke,phi(v1),R),w(Skid,cut(enc(Pke,phi(v1),R))),w(Skid,v1),zkp(Pke,pub(Skid),enc(Pke,phi(v1),R),cut(enc(Pke,phi(w(Skid,v1)),R)),w(Skid,v1),R,Skid)) = true
+   otherwise forall Pke:public_key,Skid:private_key,v1:mynat,R:mynat,ECid:mynat; verifP(Pke,pub(Skid),enc(Pke,phi(v1),R),cut(enc(Pke,phi(w(Skid,v1)),R)),w(Skid,v1),zkp(Pke,pub(Skid),enc(Pke,phi(v1),R),w(Skid,cut(enc(Pke,phi(v1),R))),w(Skid,v1),R,Skid)) = true
+   otherwise forall Pke:public_key,Skid:private_key,v1:mynat,R:mynat,ECid:mynat; verifP(Pke,pub(Skid),enc(Pke,phi(v1),R),cut(enc(Pke,phi(w(Skid,v1)),R)),w(Skid,v1),zkp(Pke,pub(Skid),enc(Pke,phi(v1),R),cut(enc(Pke,phi(w(Skid,v1)),R)),w(Skid,v1),R,Skid)) = true.
+
+event Confirmed(bitstring,mynat).
+event HappyUser(bitstring,mynat).
+event InsertBB(agent_id,bitstring).
+event HasVoted(bitstring,agent_id,bitstring,bitstring,bitstring).
+event NeverTrue.
+
+fun OutInsertBB(agent_id,bitstring):bitstring [private].
+
+letfun CreateVote(Pke:public_key,Id:agent_id,J1:mynat,Skid:private_key) = let V:bitstring = phi(v(J1)) in new R:mynat; let C:bitstring = enc(Pke,V,R) in let P:bitstring = zkp(Pke,pub(Skid),C,w(Skid,cut(C)),w(Skid,v(J1)),R,Skid) in (C,w(Skid,v(J1)),w(Skid,cut(C)),pub(Skid),P).
+
+letfun ProcessBallotCheck(Pke:public_key,Id:agent_id,B:bitstring) = let (C:bitstring,W1:mynat,EC:mynat,= pk(Id),P:bitstring) = B in let Ok1:bool = verifP(Pke,pk(Id),C,EC,W1,P) in let Ok2:bool = verifE(Pke,C) in true.
+
+letfun CreateBallotProof(B:bitstring,K:private_key,RF1:bitstring,RF2:bitstring,RF3:bitstring,RF4:bitstring,RF5:bitstring) = let (C:bitstring,W1:mynat,EC:mynat,Pkid:public_key,P:bitstring) = B in let RC1:bitstring = f(K,W1) in if (h(RC1) <> RF1 && (h(RC1) <> RF2 && (h(RC1) <> RF3 && (h(RC1) <> RF4 && h(RC1) <> RF5)))) then () else RC1.
+
+letfun AuditBallotProof(RC_Set:bitstring,SaRC1:bitstring) = let RC1:bitstring = RC_Set in RC1 = SaRC1.
+
+free mAC1:bitstring.
+free mAC2:bitstring.
+free mCA1:bitstring.
+free mCA2:bitstring.
+
+fun AliceData(agent_id,private_key):bitstring [private].
+
+reduc forall Id:agent_id,K:private_key,J1:mynat; GetAliceData(AliceData(Id,K),J1) = (Id,sk(Id),f(K,w(sk(Id),v(J1))),f(K,w(sk(Id),cc(Id))),cc(Id)).
+
+fun ServData(public_key,private_key,private_key):bitstring [private].
+
+reduc forall Pke:public_key,K:private_key,Sks:private_key,Id:agent_id,J1:mynat,J2:mynat,J3:mynat,J4:mynat,J5:mynat; GetServData(ServData(Pke,K,Sks),J1,J2,J3,J4,J5,Id) = (Pke,K,pub(Sks),h(f(K,w(sk(Id),v(J1)))),h(f(K,w(sk(Id),v(J2)))),h(f(K,w(sk(Id),v(J3)))),h(f(K,w(sk(Id),v(J4)))),h(f(K,w(sk(Id),v(J5)))),sign(Sks,f(K,w(sk(Id),cc(Id))))).
+
+type stamp.
+
+free id_get:stamp [private].
+
+event DoubleInsert_agent_id(stamp,stamp,agent_id).
+
+query Id:agent_id,B1:bitstring,B2:bitstring,Id':agent_id,B':bitstring,st:stamp,st1:stamp,st2:stamp,x:agent_id;
+  attacker((OutInsertBB(Id,B1),OutInsertBB(Id,B2))) ==>
+        B1 = B2
+    ||  event(DoubleInsert_agent_id(st2,st,x)) && event(DoubleInsert_agent_id(st2,st1,x)) && st <> st1.
+
+query Id:agent_id,K:private_key,J1:mynat,W1:mynat,Pke:public_key,Sks:private_key,B:bitstring,C:bitstring,EC:mynat,P:bitstring,R:mynat,FC:bitstring,CRFid:bitstring,B2:bitstring,v1:mynat,st:stamp,st1:stamp,st2:stamp,x:agent_id;
+  event(HasVoted(ServData(Pke,K,Sks),honest(Id),B,FC,CRFid)) ==>
+        event(Confirmed(AliceData(honest(Id),K),J1)) && v1 = v(J1) && B = (C,W1,EC,pub(sk(honest(Id))),P) && C = enc(Pke,phi(v1),R)
+    ||  event(DoubleInsert_agent_id(st2,st,x)) && event(DoubleInsert_agent_id(st2,st1,x)) && st <> st1.
+
+query Id:agent_id,K:private_key,J1:mynat,W1:mynat,Pke:public_key,Sks:private_key,B:bitstring,C:bitstring,EC1:mynat,P:bitstring,R:mynat,FC:bitstring,CRFid:bitstring,B2:bitstring,EC2:mynat,v1:mynat,st:stamp,st1:stamp,st2:stamp,x:agent_id;
+  event(HappyUser(AliceData(Id,K),J1)) ==>
+        event(HasVoted(ServData(Pke,K,Sks),Id,B,FC,CRFid)) && v1 = v(J1) && B = (C,W1,EC1,pub(sk(Id)),P) && C = enc(Pke,phi(v1),R) && W1 = w(sk(Id),v1) && (EC1 = w(sk(Id),cut(enc(Pke,phi(v1),R))) || EC1 = cut(enc(Pke,phi(w(sk(Id),v1)),R))) && P = zkp(Pke,pub(sk(Id)),C,EC2,W1,R,sk(Id)) && (EC2 = w(sk(Id),cut(enc(Pke,phi(v1),R))) || EC2 = cut(enc(Pke,phi(w(sk(Id),v1)),R))) && CRFid = sign(Sks,FC)
+    ||  event(DoubleInsert_agent_id(st2,st,x)) && event(DoubleInsert_agent_id(st2,st1,x)) && st <> st1.
+
+process
+  out(c,pke);
+  out(c,ske);
+  out(c,pks);
+  (
+    out(locktb,vlocktb);
+    0
+  ) | (
+    !( 
+    in(c,J1:mynat);
+    new id_seed:agent_id;
+    out(c,honest(id_seed));
+    if (J1 = J1 && a1 <> a1) (* Application of the process Alice *)
+    then
+      0
+    else
+      let (Id:agent_id,Skid:private_key,RCid1:bitstring,FCid:bitstring,CCid:mynat) = GetAliceData(AliceData(honest(id_seed),k),J1) in
+      out(c,(mAC1,Id,Skid,pk(Id),J1));
+      in(c,(= mCA1,RC_Set:bitstring));
+      if AuditBallotProof(RC_Set,RCid1) then
+      event Confirmed(AliceData(honest(id_seed),k),J1);
+      out(c,(mAC2,CCid));
+      in(c,(= mCA2,FC:bitstring));
+      if FC <> FCid
+      then
+        0
+      else
+        event HappyUser(AliceData(honest(id_seed),k),J1);
+        0
+    )  ) | (
+    !( 
+    new id:agent_id;
+    out(c,id);
+    out(c,AliceData(id,k));
+    0
+    )  ) | (
+    !( 
+    in(c,(Id:agent_id,B:bitstring)); (* Application of the process Serv *)
+    let (Pke:public_key,K:private_key,Pks:public_key,RFid1:bitstring,RFid2:bitstring,RFid3:bitstring,RFid4:bitstring,RFid5:bitstring,CRFid:bitstring) = GetServData(ServData(pke,k,sks),j1,j2,j3,j4,j5,Id) in
+    let Ok1:bool = ProcessBallotCheck(Pke,Id,B) in
+    in(locktb,= vlocktb);
+    new st:stamp;
+    get bb(= Id,B2:bitstring) in
+      out(locktb,vlocktb);
+      0
+    else
+      new d:channel;
+      (
+        let (= Id,x:bitstring) = (Id,B) in
+          event DoubleInsert_agent_id(id_get,st,Id);
+          out(d,st);
+          0
+        else
+          out(d,st);
+          0
+      ) | (
+        in(d,= st);
+        insert bb(Id,B);
+        out(c,OutInsertBB(Id,B));
+        let BallotProof:bitstring = CreateBallotProof(B,K,RFid1,RFid2,RFid3,RFid4,RFid5) in
+        if BallotProof = ()
+        then
+          out(locktb,vlocktb);
+          0
+        else
+          out(c,BallotProof);
+          in(c,CM:mynat);
+          let FC:bitstring = f(K,CM) in
+          let Ok2:bool = verifS(Pks,FC,CRFid) in
+            insert cb(Id,FC,CRFid);
+            event HasVoted(ServData(pke,k,sks),Id,B,FC,CRFid);
+            out(c,FC);
+            out(locktb,vlocktb);
+            0
+          else
+            out(locktb,vlocktb);
+            0
+      )
+    )  )

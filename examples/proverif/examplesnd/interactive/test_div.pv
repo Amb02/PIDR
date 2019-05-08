@@ -1,0 +1,55 @@
+free c: channel.
+free d:channel [private].
+free e:channel [private].
+fun h(channel):channel.
+reduc forall x:channel; g(h(x),x) = x.
+
+table K(channel, channel).
+table T(channel, channel).
+table L(channel, channel).
+let in_fail = in(c, =choice[c,d]). (* pat fails *)
+let in_fail1 = !in(choice[d,c],x:channel). (* channel fails cause one element in public on one side only *)
+let in_fail2 = !in(choice[g(c,c),d],x:channel). (* channel evaluation fails on one side *)
+let in_fail3 = !in(choice[d,c],x:channel). (* channel fails, only one term pub *)
+let in_fail4 = !in(choice[g(c,c),g(c,c)],x:channel). (* channel evaluation fails on both sides *)
+let in_fail5 = !in(choice[g(c,c),g(c,c)],=choice[c,d]). (* channel evaluation fails and pattern evaluation fails (channel must be detected) *)
+let out_fail = !out(choice[c,d], c). (* channel fails pub only on one side *)
+let out_fail1 = !(out(c, g(choice[c,d],c))). (* mess fails both side *)
+let out_fail2 = !out(c, g(choice[d,h(d)],d)). (* mess fails one side *)
+let out_fail3 = !out(choice[g(d,d),d], c). (* channel evaluation fails one side *)
+let out_fail4 = out(c,g(choice[c,d],choice[h(c),c])). (* message fails both sides *)
+let out_fail5 = out(g(choice[c,d],choice[d,c]),g(choice[c,d],c)). (* message and chanel fails both sides *)
+
+let test_fail = in(c,x:channel); if x = choice[c,g(h(d),d)] then in_fail1 else in_fail2. (* not same branch 1 *)
+let test_fail2 = in(c,x:channel); if x = choice[g(h(d),d),c] then in_fail1 else in_fail2. (* not same branch 2 *)
+let test_fail3 = in(c,x:channel); if x = choice[c,g(d,c)] then in_fail1 else in_fail2. (* condition only one side *)
+let test_fail4 = in(c,x:channel); if x = g(choice[d,c],c) then in_fail1 else in_fail2. (* condition fail all sides *)
+let test_fail_nil = in(c,x:channel); if x = choice[c,g(h(d),d)] then in_fail1. (* not same branch q nil *)
+let test_fail_nil2 = in(c,x:channel); if x = choice[c,g(h(d),d)] then in_fail1. (* nost same branch q nil *)
+let test_fail_nil3 = in(c,x:channel); if x = choice[g(d,d),d] then in_fail1. (* test fail one side with q nil *)
+let test_fail_nil4 = in(c,x:channel); if x = choice[g(h(d),d),c] then in_fail1. (* test fail both sides with q nil *)
+let recipe_fail = !out(c, choice[h(c), h(d)]). (* enter g(~M, c) *)
+let insert_fail = !insert K(d,choice[c,g(c,c)]).
+let insert_fail_both_sides = !insert K(d,choice[g(c,d),g(c,c)]).
+let insert_ok = insert L(d,choice[d,h(d)]); insert K(d,choice[g(h(c),c),g(h(d),d)]); insert K(d,choice[d,h(d)]); insert K(d,choice[d,h(d)]); insert L(d,choice[d,h(d)]); insert K(d,choice[h(c),d]).
+let get_ok = !get K(=d, x) in out(c, x).
+let get_fail = !get K(=choice[d,h(d)], x) in out(c, x). (* miss one case . *)
+let let_fail = let (=choice[d,c]) = choice[d,d] in out (c, h(c)). (* fails pattern side one *)
+let let_fail2 = let  x = g(choice[h(d),c], c) in out(c, h(x)). (* fails side one *)
+let rio_in_fail = (in(choice[d,h(d)],=choice[h(d),c]) | out(choice[d,h(d)],choice[h(d),d])). (*rio pat fail *)
+let rio_ch_fail2 = in(choice[d,e],x:channel) | out(d,choice[d,d]).
+let rio_ch_fail3 = in(choice[d,e],x:channel) | out(choice[d,e], d) | out(d,choice[d,d]).
+let rio2 = (in(d,x:channel) | (out(d,choice[d,d]))).
+
+
+process
+	rio_ch_fail3
+	(*test_fail_nil3	 | !get_ok*)
+        (*(in_fail | in_fail1 | in_fail2 | in_fail3 | in_fail4)
+         |(out_fail | out_fail1 | out_fail2 | out_fail3 | out_fail4 | out_fail5)
+         | (test_fail | test_fail2 | test_fail3 | test_fail4)
+         | (test_fail_nil | test_fail_nil2 | test_fail_nil3 | test_fail_nil4)
+         | recipe_fail
+         | (insert_fail | insert_fail_both_sides)
+         | (insert_ok | get_ok | get_fail )
+         | (let_fail)*)

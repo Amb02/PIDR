@@ -1,0 +1,36 @@
+free c:channel.
+free d:channel [private].
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+event A(bitstring).
+event B(bitstring).
+
+const ok,ko,k:bitstring[private].
+
+axiom x:bitstring,y:bitstring; event(A(x)) ==> x = a for { public_vars x } [fullSat].
+
+lemma x:bitstring;
+  event(B(x)) ==> x = a;
+  event(A(x)) for { public_vars x };
+  event(A(x)) ==> x = a for { public_vars x } [maxSubset].
+
+query x:bitstring; event(A(x)) ==> event(B(a)) public_vars x.
+query x:bitstring; attacker(x).
+query x:bitstring; attacker(x) public_vars x.
+
+
+query x:bitstring; event(A(x)) ==> event(B(a)) public_vars x; attacker(x) public_vars x.
+
+process
+  (in(c,x:bitstring);
+  if x = a
+  then
+    event A(a);
+    out(d,k)
+  else
+    out(c,ko))
+
+  | in(d,x:bitstring); out(c,ok)

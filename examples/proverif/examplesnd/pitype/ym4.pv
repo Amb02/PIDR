@@ -1,0 +1,94 @@
+(* -- Equational theory -- *)
+(* Asymmetric encryption *)
+fun sk(bitstring):bitstring [private].
+fun pk(bitstring):bitstring.
+fun aenc(bitstring,bitstring):bitstring.
+
+reduc forall message:bitstring, xsk:bitstring;
+  adec(aenc(message,pk(xsk)), xsk) = message.
+
+(* Symmetric encryption *)
+fun psk(bitstring):bitstring [private]. (*preshared key avec le serveur*)
+fun enc(bitstring,bitstring):bitstring.
+
+reduc forall message:bitstring, k:bitstring;
+  dec(enc(message,k), k) = message.
+
+(* Hash *)
+fun h(bitstring):bitstring.
+
+
+(* -- Names -- *)
+free public:channel.
+
+free ok:bitstring.
+
+event AliceALaClef(bitstring,bitstring,bitstring,bitstring).
+event BobALaClef(bitstring,bitstring,bitstring,bitstring).
+event AliceAFini(bitstring,bitstring,bitstring,bitstring).
+event BobAFini(bitstring,bitstring,bitstring,bitstring).
+
+(* -- Processes -- *)
+free A:bitstring. free B:bitstring.
+free n: bitstring[private].
+(*free n': bitstring[private].*)
+
+let Alice(a:bitstring,b:bitstring,ka:bitstring) =
+    out(public,aenc(ka,pk(sk(b))));
+    in(public,(x:bitstring,y:bitstring));
+    let xkb = adec(dec(x,ka),sk(a)) in
+    if adec(dec(y,xkb),sk(a)) = b then
+       (event AliceALaClef(a,b,ka,xkb);
+        out(public,aenc(enc(a,xkb),pk(sk(b))));
+        event AliceAFini(a,b,ka,xkb)).
+      
+let Bob(a:bitstring,b:bitstring) =
+    in(public,x:bitstring);
+    let xka = adec(x,sk(b)) in
+    new n':bitstring;
+    event BobALaClef(a,b,xka,n');
+    out(public, (enc(aenc(n',pk(sk(a))),xka), enc(aenc(b,pk(sk(a))),n')));
+    in(public,=aenc(enc(a,n'),pk(sk(b))));
+    event BobAFini(a,b,xka,n').
+
+let Bob'(a:bitstring,b:bitstring) =
+    in(public,x:bitstring);
+    let xka = adec(x,sk(b)) in
+    new kb:bitstring;
+    event BobALaClef(a,b,xka,kb);
+    out(public, (enc(aenc(kb,pk(sk(a))),xka), enc(aenc(b,pk(sk(a))),kb)));
+    in(public,=aenc(enc(a,kb),pk(sk(b))));
+    event BobAFini(a,b,xka,kb).
+
+(* query attacker(n). *)
+(*query attacker(new n').*)
+query secret n'.
+
+query k:bitstring,k':bitstring;
+      event(AliceAFini(A,B,k,k')) ==> event(BobALaClef(A,B,k,k')).
+query k:bitstring,k':bitstring;
+      event(BobAFini(A,B,k,k')) ==> event(AliceALaClef(A,B,k,k')).
+
+
+let Alice'(a:bitstring,b:bitstring) =
+    new ka:bitstring; Alice(a,b,ka).
+
+let session_query() = 
+  (Alice(A,B,n) | Bob(A,B)).
+
+let session_honnete(a:bitstring,b:bitstring) = 
+    Alice'(a,b) | Bob'(a,b).
+
+let honnete(c:bitstring) =
+    out(public,pk(sk(c))).
+           
+(* -- Main process -- *)
+process
+  honnete(A) | honnete(B) | session_query()
+  | ! session_honnete(A,B)
+  | ! session_honnete(B,A)
+  | ! (new c:bitstring; out(public,(c,sk(c)));
+      ! (Alice'(A,c) |
+         Alice'(B,c) |
+         Bob'(c,A)    |
+         Bob'(c,B)))

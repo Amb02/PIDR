@@ -1,0 +1,12 @@
+free c:channel.
+free a:bitstring.
+
+fun enc(bitstring,bitstring):bitstring.
+reduc forall x:bitstring,y:bitstring; dec(enc(x,y),y) = x.
+
+equivalence
+  phase 1;
+  out(c,a)
+
+  phase 2;
+  out(c,a)

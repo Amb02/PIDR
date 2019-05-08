@@ -1,0 +1,67 @@
+(*Salah-Kerroum
+A->S : B,{Na}kAS
+S->B : A,{Kab,{Na,B,Kab}kAS}kSB
+B->A : {Na,B,Kab}kAS
+*)
+
+set verboseRules = true.
+(*
+attacker((a[],enc((k_55,z_56),Kbs[]))) -> attacker(z_56)
+attacker((b[],enc(x_64,Kas[]))) -> attacker((a[],enc((Kab[],enc(((x_64,b[]),Kab[]),Kas[])),Kbs[])))
+
+==> 
+
+attacker(enc(x_64,Kas[])) -> attacker(enc(((x_64,b[]),Kab[]),Kas[]))
+
+Loops. The problem is that ProVerif loops, but avoids creating precisely the clause
+(which would be detected by the heuristics and would automatically generate the
+"nounif" below).
+*)
+nounif x: bitstring; attacker(enc(x,new Kas)).
+
+free c:channel.
+
+type host.
+type key.
+
+(* Queries *)
+
+free Kab,Na: bitstring[private].
+query attacker(Kab).
+
+free a,b,e:host.
+
+fun enc(bitstring,key): bitstring.
+reduc forall x: bitstring, y: key; dec(enc(x,y),y) = x.
+
+let roleA(b:host,Kas:key,Na:bitstring) =
+    out(c,(b,( enc(Na,Kas) )));     (* A->S : B,{Na}kAS *)
+    in(c,x:bitstring);
+    let y = dec(x,Kas) in
+    let(=Na,=b,k:bitstring) = y.
+
+let roleB(a:host,Kbs:key)=
+    in(c,x:bitstring);
+    let (=a,y:bitstring) = x  in
+    let (k:bitstring,z:bitstring) = dec(y,Kbs) in
+    out(c,z).			       (* B->A : {Na,B,Kab}kAS *)
+
+let roleS(a:host,b:host,Kas:key,Kbs:key,Kab:bitstring)=
+    in(c,x:bitstring);
+    let (=b,y:bitstring) = x in 				
+    let z = dec(y,Kas) in
+    let s = enc( ((z,b),Kab) ,Kas) in
+    let t = enc ( (Kab,s), Kbs ) in 
+    out(c,(a,t)).  	     	       (* S->B : A,{Kab,{Na,B,Kab}kAS}kSB *)	
+    
+    
+process
+	new Kas: key;
+	new Kbs: key;
+	new Kes: key;
+
+	(
+	(!roleA(b,Kas,Na))
+	|(!roleB(a,Kbs))
+	|(!roleS(a,b,Kas,Kbs,Kab))
+	)

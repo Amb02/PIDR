@@ -1,0 +1,145 @@
+(* Bellovin, Merritt, Oakland 92, section 2.1
+   Version in which A and B talk to anybody 
+   was coded by B. Blanchet *)
+
+(* We propose the following modeling to be compatible with our modeling in AVISPA:
+
+ A -> B : {Ea}_Kab        |    Key exchange part
+ B -> A : {{K}_Ea}_Kab    |
+ A -> B : {Ca}_K          |
+ B -> A : {Ca,Cb}_K       |    Challenge/Response
+ A -> B : {Cb}_K          |    Authentication part
+
+*)
+
+nounif attacker:senc(x,*y).  (* For termination *)
+
+(* c is the normal network, insecure *)
+free c.
+(* p is a special channel used to store the names of trusted agents *)
+private free p.
+
+fun host/1.
+private reduc getkey(host(x)) = x.
+
+(* Symmetric cryptography *)
+
+fun senc/2.
+fun sdec/2.
+equation sdec(senc(x,y),y) = x.
+equation senc(sdec(x,y),y) = x.
+
+
+(* Symmetry of Kab = Kba *)
+fun sym/2.
+equation sym(x,host(y)) = sym(y,host(x)).
+
+(* Public key cryptography *)
+
+fun penc/2.
+fun pk/1.
+reduc pdec(penc(x,pk(y)),y) = x.
+
+(* Secrecy assumptions *)
+
+not kas.
+
+(* Effectively the claim signals *)
+private free secretACa, secretACb, secretBCa, secretBCb, secretBk, secretAk, secretAskea, secretApkea, secretBpkea.
+
+(* Security claims to verify *)
+query attacker:secretACa;
+      attacker:secretACb;
+      attacker:secretAk;
+      attacker:secretAskea;
+      attacker:secretApkea;
+      attacker:secretBCa;
+      attacker:secretBCb;
+      attacker:secretBk;
+      attacker:secretBpkea.
+
+query ev:endAfull(x1,x2,x3,x4) ==> ev:beginBfull(x2,x1,x3,x4).
+query ev:endBfull(x1,x2,x3,x4) ==> ev:beginAfull(x2,x1,x3,x4).
+
+let processI =
+	(* choose the other principal *)
+ 	in(c,hostB);
+
+	(* Generate a new public key *) 
+	new sEA;
+	let EA = pk(sEA) in
+	out(c, (hostA, senc(EA, sym(kas, hostB)))); (* First hostA is just for more readability *)
+
+	in(c,m2);
+	let K = pdec(sdec(m2,sym(kas, hostB)),sEA) in
+
+	new challengeA;
+	out(c, senc((challengeA), K));
+
+	in(c, m4);
+	let (=challengeA, challengeb) = sdec(m4, K) in
+
+	(* signal done *)
+	event beginAfull(hostA,hostB,challengeA,challengeb); 
+
+	out(c, senc((challengeb), K));
+
+
+        (* If I am talking to an honest principal *)	
+	in(p,m);
+        if m  = hostB  then 
+	event endAfull(hostA,hostB,challengeA,challengeb);
+	out(c, senc(secretACa, challengeA));
+	out(c, senc(secretACb, challengeb));
+	out(c, senc(secretAk, K));
+	out(c, senc(secretAskea, sEA));
+	out(c, senc(secretApkea, EA)).
+
+
+
+
+let processR =
+	(* choose initiator *)
+ 	in(c,hostB);
+
+	in(c, (=hostB, m));
+	let EA = sdec(m, sym(kas,hostB) ) in
+
+	new K;
+
+	out(c, senc(penc(K, EA), sym(kas,hostB)));
+	
+	in(c,m3);
+	let (challengea) = sdec(m3, K) in
+	new challengeB;
+	
+	(* signal done *)
+        event beginBfull(hostA,hostB,challengea,challengeB); 
+
+	out(c, senc((challengea, challengeB), K));
+ 	in(c, m5);
+	if sdec(m5, K) = (challengeB) then
+
+
+	(* If I am talking to an honest principal *)	
+	in(p,mf);
+        if mf  = hostB  then 
+	event endBfull(hostA,hostB,challengea,challengeB);
+	out(c, senc(secretBCa, challengea));
+	out(c, senc(secretBCb, challengeB));
+	out(c, senc(secretBk, K));
+	out(c, senc(secretBpkea, EA)).
+
+
+       
+
+process 
+!(
+    (* Generic Generation of principals *)
+    new kas;   
+    let hostA= host(kas) in
+    out(c,hostA);
+
+    ((!processI) | (!processR)) | ! (out(p,hostA))
+)
+

@@ -1,0 +1,24 @@
+free c:channel.
+free d:channel [private].
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+event A(bitstring).
+event B(bitstring).
+
+const ok,ko,k:bitstring[private].
+
+axiom x:bitstring,y:bitstring; event(A(x)) ==> event(B(new k1)) && x = a [fullSat].
+
+
+query attacker(ok).
+
+process
+  ! new k1:bitstring;
+  ((in(c,x:bitstring);
+   event B(x);
+   event A(x);
+   out(d,k))
+  | in(d,x:bitstring); out(c,ok))

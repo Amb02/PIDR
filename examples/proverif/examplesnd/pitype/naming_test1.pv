@@ -1,0 +1,20 @@
+(* check that identifiers x_0nnn are correctly handled *)
+
+free c:channel.
+
+free x_05:bitstring [private].
+free RSA:bitstring [private].
+
+event evCocks.
+event evRSA.
+
+query event(evCocks) ==> event(evRSA).
+
+process
+	out(c,RSA);
+	in(c,x:bitstring);
+	if x = x_05 then
+		event evCocks;
+		event evRSA
+	else
+		event evRSA

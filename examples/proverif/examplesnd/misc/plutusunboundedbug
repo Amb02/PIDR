@@ -1,0 +1,168 @@
+(* Plutus 
+   to use with with rulesAvik.ml (otherwise does not terminate)
+   This example caused a bug 
+   "Internal error: bound vars should be cleaned up (normal)"
+   now fixed (some cleanup instructions were forgotten in the
+   code for checking predicates in piauth.ml).
+ *)
+
+(*...
+param traceDisplay = long.
+*)
+param verboseRules = true.
+
+(* _kgen(group,version,secret key) *)
+
+fun skgen/2.
+fun pkgen/2.
+
+data zero/0.
+data succ/1.
+
+(* w is group, x is version, y is secret key *)
+
+(*reduc unwind(skgen(w,succ(x),y)) = skgen(w,x,y).*)
+fun unwindArg/3.
+private reduc decomposeUnwindArg(unwindArg(skgen(x,y),xpast,ret)) = (x,y,xpast,ret).
+
+(* write(filename,term,writerkey) *)
+
+fun write/3.
+
+(* read(filename,crypt,readerkey) *)
+
+reduc read(z,write(z,u,pkgen(x,y)),skgen(x,y)) = u.
+
+free c,f.
+free newgroup, revoke.
+free rkeyreq, wkeyreq.
+free corrupt. 
+
+(* grp(secret key) *)
+
+fun grp/1.
+
+(* rprivchannel(rdr) and wprivchannel(wtr) *)
+
+private fun rprivchannel/1.
+private fun wprivchannel/1.
+
+(* rdr(grp(secret key),version) *)
+
+data rdr/2.
+data wtr/1.
+
+(*...
+
+data nil/0.
+data cons/2.
+
+pred member/2.
+clauses
+	member:x,cons(x,y);
+	member:x,y -> member:x,cons(z,y).
+*)
+
+pred notbefore/2 refTransAtt.
+clauses
+	notbefore:x,x;
+	notbefore:x,y -> notbefore:succ(x),y.
+
+query let mx = m; 
+      attacker:mx ==> 
+      	      	  ev:isreader(gx, rx, vx) 
+		& ev:corrupt(rx,vx) 
+		& ev:writem(wx, mx, vy)
+		& mess:currentversion,vx
+                & notbefore:vx,vz
+                & notbefore:vz,vy
+	        & ev:iswriter(gx, wx).
+
+(* -------- Proved to be true *)
+query ev:gets(rx, mx, vx) ==> 
+      		  ev:isreader(gx, rx, vx) 
+		& ev:writem(wx, mx, vx) 
+		& ev:iswriter(gx, wx) 
+		& ev:isgroup(gx).
+
+
+(* group is grp(secret key) *)
+
+(* reader is rdr(group,version) *)
+
+(* writer is wtr(group) *)
+
+let processOwr =
+    in(c, =newgroup); 
+    new sk;
+    let g = grp(sk) in
+    event isgroup(g);
+    out(c,g);
+    new currentversion;
+    (out(currentversion, zero) |
+     (
+     ! in(currentversion, v);
+       in(c, =(revoke, g));
+       out(currentversion, succ(v)) 
+       )
+    |
+     (
+     !in(c, (=rkeyreq, rdr(=g,vx)));
+     in(currentversion, v);
+     out(currentversion, v);
+     let r = rdr(g,vx) in
+     event isreader(g, r, v); 
+     out(rprivchannel(r), (skgen(v, sk), v))
+     )
+    |
+     (
+     !in(c, =(wkeyreq, wtr(g)));
+     in(currentversion, v);
+     out(currentversion, v);
+     let w = wtr(g) in
+     event iswriter(g, w);
+     out(wprivchannel(w), (pkgen(v, sk), v))
+     )
+     ).
+
+let processGoodRdr = 
+    in(c,r);
+    out(c, (rkeyreq, r));
+    in(rprivchannel(r), (rkey, v));
+    in(f,crypt);
+    let n = read(f,crypt,rkey) in 
+      event gets(r, n, v)
+    else 
+      let vpast suchthat notbefore:v,vpast in
+      new ret;
+      out(c, unwindArg(rkey,vpast,ret));
+      in(ret,pastkey);
+      let pn = read(f,crypt,pastkey) in
+      event gets(r,pn,vpast).
+
+let processBadRdr =
+    in(c,r);
+    out(c, (rkeyreq, r));
+    in(rprivchannel(r), (rkey, v));
+    in(corrupt, =r);
+    event corrupt(r,v);
+    out(c, rkey).
+
+let processWtr =
+    in(c, w); 
+    out(c, (wkeyreq, w));
+    in(wprivchannel(w), (wkey,v));
+    new m; 
+    event writem(w, m, v);
+    !out(f,write(f,m,wkey)).
+ 
+let processUnwind =
+    in(c, arg);
+    let (x,y,xpast,ret) = decomposeUnwindArg(arg) in
+    if notbefore:x,xpast then
+    out(ret, skgen(xpast,y)).
+
+
+process
+	((!processOwr) | (! processGoodRdr) | (!processBadRdr)  | (! processWtr) | (!processUnwind)) 
+	

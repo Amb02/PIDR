@@ -1,0 +1,72 @@
+(*************************************************************
+ *                                                           *
+ *       Cryptographic protocol verifier                     *
+ *                                                           *
+ *       Bruno Blanchet                                      *
+ *                                                           *
+ *       Copyright (C) INRIA, CNRS 2000-2002                 *
+ *                                                           *
+ *************************************************************)
+
+(*
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details (in file LICENSE).
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+*)
+(* 
+
+? -> A : pkB
+A -> B : { N_A, pkA }_pkB
+B -> A : { N_A, N_B, pkB }_pkA
+A -> B : { N_B, K }_pkB
+B -> A : { S }_K
+
+*)
+
+(* Public key cryptography *)
+
+fun pk/1.
+fun encrypt/2.
+reduc decrypt(encrypt(x,pk(y)),y) = x.
+
+query secret.
+
+let processA = out(c,pkA) |
+				in(c,m1); 
+				let (pkXB, NX1, NX2) = m1 in
+				if pkXB = pkB then
+				(out(c, encrypt( (NX1, NX2, secret), pkXB) ) |
+				 in(c, m2);
+				 let (NX3, X, enc) = m2 in
+					if NX3 = NX1 then 0
+					else 0 ).
+
+let processB = in(c, pkXA); 
+				new N1; new N2;
+				out(c, (pkB, N1, N2) ) |
+				in(c, m3);
+				let (NX4, X, Y) = decrypt(m3, skB) in
+					(if NX4 = N1 then
+						out(c, (N1, X, encrypt((X, Y, N1), pkB)))).
+
+process new skA; let pkA = pk(skA) in
+        out(c, pkA);
+        new skB; let pkB = pk(skB) in
+        out(c, pkB);
+		new skB; let pkB = pk(skB) in
+        out(c, pkB);
+	new secret;
+	(!processA | !processB)
+

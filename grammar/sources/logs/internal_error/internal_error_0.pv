@@ -1,0 +1,12 @@
+(* Fixed in version 1.84 *)
+
+   pred p(bitstring,bitstring).
+
+   const c:bitstring.
+   elimtrue p(c,c).
+
+   event e().
+   query event(e()).
+
+   process if p(c,c) then event e()
+

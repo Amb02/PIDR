@@ -1,0 +1,17 @@
+param verboseRules = true.
+param verboseCompleted = true.
+
+fun enc/2. (* enc(key,msg) *)
+reduc dec(k,enc(k,m)) = m.
+
+query ev:bad().
+
+private free k.
+free ch, m.
+ 
+
+process
+ in(ch,x);
+ let xm = dec(k,x) in
+ out(ch,enc(k,m)); (* Try removing this line => NOT bad() provable *)
+ event bad()

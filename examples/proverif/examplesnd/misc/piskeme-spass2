@@ -1,0 +1,51 @@
+begin_problem(Unknown).
+
+list_of_descriptions.
+name({*A protocol*}).
+author({*Bruno Blanchet - Automatic translator*}).
+status(unknown).
+description({**}).
+end_of_list.
+
+list_of_symbols.
+functions[(name_secretA,0), (constr_sencrypt,2), (tuple_base,0), (name_secretB,0), (name_x,2), (name_y,2), (name_Ka,2), (tuple_2,2), (constr_encrypt,2), (name_Kb,2), (tuple_3,3), (tuple_4,4), (name_c,0), (constr_keyhash,2), (constr_pk,1), (name_skA,0), (constr_hash,1), (name_skB,0), (constr_exp,2)].
+predicates[(pred_mess,2), (pred_attacker,1)].
+end_of_list.
+list_of_formulae(axioms).
+
+formula(pred_attacker(tuple_base)).
+formula(forall([any0,any1],implies(and(pred_attacker(any0),pred_attacker(any1)),pred_attacker(tuple_2(any0,any1))))).
+formula(forall([any0,any1],implies(pred_attacker(tuple_2(any0,any1)), and(pred_attacker(any0),pred_attacker(any1))))).
+formula(forall([any0,any1,any2],implies(and(pred_attacker(any0),pred_attacker(any1),pred_attacker(any2)),pred_attacker(tuple_3(any0,any1,any2))))).
+formula(forall([any0,any1,any2],implies(pred_attacker(tuple_3(any0,any1,any2)), and(pred_attacker(any0),pred_attacker(any1),pred_attacker(any2))))).
+formula(forall([any0,any1,any2,any3],implies(and(pred_attacker(any0),pred_attacker(any1),pred_attacker(any2),pred_attacker(any3)),pred_attacker(tuple_4(any0,any1,any2,any3))))).
+formula(forall([any0,any1,any2,any3],implies(pred_attacker(tuple_4(any0,any1,any2,any3)), and(pred_attacker(any0),pred_attacker(any1),pred_attacker(any2),pred_attacker(any3))))).
+formula(forall([var_v5,var_v4], implies(and(pred_attacker(constr_sencrypt(var_v4,var_v5)),pred_attacker(var_v5)), pred_attacker(var_v4)))).
+formula(forall([var_v23], implies(pred_attacker(var_v23), pred_attacker(constr_hash(var_v23))))).
+formula(forall([var_v24,var_v25], implies(and(pred_attacker(var_v25),pred_attacker(var_v24)), pred_attacker(constr_encrypt(var_v25,var_v24))))).
+formula(forall([var_v26,var_v27], implies(and(pred_attacker(var_v27),pred_attacker(var_v26)), pred_attacker(constr_keyhash(var_v27,var_v26))))).
+formula(forall([var_v28], implies(pred_attacker(var_v28), pred_attacker(constr_pk(var_v28))))).
+formula(forall([var_v3,var_v2], implies(and(pred_attacker(constr_encrypt(var_v2,constr_pk(var_v3))),pred_attacker(var_v3)), pred_attacker(var_v2)))).
+formula(forall([var_v29,var_v30], implies(and(pred_attacker(var_v30),pred_attacker(var_v29)), pred_attacker(constr_sencrypt(var_v30,var_v29))))).
+formula(forall([var_v31,var_v32], implies(and(pred_attacker(var_v32),pred_attacker(var_v31)), pred_attacker(constr_exp(var_v32,var_v31))))).
+formula(forall([var_v33,var_v34], implies(and(pred_mess(var_v34,var_v33),pred_attacker(var_v34)), pred_attacker(var_v33)))).
+formula(pred_attacker(name_c)).
+formula(forall([var_v35,var_v36], implies(and(pred_attacker(var_v36),pred_attacker(var_v35)), pred_mess(var_v36,var_v35)))).
+formula(pred_attacker(constr_pk(name_skA))).
+formula(pred_attacker(constr_pk(name_skB))).
+formula(forall([var_v40,var_v39], implies(pred_attacker(var_v39), pred_attacker(tuple_2(constr_encrypt(tuple_2(constr_pk(name_skA),name_Ka(var_v39,var_v40)),var_v39),constr_exp(tuple_base,name_x(var_v39,var_v40))))))).
+formula(forall([var_v48,var_v45,var_v46,var_v47], implies(and(pred_attacker(tuple_3(constr_encrypt(var_v45,constr_pk(name_skA)),var_v46,constr_keyhash(tuple_4(constr_exp(tuple_base,name_x(var_v47,var_v48)),var_v46,var_v47,constr_pk(name_skA)),constr_hash(tuple_2(name_Ka(var_v47,var_v48),var_v45))))),pred_attacker(var_v47)), pred_attacker(constr_keyhash(tuple_4(var_v46,constr_exp(tuple_base,name_x(var_v47,var_v48)),constr_pk(name_skA),var_v47),constr_hash(tuple_2(name_Ka(var_v47,var_v48),var_v45))))))).
+formula(forall([var_v51,var_v49,var_v50], implies(and(pred_attacker(tuple_3(constr_encrypt(var_v49,constr_pk(name_skA)),var_v50,constr_keyhash(tuple_4(constr_exp(tuple_base,name_x(constr_pk(name_skB),var_v51)),var_v50,constr_pk(name_skB),constr_pk(name_skA)),constr_hash(tuple_2(name_Ka(constr_pk(name_skB),var_v51),var_v49))))),pred_attacker(constr_pk(name_skB))), pred_attacker(constr_sencrypt(name_secretA,constr_hash(constr_exp(var_v50,name_x(constr_pk(name_skB),var_v51)))))))).
+formula(forall([var_v60,var_v61,var_v58,var_v59], implies(pred_attacker(tuple_2(constr_encrypt(tuple_2(var_v58,var_v59),constr_pk(name_skB)),var_v60)), pred_attacker(tuple_3(constr_encrypt(name_Kb(tuple_2(constr_encrypt(tuple_2(var_v58,var_v59),constr_pk(name_skB)),var_v60),var_v61),var_v58),constr_exp(tuple_base,name_y(tuple_2(constr_encrypt(tuple_2(var_v58,var_v59),constr_pk(name_skB)),var_v60),var_v61)),constr_keyhash(tuple_4(var_v60,constr_exp(tuple_base,name_y(tuple_2(constr_encrypt(tuple_2(var_v58,var_v59),constr_pk(name_skB)),var_v60),var_v61)),constr_pk(name_skB),var_v58),constr_hash(tuple_2(var_v59,name_Kb(tuple_2(constr_encrypt(tuple_2(var_v58,var_v59),constr_pk(name_skB)),var_v60),var_v61))))))))).
+formula(forall([var_v63,var_v64,var_v65], implies(and(pred_attacker(constr_keyhash(tuple_4(constr_exp(tuple_base,name_y(tuple_2(constr_encrypt(tuple_2(constr_pk(name_skA),var_v63),constr_pk(name_skB)),var_v64),var_v65)),var_v64,constr_pk(name_skA),constr_pk(name_skB)),constr_hash(tuple_2(var_v63,name_Kb(tuple_2(constr_encrypt(tuple_2(constr_pk(name_skA),var_v63),constr_pk(name_skB)),var_v64),var_v65))))),pred_attacker(tuple_2(constr_encrypt(tuple_2(constr_pk(name_skA),var_v63),constr_pk(name_skB)),var_v64))), pred_attacker(constr_sencrypt(name_secretB,constr_hash(constr_exp(var_v64,name_y(tuple_2(constr_encrypt(tuple_2(constr_pk(name_skA),var_v63),constr_pk(name_skB)),var_v64),var_v65)))))))).
+
+end_of_list.
+
+list_of_formulae(conjectures).
+
+formula(pred_attacker(name_secretB)).
+formula(pred_attacker(name_secretA)).
+
+end_of_list.
+
+end_problem.

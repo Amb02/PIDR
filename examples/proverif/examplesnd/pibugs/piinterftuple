@@ -1,0 +1,14 @@
+(* 
+
+The system should not prove strong secrecy
+
+*)
+
+private free secret.
+noninterf secret.
+
+free c.
+free c1.
+free c2.
+
+process let (x,y) = secret in out(c,c1) else out(c,c2)

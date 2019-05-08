@@ -1,0 +1,17 @@
+const a:bitstring.
+const b:bitstring.
+fun h(bitstring):bitstring.
+fun f(bitstring):bitstring.
+fun g(bitstring,bitstring,bitstring):bitstring.
+
+equation forall x:bitstring, y:bitstring; g(h(x),y,a) = y;
+         forall x:bitstring, y:bitstring; g(f(x),b,y) = y [convergent].
+
+event e1(bitstring).
+event e2(bitstring).
+
+query x:bitstring, y:bitstring, z:bitstring; event(e2(g(x,y,z))) ==> event(e1(y)).
+
+process
+  event e1(a);
+  event e2(a)

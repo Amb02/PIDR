@@ -1,0 +1,150 @@
+free c:channel.
+free k1:bitstring [private].
+free k2:bitstring [private].
+const ok:bitstring.
+const ko:bitstring.
+
+fun enc(bitstring,bitstring):bitstring.
+reduc forall x:bitstring, y:bitstring; dec(enc(x,y),y) = x.
+
+set verboseClauses = explained.
+
+noninterf k1.
+
+process
+  in(c,x:bitstring);
+  in(c,y:bitstring);
+  new k:bitstring;
+  let z = dec(dec(x,k2),dec(y,k1)) in
+    out(c,enc(ok,k))
+  else
+    out(c,ko)
+
+(* Should produce the clauses:
+Initial clauses:
+Clause 0: testunif((@mayfail_v,@mayfail_v_1),(true,@genmf)) && attacker(@mayfail_v) && attacker(@mayfail_v_1) -> bad
+
+Clause 1: testunif((@mayfail_v,@mayfail_v_1),(@gen,@genmf)) && attacker(@mayfail_v) && attacker(@mayfail_v_1) -> bad
+
+Clause 2: testunif((@mayfail_v,@mayfail_v_1),(fail-any,@genmf)) && attacker(@mayfail_v) && attacker(@mayfail_v_1) -> bad
+
+Clause 3: attacker(true)
+
+Clause 4: attacker(ok)
+
+Clause 5: testunif((@mayfail_v),(true)) && attacker(@mayfail_v) -> bad
+
+Clause 6: testunif((@mayfail_v),(@gen)) && attacker(@mayfail_v) -> bad
+
+Clause 7: attacker(ko)
+
+Clause 8: attacker(false)
+
+Clause 9: attacker(v) && attacker(v_1) -> attacker(enc(v,v_1))
+
+Clause 10: testunif((@mayfail_v,@mayfail_v_1),(@gen,@gen_1)) && attacker(@mayfail_v) && attacker(@mayfail_v_1) -> bad
+
+Clause 11: attacker(enc(x_1,y_1)) && attacker(y_1) -> attacker(x_1)
+
+Clause 12: testunif((@mayfail_v,@mayfail_v_1),(enc(@gen,@gen_1),@gen_1)) && attacker(@mayfail_v) && attacker(@mayfail_v_1) -> bad
+
+Clause 13: testunif((@mayfail_v,@mayfail_v_1),(@gen,@gen_1)) && attacker(@mayfail_v) && attacker(@mayfail_v_1) -> bad
+
+Clause 14: testunif((@mayfail_v,@mayfail_v_1),(fail-any,@genmf)) && attacker(@mayfail_v) && attacker(@mayfail_v_1) -> bad
+
+Clause 15: testunif((@mayfail_v,@mayfail_v_1),(@gen,fail-any)) && attacker(@mayfail_v) && attacker(@mayfail_v_1) -> bad
+
+Clause 16: testunif((@mayfail_v,@mayfail_v_1),(true,@genmf)) && attacker(@mayfail_v) && attacker(@mayfail_v_1) -> bad
+
+Clause 17: testunif((@mayfail_v,@mayfail_v_1),(@gen,@genmf)) && attacker(@mayfail_v) && attacker(@mayfail_v_1) -> bad
+
+Clause 18: testunif((@mayfail_v,@mayfail_v_1),(fail-any,@genmf)) && attacker(@mayfail_v) && attacker(@mayfail_v_1) -> bad
+
+Clause 19: attacker(v) && attacker(v_1) -> attacker((v,v_1))
+
+Clause 20: testunif((@mayfail_v,@mayfail_v_1),(@gen,@gen_1)) && attacker(@mayfail_v) && attacker(@mayfail_v_1) -> bad
+
+Clause 21: attacker((v,v_1)) -> attacker(v)
+
+Clause 22: testunif((@mayfail_v),((@gen,@gen_1))) && attacker(@mayfail_v) -> bad
+
+Clause 23: testunif((@mayfail_v),(@gen)) && attacker(@mayfail_v) -> bad
+
+Clause 24: attacker((v,v_1)) -> attacker(v_1)
+
+Clause 25: testunif((@mayfail_v),((@gen,@gen_1))) && attacker(@mayfail_v) -> bad
+
+Clause 26: testunif((@mayfail_v),(@gen)) && attacker(@mayfail_v) -> bad
+
+Clause 27: attacker(())
+
+Clause 28: testunif((),()) -> bad
+
+Clause 29: attacker(v) -> attacker((v))
+
+Clause 30: testunif((@mayfail_v),(@gen)) && attacker(@mayfail_v) -> bad
+
+Clause 31: attacker((v)) -> attacker(v)
+
+Clause 32: testunif((@mayfail_v),((@gen))) && attacker(@mayfail_v) -> bad
+
+Clause 33: testunif((@mayfail_v),(@gen)) && attacker(@mayfail_v) -> bad
+
+Clause 34: testunif((@mayfail_v),(fail-any)) && attacker(@mayfail_v) -> bad
+
+Clause 35: mess(v,v_1) && attacker(v) -> attacker(v_1)
+
+Clause 36: attacker(v) && attacker(v_1) -> mess(v,v_1)
+
+Clause 37: attacker(v) -> input(v)
+
+Clause 38: attacker(v) -> output(v)
+
+Clause 39: input(v) && output(v_1) && testunif(v,v_1) -> bad
+
+Clause 40: attacker(fail-any)
+
+Clause 41: attacker(c[])
+
+Clause 42: equal(v,v)
+
+Clause 43: attacker(v) -> attacker(new-name_1)
+Abbreviations:
+new-name_1 = new-name[!att = v]
+
+Clause 44: attacker(v) && attacker(v_1) && testunif(v,v_1) -> bad
+
+Clause 45: attacker(enc(y_1,k1[])) && attacker(enc(enc(z_1,y_1),k2[])) -> output(c[])
+
+Clause 46: testunif((c[]),(@gen)) && attacker(enc(y_1,k1[])) && attacker(enc(enc(z_1,y_1),k2[])) -> bad
+
+Clause 47: attacker(enc(y_1,k1[])) && attacker(enc(enc(z_1,y_1),k2[])) -> attacker(enc(ok,k_1))
+Abbreviations:
+k_1 = k[y = enc(y_1,k1[]),x = enc(enc(z_1,y_1),k2[])]
+
+Clause 48: testunif((enc(@gen,@gen_1),ok,k_1),(@gen_2,@gen,@gen_1)) && attacker(enc(y_1,k1[])) && attacker(enc(enc(z_1,y_1),k2[])) -> bad
+Abbreviations:
+k_1 = k[y = enc(y_1,k1[]),x = enc(enc(z_1,y_1),k2[])]
+
+Clause 49: testunif((@gen,@gen,@gen_1,@gen_2,y_1,k1[],x_1,k2[]),(@gen_3,@gen_4,enc(@gen,@gen_5),@gen_5,enc(@gen_2,@gen_6),@gen_6,enc(@gen_1,@gen_7),@gen_7)) && attacker(y_1) && attacker(x_1) -> bad
+
+Clause 50: (forall @gen,@gen_1, (x_1 <> enc(enc(@gen_1,@gen),k2[]) | y_1 <> enc(@gen,k1[]))) && attacker(y_1) && attacker(x_1) -> output(c[])
+
+Clause 51: (forall @gen,@gen_1, (x_1 <> enc(enc(@gen_1,@gen),k2[]) | y_1 <> enc(@gen,k1[]))) && testunif((c[]),(@gen_2)) && attacker(y_1) && attacker(x_1) -> bad
+
+Clause 52: (forall @gen,@gen_1, (x_1 <> enc(enc(@gen_1,@gen),k2[]) | y_1 <> enc(@gen,k1[]))) && attacker(y_1) && attacker(x_1) -> attacker(ko)
+
+Clause 53: (forall @gen,@gen_1, (x_1 <> enc(enc(@gen_1,@gen),k2[]) | y_1 <> enc(@gen,k1[]))) && testunif((ko),(@gen_2)) && attacker(y_1) && attacker(x_1) -> bad
+
+Clause 54: testunif((@gen),(y_1)) && attacker(y_1) && attacker(x_1) -> bad
+
+Clause 55: attacker(x_1) -> input(c[])
+
+Clause 56: testunif((c[]),(@gen)) && attacker(x_1) -> bad
+
+Clause 57: testunif((@gen),(x_1)) && attacker(x_1) -> bad
+
+Clause 58: input(c[])
+
+Clause 59: testunif((c[]),(@gen)) -> bad
+*)

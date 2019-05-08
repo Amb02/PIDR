@@ -1,0 +1,77 @@
+param verboseRules = yes.
+param redundancyElim = no.
+param redundantHypElim = false.
+data cons/2.
+
+not anySCTService.
+
+data STSSTRING/0.
+ data ServiceTAG/3.
+ data rsasha1STRING/0.
+ data SecurityContextTAG/5.
+ data Env1/7.
+ fun pk/1.
+ fun x509/4.
+ fun aes/2.
+
+ pred isService/4.
+ pred isSCT/6.
+ pred mkMsg1/7.
+ pred isMsg11/7.
+
+ free publish.
+ private free anySCTService.
+
+ reduc decaes(k,aes(k,b)) = b.
+
+ clauses S = ServiceTAG(uri, ac, subj) -> isService:S,uri,ac,subj.
+
+ clauses tok = SecurityContextTAG(sctid,key,basetoken,appTo,basecert)
+	 -> isSCT:tok,sctid,key,basetoken,appTo,basecert.
+
+ clauses isSCT:sctok,sctid,sctkey,U,uri,cert 
+	 & ebody = aes(sctkey, b1) 
+	 & msg1 = Env1(uri,ac,id1,t1,ac,ebody,sctid)
+	 -> mkMsg1:msg1,uri,ac,sctok,id1,t1,b1.
+
+ clauses msg1 = Env1(uri,ac,id1,t1,ac,ebody,sctid) 
+	 & isSCT:sctok1,sctid1,sctkey1,U,ato1,cert1
+	 & b1 = decaes(sctkey1, ebody)
+	 -> isMsg11:msg1,sctok1,id1,t1,b1,ac,uri.
+
+ let Service = 
+	!in (publish,(cert,AServ));
+ 	let Aac,Asubj,Auri suchthat isService:AServ,Auri,Aac,Asubj in 
+        in (publish,msg1);
+	in (anySCTService,(sctoken2));
+	in (anySCTService,(sctoken1));
+	let sctid1,sctkey1,U suchthat isSCT:sctoken1,sctid1,sctkey1,U,Auri,cert in 
+  	let sctid2,sctkey2,U2 suchthat isSCT:sctoken2,sctid2,sctkey2,U2,Auri,cert in 
+	let id1,t1,b1,ac suchthat isMsg11:msg1,sctoken1,id1,t1,b1,ac,Auri in 
+  	event endC3().
+
+ let Client = !
+	!in (publish,(u,AServer,certA,Auri,n,ac,id2,t2,t1,b1,appTo));
+	new pwd;
+	let U = cons(u, pwd) in 
+	new id1;new key;new utokid;
+	new sctid;new sctkey;
+	(
+	let sct = SecurityContextTAG(sctid, sctkey, U, appTo, cert) in
+	!out (anySCTService,(sct))
+	|
+  	out (publish,sctkey);
+	let msg1 suchthat mkMsg1:msg1,Auri,ac, SecurityContextTAG(sctid,sctkey,U,appTo,certA),id1,t1,b1 in 
+  	out (publish,msg1)
+	).
+
+ query ev:endC3().
+
+ process 
+	new sr;
+	let kr = pk(sr) in 
+	new sx;
+	let cert = x509(sr,STSSTRING,rsasha1STRING,pk(sx)) in 
+  	out (publish,kr);
+   	out (publish,cert);
+   	( Service | Client )

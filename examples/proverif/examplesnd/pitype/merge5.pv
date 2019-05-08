@@ -1,0 +1,8 @@
+free a: bitstring.
+free c,d,e:channel.
+fun hash(bitstring):bitstring.
+
+equivalence
+   ! new a: bitstring; ! let x = hash(a) in ! out(c,x)
+
+   ! new a:bitstring; ! out(c, hash(a))

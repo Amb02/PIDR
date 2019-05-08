@@ -1,0 +1,8 @@
+const c : channel.
+const a : bitstring.
+event e.
+query event(e).
+
+process
+    in(c, =a);
+    event e

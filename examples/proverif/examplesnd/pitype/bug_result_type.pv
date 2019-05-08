@@ -1,0 +1,7 @@
+type s.
+type t.
+
+reduc forall x:bitstring; g(x) = x;
+      forall y:s, x:t; g((x,y)) = y.
+
+process 0

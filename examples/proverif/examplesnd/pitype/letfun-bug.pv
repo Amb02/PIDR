@@ -1,0 +1,38 @@
+(* This is an attempt to use sets and set exclusion in order to simulate 
+   exlclusive OR (XOR).  This is expected to fail because it is conceptually
+   the same as encoding associativity and communitivity which are stated to
+   be beyond proverif's capabilities.  However, things can be learned from
+   failure.
+
+   Note: For our purposes, set exclusion is defined as:
+
+    forall x, y : set
+    exclusion(x,y)  = union(x,y) - intersect(x,y)
+*)
+
+type bset.
+
+fun consset(bitstring, bset): bset [data].
+const emptyset: bset [data].
+letfun singleton(val : bitstring) = consset(val,emptyset).
+
+pred notmem(bitstring, bset).
+clauses
+    forall x: bitstring; notmem(x, emptyset);
+    forall x: bitstring, z:bitstring, y:bset; notmem(x,y) && x<>z -> notmem(x, consset(z,y)).
+
+(* exclusion(r,x,y) means r = x `exclusion` y *)
+pred exclusion(bset, bset, bset).
+clauses
+    forall x:bset; exclusion(x, emptyset, x);
+    forall x:bset, y:bset, z:bset, a:bitstring; notmem(a,y) && exclusion(z,x,y) -> exclusion(consset(a,z),consset(a,x), y);
+    forall x:bset, y:bset, z:bset, a:bitstring; notmem(a,x) && exclusion(z,x,y)-> exclusion(consset(a,z),x, consset(a,y)).
+
+(* Syntax error - the manual lies, the grammer is much more restricted *)
+letfun xor(val:bitstring, sb : bitstring) =
+    let s = bitStringToSet(sb) in
+    let t = singleton(val) in
+    let r:bset suchthat exclusion(r,t,s) in
+    r else emptyset.
+
+process 0

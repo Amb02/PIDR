@@ -1,0 +1,7 @@
+free c : channel.
+free d : channel [private].
+
+fun f(channel): channel.
+
+process
+  out(choice[f(c), d], d)

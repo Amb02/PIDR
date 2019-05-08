@@ -1,0 +1,38 @@
+#!/bin/sh
+
+output=secr`date '+%d.%m.%y-%H:%M:%S'`
+
+(
+if [ .$1 = . ]
+then
+    PROG=../../../xtime
+else
+    PROG="../../../xtime -repeat 10 -o /dev/null"
+fi
+
+echo Needham-Schroeder public key
+$PROG $HOME/spass/SPASS-1.0.3/SPASS ./needham-orig
+echo Needham-Schroeder public key corrected
+$PROG $HOME/spass/SPASS-1.0.3/SPASS ./needham-corr-orig
+echo Needham-Schroeder shared key
+$PROG $HOME/spass/SPASS-1.0.3/SPASS ./needham-shr-orig4
+echo Needham-Schroeder shared key corrected
+$PROG $HOME/spass/SPASS-1.0.3/SPASS ./needham-shr-corr4
+echo Denning-Sacco
+$PROG $HOME/spass/SPASS-1.0.3/SPASS ./denning-sacco-orig
+echo Denning-Sacco corrected
+$PROG $HOME/spass/SPASS-1.0.3/SPASS ./denning-sacco-corr-orig
+echo Otway-Rees
+$PROG $HOME/spass/SPASS-1.0.3/SPASS ./otway-rees-orig
+echo Otway-Rees Paulson err
+$PROG $HOME/spass/SPASS-1.0.3/SPASS ./otway-rees-paulson-err
+echo Yahalom
+$PROG $HOME/spass/SPASS-1.0.3/SPASS ./yahalom
+echo Simplified Yahalom
+# $PROG $HOME/spass/SPASS-1.0.3/SPASS ./simpleryahalom
+echo Does not terminate
+echo Skeme
+$PROG $HOME/spass/SPASS-1.0.3/SPASS ./skeme2
+
+) > tests/$output
+

@@ -1,0 +1,13 @@
+(* Should find that observational equivalence is wrong *)
+
+param verboseRules = yes.
+
+fun enc/2.
+reduc dec(enc(x,y),y) = x.
+
+free c.
+private free s,k.
+noninterf s.
+
+process
+  in(dec(enc(s,k),k), =())

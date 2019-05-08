@@ -1,0 +1,356 @@
+		
+
+
+(* nounif attacker:enc( *x, *y, *z ). *)
+(* nounif attacker:sig( x, *y, *z ). *)
+
+nounif attacker:vk(x).
+
+
+(* param verboseRules = true. *)
+
+not attacker:U1r1.
+not attacker:U1r2.
+not attacker:U1r3.
+not attacker:U1r4.
+not attacker:U1rSh2.
+not attacker:U1rSh3.
+not attacker:U1rSh4.
+not attacker:U2r1.
+not attacker:U2r2.
+not attacker:U2r3.
+not attacker:U2r4.
+not attacker:U2rSh3.
+not attacker:U2rSh4.
+not attacker:dk(x); x=U1E[].
+not attacker:dk(x); x=U2E[].
+not attacker:sk(U1S).
+not attacker:sk(U2S).
+not attacker:chBuffer1.
+not attacker:chBuffer2.
+not attacker:chBack1.
+not attacker:chBack2.
+not attacker:chBack3.
+
+(* TODO: arity of garbage destructors ... *)
+
+fun dk/1.
+fun ek/1.
+fun enc/3.
+fun garbageEnc/3.
+reduc dec(dk(A), enc(ek(A), m, r)) = m.
+reduc isenc(enc(ek(A), m, r)) = enc(ek(A), m, r);
+      isenc(garbageEnc(k, r, l)) = garbageEnc(k, r, l).
+reduc ekof(enc(ek(A), m, r)) = ek(A);
+      ekof(garbageEnc(k, r, l)) = k.
+reduc ekofdk(dk(A)) = ek(A).
+reduc isek(ek(A)) = ek(A).
+reduc isdk(dk(A)) = dk(A).
+
+fun sk/1.
+fun vk/1.
+fun sig/3.
+fun garbageSig/3.
+reduc issig(sig(sk(A), m, r)) = sig(sk(A), m, r);
+      issig(garbageSig(k, r, l)) = garbageSig(k, r, l).
+reduc ver(vk(A), sig(sk(A), m, r)) = m.
+reduc vkof(sig(sk(A), m, r)) = vk(A);
+      vkof(garbageSig(k, r, l)) = k.
+reduc vkofsk(sk(A)) = vk(A).
+reduc isvk(vk(A)) = vk(A).
+reduc issk(sk(A)) = sk(A).
+
+fun empty/0.
+fun string0/1.
+fun string1/1.
+reduc unstring0(string0(s)) = s.
+reduc unstring1(string1(s)) = s.
+
+fun garbage/2.
+
+(* FIXME *)
+(*reduc isin(x,(x,b,c,d)) = x;
+      isin(x,(a,x,c,d)) = x;
+      isin(x,(a,b,x,d)) = x;
+      isin(x,(a,b,c,x)) = x.*)
+
+fun O/0.
+fun S/1.
+reduc unS(S(n)) = n.
+
+(*
+All of the choices have the same length, so we don't care
+about length functions...
+*)
+
+(* public channels for parties *)
+free ch, ch1, ch2, ch3, ch4, chBitcoin.
+
+(* randomness for signature keys of honest parties *)
+private free U1S, U2S, U3S, U4S.
+
+(* private channels for communication with setup process *)
+(* private free ch1p, ch2p, ch3p, ch4p, chFinalCheckp. *)
+
+(* private channels for CHECKs *)
+private free chCHECK1, chCHECK2, chCHECKgo.
+(* private free chCHECKSign, chCHECKSignGo1. *)
+(* private free chCHECKSign2, chCHECKSignGo2. *)
+private free ch1CheckSign, ch2CheckSign.
+
+
+let user1 =
+	(* receive output address from setup process *)
+	let myek = ek(U1E) in
+	let mydk = dk(U1E) in
+	let mysk = sk(U1S) in
+	let myvk = vk(U1S) in
+
+	let myaout = aout1 in
+
+	(**** announcement phase ****)
+	(* create encryption key pair and publish the encryption key *)
+	out(ch1, sig(mysk, (PHASE_ANNOUNCE, sid, myek), U1r1));
+
+	(* receive encryption keys *)
+	let ekU1 = ek(U1E) in
+	in(ch1, sigEkU2);
+	let (=PHASE_ANNOUNCE, =sid, ekU2C) = ver(vkU2, sigEkU2) in
+	in(ch1, sigEkU3);
+	let (=PHASE_ANNOUNCE, =sid, ekU3C) = ver(vkU3, sigEkU3) in
+	in(ch1, sigEkU4);
+	let (=PHASE_ANNOUNCE, =sid, ekU4C) = ver(vkU4, sigEkU4) in
+
+	let ekU4 = isek(ekU4C) in
+	let ekU3 = isek(ekU3C) in
+	let ekU2 = isek(ekU2C) in
+
+
+	(**** equivocation check phase ****)
+	let eks = (ekU1, ekU2, ekU3, ekU4) in
+	out(ch1, sig(mysk, (PHASE_CHECK_EQUIVOCATION, sid, eks), U1r2));
+	in(ch1, eks2);
+	in(ch1, eks3);
+	in(ch1, eks4);
+	let (=PHASE_CHECK_EQUIVOCATION, =sid, =eks) = ver(vkU2, eks2) in
+	let (=PHASE_CHECK_EQUIVOCATION, =sid, =eks) = ver(vkU3, eks3) in
+	let (=PHASE_CHECK_EQUIVOCATION, =sid, =eks) = ver(vkU4, eks4) in
+
+	(**** shuffle phase ****)
+	let c4 = enc(ekU4, myaout, U1rSh4) in
+	let c3 = enc(ekU3, c4, U1rSh3) in
+	let c2 = enc(ekU2, c3, U1rSh2) in
+
+	out(chBuffer1, (c3, eks));
+	event user1HasWrittenToBuffer();
+
+	let vector = c2 in
+
+	out(ch1, sig(mysk, (PHASE_SHUFFLE, sid, vector), U1r3));
+
+	(**** signature phase ****)
+	(* receive shuffled vector *)
+	in(ch1, finalvectorSig);
+	let (=PHASE_BROADCAST_SHUFFLED, =sid, finalvector) = ver(vkU4, finalvectorSig) in
+	let (x1, x2, x3, x4) = finalvector in
+	(* sign if output address is contained in vector *)
+
+	new chBack1;
+	out(ch1CheckSign, (sid, finalvector, chBack1));
+	in(chBack1, =chBack1);
+
+	out(ch1, sig(mysk, (PHASE_SIGN, sid, finalvector), U1r4));
+	event endUser1().
+
+let user2 =
+	let myaout = aout2 in
+	(**** announcement phase ****)
+	(* create encryption key pair and publish the encryption key *)
+	out(ch2, sig(sk(U2S), (PHASE_ANNOUNCE, sid, ek(U2E)), U2r1));
+
+	(* receive encryption keys *)
+	let ekU2 = ek(U2E) in
+
+	in(ch2, sigEkU1);
+	let (=PHASE_ANNOUNCE, =sid, ekU1) = ver(vkU1, sigEkU1) in
+	in(ch2, sigEkU3);
+	let (=PHASE_ANNOUNCE, =sid, ekU3) = ver(vkU3, sigEkU3) in
+	in(ch2, sigEkU4);
+	let (=PHASE_ANNOUNCE, =sid, ekU4) = ver(vkU4, sigEkU4) in
+
+	let ekU1 = isek(ekU1C) in
+	let ekU3 = isek(ekU3C) in
+	let ekU2 = isek(ekU2C) in
+
+	(**** equivation check phase ****)
+	let eks = (ekU1, ekU2, ekU3, ekU4) in
+
+	out(ch2, sig(sk(U2S), (PHASE_CHECK_EQUIVOCATION, sid, eks), U2r2));
+	in(ch2, eks1);
+	in(ch2, eks3);
+	in(ch2, eks4);
+	let (=PHASE_CHECK_EQUIVOCATION, =sid, =eks) = ver(isvk(vk(U1S)), eks1) in
+	let (=PHASE_CHECK_EQUIVOCATION, =sid, =eks) = ver(isvk(vkU3), eks3) in
+	let (=PHASE_CHECK_EQUIVOCATION, =sid, =eks) = ver(isvk(vkU4), eks4) in
+
+	in(ch2, x);
+	let (=PHASE_SHUFFLE, =sid, v) = ver(isvk(vk(U1S)), x) in
+	let d = dec(dk(U2E), v) in
+	if ekof(d) = ekU3 then
+
+	new chBack3;
+	event user2WantsToReadFromBuffer();
+	out(chBuffer2, ((d, eks), chBack3));
+	in(chBack3, =(d, eks));
+
+	let c4 = enc(isek(ekU4), myaout, U2rSh4) in
+	let c3 = enc(isek(ekU3), c4, U2rSh3) in
+
+
+	out(ch2, sig(sk(U2S), (PHASE_SHUFFLE, sid, (d, c3)), U2r3));
+	in(ch2, finalvectorSig);
+	let (=PHASE_BROADCAST_SHUFFLED, =sid, finalvector) = ver(vkU4, finalvectorSig) in
+	let (x1, x2, x3, x4) = finalvector in
+
+	new chBack2;
+	out(ch2CheckSign, (sid, finalvector, chBack2));
+	in(chBack2, =chBack2);
+
+    out(ch2, sig(sk(U2S), (PHASE_SIGN, sid, finalvector), U2r4));
+	event endUser2();
+	0.
+
+let buffer =
+	(
+		in(chBuffer1, x);
+		let (d, eks) = x in
+		in(chBuffer2, (y, chBack3));
+		if x = y then
+			event additionalCheckSucceeded();
+			out(chBack3, x)
+	).
+
+(* Intuition:
+For trace properties,
+parties check only their own address.
+
+For equivalence, they might check each other's address, which is not realistic.
+We prove however that the protocol would not finish anyway.
+*)
+
+let user1CheckSign=
+	in(ch1CheckSign, (=sid, vector, chBack));
+	let (x1, x2, x3, x4) = vector in
+	if x1 = aout1 then
+		user1CheckSignB
+	else if x2 = aout1 then
+		user1CheckSignB
+	else if x3 = aout1 then
+		user1CheckSignB
+	else if x4 = aout1 then
+		user1CheckSignB
+	.
+
+let user1CheckSignB =
+	if x1 = aout2 then
+		event user1AdditionalSignCheckSucceeded();
+		out(chBack, chBack)
+	else if x2 = aout2 then
+		event user1AdditionalSignCheckSucceeded();
+		out(chBack, chBack)
+	else if x3 = aout2 then
+		event user1AdditionalSignCheckSucceeded();
+		out(chBack, chBack)
+	else if x4 = aout2 then
+		event user1AdditionalSignCheckSucceeded();
+		out(chBack, chBack)
+	else
+		(* do not send signal, abort protocol *)
+		0.
+
+let user2CheckSign=
+	in(ch2CheckSign, (=sid, vector, chBack));
+	let (x1, x2, x3, x4) = vector in
+	if x1 = aout2 then
+		user2CheckSignB
+	else if x2 = aout2 then
+		user2CheckSignB
+	else if x3 = aout2 then
+		user2CheckSignB
+	else if x4 = aout2 then
+		user2CheckSignB
+	.
+
+let user2CheckSignB =
+	if x1 = aout1 then
+		event user2AdditionalSignCheckSucceeded();
+		out(chBack, chBack)
+	else if x2 = aout1 then
+		event user2AdditionalSignCheckSucceeded();
+		out(chBack, chBack)
+	else if x3 = aout1 then
+		event user2AdditionalSignCheckSucceeded();
+		out(chBack, chBack)
+	else if x4 = aout1 then
+		event user2AdditionalSignCheckSucceeded();
+		out(chBack, chBack)
+	else
+		(* do not send signal, abort protocol *)
+		0.
+
+
+let bitcoinNetwork =
+	in(chBitcoin, m1);
+	in(chBitcoin, m2);
+	in(chBitcoin, m3);
+	in(chBitcoin, m4);
+	let (=PHASE_SIGN, sid1, vector) = ver(vkU1, m1) in
+	let (=PHASE_SIGN, sid2, =vector) = ver(vkU2, m2) in
+	let (=PHASE_SIGN, sid3, =vector) = ver(vkU3, m3) in
+	let (=PHASE_SIGN, sid4, =vector) = ver(vkU4, m4) in
+	event transactionAccepted(vector, sid).
+
+
+
+		(* check reachability of final event *)
+	query ev:transactionAccepted(vector, sid).
+	query ev:endUser1().
+	query ev:endUser2().
+	
+
+process
+	(* declare some useful constants. we can use the preprocessor if this generates trouble *)
+	(* phases *)
+	let PHASE_ANNOUNCE = empty() in
+	let PHASE_CHECK_EQUIVOCATION = string0(PHASE_ANNOUNCE) in
+	let PHASE_SHUFFLE = string0(PHASE_CHECK_EQUIVOCATION) in
+	let PHASE_BROADCAST_SHUFFLED = string0(PHASE_SHUFFLE) in
+	let PHASE_SIGN = string0(PHASE_BROADCAST_SHUFFLED) in
+
+	let vkU1 = vk(U1S) in
+	let vkU2 = vk(U2S) in
+
+	new aout1; new U1E;
+	new U1r1; new U1r2; new U1r3; new U1r4;
+	new U1rSh2; new U1rSh3; new U1rSh4;
+
+	new aout2; new U2E;
+	new U2r1; new U2r2; new U2r3; new U2r4;
+	new U2rSh3; new U2rSh4;
+
+	new sid;
+	new chBuffer1; new chBuffer2;
+
+	out(ch, (vkU1, vkU2));
+	(* we send the attacker the signing keys. would be nicer to let him generate the keys
+	but ProVerif takes long to terminate.*)
+	let vkU3 = vk(U3S) in
+	let vkU4 = vk(U4S) in
+	out(ch, (sk(U3S), sk(U4S)));
+	(0
+	| (!bitcoinNetwork)
+	| ((
+		out(ch, sid);
+		out(ch, (aout1, aout2));
+		(user1 | user2 | user1CheckSign | user2CheckSign | buffer ) ))
+	)

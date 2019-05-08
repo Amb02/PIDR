@@ -1,0 +1,467 @@
+(* Post-review: Unified ProVerif specification, version 14, for Scytl's Voting Protocol. All variants included. Tabulation size : 8 spaces. *)
+(* Reachability ............ : For Cast as Intended and Tallied as Cast properties; from study_v14.pve with the 'REA' option.               *)
+(* Observational Equivalence : For Ballot Provivacy; 2 honest + many dishonest in the challenge; [..] with the 'OBS' option w/ or w/o HH.   *)
+
+(* 0. Maintenance informations. *)
+
+(* Notation changes from Report to Paper *)
+(* Report : pCC, CC, sCC	-> Paper : pRC, RC, sRC	  *)
+(* Report : CM_table, CMtable	-> Paper : M_table, M	  *)
+(* Report : S_VCC		-> Paper : CRF, aka SigFC *)
+(* Report : VCCssk, VCCspk	-> Paper : Skc, Pkc	  *)  (* idem vccssk/skc .. *)
+(* Report : VCC, sVCC		-> Paper : FC, sFC	  *)
+(* Report : BCKid, bck		-> Paper : CCid, cc	  *)
+(* Report : VCksid		-> Paper : Ks		  *)  (* and obtained through decryption *)
+(* Report : VCidsk, VCidpk	-> Paper : Skid, Pkid	  *)
+(* Report : KSpwd, VCid		-> Paper : Kid, Id	  *)  (* Kid not in the spec, used as deltaKey(SVKid) *)
+(* Report : Csk, csk		-> Paper : Ska, ska	  *)
+(* Report : EBpk, EBsk		-> Paper : Pkb, Skb	  *)  (* instead of Pk,Sk because too confusing with other keys *)
+(* Report : ebpk, ebsk		-> Paper : pkb, skb	  *)  (* alias pk,sk *)
+
+(* Notation changes from Scytl to Paper *)
+(* Types      : agent_id -> agentId  private_ekey -> ekey  public_ekey -> epkey  symmetric_ekey -> symkey                                *)
+(*                                   private_skey -> skey  public_skey -> spkey  symmetric_key  -> symkey  -- for Ska, fused with symkey *)
+(* Functions  : Enc_c1 -> aenc1   Enc_c2 -> aenc2   Enc -> aenc   Enc_s -> enc   Dec -> adec   Dec_s -> dec                              *)  
+(* Role Alice : Alice -> Voter    sRC_Received -> sRC'     GetVoterData(... reordered)         Confirmed/HappyUser with InitData -> SVK  *)
+(* Role Cmp   : Cmp -> Device     Computer -> VDevice *)
+(* ZKP        : Remove tild from ZKP;  also in EC;         Ballot:  C -> E;  phi -> (..,..);                                             *)
+(* Fonction v(..) : nat -> bitstring en résultat;  pRC(.. nat) --> bitstring;  cc(..) : nat -> bitstring;  sRC(..nat) --> bitstring;     *)
+(* Retour :  conserver CCid at sFCid dans Voter, Device, et Voter_Device, pour éviter le conflit avec cc(..) et sFC(..).                 *)
+(* InsertBB :  encryption E au leiu de ballot (E, ..);   Type :  nat -> int  *)
+
+(* NOTE : The notations in this model matches the ones in the EuroSP submission. However, small differences may exist.               *)
+(*        For example : Ska in this model is called gka in the submission. A password pwd in the submission is called svk here.          *)
+(*        The ProVerif model is also more precise. For example, it makes the difference between voting choices (the index of a candidate *)
+(*        in the list) and voting options (the prime number associated to this index). Also, Tallied-as-Cast -> Individual Verifiability *)
+
+set ignoreTypes=true.
+
+
+
+
+(* 1. Objects and Types *)
+
+type   agentId .      fun t_agentId(agentId)         :    bitstring   [data,typeConverter].  (* The type for any IDs like e.g. voter's Id.  *)
+type   password.      fun t_password(password)       :    bitstring   [data,typeConverter].  (* The type for user passwords.                *)
+type   int     .      fun t_int(int)                 :    bitstring   [data,typeConverter].  (* The type for integers (modulo).             *)
+free   c		      : channel              .    (* Public Channel for communications with the intruder   # public                 *)
+fun    v(int)                 : int         [data]   .    (* The function from voting choices to voting options    # public ,    invertible *)
+table  bb(agentId,bitstring)                         .    (* The Ballot Box, storing the ballots for each agent    # private                *)
+table  cb(agentId,bitstring,bitstring)               .    (* The Confirm. Box, storing FC/CRF for each agent id    # private                *)
+free   svka, svkb             : password    [private].    (* Defines two SVK for two honest voters Alice and Bob   # public                 *)
+free   ja1,jb1,ja2,jb2,ja3,jb3   : int                  .    (* Voting choices for the Honest voters -- REA or OBS    # public                 *)
+free   a1,a2,a3         : int		     .	  (* MODELING : an indexed set of int atoms, for disquality tests  -- only in Test. *)
+
+
+
+(* 2. Intruder capabilities and functions extracted from the CryptoPaper. *)
+
+(* Encryption scheme  --  from CryptoPaper, page 4  --  expected to be ElGamal  --  Key pairs generated through Gen_e, which is implicit.   *)
+type   ekey .  fun t_ekey(ekey)   : bitstring  [data,typeConverter].                         (* The type for private keys + type converter. *)
+type   epkey.  fun t_epkey(epkey) : bitstring  [data,typeConverter].                         (* The type for public keys  + type converter. *)
+fun    ske(agentId)               : ekey [private]   .    (* The private enc. key associated to an agentId         # private                *)
+fun    pube(ekey)                 : epkey            .    (* The function to rebuild a public key from the private # public , noninvertible *)
+letfun pke(Id:agentId)		  = pube(ske(Id))    .    (* The public  enc. key associated to an agent id        # public ,    invertible *)
+fun    aenc1(                int) : int              .    (* The c1 part of the asymmetric encryption function with explicit random number. *)
+fun    aenc2(epkey,bitstring,int) : bitstring        .    (* The c2 part of the asymmetric encryption function with explicit random number. *)
+letfun aenc(Pk:epkey,M:bitstring,R:int) = (aenc1(R),aenc2(Pk,M,R)).							      (* Encryption *)
+reduc  forall Sk:ekey , M:bitstring, R:int;  adec(Sk,(aenc1(R),aenc2(pube(Sk),M,R))) = M   .			              (* Decryption *)
+reduc  forall Pk:epkey, M:bitstring, R:int;  VerifE(Pk,(aenc1(R),aenc2(Pk,M,R)))     = true.				      (* Checks key *)
+reduc  forall Id:agentId;                    Get_Id(pube(ske(Id)))                   = Id  .				      (* Extract Id *)
+
+
+(* Signature scheme  --  from CryptoPaper, page 4 & 5  --  expected to be the RSA Probabilistic Signature Scheme (PSS)  --  Gen_s implicit. *)
+type   skey .  fun t_skey(skey)   : bitstring  [data,typeConverter].			     (* The type for private keys + type converter. *)
+type   spkey.  fun t_spkey(spkey) : bitstring  [data,typeConverter].			     (* The type for public keys  + type converter. *)
+fun    sks(agentId)		  : skey   [private] .    (* The private sig. key associated to an agentId         # private                *)
+fun    pubs(skey)		  : spkey	     .    (* The function to rebuild a public key from the private # public , noninvertible *)
+letfun pks(Id:agentId)		  = pubs(sks(Id))    .    (* The public  sig. key associated to an agent id        # public ,    invertible *)
+fun    Sign(skey,bitstring)	  : bitstring	     .    (* The digital signature function with explicit random number. (Signature)        *)
+reduc  forall Sk:skey, M:bitstring;  Verify(pubs(Sk),M,Sign(Sk,M)) = true.						    (* Verification *)
+reduc  forall Sk:skey, M:bitstring;  Checks(pubs(Sk),Sign(Sk,M))   = M   .				    (* More expressive than Verify. *)
+reduc  forall Sk:skey, M:bitstring;  Get_Message(Sign(Sk,M))       = M   .				    (* Worst case for modeling only *)
+
+
+(* Modeling of the Non-Interactive Zero-Knowledge Proofs of Knowledge  -- from CryptoPaper, pages 5 & 6  -- Names changed for abstractions. *)
+(* Both the 'Equality of discrete logarithms' (used in two variants) and the 'Knowledge of encryption exponent' are abstracted inside the   *)
+(* ZKP and VerifP operators. Consequently, the c1~ and c2~, which are intermediate values, are not needed anymore and thus abstracted away. *)
+(* Moreover, the 'Correct decryption' is not needed for this modeling w.r.t the expected security properties.                               *)
+fun    pRC(ekey,int) : int.				  (* The built of partial Return Codes (ski,vi) = vi^ski   # public , noninvertible *)
+reduc  forall Sk:ekey, V:int;	    Get_Vote1(pRC(Sk,V),Sk)    = V        .			      (* Worst case for modeling only       *)
+fun    ZKP(epkey, epkey, bitstring, int,int,int, int, ekey) : bitstring.			      (* Modeling of the proof generation   *)
+reduc  forall Pkb:epkey, Skid:ekey, v1:int,v2:int,v3:int, R:int;					      (* Modeling of the proof verification *)
+       VerifP(Pkb, pube(Skid), (aenc1(R),aenc2(Pkb,(t_int(v1),t_int(v2),t_int(v3)),R)), pRC(Skid,v1),pRC(Skid,v2),pRC(Skid,v3),
+          ZKP(Pkb, pube(Skid), (aenc1(R),aenc2(Pkb,(t_int(v1),t_int(v2),t_int(v3)),R)), pRC(Skid,v1),pRC(Skid,v2),pRC(Skid,v3), R,Skid)) = true.
+(* Consequently to abstracting c1~ and c2~ away from ZKP/VerifP, we do not need anymore the 4 variants of this reduction shown previously.  *)
+(* Remaining limitation : the agregation function phi(..) is commutative, but modeled as a pair; otherwise far too many cases for ProVerif. *)
+
+
+(* Symmetric encryption scheme  --  from CryptoPaper Draft update, page 3  --  expected to be based on AES                                  *)
+type   symkey.   fun t_symkey(symkey) : bitstring [data,typeConverter].				  (* The type for symetric encryption keys. *)
+fun    enc(symkey,bitstring)	      : bitstring.						  (* Encryption (symmetric key)             *)
+reduc  forall SymK:symkey, M:bitstring; dec(SymK,enc(SymK,M)) = M.				  (* Decyption  (symmetric key)             *)
+
+
+(* Key and IDs derivation scheme  --  from CryptoPaper Draft update, page 3  *)
+(* free   IDseed		 : bitstring	     . *)  (* A public seed for IDs   --  Not needed: value fixed  # public                 *)
+(* free   KEYseed		 : bitstring	     . *)  (* A public seed for KEYs  --  Not needed: value fixed  # public                 *)
+fun    deltaId(password)	 : agentId	     .     (* The delta function, for agents IDs                   # public                 *)
+fun    deltaKey(password)	 : symkey	     .     (* The delta function, for symmetric encryption keys    # public                 *)
+
+
+(* Keyed Pseudo-Random and hash functions  --  from cryptoPaper, pages 7 & 8  --  Note: Not the same keys as for symmetric encryption       *)
+fun    H(symkey)		  : bitstring	     .     (* The hash function  --  from CryptoPaper page 5       # public , noninvertible *)
+fun    f(symkey,int)		  : symkey	     .     (* The keyed pseudo-random function f  --  page 7       # public , noninvertible *)
+
+
+
+(* 3. Initialization sequence (done off-line in this modeling). *)
+
+(* Setup(...) i.e. the initialisation step from the Registrar  --  done off-line in this modeling  --  from CryptoPaper page 9              *)
+free   election		   : agentId		     .    (* The election id - used to derive public/private keys  # public (sk is private) *)
+free   signature	   : agentId		     .    (* The signature id - used to derive public/private keys # public (sk is private) *)
+letfun pkb                 = pke(election)	     .    (* The Election public  key (for the Board) in (Pkb,Skb) # public                 *)
+letfun skb                 = ske(election)	     .    (* The Election private key (for the Board) in (Pkb,Skb) # private                *)
+free   ska                 : symkey [private]	     .    (* The Global Audit key 'Ska' (for f(...) function)      # private                *)
+letfun pkc                 = pks(signature)	     .    (* The Global Confirmation public  key in pair (Pkc,Skc) # public                 *)
+letfun skc                 = sks(signature)	     .    (* The Global Confirmation private key in pair (Pkc,Skc) # private                *)
+
+
+(* Register(..,id,ska,skc) ie. the registration step for any new voter  --  done off-line through functions  --  from CryptoPaper page 9    *)
+fun    cc(agentId)	       : int       [private] .	       (* The Confirmation Code 'CC^id'  of an agent id                   # private *)
+fun    sRC(symkey,agentId,int) : bitstring [private] .	       (* The short Return Code 'sRC^id_i' of an agent id + voting option # private *)
+fun    sFC(symkey,agentId)     : bitstring [private] .	       (* The short Finalization Code 'sFC^id' of an agent id             # private *)
+reduc  forall SVK:password; GetKs(deltaId(SVK)) = enc(deltaKey(SVK), t_ekey(ske(deltaId(SVK)))).	     (* CryptoPaperDraft upd.page 4 *)
+fun    M_table(symkey,agentId) : bitstring	   .           (* The Mapping Table ('M_id', unbounded)  --  opened with readRC/FC().       *)
+reduc  forall Ska:symkey, Id:agentId, J:int;                                                                       
+       readRC(H(f(Ska, pRC(ske(Id),v(J)  ))), M_table(Ska,Id)) = enc(f(Ska, pRC(ske(Id),v(J)  )), sRC(Ska,Id,v(J))).	     (* enc(RC,sRC) *)
+reduc  forall Ska:symkey, Id:agentId;                                                                              
+       readFC(H(f(Ska, pRC(ske(Id),cc(Id)))), M_table(Ska,Id)) = enc(f(Ska, pRC(ske(Id),cc(Id))), sFC(Ska,Id))     .	     (* enc(FC,sFC) *)
+(* For any voter id, generates Pkid,Skid ............ : pke(id) and ske(id) and GetKs(id)       --  distributed in encrypted private data.  *)
+(* For any voter id, chooses a confirmation key ..... : cc(id) as defined above;                --  distributed in VoterData and Mapping.   *)
+(* For any voter id, computes a list of Return Codes RC(id,i) ......... : with f(..) and pRC(..) and v(i)    --  used to build the Mapping. *)
+(* for any voter id, computes the Finalization Code  FC(id) ........... : with f(..) and pRC(..) and cc(id)  --  used to build the Mapping. *)
+(* for any voter id, chooses the short RC and short FC ................ : with sRC(..) and sFC(..) -- distributed in VoterData and Mapping. *)
+(* For any voter id, computes the signature of the Finalization Code .. : Sign(skc,sFC(id))                  --  distributed in ServData.   *)
+(* For any voter id, stores a list of hashed Return Codes {H(RC(id,i))}_i=1..inf ..... : through MakeRFList  --  distributed in ServData.   *)
+
+
+(* Registration data for any voter id  --  VoterData(svk,ska) produced by the Registrar for Voter   --  opened with a reduction             *)
+fun   VoterData(password,symkey) : bitstring [private].
+reduc forall Ska:symkey, SVK:password, J1:int,J2:int,J3:int;
+      GetVoterData(VoterData(SVK,Ska),J1,J2,J3) = (SVK, sRC(Ska,deltaId(SVK),v(J1)),sRC(Ska,deltaId(SVK),v(J2)),sRC(Ska,deltaId(SVK),v(J3)), cc(deltaId(SVK)), sFC(Ska,deltaId(SVK))).
+(*    Note: The set of sRC(id,v(J)) is a selection of sRC corresponding to the {J$i|$i=1..3}, decided at Voter's initialisation.           *)
+
+
+(* Registration data for the server (Bulletin Board)  --  ServData(pke,Ska,sks) produced by the Registrar  -- opened with a reduction       *)
+fun   ServData(epkey,symkey,skey) : bitstring [private].
+reduc forall Pkb:epkey, Ska:symkey, Skc:skey, SVK:password;							(* Note : Id = deltaId(SVK) *)
+      GetServData(ServData(Pkb,Ska,Skc),deltaId(SVK)) = (Pkb, Ska, pubs(Skc), enc(deltaKey(SVK),t_ekey(ske(deltaId(SVK)))),
+							 M_table(Ska,deltaId(SVK)), Sign(Skc,sFC(Ska,deltaId(SVK))) ).
+
+
+
+(* 4. Algebraic properties and List of Events *)
+
+(* Equational theory commented out  --  Kept for reference but this property is not supported by ProVerif. *)
+(* equation forall {V$i:bitstring|$i=1..3};  ({t_int(V$i)|$i=1..3}) = ({t_int(V$i)|$i=1..3 'mixed' }).  *)              (* Commutativity *)
+
+event Confirmed(password, int,int,int).                                     (* Issued by the voter when he/she confirms his/her vote.    *)
+event HappyUser(password, int,int,int).                                     (* Issued by the voter when he/she terminates successfuly.   *)
+event InsertBB( agentId, bitstring).                                           (* Issued by the server when it adds someting in BB.         *)
+event HasVoted( bitstring, agentId, bitstring, bitstring, bitstring).          (* Issued by the server when it gets a voter's confirmation. *)
+event NeverTrue.                                                               (* An event that is never activated, and thus, never true.   *)
+event Results(int,int,int,int,int,int).				       (* Issued by the Tally when it publishes the results.        *)
+
+
+
+(* 5. Methods and Agents processes *)
+
+(* GetID(SVKid)  --  VDevice generates the Voter's identifier  --  Directly replaced by deltaId(SVKid)  --  from CryptoPaper update page 4. *)
+(* letfun GetID(SVKid:password) = deltaId(SVKid). *)
+
+(* GetKey(SVKid,Ks)  --  VDevice retreives the Voter's private voting key from the keystore  --  from CryptoPaper update page 4.            *)
+letfun GetKey(SVKid:password,Ks:bitstring) =
+    let t_ekey(Skid:ekey) = dec(deltaKey(SVKid),Ks) in
+    Skid
+.
+
+(* CreateVote(Pkb,Id,Vopt,Skid)  --  VDevice creates the ballot  --  from CryptoPaper pages 9 & 10.                                         *)
+(* NOTE : Change w.r.t. the CryptoPaper Update page 4 : Pkb added as 1st argument, because it is needed by this method.                     *)
+letfun CreateVote(Pkb:epkey,Id:agentId,J1:int,J2:int,J3:int,Pkid:epkey,Skid:ekey) =
+    let V = (t_int(v(J1)),t_int(v(J2)),t_int(v(J3))) in new R:int; let E = aenc(Pkb, V, R) in
+    let P = ZKP(Pkb,Pkid,E,pRC(Skid,v(J1)),pRC(Skid,v(J2)),pRC(Skid,v(J3)), R,Skid) in
+    (E, pRC(Skid,v(J1)),pRC(Skid,v(J2)),pRC(Skid,v(J3)), Pkid, P)
+.
+
+(* ProcessVote(bb,Id,B)  --  Server checks and processes the ballot  --  bb tested and filled outside  --  from CryptoPaper page 10.        *)
+letfun ProcessVoteCheck(Pkb:epkey,Id:agentId,B:bitstring) =
+    let (E:bitstring, W1:int,W2:int,W3:int, =pke(Id), P:bitstring) = B in
+    let Ok1 = VerifP(Pkb,pke(Id),E,W1,W2,W3, P) in
+(*  let Ok2 = VerifE(Pkb, E) in            NOTE : Commented out because this is not shown in the last version of the CryptoPaper (02/2017). *)
+    true
+.
+
+(* CreateRC(B,ska,M)  --  Server prepares the Return Codes  --  aka. CreatePallotProof  --  from CryptoPaper page 10.                       *)
+letfun CreateRC(B:bitstring,Ska:symkey,M:bitstring) =
+    let (E:bitstring, W1:int,W2:int,W3:int, Pkid:epkey, P:bitstring) = B in
+    let (RC1:symkey,RC2:symkey,RC3:symkey) = (f(Ska,W1),f(Ska,W2),f(Ska,W3)) in
+    let sRC1 = dec(RC1,readRC(H(RC1),M)) in 
+    let sRC2 = dec(RC2,readRC(H(RC2),M)) in 
+    let sRC3 = dec(RC3,readRC(H(RC3),M)) in 
+    (sRC1,sRC2,sRC3)
+.
+
+(* Confirm(Id,B,Skid,CCid)  --  VDevice generates a Confirmation Message  --  Done directly inside 'Device' and 'Voter_Device'.             *)
+
+(* AuditBallotProof(({sRC'$i|$i=1..3}),({sRCid$i|$i=1..3}))  --  Voter checks if all expected RC were indeed received.                    *)
+(* According to the CryptoPaper update, instead of a method, this is done directly inside the 'Voter' and 'Voter_Device' processes.         *)
+
+(* ProcessConfirm(bb,Id,CMid,Ska,Skc,..)  --  Server checks the retreived short Finalization Code.                                          *)
+(* Instead of a method, this is done directly inside the 'Serv' process.                                                                    *)
+
+
+(* Typing of the messages -- between Voter and his VDevice only *)
+free mAC1, mAC2, mCA1, mCA2 : bitstring.
+
+(* Voter  --  The client process *)
+let Voter(Ch1:channel,InitData:bitstring,J1:int,J2:int,J3:int) =
+    (* Checks that the voting choices are all different *)
+    if (J1 = J1 && a1 <> a1) || (J1 = J2 && a1 <> a2) || (J1 = J3 && a1 <> a3) then 0 else 
+    if (J2 = J1 && a2 <> a1) || (J2 = J2 && a2 <> a2) || (J2 = J3 && a2 <> a3) then 0 else 
+    if (J3 = J1 && a3 <> a1) || (J3 = J2 && a3 <> a2) || (J3 = J3 && a3 <> a3) then 0 else 	    (* No honest voter can use twice the same option *)
+    (* Retrieves registration data obtained from the Registrar  --  Set of initial data given to Voter by the Registrar.             *)
+    let (SVK:password, sRC1:bitstring,sRC2:bitstring,sRC3:bitstring, CCid:int, sFCid:bitstring) = GetVoterData(InitData,J1,J2,J3) in
+    (* Voting part -- The voting process followed by agent Voter *)
+    out(Ch1, ( mAC1,SVK,J1,J2,J3));
+    in( Ch1, (=mCA1,(sRC'1:bitstring,sRC'2:bitstring,sRC'3:bitstring)));
+    if ((sRC'1=sRC1) || (sRC'2=sRC1) || (sRC'3=sRC1)) && ((sRC'1=sRC2) || (sRC'2=sRC2) || (sRC'3=sRC2)) && ((sRC'1=sRC3) || (sRC'2=sRC3) || (sRC'3=sRC3)) then			    (* Compares the short Return Codes.              *)
+    ( event Confirmed(SVK, J1,J2,J3);
+      out(Ch1, ( mAC2,CCid));
+      in( Ch1, (=mCA2,=sFCid));						            (* Voter checks the Finalization Code's value.   *)
+      event HappyUser(SVK, J1,J2,J3)
+    )
+.
+
+(* VDevice  --  The Voter's computer *)
+let Device(Ch1:channel,Ch2:channel,Pkb:epkey) =
+    in( Ch1, (=mAC1,SVK:password,J1:int,J2:int,J3:int));				    (* The Voter password plus the Voting options.   *)
+    let Id:agentId = deltaId(SVK) in						    (* The GetID method; CryptoPaperUpdate page 4.   *)
+    out(Ch2, Id);                                                                   (* Sends the Voter's Id to the Bulletin Board.   *)
+
+    in( Ch2, Ks:bitstring);							    (* Receives the associated Voter's keystore.     *)
+    let Skid = GetKey(SVK,Ks) in						    (* Retreives the associated Voter's private key. *)
+    out(Ch2, CreateVote(Pkb,Id,J1,J2,J3,pube(Skid),Skid));		    (* Sends the ballot (ie. 'Vote') to the server.  *)
+
+    in( Ch2, sRC_Set:bitstring);						    (* Transmits the Return Codes to the voter.      *)
+    out(Ch1, ( mCA1,sRC_Set));
+
+    in( Ch1, (=mAC2,CCid:int));
+    out(Ch2, pRC(Skid,CCid));						            (* The Confirm(Id,_,Skid,CCid) voter's method.   *)
+
+    in( Ch2, sFCid:bitstring);							    (* Transmits the Finalization Code to the voter. *)
+    out(Ch1, ( mCA2,sFCid))
+.
+
+(* MODELING  --  Voter plus her VDevice together (if both honest, to avoid useless secure communications).                           *)
+let Voter_Device(InitData:bitstring,J1:int,J2:int,J3:int,Ch2:channel,Pkb:epkey) =
+    (* Checks that the voting choices are all different *)
+    if (J1 = J1 && a1 <> a1) || (J1 = J2 && a1 <> a2) || (J1 = J3 && a1 <> a3) then 0 else 
+    if (J2 = J1 && a2 <> a1) || (J2 = J2 && a2 <> a2) || (J2 = J3 && a2 <> a3) then 0 else 
+    if (J3 = J1 && a3 <> a1) || (J3 = J2 && a3 <> a2) || (J3 = J3 && a3 <> a3) then 0 else 	    (* No honest voter can use twice the same option *)
+    (* Retrieves registration data obtained from the Registrar  --  Set of initial data given to Voter by the Registrar.             *)
+    let (SVK:password, sRC1:bitstring,sRC2:bitstring,sRC3:bitstring, CCid:int, sFCid:bitstring) = GetVoterData(InitData,J1,J2,J3) in
+    (* Voting part -- The voting process followed by agent Voter *)
+    let Id:agentId = deltaId(SVK) in						    (* The GetID method; CryptoPaperUpdate page 4.   *)
+    out(Ch2, Id);								    (* Sends the Voter's Id to the Bulletin Board.   *)
+
+    in( Ch2, Ks:bitstring);							    (* Receives the associated Voter's keystore.     *)
+    let Skid = GetKey(SVK,Ks) in						    (* Retreives the associated Voter's private key. *)
+    out(Ch2, CreateVote(Pkb,Id,J1,J2,J3,pube(Skid),Skid));		    (* Sends the ballot (ie. 'Vote') to the server.  *)
+
+    in( Ch2, (sRC'1:bitstring,sRC'2:bitstring,sRC'3:bitstring));					    (* Receives the short Return Codes from server.  *)
+    if ((sRC'1=sRC1) || (sRC'2=sRC1) || (sRC'3=sRC1)) && ((sRC'1=sRC2) || (sRC'2=sRC2) || (sRC'3=sRC2)) && ((sRC'1=sRC3) || (sRC'2=sRC3) || (sRC'3=sRC3)) then			    (* Compares the short Return Codes.              *)
+    ( event Confirmed(SVK, J1,J2,J3);
+      out(Ch2, pRC(Skid,CCid));							    (* The Confirm(Id,_,Skid,CCid) voter's method.   *)
+      in( Ch2, =sFCid);							            (* Voter checks the Finalization Code's value.   *)
+      event HappyUser(SVK, J1,J2,J3)
+    )
+.
+
+(* Server  --  The election server  --  With infinitly iterated Finalization Code (ie. Finalization/ProcessConfirm) part.            *)
+let Serv(Ch2:channel,InitData:bitstring,CTally:channel) =
+    in(Ch2, Id:agentId);
+    (* Retrieves Registration data for this Voter identifier Id *)
+    let (Pkb:epkey,Ska:symkey,Pkc:spkey,Ks:bitstring,M:bitstring,CRF:bitstring) = GetServData(InitData,Id) in
+    (* Provides Ks to the voting device, and asks for the ballot (alias 'vote') *)
+    out(Ch2, Ks);
+    in( Ch2, B:bitstring);
+    let (E:bitstring, W1:int,W2:int,W3:int, =pke(Id), P:bitstring) = B in
+    (* Voting part -- the Ballot processing and confirmation followed by the Server *)
+    let Ok1 = ProcessVoteCheck(Pkb,Id,B) in
+    ( get bb(=Id,B2) in 0 else
+      ( event InsertBB(Id,E); insert bb(Id,B);				   (* Add ballot to the Ballot Box 'bb'; InsertBB for enc.   *)
+	let sRC_Set = CreateRC(B,Ska,M) in				   (* Gets the set of RC; Blocks the process if this fails.  *)
+	( out(Ch2, sRC_Set);
+	  !( in( Ch2, CM:int);
+	     let FCid:symkey = f(Ska,CM) in			           (* The ProcessConfirm(bb,Id,CM,Ska,Pkc,..) method.        *)
+	     let sFCid:bitstring = dec(FCid, readFC(H(FCid),M)) in
+	     let Ok2 = Verify(Pkc,sFCid,CRF) in
+	     ( insert cb(Id,sFCid,CRF);
+	       event HasVoted(InitData,Id,B,sFCid,CRF);			   (* Add confirmation to the Confirmation Box 'cb'.         *)
+	       out(Ch2, sFCid); out(CTally, (Id,B,sFCid,CRF))		   (* Phase 1 -- Sends the ballot to the Tally.              *)
+	     )
+           )
+        )
+      )
+    )
+.
+
+
+
+(* 6. Second Phase -- The Tally after all votes are collected. *)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(* 7. Security properties *)
+
+
+
+
+
+
+
+(* Single-vote Property : Only one ballot is stored in the table for each agent Id  --  Impossible with ProVerif, need thread exclusion.    *)
+(*                        Moreover, the protocol specification we used did not ensure this property, which is implementation dependant.     *)
+(* Remark : If we combine this prop with our cast-as-intended and tallied-as-cast proved properties, then the expected cast-as-intended     *)
+(*          and tallied-as-cast, with only one ballot, immediately follows. If however the single-vote property cannot be guarantied by     *)
+(*          the implementation, then the protocol is vulnerable: a dishonest voter's computer may cast multiple ballots concurrently so     *)
+(*          that one with other choices that the voter's ones is finally accepted. The simple table's tests do not prevent this behaviour.  *)
+(* query Id:agentId, E1:bitstring, E2:bitstring;		event(InsertBB(Id,E1)) && event(InsertBB(Id,E2)) ==> E1 = E2.	            *)
+
+
+(* Cast-as-Intended Property : The server registers a vote for the *honest* voter if and only if the voter confirmed his vote to him. *)
+query Id:agentId, Ska:symkey, W1:int,W2:int,W3:int, Pkb:epkey, Skc:skey, P:bitstring, R:int,
+	    sFCid:bitstring, E:bitstring, CRF:bitstring, J1:int,J2:int,J3:int, SVK:password,
+	    J1J1:int, W1W1:int, J2J1:int, W2W1:int, J3J1:int, W3W1:int, R1:int, P1:bitstring,
+	     J1J2:int, W1W2:int, J2J2:int, W2W2:int, J3J2:int, W3W2:int, R2:int, P2:bitstring,
+	     J1J3:int, W1W3:int, J2J3:int, W2W3:int, J3J3:int, W3W3:int, R3:int, P3:bitstring;
+	event(HasVoted(ServData(Pkb,Ska,Skc), deltaId(svka), (E,W1,W2,W3,pube(ske(deltaId(svka))),P), sFCid, CRF))
+	  ==>  event(Confirmed(svka, ja1,ja2,ja3))  && Id = deltaId(svka)
+	    && E = (aenc1(R),aenc2(Pkb,(t_int(v(J1 )),t_int(v(J2 )),t_int(v(J3 ))),R))
+	(* Linking J1..Jk to j1..jk : There exists one ballot for J1..Jk, plus k ballots containing every j in j1..jk; Equal if Single-vote *)
+	(* Consequently, if the voting choices in HasVoted(..) does not match the voter's intentions, then the Server misbehaved.	    *)
+	    && event(InsertBB(Id, (aenc1(R  ),aenc2(Pkb,(t_int(v(J1   )),t_int(v(J2   )),t_int(v(J3   ))),R  ))))
+     && event(InsertBB(Id, (aenc1(R1),aenc2(Pkb,(t_int(v(J1J1)),t_int(v(J2J1)),t_int(v(J3J1))),R1)))) 
+     && event(InsertBB(Id, (aenc1(R2),aenc2(Pkb,(t_int(v(J1J2)),t_int(v(J2J2)),t_int(v(J3J2))),R2)))) 
+     && event(InsertBB(Id, (aenc1(R3),aenc2(Pkb,(t_int(v(J1J3)),t_int(v(J2J3)),t_int(v(J3J3))),R3)))) 
+	    && (J1J1 = ja1 || J2J1 = ja1 || J3J1 = ja1) && (J1J2 = ja2 || J2J2 = ja2 || J3J2 = ja2) && (J1J3 = ja3 || J2J3 = ja3 || J3J3 = ja3)
+.
+
+(* REMARK: If the Server did not misbehave, then all these InsertBB(...) must be equal all together, since only one could be cast for *)
+(*         each Id. It follows that the ballot shown by HasVoted(..) contains all the honest voter's choices j1..jk, and thus no more *)
+(*         that these since the j1..jk differ two-by-two and each ballot contains exactly k voting choices.                           *)
+
+
+(* Tallied-as-Cast Property : The voter finishes and is happy iff the server has his vote (same choices) and the Tally will accept it.*)
+query Id:agentId, Ska:symkey, W1:int,W2:int,W3:int, Pkb:epkey, Skc:skey, P:bitstring, R:int,
+      sFCid:bitstring, E:bitstring, CRF:bitstring, J1:int,J2:int,J3:int, SVK:password,
+     J1J1:int, W1W1:int, J2J1:int, W2W1:int, J3J1:int, W3W1:int, R1:int, P1:bitstring,
+      J1J2:int, W1W2:int, J2J2:int, W2W2:int, J3J2:int, W3W2:int, R2:int, P2:bitstring,
+      J1J3:int, W1W3:int, J2J3:int, W2W3:int, J3J3:int, W3W3:int, R3:int, P3:bitstring;
+	event(HappyUser(SVK, ja1,ja2,ja3))
+	  ==>  event(HasVoted(ServData(Pkb,Ska,Skc), Id, (E, W1,W2,W3, pube(ske(Id)), P), sFCid, CRF))  && Id = deltaId(SVK)
+	(* The ballot is present in the table     -- Expected : table(bb(Id,B))           --  REMOVED : subsumed by HasVoted(..)	    *)
+	(* The ballot is confirmed in the table   -- Expected : table(cb(Id,sFCid,CRF))   --  REMOVED : subsumed by HasVoted(..)	    *)
+	(* Runs VerifP from ProcessVoteCheck      -- Expected : VerifP(Pkb,pube(ske(Id)),E,{W$i|$i=1..3}, P) = true			    *)
+	    && E = (aenc1(R),aenc2(Pkb,(t_int(v(J1)),t_int(v(J2)),t_int(v(J3))),R))
+	    && W1=pRC(ske(Id),v(J1)) && W2=pRC(ske(Id),v(J2)) && W3=pRC(ske(Id),v(J3))
+	    && P = ZKP(Pkb,pube(ske(Id)),E,W1,W2,W3, R,ske(Id))
+	(* Runs verifE (but removed, 02/2017)     -- Expected : verifE(Pkb, E) = true  --  but done already through E = aenc(Pkb,....)      *)
+	(* Runs Verify to check the confirmation  -- Expected : Verify(pubs(Skc),sFCid,CRF) = true					    *)
+	    && CRF = Sign(Skc,sFCid)
+	(* Linking J1..Jk to j1..jk : There exists one ballot for J1..Jk, plus k ballots containing every j in j1..jk; Equal if Single-vote *)
+	(* Consequently, if the voting choices in HasVoted(..) does not match the voter's intentions, then the Server misbehaved.	    *)
+	    && event(InsertBB(Id, (aenc1(R  ),aenc2(Pkb,(t_int(v(J1   )),t_int(v(J2   )),t_int(v(J3   ))),R  ))))
+	   && event(InsertBB(Id, (aenc1(R1),aenc2(Pkb,(t_int(v(J1J1)),t_int(v(J2J1)),t_int(v(J3J1))),R1)))) 
+   && event(InsertBB(Id, (aenc1(R2),aenc2(Pkb,(t_int(v(J1J2)),t_int(v(J2J2)),t_int(v(J3J2))),R2)))) 
+   && event(InsertBB(Id, (aenc1(R3),aenc2(Pkb,(t_int(v(J1J3)),t_int(v(J2J3)),t_int(v(J3J3))),R3)))) 
+	    && (J1J1 = ja1 || J2J1 = ja1 || J3J1 = ja1) && (J1J2 = ja2 || J2J2 = ja2 || J3J2 = ja2) && (J1J3 = ja3 || J2J3 = ja3 || J3J3 = ja3)
+.
+
+(* REMARK, as for Cast-as-intended : If the Server did not misbehave, then all these InsertBB(...) must be equal, and thus the ballot *)
+(*         shown by HasVoted(..) contains all the honest voter's choices j1..jk, and no more since the j1..jk are unique and the      *)
+(*         ballot contains k choices.  *)
+
+
+
+(* 8. Main process  -- initiates the election *)
+
+process
+(* Public output from Setup(..)  --  Gives the election's parameters to the Intruder. *)
+  out(c, pkb); out(c, pkc);
+  out(c, skb);		(* For reachability, the election private key can be given to the intruder. *)
+
+(* Gives the honest voter's public data to the Intruder *)
+  out(c, deltaId(svka)); out(c,pke(deltaId(svka)));
+  out(c, deltaId(svkb)); out(c,pke(deltaId(svkb)));
+
+(* Roles for honest voter(s)  --  one for Reachability, two for Observational Equivalence. *)
+   Voter(c, VoterData(svka,ska),ja1,ja2,ja3 )
+
+
+
+
+
+(* Dishonest voter(s) : As many as possible for Reachability, need only one for Obervational equivalence. *)
+| !(new svki:password; out(c,svki); out(c, pke(deltaId(svki))); out(c,VoterData(svki,ska)))
+
+(* Bulletin Board (ie. Server) : is Honest for Reachability, but Dishonest for Observational Equivalence. *)
+ | !Serv(c,ServData(pkb,ska,skc),c)
+
+
+
+
+

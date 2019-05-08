@@ -1,0 +1,130 @@
+fun enc(bitstring, bitstring): bitstring.
+fun mac(bitstring,bitstring): bitstring.
+
+(* Réductions : *)
+
+reduc forall x: bitstring, y:bitstring; dec(enc(x,y),y) = x.
+
+(* Canaux : *)
+free cag:channel.
+free c1,c2:channel.
+
+(* Constante : *)
+(* free getchallenge:bitstring. *)
+
+
+(* Erreurs : *)
+free error: bitstring.
+free error_mac: bitstring.  
+free error_nonce: bitstring.
+
+(* Agents : *)
+free alice:bitstring.
+free bob:bitstring.
+free hon:bitstring.
+free dis1:bitstring.
+free dis2:bitstring.
+free dis3:bitstring.
+
+(* Clés : *)
+
+	(* ke honnête : *)
+	free kealice:bitstring[private].
+	free kebob:bitstring[private].
+	free kehon:bitstring[private].
+
+	(* ke malhonnête : *)
+	free kedis1:bitstring.
+	free kedis2:bitstring.
+	free kedis3:bitstring.
+
+	(* km honnête : *)
+	free kmalice:bitstring[private].
+	free kmbob:bitstring[private].
+	free kmhon:bitstring[private].
+
+	(* km malhonnête : *)
+	free kmdis1:bitstring.
+	free kmdis2:bitstring.
+	free kmdis3:bitstring.
+
+
+let Reader(ke:bitstring,km:bitstring,cr:channel) =
+(*	out(cr,getchallenge); *)
+	in(cr,ntx:bitstring) ;
+	new nr:bitstring ;
+	new kr:bitstring ;
+	let m = enc((nr,ntx,kr),ke) in
+	out(cr, (m,mac(m,km)) );
+	in(cr,y:bitstring).
+
+let Passeport(ke:bitstring,km:bitstring,cp:channel) =
+(*	in(cp,=getchallenge); *)
+	new nt:bitstring;
+	out(cp,nt);
+	in(cp,(me:bitstring,mm:bitstring));
+	if mm = mac(me,km) then (let (nrx:bitstring, =nt,krx:bitstring) = dec(me,ke) in
+			(new kt:bitstring;
+			out(cp,(enc((nt,nrx,kt),ke) ,mac(enc((nt,nrx,kt),ke) ,km))))
+			else out(cp,error))
+		else out(cp,error).
+
+process
+
+
+(
+
+! 
+new cr1:channel ; out(c1,cr1) ;
+new cp1:channel ; out(cr1,cp1) ;
+new cr2:channel ; out(cr1,cr2) ;
+new cp2:channel ; out(cr1,cp2) ;
+new cr3:channel ; out(cr1,cr3) ;
+new cp3:channel ; out(cr1,cp3) ;
+new cr4:channel ; out(cr1,cr4) ;
+new cp4:channel ; out(cr1,cp4) ;
+new cr5:channel ; out(cr1,cr5) ;
+new cp5:channel ; out(cr1,cp5) ;
+new cr6:channel ; out(cr1,cr6) ;
+new cp6:channel ; out(cr1,cp6) ;
+	(
+	Reader(kealice,kmalice,cr1)
+	|
+	Passeport(kealice,kmalice,cp1)
+	|
+	Reader(kebob,kmbob,cr2)
+	|
+	Passeport(kebob,kmbob,cp2)
+	|
+	Reader(kehon,kmhon,cr3)
+	|
+	Passeport(kehon,kmhon,cp3)
+(*	|
+	Reader(kedis1,kmdis1,cr4)
+	|
+	Passeport(kedis1,kmdis1,cp4)
+	|
+	Reader(kedis2,kmdis2,cr5)
+	|
+	Passeport(kedis2,kmdis2,cp5)
+	|
+	Reader(kedis3,kmdis3,cr6)
+	|
+	Passeport(kedis3,kmdis3,cp6)*)
+	)
+|
+
+
+(
+phase 1;
+!
+new cr:channel; out(c2,cr) ;
+new cp:channel; out(cr,cp) ;
+let ke=choice[kealice,kebob] in
+let km=choice[kmalice,kmbob] in
+	(
+	Reader(ke,km,cr)
+	|
+	Passeport(ke,km,cp)
+	)
+))

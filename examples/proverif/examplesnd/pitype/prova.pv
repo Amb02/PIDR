@@ -1,0 +1,74 @@
+
+
+(* public channel *)
+	free net:channel.
+
+(* Messages *)
+	const client_id:bitstring.
+	free client_password:bitstring [private].
+
+(* the cryptographic constructors *)
+	(* enc for secrecy test *)
+	fun senc(bitstring, bitstring):bitstring.
+
+(* events *)
+	event auth_request(bitstring).
+	event auth_accepted(bitstring).
+
+
+	query x:bitstring; event(auth_accepted(x)) ==> event(auth_request(x)).
+
+(* Secrecy queries *)
+	query 	attacker(client_password).
+
+
+
+
+
+let UserAgent(TLSchannel1:channel) =
+
+
+	(* authorization request *)
+		event auth_request(client_id);
+		out(TLSchannel1, (client_id, client_password));
+	
+
+	(* authorization response *)
+		in(TLSchannel1, code:bitstring);
+
+
+	(* I pass the authorization code to the client *)
+		out(net, code);
+
+	
+
+	0.
+
+
+
+
+let authserver_AuthCode(TLSchannel1:channel, AuthCode_secret:bitstring) =
+
+
+	(* authorization request *)
+		in(TLSchannel1, (=client_id, =client_password) );
+		event auth_accepted(client_id);
+
+
+
+	(* authorization response *)
+		let auth_code = senc(client_id, AuthCode_secret) in
+		out(TLSchannel1, auth_code);
+	0.
+
+
+
+
+ process
+
+!
+	new TLSchannel1: channel;
+	new AuthCode_secret:bitstring;
+	( (!UserAgent(TLSchannel1)) |  (!authserver_AuthCode(TLSchannel1, AuthCode_secret)))
+
+

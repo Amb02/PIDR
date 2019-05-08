@@ -1,0 +1,216 @@
+(* param redundantHypElim = beginOnly. 
+
+begin:begin1(pk(sk1_22[])), pubkDC2_36 = pk(skDC2_27[]), pubkDC_35 = pk(skDC_26[]), seck1_34 = sk1_22[], @sid_137 = @sid_2986, @occ48_141 = @occ_cst() & 
+begin:begin1(pk(sk1_22[])), pubkDC2_36 = pk(skDC2_27[]), pubkDC_35 = pk(skDC_26[]), seck1_34 = sk1_22[], @sid_137 = @sid_2987, @occ48_141 = @occ_cst() & 
+begin:begin1(pk(sk1_22[])), pubkDC2_36 = pk(skDC2_27[]), pubkDC_35 = pk(skDC_26[]), seck1_34 = sk1_22[], @sid_137 = @sid_2988, @occ48_141 = @occ_cst() & 
+mess:pkChDC_14[],pubkDC_2989 & attacker:pkCh1_10[] & 
+begin:begin1(pk(sk1_22[])), pubkDC2_36 = pk(skDC2_27[]), pubkDC_35 = pk(skDC_26[]), seck1_34 = sk1_22[], @sid_137 = @sid_2990, @occ48_141 = @occ_cst() & 
+begin:begin1(pk(sk1_22[])), pubkDC2_36 = pk(skDC2_27[]), pubkDC_35 = pk(skDC_26[]), seck1_34 = sk1_22[], @sid_137 = @sid_2991, @occ48_141 = @occ_cst() & 
+mess:skCh2_17[],seck2_2992 -> 
+attacker:final2_46[m1 = (result2_47[m1 = (result1_37[pubkDC2 = pk(skDC2_27[]),pubkDC = pk(skDC_26[]),seck1 = sk1_22[],!1 = @sid_2988],(pk(sk1_22[]),sign(h(result1_37[pubkDC2 = pk(skDC2_27[]),pubkDC = pk(skDC_26[]),seck1 = sk1_22[],!1 = @sid_2988]),sk1_22[]))),!2 = @sid_2993,pubkDC = pk(skDC_26[]),pubk1 = pk(sk1_22[]),seck2 = sk2_23[],!1 = @sid_2994],(pk(sk2_23[]),sign(h(result2_47[m1 = (result1_37[pubkDC2 = pk(skDC2_27[]),pubkDC = pk(skDC_26[]),seck1 = sk1_22[],!1 = @sid_2988],(pk(sk1_22[]),sign(h(result1_37[pubkDC2 = pk(skDC2_27[]),pubkDC = pk(skDC_26[]),seck1 = sk1_22[],!1 = @sid_2988]),sk1_22[]))),!2 = @sid_2993,pubkDC = pk(skDC_26[]),pubk1 = pk(sk1_22[]),seck2 = sk2_23[],!1 = @sid_2994]),sk2_23[]))),!2 = @sid_2995,pubkDC = pubkDC_2989,pubk1 = pk(sk2_23[]),seck2 = seck2_2992,!1 = @sid_2996]
+
+*)
+
+(* SCHEME2 *)
+
+(* initialize public communication channels *)
+free c, c1, c2, c2n, c3, cDa, cDb, cDc, cD2.
+
+(* declare variables for secrecy verification of bound variables *)
+private free sR1, sF2, sR2, sfr3, sF3, sR3.
+
+(* one-way hash function *)
+fun h/1.
+
+(* digital signature *)
+fun pk/1.
+fun sign/2.
+reduc checksign(sign(x, y), pk(y)) = x.
+
+(* asymmetric encryption for server communication only *)
+fun enc/2.
+reduc dec(enc(x, pk(y)), y) = x.
+
+(* symmetric encryption for secrecy verification of bound variables *)
+fun syenc/2.
+reduc sydec(syenc(x,y),y) = x.
+
+query	(*attacker: typoflag.*)
+	evinj:end1(x) ==> evinj:begin1(x);
+	evinj:end12(x, y) ==> evinj:begin12(x, y).
+
+let process1 =
+	(* receive private & public keys *)
+	in(skCh1, seck1);
+	event begin1(pk(seck1));
+	in(pkChDC, pubkDC);
+	in(pkChDC2, pubkDC2);
+
+	(* create result 1, send to 2 & CS & AS *)
+	new result1;
+	event begin12(pk(seck1), result1);
+	out(c1, (result1, (pk(seck1), sign(h(result1), seck1))));
+	out(cDa, enc(result1, pubkDC));
+	out(cD2, enc(result1, pubkDC2)).
+
+let process2 =
+	(* receive private & public keys *)
+	in(skCh2, seck2);
+	in(pkCh1, pubk1);
+	in(pkChDC, pubkDC);
+
+	(* receive and extract message from 1 *)
+	!in(c1, m1);
+	let (R1, sign1) = m1 in
+
+	(* secrecy verification of bound variable result 1 *)
+	out(c, syenc(sR1, R1));
+
+	(* identity verification *)
+	let (=pubk1, signed1) = sign1 in
+	
+	(* signature verification *)
+	let hash1 = checksign(signed1, pubk1) in
+	event end12(pubk1, R1);
+	event end1(pubk1);
+
+	(* hash verification *)
+	if hash1 = h(R1) then
+
+	(* create final & result 2, send to 3 & n & CS *)
+	new final2; new result2;
+	out(c2n, (final2, (pk(seck2), sign(h(final2), seck2))));
+	out(c2, (result2, (pk(seck2), sign(h(result2), seck2))));
+	out(cDb, enc(result2, pubkDC)).
+
+let process3 =
+	(* receive private & public keys *)
+	in(skCh3, seck3);
+	in(pkCh2, pubk2);
+	in(pkChDC, pubkDC);
+
+	(* receive and extract message from 2 *)
+	!in(c2, m2);
+	let (R2, sign2) = m2 in
+
+	(* secrecy verification of bound variable result 2 *)
+	out(c, syenc(sR2, R2));
+
+	(* identity verification *)
+	let (=pubk2, signed2) = sign2 in
+
+	(* signature verification *)
+	let hash2 = checksign(signed2, pubk2) in
+
+	(* hash verification *)
+	if hash2 = h(R2) then
+
+	(* create final & result 3, send to n & CS *)
+	new final3; new result3;
+	out(c3, ((final3, result3), (pk(seck3), sign(h((final3, result3)), seck3))));
+	out(cDc, enc(result3, pubkDC)).
+
+let processn =
+	(* receive private & public keys *)
+	in(skChn, seckn);
+	in(pkCh2, pubk2);
+	in(pkCh3, pubk3);
+
+	(*phase 1;    starting last process*)
+
+	(* receive and extract message from 2 *)
+	!in(c2n, m2);
+	let (F2, sign2) = m2 in
+
+	(* secrecy verification of bound variable result 2 *)
+	out(c, syenc(sF2, F2));
+
+	(* identity verification *)
+	let (=pubk2, signed2) = sign2 in
+
+	(* signature verification *)
+	let hash2 = checksign(signed2, pubk2) in
+
+	(* hash verification *)
+	if hash2 = h(F2) then
+
+	(* receive and extract message from 3 *)
+	!in(c3, m3);
+	let (fr3, sign3) = m3 in
+
+	(* secrecy verification of bound variable final/result 3 *)
+	out(c, syenc(sfr3, fr3));
+
+	(* identity verification *)
+	let (=pubk3, signed3) = sign3 in
+
+	(* signature verification *)
+	let hash3 = checksign(signed3, pubk3) in
+
+	(* hash verification *)
+	if hash3 = h(fr3) then
+
+	(* extract final/result 3*)
+	let (F3, R3) = fr3 in
+
+	(* secrecy verification of bound variable final & result 3 *)
+	out(c, syenc(sF3, F3));
+	out(c, syenc(sR3, R3));
+
+	(* create result n, publish outcome *)
+	new resultn;
+	(*phase 2;   end of the protocol, before publishing outcome*)
+	out(c, (F2, F3, resultn));
+
+	(* flag to check typos *)
+	new typoflag; out(c, typoflag).
+
+let processDC =
+	(* receive result from 1 *)
+	!in(cDa, server1);
+
+	(* receive result from 2 *)
+	!in(cDb, server2);
+
+	(* receive result from 3 *)
+	!in(cDc, server3).
+
+let processDC2 =
+	(* receive result from 1 *)
+	!in(cD2, server1).
+
+let processK =
+	(* generate private keys *)
+	new sk1; new sk2; new sk3; new skn; new skDC; new skDC2;
+
+	(
+	(* generate public keys, send to entities*)
+	(let pk1 = pk(sk1) in
+	!out(pkCh1, pk1)) |
+	(let pk2 = pk(sk2) in
+	!out(pkCh2, pk2)) |
+	(let pk3 = pk(sk3) in
+	!out(pkCh3, pk3)) |
+	(let pkn = pk(skn) in
+	!out(pkChn, pkn)) |
+	(let pkDC = pk(skDC) in
+	!out(pkChDC, pkDC)) |
+	(let pkDC2 = pk(skDC2) in
+	!out(pkChDC2, pkDC2)) |
+
+	(* send private keys to entities *)
+	(!out(skCh1, sk1)) |
+	(!out(skCh2, sk2)) |
+	(!out(skCh3, sk3)) |
+	out(skChn, skn) |
+	out(skChDC, skDC) |
+	out(skChDC2, skDC2)
+	).
+
+process
+	(* initialize private communication channels *)
+	new pkCh1; new pkCh2; new pkCh3; new pkChn; new pkChDC; new pkChDC2;
+	new skCh1; new skCh2; new skCh3; new skChn; new skChDC; new skChDC2;
+
+	(* declare participating processes *)
+	(processK | (!process1) | (!process2) | (!process3) | processn | processDC | processDC2)

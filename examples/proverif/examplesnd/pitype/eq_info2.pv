@@ -1,0 +1,7 @@
+
+fun enc(bitstring,bitstring):bitstring.
+fun dec(bitstring,bitstring):bitstring.
+
+equation forall x:bitstring,k:bitstring; dec(enc(x,k),k) = x [linear].
+
+process 0

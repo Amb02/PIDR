@@ -1,0 +1,37 @@
+free c:channel.
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+event A(bitstring).
+
+const ok,ko:bitstring.
+
+fun enc(bitstring,bitstring):bitstring.
+fun dec(bitstring,bitstring):bitstring.
+equation forall x:bitstring, y:bitstring; dec(enc(x,y),y) = y.
+
+axiom x:bitstring,y:bitstring; event(A(enc(x,y))) ==> event(A(dec(x,y))).
+
+axiom x:bitstring,y:bitstring,z:bitstring; event(A(enc(x,enc(y,z)))) ==> event(A(dec(x,y))) && x<>z.
+
+axiom x:bitstring,y:bitstring; event(A(enc(x,y))) ==> event(A(dec(x,y))) && x<>y.
+
+axiom x:bitstring,y:bitstring,z:bitstring; event(A(enc(x,enc(y,z)))) ==> event(A(dec(x,y))) && x<>dec(y,z).
+
+lemma x:bitstring,y:bitstring; event(A(x)) && attacker(a) phase 1 ==> x=a [maxSubset].
+
+
+query x:bitstring; event(A(x)).
+
+process
+  in(c,x:bitstring);
+  phase 1;
+  if x = a
+  then
+    event A(a);
+    phase 2;
+    out(c,ok)
+  else
+    out(c,dec(x,ko))

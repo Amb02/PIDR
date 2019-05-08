@@ -1,0 +1,226 @@
+(*set traceDisplay = short.
+set verboseClauses = explained.*)
+(*set attacker = passive.*)
+(* set verboseRules = true. *)
+
+set redundancyElim = no.
+
+set stopTerm = true.
+set maxDepth = 6.
+set selFun = TermMaxsize.
+
+
+type skey.
+type pkey.
+type nonce.
+
+(* public key encryption *)
+
+fun pk(skey):pkey.
+fun encrypt(bitstring,pkey):bitstring.
+reduc forall x:bitstring, y:skey; decrypt(encrypt(x,pk(y)), y) = x.
+
+fun sign(bitstring,skey):bitstring.
+reduc forall x:bitstring, y:skey; checksign(sign(x,y), pk(y)) = x.
+reduc forall x:bitstring, y:skey; getmess(sign(x,y)) = x.
+
+
+fun hash(bitstring):bitstring.
+
+
+free c:channel. (*channel for receiver *)
+free d:channel. (*channel between custodians and authority *)
+free f:channel. (*channel to forward acknowlegdement in phase 2*)
+free g:channel.
+free p:channel. (*public clear text channel*)
+free i:channel. (* private channel for investigation *)
+
+const publicLog: pkey.
+const noKey: skey.
+
+type number.
+const one : number.
+const two : number.
+const three : number.
+const four : number.
+const five : number.
+table succ(number,number).
+
+event registered(pkey).
+event certified(bitstring).
+event AuthAck(pkey,pkey).
+event Honnest(pkey).
+event Endorse(pkey,pkey).
+event Link(pkey,pkey).
+event EventA().
+
+table auth(pkey,pkey).
+table custoRecords(skey,pkey,pkey,pkey,pkey,bitstring,bitstring).
+table custos(skey,pkey).
+
+
+(*query event(Honnest(pk( new sk1))).(**)
+(*query q:pkey; event(Link(pk(new skR),q))==>event(Endorse(pk(new skR),q)).(**)
+(*query q:pkey; event(Link(pk(new skR),q)).(**)
+(*query event(EventA()).(**)
+(*query attacker(pk(new skR)) phase 1.(**)
+(*query attacker(new seed) phase 2.(**)
+query attacker(new Transaction).(**)
+
+let receiverA(skR :skey,pkA:pkey,pk1:pkey,pk2:pkey,pkL:pkey) =
+	new skTmp1 : skey;
+	(* The receiver sends the path to the authority then to the other custodian *)
+	out(c,encrypt((pk(skR),sign((pk1,pk(skTmp1)),skR)),pkA));
+	new skTmp2 : skey;
+	out(c,encrypt(sign((pk2,pk(skTmp2)),skTmp1),pk1));
+	new skTmpL : skey;
+	out(c,encrypt(sign((pkL,pk(skTmpL)),skTmp2),pk2));
+	new Transaction: pkey;
+	out(c,encrypt(sign((publicLog,Transaction),skTmpL),pkL));
+	(* When the transaction has been signed on the public log *)
+	in(p,(=pkL,certific: bitstring));
+	let(h : bitstring, =Transaction)=checksign(certific,pkL) in
+
+	(* The receiver confirm he agrees on the declaration *)
+	phase 2;
+	in(f,ack :bitstring);
+	let(=pk(skR),=pk(skTmp1))=checksign(decrypt(ack,skR),pkA) in
+	event Endorse(pk(skR),Transaction);
+	out(g,sign((pk(skR),pk(skTmp1)),skR)).
+	
+
+
+	
+
+let AuthorityFw(pkR :pkey,skA:skey) = 
+	(* The authority receives a declaration from the receiver *)
+	in(c,cipher: bitstring);
+	let(identity :pkey, instructions : bitstring)=decrypt(cipher,skA) in
+	let(Custo1 : pkey, pkTmp1 : pkey )=checksign(instructions,identity) in
+	(* it checks this is a new identity*)
+	get auth(X,=pkTmp1) in 0
+	else
+	insert auth(identity,pkTmp1);
+	event registered(pkTmp1);
+	out(d,(pk(skA),Custo1,encrypt(sign((one,pkTmp1,hash((pkTmp1,one))),skA),Custo1)));
+
+	phase 2;
+	in(f,(=pk(skA),firstCustodian : pkey, cipher2 :bitstring));
+	let(=pkTmp1, =hash((pkTmp1,one)), hashAck : bitstring, P : number, m : number)
+		=checksign(decrypt(cipher2,skA),firstCustodian) in
+	(* Ask the receiver a confirmation *)
+	out(f,encrypt(sign((identity,pkTmp1),skA),identity));
+	in(g,FinalAck : bitstring);
+	if(checksign(FinalAck,identity)=(identity,pkTmp1))
+	then event AuthAck(identity,pkTmp1);
+	(* investigation process from declaration*)
+	phase 3;
+		(* Custo 1 *)
+	in(i,sign1 : bitstring);
+	let( seed1 : pkey, C2 : pkey, signatureAck2 : bitstring)=checksign(sign1,Custo1) in
+	get custos(skh2:skey,=C2) in
+	let(k2 : pkey, h2 : bitstring, h'2 : bitstring,P2:number,m2:number)=checksign(signatureAck2,C2) in
+
+
+	if(h2 = hash((k2,seed1,hash((pkTmp1,one))))
+		&& hashAck = hash((h'2,seed1)))
+	then
+		event Honnest(Custo1);
+		(* Custo 2 *)
+	in(i, sign2 : bitstring);
+	let( seed2 : pkey, CL : pkey, signatureAckL : bitstring)= checksign(sign2,C2) in
+	get custos(skhL:skey,=CL) in
+	let(kL : pkey, hL : bitstring, h'L : bitstring,PL:number,mL:number)=checksign(signatureAckL,CL) in
+	if(hL = hash((kL,seed2,hash((k2,seed1,hash((pkTmp1,one))))))
+		&& h'2 = hash((h'L,seed2)))
+	then
+		event Honnest(C2);
+		(* Last Custodian *)
+	in(p,(seedL : bitstring, LastCustodian : pkey,log : bitstring));
+	let(finalHash : bitstring,transaction : pkey)=checksign(log,CL) in
+	if(finalHash = hash((seedL,hash((kL,seed2,hash((k2,seed1,hash((pkTmp1,one))))))))
+		&& h'L = hash((transaction,seedL)))
+	then
+		event Honnest(CL);
+	event Link(pkR,transaction);
+	0.
+
+let InvestigationFromLog() =
+	in(p,(pkL :pkey ,certific: bitstring));
+	let(h : bitstring, transaction : pkey)=checksign(certific,pkL) in
+		(*Check the Last Custodian *)
+	in(d,(C2 : pkey, CL : pkey, cipher : bitstring));
+	0.
+	
+
+let Custodian(Au:pkey,Cu1:pkey,Cu2:pkey,CuL:pkey) =
+	in(d,(previousCustodian : pkey, presentCustodian : pkey, cipher : bitstring));
+	if((previousCustodian=Au && presentCustodian =Cu1)||(previousCustodian=Cu1 && presentCustodian =Cu2)||(previousCustodian=Cu2 && presentCustodian =CuL))
+	then
+	get custos(myKey,=presentCustodian) in 
+	get custos(hiddenKey,=previousCustodian) in
+	let(length : number, presentid : pkey, hashValue : bitstring) =checksign(decrypt(cipher,myKey),previousCustodian) in
+	(*get succ(=length, incrlength) in*)
+	get custoRecords(
+		=myKey,aCustodian,anotherCustodian,=presentid,someid,someseed,somehashValue) in
+	0
+	else
+	in(c,fromR: bitstring);
+	let(nextCustodian : pkey, nextid: pkey) 
+		= checksign(decrypt(fromR,myKey),presentid) in
+	new seed : bitstring;
+	insert custoRecords(myKey,previousCustodian,nextCustodian,presentid,nextid,seed,hashValue);
+	if(nextCustodian=publicLog)
+	then
+		out(p,(presentCustodian,sign((hash((seed,hashValue)),nextid),myKey)));
+		event certified(hash((seed,hashValue)));
+		phase 2;
+		out(f,(previousCustodian,presentCustodian,
+			encrypt(sign((presentid,hashValue,hash((nextid,seed)),one,two),myKey),
+			previousCustodian)));
+		phase 3;
+		out(p,(seed,presentCustodian,sign((hash((seed,hashValue)),nextid),myKey)))
+	else
+		get custos(hiddenKey2,=nextCustodian) in
+		out(d,(presentCustodian,nextCustodian, 
+			encrypt(sign((length,nextid,hash((nextid,seed,hashValue))),myKey),nextCustodian)));
+		phase 2;
+		in(f,(=presentCustodian,=nextCustodian , cipherAck :bitstring));
+		(*get custos(myKey,=presentCustodian) in *)
+		let(=nextid, hashInit : bitstring, hashAck : bitstring, P : number, m : number)
+			=checksign(decrypt(cipherAck,myKey),nextCustodian) in
+		(*get custoRecords(=myKey,previousCustodian,=nextCustodian,presentid,=nextid,seed,hashReg) in*)
+		if(hashInit=hash((nextid,seed,hashValue)))
+		then
+		out(f,(previousCustodian,presentCustodian,
+				encrypt(sign((presentid,hashValue,hash((hashAck,seed)),one,two),myKey),previousCustodian)));
+		phase 3;
+		out(i,sign((seed,nextCustodian,decrypt(cipherAck,myKey)),myKey)).
+
+
+process 
+	new skR :skey;
+	new skA :skey;
+	new sk1 : skey;
+	new sk2 : skey;
+	new skL : skey;
+	(*new skMaliciousCustodian : skey;
+	out(c,skMaliciousCustodian);*)
+	let pkR=pk(skR)in out(c,pkR);
+	let pkA=pk(skA)in out(c,pkA);
+	let pk1=pk(sk1)in out(c,pk1);
+	let pk2=pk(sk1)in out(c,pk2);
+	let pkL=pk(skL)in out(c,pkL);
+	insert custos(noKey,pk(skA));
+	insert custos(sk1,pk(sk1));
+	insert custos(sk2,pk(sk2));
+	insert custos(skL,pk(skL));
+	(*insert custos(skMaliciousCustodian,pk(skMaliciousCustodian));(* for toggle malicious*)
+	insert succ(one,two);
+	insert succ(two, three);
+	insert succ(three,four);
+	(*insert succ(four,five);*)
+	((receiverA(skR,pkA,pk1,pk2,pkL)) | (!AuthorityFw(pkR,skA)) 
+	| (!Custodian(pkA,pk1,pk2,pkL)) )
+
+

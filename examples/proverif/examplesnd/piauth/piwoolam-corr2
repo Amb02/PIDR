@@ -1,0 +1,59 @@
+free c.
+(*
+
+WooLam shared-key auth protocol
+Full corrections of Abadi, Needham, Prudent engineering practice...
+
+A -> B : A
+B -> A : N (fresh)
+A -> B : { N }_kAS
+B -> S : A,B,{ N }_kAS
+S -> B : { A, N }_kBS
+B: verify { A, N }_kBS = the message from S
+
+Does not terminate.
+There is obviously an attack, because the role of A does not depend
+on B, so A can very well talk to the adversary, while B thinks
+that A talks with him.
+
+*)
+
+not kAS.
+not kBS.
+
+(* Shared-key cryptography *)
+
+fun encrypt/2.
+reduc decrypt(encrypt(m,k),k) = m.
+
+(* Host name / key *)
+
+fun host/1.
+private reduc getkey(host(x)) = x.
+
+query ev:endBparam(h) ==> ev:beginBparam(h).
+
+let processA = in(c, hostB2); (* Choose the B host *)
+	       event beginBparam(hostB2);
+               out(c,hostA); in(c,n); 
+               out(c, encrypt(n, kAS)).
+
+let processB = in(c, hostA2); new N; out(c, N); in(c, m);
+               out(c, (hostA2, hostB, m));
+               in(c, m2);
+	       let (hostA3, N3) = decrypt(m2, kBS) in
+                   if hostA3 = hostA2 then
+                     if N3 = N then
+                        (* OK *)
+                        if hostA2 = hostA then event endBparam(hostB).
+
+let processS = in(c,m);
+               let (hostA1, hostB1, m2) = m in
+                  let n = decrypt(m2, getkey(hostA1)) in
+                        out(c, encrypt((hostA1, n), getkey(hostB1))).
+
+process new kAS; new kBS;
+        let hostA = host(kAS) in
+        let hostB = host(kBS) in
+	out(c, hostA); out(c, hostB);
+	((!processA) | (!processB) | (!processS))

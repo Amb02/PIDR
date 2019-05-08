@@ -1,0 +1,23 @@
+free c:channel.
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+free k:bitstring [private].
+
+event A(bitstring).
+event B.
+
+const ok,ko:bitstring.
+
+not attacker(k).
+
+process
+  in(c,x:bitstring);
+  if x = diff[a,b]
+  then
+    event A(a);
+    out(c,diff[k,k])
+  else
+    out(c,ko)

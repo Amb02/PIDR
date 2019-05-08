@@ -1,0 +1,13 @@
+fun h(bitstring): bitstring.
+reduc forall x: bitstring; g(h(x)) = x.
+
+event e(bitstring).
+
+free a: bitstring.
+
+channel c.
+
+process let x = g(a) in
+            out(c, a)
+	else
+	    out(c, h(a))

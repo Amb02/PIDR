@@ -1,0 +1,11 @@
+(* BUG: ProVerif thinks non-interference is true, because the
+   clauses to test whether a term is a tuple are omitted. *)
+
+private free a.
+private free a1, a2.
+private free b.
+free c.
+
+noninterf a among ((a1,a2), b).
+
+process out(c, a)

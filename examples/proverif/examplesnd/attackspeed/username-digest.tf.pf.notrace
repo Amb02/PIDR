@@ -1,0 +1,55 @@
+param reconstructTrace = no.
+(* DO NOT DISTRIBUTE *)
+
+(* param predicatesImplementable = nocheck.*) 
+data cons/2.
+data nil/0.
+data emptyTuple/0.
+reduc hd(cons(a,b))=a.
+reduc tl(cons(a,b))=b.
+data Element/3.
+reduc ElementAtt(Element(x,y,z))=y.
+reduc ElementBody(Element(x,y,z))=z.
+data Attribute/2.
+reduc AttributeParm(Attribute(x,y))=y.
+pred memberList/2 memberOptim.
+clauses 
+memberList:x,cons(x,l);
+memberList:x,l -> memberList:x,cons(y,l).
+data SecurityTAG/0.
+ data EnvelopeTAG/0.
+ data HeaderTAG/0.
+ data BodyTAG/0.
+ data GetOrderTAG/0.
+ data orderIdTAG/0.
+ data UsernameTokenTAG/0.
+ data UsernameTAG/0.
+ data PasswordTAG/0.
+ data TypeTAG/0.
+ data PasswordDigestSTRING/0.
+ data NonceTAG/0.
+ data CreatedTAG/0.
+ data concat/2.
+ data utf8/1.
+ data base64/1.
+ fun sha1/1.
+ fun principal/1.
+ pred hasSecurityHeader/2.
+ pred hasBody/2.
+ free httpChan.
+ free publishChan.
+ free initChan.
+ pred isGetOrder/2.
+ pred isDigestUserToken/5.
+ pred hasUserTokenDigest/6.
+ clauses env = Element(EnvelopeTAG,nil,cons(Element(HeaderTAG,nil,headers),cons(dummyl47c42,nil))) & memberList:header,headers & header = Element(SecurityTAG,nil,toks) -> hasSecurityHeader:env,toks.
+ clauses env = Element(EnvelopeTAG,nil,cons(Element(HeaderTAG,nil,dummyl52c31),cons(b,nil))) & b = Element(BodyTAG,dummyl53c15,cons(dummyl53c18,nil)) -> hasBody:env,b.
+ clauses b = Element(BodyTAG,dummyl15c17,cons(Element(GetOrderTAG,nil,cons(Element(orderIdTAG,nil,cons(orderid,nil)),nil)),nil)) -> isGetOrder:b,orderid.
+ clauses tok = Element(UsernameTokenTAG,dummyl18c26,cons(Element(UsernameTAG,nil,cons(u,nil)),cons(Element(PasswordTAG,cons(Attribute(TypeTAG,PasswordDigestSTRING),nil),cons(base64(d),nil)),cons(Element(NonceTAG,nil,cons(base64(n),nil)),cons(Element(CreatedTAG,nil,cons(t,nil)),nil))))) & u = principal(pwd) & d = sha1(concat(n,concat(utf8(t),utf8(pwd)))) -> isDigestUserToken:tok,u,pwd,n,t.
+ clauses hasSecurityHeader:e,toks & memberList:utok,toks & isDigestUserToken:utok,u,pwd,n,t & hasBody:e,b -> hasUserTokenDigest:e,u,pwd,n,t,b.
+  query ev:endLog(a,b,c).
+ process new pwdu;let u = principal(pwdu) in 
+  (out (publishChan,(u));!(in (initChan,(orderid,n,t));event  beginLog(u,n,t); let d = sha1(concat(n,concat(utf8(t),utf8(pwdu)))) in 
+  (out (httpChan,(Element(EnvelopeTAG,nil,cons(Element(HeaderTAG,nil,cons(Element(SecurityTAG,nil,cons(Element(UsernameTokenTAG,nil,cons(Element(UsernameTAG,nil,cons(u,nil)),cons(Element(PasswordTAG,cons(Attribute(TypeTAG,PasswordDigestSTRING),nil),cons(base64(d),nil)),cons(Element(NonceTAG,nil,cons(base64(n),nil)),cons(Element(CreatedTAG,nil,cons(t,nil)),nil))))),nil)),nil)),cons(Element(BodyTAG,nil,cons(Element(GetOrderTAG,nil,cons(Element(orderIdTAG,nil,cons(orderid,nil)),nil)),nil)),nil)))));0))|(!in (httpChan,(e));let b,v,n,t suchthat hasUserTokenDigest:e,v,pwdu,n,t,b in 
+  (let orderid suchthat isGetOrder:b,orderid in 
+  (event endLog(v,n,t); event done(); 0))))

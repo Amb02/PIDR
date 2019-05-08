@@ -1,0 +1,44 @@
+free c.
+(*
+
+Woo and Lam public-key auth protocol (1997), simplified
+
+A -> B: pkA
+B -> A: N
+A -> B: { pkA, pkB, N }_skA
+
+Correct
+
+*)
+
+param injectiveAg = false.
+
+(* Signatures *)
+
+fun pk/1.
+fun sign/2.
+reduc getmess(sign(m,k)) = m.
+reduc checksign(sign(m,k), pk(k)) = m.
+
+let processA = in(c, pkB0); (* Choose B *)
+               begin Bparam(pkB0);
+               out(c, pkA);
+               in(c,n);
+	       out(c,sign((pkA, pkB0, n),skA)).
+
+let processB = in(c, pkA0);
+               new n; out(c,n);
+               in(c,m); 
+               let (pkA3, pkB3, n3) = checksign(m,pkA0) in
+		if pkA3 = pkA0 then
+                if pkB3 = pkB then
+                if n3 = n then
+			(* OK *)
+                        if pkA3 = pkA then
+			  end Bparam(pkB).
+
+process new skA; new skB;
+        let pkA = pk(skA) in
+        let pkB = pk(skB) in
+	out(c, pkA); out(c, pkB); 
+	((!processA) | (!processB))

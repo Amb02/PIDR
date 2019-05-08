@@ -1,0 +1,85 @@
+(*
+ Needham Shroeder
+A->B : {A,Na}pub(B)
+B->A : {B,Na,Nb}pub(A)
+A->B : {Nb}pub(B) 
+*)
+
+set verboseRules = true.
+
+(*
+
+attacker(aenc((b[],p2_114),pk(prKa[]))) -> attacker(aenc((a[],(p2_114,Nb_23[!1 = @sid_115])),pk(prKb[])))
+attacker(aenc((a[],p2_136),pk(prKb[]))) -> attacker(aenc((b[],(p2_136,Nbb[])),pk(prKa[])))
+
+==>
+
+attacker(aenc((a[],p2_136),pk(prKb[]))) -> attacker(aenc((a[],((p2_136,Nbb[]),Nb_23[!1 = @sid_115])),pk(prKb[])))
+
+Loops. The problem is that ProVerif loops, but avoids creating precisely the clause
+(which would be detected by the heuristics and would automatically generate the
+"nounif" below).
+*)
+
+nounif x: bitstring; attacker(aenc((a, x), pk(new prKb))).
+
+
+free c:channel.
+
+type pkey.
+type skey.
+type host.
+
+(* Queries *)
+
+free Naa, Nbb: bitstring[private].
+query attacker(Naa);
+      attacker(Nbb).
+
+free a,b,e:host.
+
+
+fun pk(skey): pkey.
+fun aenc(bitstring,pkey): bitstring.
+reduc forall x: bitstring, y: skey; adec(aenc(x,pk(y)),y) = x.
+
+
+let roleA(a:host,b:host,prKa:skey,pKb:pkey,Na:bitstring) =
+    out(c,aenc((a,Na),pKb));
+    in(c,x:bitstring);
+    let y = adec(x,prKa) in
+    let (=b,(=Na,p2:bitstring))= y in
+    out(c,aenc(p2,pKb)).
+
+let roleB(a:host,b:host,prKb:skey,pKa:pkey,Nb:bitstring) =
+    in(c,x:bitstring);
+    let y = adec(x,prKb) in
+    let (=a,p2:bitstring)=y in
+    out(c,aenc((b,(p2,Nb)),pKa));
+    in(c,x1:bitstring);
+    let y1=adec(x1,prKb) in 0.
+     
+
+process
+	new prKa: skey;
+	new prKb: skey;
+	new prKc: skey;
+	let pKa = pk(prKa) in
+	let pKb = pk(prKb) in
+	let pKc = pk(prKc) in
+	(
+	(!new Na:bitstring ; roleA(a,e,prKa,pKc,Na))|
+	(!new Nb:bitstring ; roleB(e,a,prKa,pKc,Nb))|
+	(!new Na:bitstring ; roleA(b,e,prKb,pKc,Na))|
+	(!new Nb:bitstring ; roleB(e,b,prKb,pKc,Nb))|
+	(!new Na:bitstring ; roleA(b,a,prKb,pKa,Na))|
+  	(!new Nb:bitstring ; roleB(b,a,prKa,pKb,Nb))|
+
+	(!roleA(a,b,prKa,pKb,Naa))|
+	(!roleB(a,b,prKb,pKa,Nbb))|
+
+	out(c,pKa) |
+	out(c,pKb) |
+	out(c,prKc)
+	)
+

@@ -1,0 +1,15 @@
+
+type T.
+type T1.
+type T2.
+
+fun G(T): T2 [data].
+fun F(T1, T2): bitstring [data].
+
+const C, D: bitstring.
+
+channel c.
+
+process
+	in(c, m: bitstring);
+	out(c, let F(A,G(B)) = m in C else D)

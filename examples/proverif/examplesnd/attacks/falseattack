@@ -1,0 +1,16 @@
+(* Example of false attack 
+   With unifyDerivation, the derivation is transformed into an infeasible
+   derivation (it has attacker(a) as hypothesis).
+   If, instead of allowing attacker(x) as hypothesis, we required
+   to use clause (Rn) attacker(b[i]), then unifyDerivation would fail,
+   showing that the derivation does not correspond to a trace.
+*)
+
+
+(* param unifyDerivation = true. *)
+
+free c.
+private free s.
+query attacker:s.
+
+process new a; in(c, x); out(c, a); if a = x then out(c, s) else 0

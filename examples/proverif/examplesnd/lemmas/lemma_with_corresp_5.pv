@@ -1,0 +1,30 @@
+free c:channel.
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+event A(bitstring).
+
+const ok,ko:bitstring.
+
+lemma x:bitstring,y:bitstring;
+  event(A(x)) ==> x=b;
+  event(A(x)) ==> x=a [maxSubset].
+
+lemma x:bitstring,y:bitstring;
+  event(A(x)) ==> x=h(b);
+  event(A(x)) ==> x=h(a) [maxSubset].
+
+query x:bitstring;
+  event(A(x));
+  event(A(x)) ==> x=h(a).
+
+process
+  in(c,x:bitstring);
+  if x = a
+  then
+    event A(a);
+    out(c,ok)
+  else
+    out(c,ko)

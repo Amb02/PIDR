@@ -1,0 +1,74 @@
+
+(*header*)
+set ignoreTypes=attacker.
+
+type pkey.
+type Pkey.
+type host.
+type ssid.
+
+free c: channel.
+free cp:channel [private].
+
+free A, B: host.
+
+(*functions*)
+
+(* Chiffrement asymetrique *)
+fun pk(pkey,host): Pkey .
+reduc forall m:pkey, h:host; gethost(pk(m,h))=h.
+
+fun encrypt(bitstring, Pkey): bitstring.
+reduc forall x: bitstring, y: pkey, h:host; decrypt(encrypt(x,pk(y,h)),y) = x.
+
+reduc forall x1:host, x2:host, sk1:pkey, sk2:pkey; choosekey(x1,x1,x2,sk1,sk2) = sk1;
+      forall x1:host, x2:host, sk1:pkey, sk2:pkey;choosekey(x2,x1,x2,sk1,sk2) = sk2.
+
+(* Hachage *)
+fun hash(bitstring):bitstring.
+
+(*Process specifications*)
+
+let processROR(sida:ssid,ra:bitstring,rb:bitstring,pkY:Pkey,ma:bitstring,Ks:bitstring)=
+      in (cp,(=sida, ((=ra, =rb), (=pkY, =ma))));
+      new R:bitstring;
+      out(c,choice[R,Ks]).
+
+let processB(skA:pkey,skB: pkey) =  
+    in (c, Y: host);
+    let skY=choosekey(Y,A,B,skA,skB) in
+   
+   
+    let pkY=pk(skY,Y) in
+    in(c,(ra:bitstring,sida:ssid));
+    new rb: bitstring;  
+    out(c,(rb, (sida, pkY)));     
+    
+    in(c,m2: bitstring);
+    let (SEEDKEY:bitstring)=decrypt(m2,skY) in
+    let Ks = hash((ra, (rb, SEEDKEY))) in 
+   
+    processROR(sida,ra,rb,pkY,m2,Ks) else 0.
+
+
+let processA() =
+    new ra: bitstring;  
+    new sida:ssid; 
+    out(c,(ra,sida));    
+
+    in(c,(rb: bitstring, (=sida, pkY:Pkey)));                   
+    new SEEDKEY:bitstring;
+    let ma=encrypt(SEEDKEY,pkY)  in
+    let Ks = hash((ra, (rb, SEEDKEY))) in     
+    out(cp,(sida, ((ra, rb), (pkY, ma))));	
+    out(c,ma). 	
+
+
+
+process 
+	new skA : pkey; let pkA = pk(skA,A) in
+	new skB : pkey; let pkB = pk(skB,B) in
+	out(c, pkA);
+	out(c, pkB);	
+	((!processA()) | (!processB(skA,skB))) 
+    

@@ -1,0 +1,31 @@
+#!/bin/sh
+
+if [ -x ../../../../xtime ]
+then
+    if [ .$1 = . ]
+    then
+        PROG=../../../../xtime
+    else
+        PROG="../../../../xtime -repeat 10 -o /dev/null"
+    fi
+else
+    PROG=
+fi
+
+(
+for i in SECRECY PROP1 PROP2 PROP3 PROP4
+do
+
+for j in CHTOTTP PKCHANNEL SSH
+do
+
+echo $i-$j
+m4 -D$j -D$i protocol > prot-$i-$j
+$PROG ../../../../proverif -in pi prot-$i-$j > prot-$i-$j.result
+grep goal prot-$i-$j.result
+grep system prot-$i-$j.result | grep user
+
+done
+
+done
+) | tee results

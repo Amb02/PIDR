@@ -1,0 +1,35 @@
+nounif c:x.
+anytrue c.
+tupleinv c.
+
+(* Shared key cryptography *)
+
+fun enc/2.
+reduc dec(enc(x,y),y) = x.
+
+(* Diffie-Hellman functions *)
+(* equation f(x,g(y)) = f(y,g(x)). *)
+
+fun g/1.
+fun h2/0.
+fun h1/2.
+fun h0/2.
+reduc f(g(x), g(y)) = h2;
+      f(g(g(x)), y) = h2;
+      f(x, g(g(y))) = h2;
+      f(g(x), y) = h1(x,y);
+      f(x,g(y)) = h1(x,y);
+      f(x,y) = h0(x,y).
+
+(* An example of process *)
+
+let p0 = new n0; 
+         (out(c,g(n0)) | in(c,x1); let k = f(n0,x1) in out(c, enc(s,k))).
+
+let p1 = new n1; 
+         (out(c,g(n1)) | in(c,x0); 
+                         let k = f(x0,n1) in 
+                         in (c,m); 
+                         let s = dec(m,k) in 0).
+
+process new s; p0 | p1

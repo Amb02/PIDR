@@ -1,0 +1,703 @@
+(* Options *)
+param traceDisplay = long.
+
+(* Constant and Free variables *)
+
+data KeyStoreOperandPUT0/0.
+data KeyStoreOperandGET0/0.
+
+
+(* Pair and Pair splitting *)
+reduc GetLeft((left,right)) = left.
+reduc GetRight((left,right)) = right.
+
+(* Asymmetric key cryptography *)
+fun PubPart/1.
+fun PriPart/1.
+fun PriEncrypt/2.
+fun PubEncrypt/2.
+reduc PriDecrypt(PriPart(Key),PubEncrypt(PubPart(Key),M)) = M.
+reduc PubDecrypt(PubPart(Key),PriEncrypt(PriPart(Key),M)) = M.
+data true/0.
+reduc SignCheck(PriEncrypt(PriPart(Key),M),M,PubPart(Key)) = true.
+
+(* Shared key cryptography *)
+fun SharedKey/1.
+reduc MaterialShareKey(SharedKey(x)) = x.
+
+fun SymEncrypt/2.
+reduc SymDecrypt(Key, SymEncrypt(Key, M)) = M.
+
+(* Hash function *)
+fun H/1.
+
+(* Diffie-Hellman *)
+(* Raw version that is not supported by proverif:
+ * fun EXP/3.
+ * equation EXP(EXP(g,y,p),x,p) = EXP(EXP(g,x,p),y,p).
+ *)
+
+fun DHPub/1.
+fun DHKey/2.
+equation DHKey(x,DHPub(y)) = DHKey(y,DHPub(x)).
+
+
+(* Secrecy assumptions *)
+query attacker:SharedKey(nonce153).
+
+(* Private Free variables *)
+
+
+(* Query about desired properties *)
+ 
+
+(* Instances *)
+process
+new I1;
+let lastElem3 = (I1,I1) in 
+new p15;
+let scert17 = PubPart(p15) in 
+let sprikey19 = PriPart(p15) in 
+new user14;
+let pair111 = (user14,scert17) in 
+let pri113 = (user14,sprikey19) in 
+new p215;
+let scert217 = PubPart(p215) in 
+let sprikey219 = PriPart(p215) in 
+new user214;
+let pair221 = (user214,scert217) in 
+let pri223 = (user214,sprikey219) in 
+new p325;
+let scert327 = PubPart(p325) in 
+let sprikey329 = PriPart(p325) in 
+new user324;
+let pair331 = (user324,scert327) in 
+let pri333 = (user324,sprikey329) in 
+new keyStore134;
+out(keyStore134,(KeyStoreOperandPUT0,pri113));
+out(keyStore134,(KeyStoreOperandPUT0,pair221));
+out(keyStore134,(KeyStoreOperandPUT0,pair331));
+new keyStore238;
+out(keyStore238,(KeyStoreOperandPUT0,pri223));
+out(keyStore238,(KeyStoreOperandPUT0,pair111));
+out(keyStore238,(KeyStoreOperandPUT0,pair331));
+new keyStore342;
+out(keyStore342,(KeyStoreOperandPUT0,pri333));
+out(keyStore342,(KeyStoreOperandPUT0,pair111));
+out(keyStore342,(KeyStoreOperandPUT0,pair221));
+new c1146;
+let ch150 = (user14,c1146) in 
+new c2147;
+let ch252 = (user214,c2147) in 
+new c3648;
+let ch354 = (user324,c3648) in 
+let channels156 = (ch150,lastElem3) in 
+let channels258 = (ch252,channels156) in 
+let channels60 = (ch354,channels258) in 
+new fromName63;
+new fromValue64;
+let from66 = (fromName63,fromValue64) in 
+new to168;
+let toValue171 = (to168,lastElem3) in 
+new to269;
+let toValue73 = (to269,toValue171) in 
+new toName67;
+let to175 = (toName67,toValue73) in 
+new dateName76;
+new dateValue77;
+let date79 = (dateName76,dateValue77) in 
+new subjectName80;
+new subjectValue81;
+let subject83 = (subjectName80,subjectValue81) in 
+let h185 = (from66,lastElem3) in 
+let h287 = (to175,h185) in 
+let h389 = (date79,h287) in 
+let headers191 = (subject83,h389) in 
+new contentTypeName92;
+new contentTypeValue93;
+let contentType95 = (contentTypeName92,contentTypeValue93) in 
+let mimeHeaders97 = (contentType95,lastElem3) in 
+new ctext98;
+let body100 = (ctext98,lastElem3) in 
+let text102 = ((contentTypeValue93,mimeHeaders97),body100) in 
+new contentTypeValue2103;
+let contentType2105 = (contentTypeName92,contentTypeValue2103) in 
+let mimeHeaders2107 = (contentType2105,lastElem3) in 
+new ctext2108;
+let body2110 = (ctext2108,lastElem3) in 
+let attachment112 = ((contentTypeValue2103,mimeHeaders2107),body2110) in 
+new MIMEContentType113;
+let contentType3115 = (contentTypeName92,MIMEContentType113) in 
+let mimeHeaders3117 = (contentType3115,lastElem3) in 
+let parts1119 = (text102,lastElem3) in 
+let parts121 = (attachment112,parts1119) in 
+let clearMessage5123 = ((MIMEContentType113,mimeHeaders3117),parts121) in 
+let mail125 = (((fromValue64,toValue73),headers191),clearMessage5123) in 
+new chan161;
+new chan262;
+(
+!(
+new I1129;
+let lastElem1131 = (I1129,I1129) in 
+let w0133 = GetLeft(mail125) in 
+let w1134 = GetLeft(w0133) in 
+let headers2134 = GetRight(w0133) in 
+let w0136 = GetLeft(mail125) in 
+let w1137 = GetLeft(w0136) in 
+let sender1138 = GetLeft(w1137) in 
+let w0139 = GetLeft(mail125) in 
+let w1140 = GetLeft(w0139) in 
+let to2141 = GetRight(w1140) in 
+out(keyStore134,(KeyStoreOperandGET0,sender1138));
+in(keyStore134,privateKey143);
+new envelope127;
+new t144;
+new signType126;
+new contentTypeName1132;
+new signedData145;
+new multipart146;
+if envelope127 = t144 then (
+let w0148 = GetLeft(mail125) in 
+let clearMessage6148 = GetRight(mail125) in 
+let w1149 = GetLeft(w0148) in 
+new nonce153;
+let sk157 = SharedKey(nonce153) in 
+let encryptedContent159 = SymEncrypt(sk157,clearMessage6148) in 
+let recipients161 = (to2141,lastElem1131) in 
+let data163 = (recipients161,sk157) in 
+out(chan262,data163);
+in(chan262,recipientsInfo165);
+let ced167 = (encryptedContent159,recipientsInfo165) in 
+new contentTypeValue1168;
+let contentType1170 = (contentTypeName1132,contentTypeValue1168) in 
+let mimeHeaders1172 = (contentType1170,lastElem1131) in 
+let bodyParts174 = (ced167,lastElem1131) in 
+let msg176 = ((contentTypeValue1168,mimeHeaders1172),bodyParts174) in 
+if signType126 = I1129 then (
+let securedMail179 = (((sender1138,to2141),headers2134),msg176) in 
+let m1180 = GetLeft(to2141) in 
+let i181 = GetRight(to2141) in 
+if m1180 = I1129 then (
+0
+)else (
+let hName1185 = m1180 in 
+out(chan161,hName1185);
+in(chan161,msg1187);
+if msg1187 = I1129 then (
+0
+)else (
+let c12191 = msg1187 in 
+out(c12191,securedMail179);
+let p21194 = i181 in 
+let m2195 = GetLeft(p21194) in 
+let i2196 = GetRight(p21194) in 
+if m2195 = I1129 then (
+0
+)else (
+let hName2200 = m2195 in 
+out(chan161,hName2200);
+in(chan161,msg2202);
+if msg2202 = I1129 then (
+0
+)else (
+let c22206 = msg2202 in 
+out(c22206,securedMail179);
+let p31209 = i2196 in 
+let m3210 = GetLeft(p31209) in 
+let m3wqd211 = GetRight(p31209) in 
+if m3210 = I1129 then (
+0
+)else (
+let hName3215 = m3210 in 
+out(chan161,hName3215);
+in(chan161,msg3217);
+if msg3217 = I1129 then (
+0
+)else (
+let c3221 = msg3217 in 
+out(c3221,securedMail179);
+0
+)))))))else (
+if signType126 = signedData145 then (
+let clearMessageHash226 = H(clearMessage6148) in 
+let sign228 = PriEncrypt(privateKey143,clearMessageHash226) in 
+let sd230 = (clearMessage6148,sign228) in 
+new MIMEContentTypeValue231;
+let MIMEContentType1233 = (contentTypeName1132,MIMEContentTypeValue231) in 
+let MIMEHeaders235 = (MIMEContentType1233,lastElem1131) in 
+let abodyParts237 = (sd230,lastElem1131) in 
+let signedMessage239 = ((MIMEContentTypeValue231,MIMEHeaders235),abodyParts237) in 
+let securedMail1241 = (((sender1138,to2141),headers2134),signedMessage239) in 
+let m11242 = GetLeft(to2141) in 
+let i1243 = GetRight(to2141) in 
+if m11242 = I1129 then (
+0
+)else (
+let hName11247 = m11242 in 
+out(chan161,hName11247);
+in(chan161,msg11249);
+if msg11249 = I1129 then (
+0
+)else (
+let c13253 = msg11249 in 
+out(c13253,securedMail1241);
+let p22256 = i1243 in 
+let m21257 = GetLeft(p22256) in 
+let i21258 = GetRight(p22256) in 
+if m21257 = I1129 then (
+0
+)else (
+let hName21262 = m21257 in 
+out(chan161,hName21262);
+in(chan161,msg21264);
+if msg21264 = I1129 then (
+0
+)else (
+let c23268 = msg21264 in 
+out(c23268,securedMail1241);
+let p32271 = i21258 in 
+let m31272 = GetLeft(p32271) in 
+let m3wfd273 = GetRight(p32271) in 
+if m31272 = I1129 then (
+0
+)else (
+let hName31277 = m31272 in 
+out(chan161,hName31277);
+in(chan161,msg31279);
+if msg31279 = I1129 then (
+0
+)else (
+let c31283 = msg31279 in 
+out(c31283,securedMail1241);
+0
+)))))))else (
+if signType126 = multipart146 then (
+let clearMessageHash1288 = H(clearMessage6148) in 
+let sign1290 = PriEncrypt(privateKey143,clearMessageHash1288) in 
+let mime292 = ((I1129,lastElem1131),lastElem1131) in 
+new contentTypeValue21293;
+let contentType21295 = (contentTypeName1132,contentTypeValue21293) in 
+let headers2297 = (contentType21295,I1129) in 
+let sd1299 = (mime292,sign1290) in 
+let body21301 = (sd1299,I1129) in 
+let signPart303 = ((contentTypeValue21293,headers2297),body21301) in 
+let bodyMessage305 = (clearMessage6148,I1129) in 
+let part307 = ((I1129,lastElem1131),bodyMessage305) in 
+let abodyParts1309 = (part307,lastElem1131) in 
+let abodyParts1311 = (signPart303,abodyParts1309) in 
+new MIMEcontentTypeValue312;
+let MIMEcontentType314 = (contentTypeName1132,MIMEcontentTypeValue312) in 
+let headers3316 = (MIMEcontentType314,lastElem1131) in 
+let signedMessage1318 = ((MIMEcontentTypeValue312,headers3316),abodyParts1311) in 
+let securedMail2320 = (((sender1138,to2141),headers2134),signedMessage1318) in 
+let m12321 = GetLeft(to2141) in 
+let i2322 = GetRight(to2141) in 
+if m12321 = I1129 then (
+0
+)else (
+let hName12326 = m12321 in 
+out(chan161,hName12326);
+in(chan161,msg12328);
+if msg12328 = I1129 then (
+0
+)else (
+let c14332 = msg12328 in 
+out(c14332,securedMail2320);
+let p23335 = i2322 in 
+let m22336 = GetLeft(p23335) in 
+let i22337 = GetRight(p23335) in 
+if m22336 = I1129 then (
+0
+)else (
+let hName22341 = m22336 in 
+out(chan161,hName22341);
+in(chan161,msg22343);
+if msg22343 = I1129 then (
+0
+)else (
+let c24347 = msg22343 in 
+out(c24347,securedMail2320);
+let p33350 = i22337 in 
+let m32351 = GetLeft(p33350) in 
+let m3wfd1352 = GetRight(p33350) in 
+if m32351 = I1129 then (
+0
+)else (
+let hName32356 = m32351 in 
+out(chan161,hName32356);
+in(chan161,msg32358);
+if msg32358 = I1129 then (
+0
+)else (
+let c32362 = msg32358 in 
+out(c32362,securedMail2320);
+0
+))))))))))else (
+let w0365 = GetLeft(mail125) in 
+let clearMessage7365 = GetRight(mail125) in 
+let w1366 = GetLeft(w0365) in 
+if signType126 = signedData145 then (
+let clearMessageHash2370 = H(clearMessage7365) in 
+let sign2372 = PriEncrypt(privateKey143,clearMessageHash2370) in 
+let sd2374 = (clearMessage7365,sign2372) in 
+new MIMEContentTypeValue1375;
+let MIMEContentType2377 = (contentTypeName1132,MIMEContentTypeValue1375) in 
+let MIMEHeaders1379 = (MIMEContentType2377,lastElem1131) in 
+let abodyParts2381 = (sd2374,lastElem1131) in 
+let signedMessage2383 = ((MIMEContentTypeValue1375,MIMEHeaders1379),abodyParts2381) in 
+let securedMail3385 = (((sender1138,to2141),headers2134),signedMessage2383) in 
+let m13386 = GetLeft(to2141) in 
+let i3387 = GetRight(to2141) in 
+if m13386 = I1129 then (
+0
+)else (
+let hName13391 = m13386 in 
+out(chan161,hName13391);
+in(chan161,msg13393);
+if msg13393 = I1129 then (
+0
+)else (
+let c15397 = msg13393 in 
+out(c15397,securedMail3385);
+let p24400 = i3387 in 
+let m23401 = GetLeft(p24400) in 
+let i23402 = GetRight(p24400) in 
+if m23401 = I1129 then (
+0
+)else (
+let hName23406 = m23401 in 
+out(chan161,hName23406);
+in(chan161,msg23408);
+if msg23408 = I1129 then (
+0
+)else (
+let c25412 = msg23408 in 
+out(c25412,securedMail3385);
+let p34415 = i23402 in 
+let m33416 = GetLeft(p34415) in 
+let m3wfd2417 = GetRight(p34415) in 
+if m33416 = I1129 then (
+0
+)else (
+let hName33421 = m33416 in 
+out(chan161,hName33421);
+in(chan161,msg33423);
+if msg33423 = I1129 then (
+0
+)else (
+let c33427 = msg33423 in 
+out(c33427,securedMail3385);
+0
+)))))))else (
+if signType126 = multipart146 then (
+let clearMessageHash3432 = H(clearMessage7365) in 
+let sign3434 = PriEncrypt(privateKey143,clearMessageHash3432) in 
+let mime1436 = ((I1129,lastElem1131),lastElem1131) in 
+new contentTypeValue22437;
+let contentType22439 = (contentTypeName1132,contentTypeValue22437) in 
+let headers21441 = (contentType22439,lastElem1131) in 
+let sd3443 = (mime1436,sign3434) in 
+let body22445 = (sd3443,lastElem1131) in 
+let signPart1447 = ((contentTypeValue22437,headers21441),body22445) in 
+let bodyMessage1449 = (clearMessage7365,lastElem1131) in 
+let part1451 = ((I1129,lastElem1131),bodyMessage1449) in 
+let abodyParts11453 = (part1451,lastElem1131) in 
+let abodyParts3455 = (signPart1447,abodyParts11453) in 
+new MIMEcontentTypeValue1456;
+let MIMEcontentType1458 = (contentTypeName1132,MIMEcontentTypeValue1456) in 
+let headers31460 = (MIMEcontentType1458,lastElem1131) in 
+let signedMessage3462 = ((MIMEcontentTypeValue1456,headers31460),abodyParts3455) in 
+let securedMail4464 = (((sender1138,to2141),headers2134),signedMessage3462) in 
+let m14465 = GetLeft(to2141) in 
+let i4466 = GetRight(to2141) in 
+if m14465 = I1129 then (
+0
+)else (
+let hName14470 = m14465 in 
+out(chan161,hName14470);
+in(chan161,msg14472);
+if msg14472 = I1129 then (
+0
+)else (
+let c16476 = msg14472 in 
+out(c16476,securedMail4464);
+let p25479 = i4466 in 
+let m24480 = GetLeft(p25479) in 
+let i24481 = GetRight(p25479) in 
+if m24480 = I1129 then (
+0
+)else (
+let hName24485 = m24480 in 
+out(chan161,hName24485);
+in(chan161,msg24487);
+if msg24487 = I1129 then (
+0
+)else (
+let c26491 = msg24487 in 
+out(c26491,securedMail4464);
+let p35494 = i24481 in 
+let m34495 = GetLeft(p35494) in 
+let m3wefw496 = GetRight(p35494) in 
+if m34495 = I1129 then (
+0
+)else (
+let hName34500 = m34495 in 
+out(chan161,hName34500);
+in(chan161,msg34502);
+if msg34502 = I1129 then (
+0
+)else (
+let c34506 = msg34502 in 
+out(c34506,securedMail4464);
+0
+))))))))))
+|
+(!
+in(c2147,msg1511);
+let w0512 = GetLeft(msg1511) in 
+let w1513 = GetLeft(w0512) in 
+let headers513 = GetRight(w0512) in 
+let w0515 = GetLeft(msg1511) in 
+let w1516 = GetLeft(w0515) in 
+let sender517 = GetLeft(w1516) in 
+let w0518 = GetLeft(msg1511) in 
+let w1519 = GetLeft(w0518) in 
+let to520 = GetRight(w1519) in 
+let w0521 = GetLeft(msg1511) in 
+let mime2521 = GetRight(msg1511) in 
+let w1522 = GetLeft(w0521) in 
+let w0524 = GetLeft(mime2521) in 
+let contentType2525 = GetLeft(w0524) in 
+new pkcs7MimeSignedData526;
+if contentType2525 = pkcs7MimeSignedData526 then (
+let w0530 = GetLeft(mime2521) in 
+let bodyParts1530 = GetRight(mime2521) in 
+let part2532 = GetLeft(bodyParts1530) in 
+let partwdcw533 = GetRight(bodyParts1530) in 
+let sd4535 = part2532 in 
+let clearMessage536 = GetLeft(sd4535) in 
+let sign4537 = GetRight(sd4535) in 
+let myClearMessageHash539 = H(clearMessage536) in 
+out(keyStore238,(KeyStoreOperandGET0,sender517));
+in(keyStore238,pubKey541);
+let clearMessageHash4542 = PubDecrypt(pubKey541,sign4537) in (
+if clearMessageHash4542 = myClearMessageHash539 then (
+let newMsg545 = (((sender517,to520),headers513),clearMessage536) in 
+0
+)))else (
+new pkcs7MimeEnvelopedData527;
+if contentType2525 = pkcs7MimeEnvelopedData527 then (
+let w0549 = GetLeft(mime2521) in 
+let bodyParts2549 = GetRight(mime2521) in 
+let m551 = GetLeft(bodyParts2549) in 
+let partwdcw1552 = GetRight(bodyParts2549) in 
+let ced1554 = m551 in 
+let recipientsInfo1555 = GetRight(ced1554) in 
+let m16556 = GetLeft(recipientsInfo1555) in 
+let i6557 = GetRight(recipientsInfo1555) in 
+new I3510;
+if m16556 = I3510 then (
+0
+)else (
+let hName15561 = m16556 in 
+let rID562 = GetLeft(hName15561) in 
+if rID562 = user214 then (
+let pkc564 = GetRight(hName15561) in 
+out(keyStore238,(KeyStoreOperandGET0,user214));
+in(keyStore238,privateKey1566);
+let sk1567 = PriDecrypt(privateKey1566,pkc564) in (
+let encryptedContent1568 = GetLeft(ced1554) in 
+let clearMessage1569 = SymDecrypt(sk1567,encryptedContent1568) in (
+let newMsg1571 = (((sender517,to520),headers513),clearMessage1569) in 
+0
+)))else (
+let p27574 = i6557 in 
+let m26575 = GetLeft(p27574) in 
+let i26576 = GetRight(p27574) in 
+if m26575 = I3510 then (
+0
+)else (
+let hName25580 = m26575 in 
+let rID2581 = GetLeft(hName25580) in 
+if rID2581 = user214 then (
+let pkc1583 = GetRight(hName25580) in 
+out(keyStore238,(KeyStoreOperandGET0,user214));
+in(keyStore238,privateKey2585);
+let sk2586 = PriDecrypt(privateKey2585,pkc1583) in (
+let encryptedContent2587 = GetLeft(ced1554) in 
+let clearMessage2588 = SymDecrypt(sk2586,encryptedContent2587) in (
+let newMsg2590 = (((sender517,to520),headers513),clearMessage2588) in 
+0
+)))else (
+let p37593 = i26576 in 
+let m36594 = GetLeft(p37593) in 
+let part3df595 = GetRight(p37593) in 
+if m36594 = I3510 then (
+0
+)else (
+let hName35599 = m36594 in 
+let rID3600 = GetLeft(hName35599) in 
+if rID3600 = user214 then (
+let pkc2602 = GetRight(hName35599) in 
+out(keyStore238,(KeyStoreOperandGET0,user214));
+in(keyStore238,privateKey3604);
+let sk3605 = PriDecrypt(privateKey3604,pkc2602) in (
+let encryptedContent3606 = GetLeft(ced1554) in 
+let clearMessage3607 = SymDecrypt(sk3605,encryptedContent3606) in (
+let newMsg3609 = (((sender517,to520),headers513),clearMessage3607) in 
+0
+)))))))))else (
+new pkcs7Signature528;
+if contentType2525 = pkcs7Signature528 then (
+let w0612 = GetLeft(mime2521) in 
+let bodyParts3612 = GetRight(mime2521) in 
+let part3614 = GetLeft(bodyParts3612) in 
+let pair615 = GetRight(bodyParts3612) in 
+let signEntity617 = part3614 in 
+let part1618 = GetLeft(pair615) in 
+let part1ds619 = GetRight(pair615) in 
+let clearMessagePart621 = part1618 in 
+let w0622 = GetLeft(clearMessagePart621) in 
+let bodyparts622 = GetRight(clearMessagePart621) in 
+let part2624 = GetLeft(bodyparts622) in 
+let part2sds625 = GetRight(bodyparts622) in 
+let clearMessage4627 = part2624 in 
+let w0628 = GetLeft(signEntity617) in 
+let parts1628 = GetRight(signEntity617) in 
+let part3630 = GetLeft(parts1628) in 
+let part3df1631 = GetRight(parts1628) in 
+let sd5633 = part3630 in 
+let w0634 = GetLeft(signEntity617) in 
+let CMSContentType635 = GetLeft(w0634) in 
+new CMSSignedData636;
+if CMSContentType635 = CMSSignedData636 then (
+let sign5638 = GetRight(sd5633) in 
+let myClearMessageHash1640 = H(clearMessage4627) in 
+out(keyStore238,(KeyStoreOperandGET0,sender517));
+in(keyStore238,pubKey1642);
+let clearMessageHash5643 = PubDecrypt(pubKey1642,sign5638) in (
+if clearMessageHash5643 = myClearMessageHash1640 then (
+let newMsg4646 = (((sender517,to520),headers513),clearMessage4627) in 
+0
+)))))))
+|
+(!
+in(chan161,recipient651);
+let m15652 = GetLeft(channels60) in 
+let i5653 = GetRight(channels60) in 
+new I2650;
+if m15652 = I2650 then (
+out(chan161,I2650);
+0
+)else (
+let pch1658 = m15652 in 
+let user11659 = GetLeft(pch1658) in 
+let c1660 = GetRight(pch1658) in 
+if user11659 = recipient651 then (
+out(chan161,c1660);
+0
+)else (
+let p26665 = i5653 in 
+let m25666 = GetLeft(p26665) in 
+let i25667 = GetRight(p26665) in 
+if m25666 = I2650 then (
+0
+)else (
+let pch2671 = m25666 in 
+let user21672 = GetLeft(pch2671) in 
+let c2673 = GetRight(pch2671) in 
+if user21672 = recipient651 then (
+out(chan161,c2673);
+0
+)else (
+let p36678 = i25667 in 
+let m35679 = GetLeft(p36678) in 
+let i3680 = GetRight(p36678) in 
+if m35679 = I2650 then (
+0
+)else (
+let pch3684 = m35679 in 
+let user31685 = GetLeft(pch3684) in 
+let c35686 = GetRight(pch3684) in 
+if user31685 = recipient651 then (
+out(chan161,c35686);
+0
+)else (
+let p4691 = i3680 in 
+let m4692 = GetLeft(p4691) in 
+let m4wqd693 = GetRight(p4691) in 
+if m4692 = I2650 then (
+0
+)else (
+let pch4697 = m4692 in 
+let user4698 = GetLeft(pch4697) in 
+let c4699 = GetRight(pch4697) in 
+if user4698 = recipient651 then (
+out(chan161,c4699);
+0
+)))))))))
+|
+(!
+in(chan262,pair1704);
+let recipientsPair705 = GetLeft(pair1704) in 
+let sk4706 = GetRight(pair1704) in 
+let recipients1707 = GetLeft(recipientsPair705) in 
+let recipientsInfo2708 = GetRight(recipientsPair705) in 
+let m17709 = GetLeft(recipients1707) in 
+let i7710 = GetRight(recipients1707) in 
+new I4703;
+if m17709 = I4703 then (
+let emptyList713 = (I4703,I4703) in 
+out(chan262,emptyList713);
+0
+)else (
+let hName16717 = m17709 in 
+out(keyStore134,(KeyStoreOperandGET0,hName16717));
+in(keyStore134,pk1719);
+let pkc1721 = PubEncrypt(pk1719,sk4706) in 
+let ri1723 = (hName16717,pkc1721) in 
+let msg25725 = (ri1723,recipientsInfo2708) in 
+let p28727 = i7710 in 
+let m27728 = GetLeft(p28727) in 
+let i27729 = GetRight(p28727) in 
+if m27728 = I4703 then (
+out(chan262,msg25725);
+0
+)else (
+let hName26734 = m27728 in 
+out(keyStore134,(KeyStoreOperandGET0,hName26734));
+in(keyStore134,pk2736);
+let pkc2738 = PubEncrypt(pk2736,sk4706) in 
+let ri2740 = (hName26734,pkc2738) in 
+let msg35742 = (ri2740,msg25725) in 
+let p38744 = i27729 in 
+let m37745 = GetLeft(p38744) in 
+let i31746 = GetRight(p38744) in 
+if m37745 = I4703 then (
+out(chan262,msg35742);
+0
+)else (
+let hName36751 = m37745 in 
+out(keyStore134,(KeyStoreOperandGET0,hName36751));
+in(keyStore134,pk3753);
+let pkc3755 = PubEncrypt(pk3753,sk4706) in 
+let ri3757 = (hName36751,pkc3755) in 
+let msg4759 = (ri3757,msg35742) in 
+let p41761 = i31746 in 
+let m41762 = GetLeft(p41761) in 
+let m4rf763 = GetRight(p41761) in 
+if m41762 = I4703 then (
+out(chan262,msg4759);
+0
+)else (
+let hName4768 = m41762 in 
+out(keyStore134,(KeyStoreOperandGET0,hName4768));
+in(keyStore134,pk4770);
+let pkc4772 = PubEncrypt(pk4770,sk4706) in 
+let ri4774 = (hName4768,pkc4772) in 
+let msg5776 = (ri4774,msg4759) in 
+out(chan262,msg5776);
+0
+)))))
+)
+

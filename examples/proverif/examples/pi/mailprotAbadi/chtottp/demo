@@ -1,0 +1,23 @@
+#!/bin/sh
+
+m4 -DPROP2 protocol > prot-PROP2
+../../../../proverif -in pi prot-PROP2 | less
+
+# if [ -x ../../../xtime ]
+# then
+#     if [ .$1 = . ]
+#     then
+#         PROG=../../../xtime
+#     else
+#         PROG="../../../xtime -repeat 10 -o /dev/null"
+#     fi
+# else
+#     PROG=
+# fi
+# (
+# m4 -DPROP2 protocol > prot-PROP2
+# $PROG ../../../proverif -in pi prot-PROP2 > prot-$i.result
+# grep goal prot-$i.result
+# grep system prot-$i.result | grep user
+# ) | tee results
+

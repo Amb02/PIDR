@@ -1,0 +1,47 @@
+SECRECY-CHTOTTP
+goal reachable: attacker(Message(PasswdTable(Rpwd[]),msgid_1,(NoAuth,NoAuth)))
+The goal is reached, represented in the following fact:
+SECRECY-PKCHANNEL
+goal reachable: attacker(Message(PasswdTable(Rpwd[]),msgid_1,(NoAuth,NoAuth)))
+The goal is reached, represented in the following fact:
+SECRECY-SSH
+goal reachable: attacker(Message(PasswdTable(Rpwd[]),msgid_1,(NoAuth,NoAuth)))
+The goal is reached, represented in the following fact:
+PROP1-CHTOTTP
+goal reachable: begin(TTPSendS(Sname[],S(TTPSigKey[],(Released,A(pk(TTPDecKey[]),(Sname[],(Auth,Auth),(Give,k_1,PasswdTable(RPwd3_1),H((cleartext[],qtmp_1,Reply(PasswdTable(RPwd3_1),qtmp_1),E(k_1,Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth)))))))),PasswdTable(RPwd3_1))))) && begin(Shas(Sname[],k_1,cleartext[],qtmp_1,Reply(PasswdTable(RPwd3_1),qtmp_1),Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth)))) && attacker(RPwd3_1) -> end(Rreceived(Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth))))
+The goal is reached, represented in the following fact:
+PROP1-PKCHANNEL
+goal reachable: begin(TTPSendS(Sname[],S(TTPSigKey[],(Released,A(pk(TTPDecKey[]),(Sname[],(Auth,Auth),(Give,k_1,PasswdTable(RPwd3_1),H((cleartext[],qtmp_1,Reply(PasswdTable(RPwd3_1),qtmp_1),E(k_1,Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth)))))))),PasswdTable(RPwd3_1))))) && begin(Shas(Sname[],k_1,cleartext[],qtmp_1,Reply(PasswdTable(RPwd3_1),qtmp_1),Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth)))) && attacker(RPwd3_1) -> end(Rreceived(Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth))))
+The goal is reached, represented in the following fact:
+PROP1-SSH
+goal reachable: begin(TTPSendS(Sname[],S(TTPSigKey[],(Released,A(pk(TTPDecKey[]),(Sname[],(Auth,Auth),(Give,k_1,PasswdTable(RPwd3_1),H((cleartext[],qtmp_1,Reply(PasswdTable(RPwd3_1),qtmp_1),E(k_1,Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth)))))))),PasswdTable(RPwd3_1))))) && begin(Shas(Sname[],k_1,cleartext[],qtmp_1,Reply(PasswdTable(RPwd3_1),qtmp_1),Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth)))) && attacker(RPwd3_1) -> end(Rreceived(Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth))))
+The goal is reached, represented in the following fact:
+PROP2-CHTOTTP
+goal reachable: begin(TTPSendR(id_for_host_ch(PasswdTable(Rpwd[]),secchannel_2),(Try,y,H((cleartext5_1,q5_1,Reply(PasswdTable(Rpwd[]),q5_1),E(y,x)))))) && begin(Rhas(id_for_host_ch(PasswdTable(Rpwd[]),secchannel_2),E(y,x),H((cleartext5_1,q5_1,Reply(PasswdTable(Rpwd[]),q5_1),E(y,x))))) && attacker(cleartext5_1) && attacker(q5_1) && attacker(y) && attacker(x) -> end(JudgeSays(Received,PasswdTable(Rpwd[]),x))
+The goal is reached, represented in the following fact:
+PROP2-PKCHANNEL
+goal reachable: begin(TTPSendR(id_for_key(shkey_2),(Try,y,H((cleartext5_1,q5_1,Reply(PasswdTable(Rpwd[]),q5_1),E(y,x)))))) && begin(Rhas(id_for_key(shkey_2),E(y,x),H((cleartext5_1,q5_1,Reply(PasswdTable(Rpwd[]),q5_1),E(y,x))))) && attacker(cleartext5_1) && attacker(q5_1) && attacker(y) && attacker(x) -> end(JudgeSays(Received,PasswdTable(Rpwd[]),x))
+The goal is reached, represented in the following fact:
+PROP2-SSH
+goal reachable: begin(TTPSendR(id_for_host_key_key(PasswdTable(Rpwd[]),H((exp(exp(g,dhsecretTTP_1),dhsecretR_1),H((Spk(TTPSigKey[]),exp(g,dhsecretR_1),exp(g,dhsecretTTP_1),exp(exp(g,dhsecretTTP_1),dhsecretR_1))),keyEncTTPtoR)),H((exp(exp(g,dhsecretTTP_1),dhsecretR_1),H((Spk(TTPSigKey[]),exp(g,dhsecretR_1),exp(g,dhsecretTTP_1),exp(exp(g,dhsecretTTP_1),dhsecretR_1))),keyMacTTPtoR))),(Try,y_1,H((cleartext5_1,q5_1,Reply(PasswdTable(Rpwd[]),q5_1),E(y_1,x_1)))))) && begin(Rhas(id_for_host_key_key(PasswdTable(Rpwd[]),H((exp(exp(g,dhsecretTTP_1),dhsecretR_1),H((Spk(TTPSigKey[]),exp(g,dhsecretR_1),exp(g,dhsecretTTP_1),exp(exp(g,dhsecretTTP_1),dhsecretR_1))),keyEncTTPtoR)),H((exp(exp(g,dhsecretTTP_1),dhsecretR_1),H((Spk(TTPSigKey[]),exp(g,dhsecretR_1),exp(g,dhsecretTTP_1),exp(exp(g,dhsecretTTP_1),dhsecretR_1))),keyMacTTPtoR))),E(y_1,x_1),H((cleartext5_1,q5_1,Reply(PasswdTable(Rpwd[]),q5_1),E(y_1,x_1))))) && attacker(cleartext5_1) && attacker(q5_1) && attacker(y_1) && attacker(x_1) -> end(JudgeSays(Received,PasswdTable(Rpwd[]),x_1))
+The goal is reached, represented in the following fact:
+PROP3-CHTOTTP
+goal reachable: begin(TTPSendS(Sname[],S(TTPSigKey[],(Released,A(pk(TTPDecKey[]),(Sname[],(Auth,Auth),(Give,k_1,PasswdTable(RPwd3_1),H((cleartext[],qtmp_1,Reply(PasswdTable(RPwd3_1),qtmp_1),E(k_1,Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth)))))))),PasswdTable(RPwd3_1))))) && begin(Shas(Sname[],k_1,cleartext[],qtmp_1,Reply(PasswdTable(RPwd3_1),qtmp_1),Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth)))) && attacker(RPwd3_1) -> end(Rreceived(Message(PasswdTable(RPwd3_1),msgid_1,(Auth,Auth))))
+The goal is reached, represented in the following fact:
+PROP3-PKCHANNEL
+goal reachable: begin(TTPSendS2(Sname[],S(TTPSigKey[],(Released,A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x,H((cleartext[],qtmp_1,Reply(x,qtmp_1),E(k_1,Message(x,msgid_1,(Auth,NoAuth)))))))))))) && begin(Shas(Sname[],k_1,cleartext[],qtmp_1,Reply(x,qtmp_1),Message(x,msgid_1,(Auth,NoAuth)))) && attacker(x) -> end(Rreceived(Message(x,msgid_1,(Auth,NoAuth))))
+The goal is reached, represented in the following fact:
+event Rreceived(Message(a_2,msgid_1,(Auth,NoAuth))) at {49} in copy a (goal)
+PROP3-SSH
+goal reachable: begin(TTPSendS2(Sname[],S(TTPSigKey[],(Released,A(pk(TTPDecKey[]),(Sname[],(Auth,NoAuth),(Give,k_1,x_1,H((cleartext[],qtmp_1,Reply(x_1,qtmp_1),E(k_1,Message(x_1,msgid_1,(Auth,NoAuth)))))))))))) && begin(Shas(Sname[],k_1,cleartext[],qtmp_1,Reply(x_1,qtmp_1),Message(x_1,msgid_1,(Auth,NoAuth)))) && attacker(x_1) -> end(Rreceived(Message(x_1,msgid_1,(Auth,NoAuth))))
+The goal is reached, represented in the following fact:
+event Rreceived(Message(a_1,msgid_1,(Auth,NoAuth))) at {60} in copy a (goal)
+PROP4-CHTOTTP
+goal reachable: begin(TTPSendR(id_for_host_ch(PasswdTable(Rpwd[]),secchannel_2),(Try,k_1,H((cleartext[],qtmp_1,Reply(PasswdTable(Rpwd[]),qtmp_1),E(k_1,Message(PasswdTable(Rpwd[]),msgid_1,(Auth,Auth)))))))) && begin(Rhas(id_for_host_ch(PasswdTable(Rpwd[]),secchannel_2),E(k_1,Message(PasswdTable(Rpwd[]),msgid_1,(Auth,Auth))),H((cleartext[],qtmp_1,Reply(PasswdTable(Rpwd[]),qtmp_1),E(k_1,Message(PasswdTable(Rpwd[]),msgid_1,(Auth,Auth))))))) -> end(SThinksRhas(Message(PasswdTable(Rpwd[]),msgid_1,(Auth,Auth))))
+The goal is reached, represented in the following fact:
+PROP4-PKCHANNEL
+goal reachable: begin(TTPSendR(id_for_key(shkey_2),(Try,k_1,H((cleartext[],qtmp_1,Reply(PasswdTable(Rpwd[]),qtmp_1),E(k_1,Message(PasswdTable(Rpwd[]),msgid_1,(Auth,Auth)))))))) && begin(Rhas(id_for_key(shkey_2),E(k_1,Message(PasswdTable(Rpwd[]),msgid_1,(Auth,Auth))),H((cleartext[],qtmp_1,Reply(PasswdTable(Rpwd[]),qtmp_1),E(k_1,Message(PasswdTable(Rpwd[]),msgid_1,(Auth,Auth))))))) -> end(SThinksRhas(Message(PasswdTable(Rpwd[]),msgid_1,(Auth,Auth))))
+The goal is reached, represented in the following fact:
+PROP4-SSH
+goal reachable: begin(TTPSendR(id_for_host_key_key(PasswdTable(Rpwd[]),H((exp(exp(g,dhsecretTTP_1),dhsecretR_1),H((Spk(TTPSigKey[]),exp(g,dhsecretR_1),exp(g,dhsecretTTP_1),exp(exp(g,dhsecretTTP_1),dhsecretR_1))),keyEncTTPtoR)),H((exp(exp(g,dhsecretTTP_1),dhsecretR_1),H((Spk(TTPSigKey[]),exp(g,dhsecretR_1),exp(g,dhsecretTTP_1),exp(exp(g,dhsecretTTP_1),dhsecretR_1))),keyMacTTPtoR))),(Try,k_1,H((cleartext[],qtmp_1,Reply(PasswdTable(Rpwd[]),qtmp_1),E(k_1,Message(PasswdTable(Rpwd[]),msgid_1,(Auth,Auth)))))))) && begin(Rhas(id_for_host_key_key(PasswdTable(Rpwd[]),H((exp(exp(g,dhsecretTTP_1),dhsecretR_1),H((Spk(TTPSigKey[]),exp(g,dhsecretR_1),exp(g,dhsecretTTP_1),exp(exp(g,dhsecretTTP_1),dhsecretR_1))),keyEncTTPtoR)),H((exp(exp(g,dhsecretTTP_1),dhsecretR_1),H((Spk(TTPSigKey[]),exp(g,dhsecretR_1),exp(g,dhsecretTTP_1),exp(exp(g,dhsecretTTP_1),dhsecretR_1))),keyMacTTPtoR))),E(k_1,Message(PasswdTable(Rpwd[]),msgid_1,(Auth,Auth))),H((cleartext[],qtmp_1,Reply(PasswdTable(Rpwd[]),qtmp_1),E(k_1,Message(PasswdTable(Rpwd[]),msgid_1,(Auth,Auth))))))) -> end(SThinksRhas(Message(PasswdTable(Rpwd[]),msgid_1,(Auth,Auth))))
+The goal is reached, represented in the following fact:

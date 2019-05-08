@@ -1,0 +1,60 @@
+free c:channel.
+free k1:bitstring [private].
+free k2:bitstring [private].
+const ok:bitstring.
+const ko:bitstring.
+
+fun enc(bitstring,bitstring):bitstring.
+reduc forall x:bitstring, y:bitstring; dec(enc(x,y),y) = x.
+
+set verboseClauses = short.
+
+query attacker(ok).
+
+process
+  in(c,x:bitstring);
+  in(c,y:bitstring);
+  let z = dec(dec(x,k2),dec(y,k1)) in
+    out(c,ok)
+  else
+    out(c,ko)
+
+(* Should produce the clauses:
+Initial clauses:
+Clause 0: attacker(true)
+
+Clause 1: attacker(ok)
+
+Clause 2: attacker(ko)
+
+Clause 3: attacker(false)
+
+Clause 4: attacker(v) && attacker(v_1) -> attacker(enc(v,v_1))
+
+Clause 5: attacker(enc(x_1,y_1)) && attacker(y_1) -> attacker(x_1)
+
+Clause 6: attacker(v) && attacker(v_1) -> attacker((v,v_1))
+
+Clause 7: attacker((v,v_1)) -> attacker(v)
+
+Clause 8: attacker((v,v_1)) -> attacker(v_1)
+
+Clause 9: mess(v,v_1) && attacker(v) -> attacker(v_1)
+
+Clause 10: attacker(v) && attacker(v_1) -> mess(v,v_1)
+
+Clause 11: attacker(fail-any)
+
+Clause 12: attacker(c[])
+
+Clause 13: equal(v,v)
+
+Clause 14: attacker(new-name_1)
+Abbreviations:
+new-name_1 = new-name[!att = v]
+
+Clause 15: attacker(enc(y_1,k1[])) && attacker(enc(enc(z_1,y_1),k2[])) -> attacker(ok)
+
+Clause 16: (forall @gen,@gen_1, (x_1 <> enc(enc(@gen_1,@gen),k2[]) | y_1 <> enc(@gen,k1[]))) && attacker(y_1) && attacker(x_1) -> attacker(ko)
+
+*)

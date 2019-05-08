@@ -1,0 +1,8 @@
+fun alternate(bitstring, bitstring): bitstring.
+fun push(bitstring, bitstring): bitstring.
+const nil:bitstring.
+
+equation forall y:bitstring; alternate(nil,y) = y;
+	 forall x:bitstring, y:bitstring, z:bitstring; alternate(push(x,y),z) = push(x,alternate(z,y)) [convergent].
+
+process 0

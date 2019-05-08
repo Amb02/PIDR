@@ -1,0 +1,7 @@
+fun hash/1.
+
+free c.
+
+process
+	new n;
+	out(c, choice[n, hash(n)])

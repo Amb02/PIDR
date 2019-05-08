@@ -1,0 +1,32 @@
+free c:channel.
+free d:channel [private].
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+event A(bitstring).
+event B(bitstring).
+
+const zero:bitstring.
+fun succ(bitstring):bitstring.
+pred is_nat(bitstring).
+clauses
+  is_nat(zero); forall x:bitstring; is_nat(x) -> is_nat(succ(x)).
+
+pred is_nat2(bitstring)[block].
+
+const ok,ko,k:bitstring[private].
+
+axiom x:bitstring,y:bitstring; event(A(x)) ==> event(B(x)) && is_nat(x) [fullSat].
+
+
+query x:bitstring;
+  attacker(ok) ==> event(A(x)) && x = a;
+  attacker(ok) ==> event(A(x)).
+
+process
+  (in(c,x:bitstring);
+   event A(x);
+   out(d,k))
+  | in(d,x:bitstring); out(c,ok)

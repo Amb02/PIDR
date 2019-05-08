@@ -1,0 +1,229 @@
+(************)
+(* Preamble *)
+(************)
+
+(** Data types **)
+type Host.
+type Key.
+type PubKey.
+type PrvKey.
+type Tag.
+type Composite.
+type Prime.
+type GroupElem.
+type Exponent.
+type Time. 
+type Nonce.
+
+(* For passive attackers, the model is secure. Uncomment to verify *)
+(* set attacker = passive. *)
+
+(** Channels **)
+free net:channel. (* Public channel *)
+
+(** Message tags. **)
+free msg1,msg2,msg3,msg4,msg5,msg6,msg7:Tag.
+
+(** Constructors and destructors **)
+
+(* Diffie-Hellman functions and equations *)
+const g: GroupElem.
+fun exp(GroupElem,Exponent): GroupElem.
+equation forall x: Exponent, y: Exponent; exp(exp(g,x),y) = exp(exp(g,y),x).
+
+(* Factoring -- assumed simple for composites of msg2 -- *)
+fun compose(Prime,Prime): Composite.
+reduc forall p:Prime, q:Prime; factor1(compose(p,q)) = p.
+reduc forall p:Prime, q:Prime; factor2(compose(p,q)) = q.
+
+(* Symmetric encryption and decryption *)
+fun kdf(bitstring): Key. (* Key derivation function *)
+fun senc(bitstring,Key): bitstring. (* Encryption *)
+(* THIS DEFINITION OF DECRYPTION IS ERRONEOUS: 
+   it works only when keys are of the form kdf(s), 
+   which is not true for group elements
+reduc forall m:bitstring, s:bitstring; sdec(senc(m,kdf(s)),kdf(s)) = m. 
+
+HERE IS THE FIXED DEFINITION *)
+reduc forall m:bitstring, k:Key; sdec(senc(m,k),k) = m. (* Decryption *)
+
+fun sencGE(bitstring,GroupElem): bitstring.
+reduc forall m:bitstring,k:GroupElem; sdecGE(sencGE(m,k),k) = m.
+
+(* Asymmetric encryption and decryption *)
+fun getpubkey(PrvKey): PubKey. (* Get public key from private key *)
+fun aenc(bitstring, PubKey): bitstring. (* Encryption *)
+reduc forall m:bitstring, p:PrvKey; adec(aenc(m,getpubkey(p)),p) = m. (* Decryption *)
+
+(* Hash functions -- no reduc *)
+fun sha1(bitstring):bitstring.
+fun sha1key(GroupElem):bitstring. (* Just for convenience... -- NOTE: Could use type conversion here *)
+
+(* For converting auth_key to a key *)
+fun groupelemtokey(GroupElem): Key [data,typeConverter].
+
+(* Events *)
+event ClientRequestsRegistration(Nonce).
+event ClientSuccess(Nonce,Nonce).
+event TelegramSuccess(Nonce,Nonce).
+
+(** The queries. **)
+
+(* Each time the client server succeeds, Telegram suceeded before for
+   the same parameters. *)
+(* query n1:Nonce, n2:Nonce;
+inj-event(ClientSuccess(n1,n2)) ==> inj-event(TelegramSuccess(n1,n2)). *)
+
+(* Each time the server succeeds in registration (for a given nonce)
+   a legitimate customer has initiated that request *)
+(* query n1:Nonce, n2:Nonce;
+inj-event(TelegramSuccess(n1,n2)) ==> (inj-event(ClientSuccess(n1,n2)) && inj-event(ClientRequestsRegistration(n1))). *)
+
+(* Secrecy *)
+
+(* The attacker does not gain knowledge of a freshly created key *)
+query message:bitstring; attacker(new message).
+
+(***********************)
+(* The protocol itself *)
+(***********************)
+
+(** The client process. **)
+let client =
+
+    (* Create 'nonce' and send it: Message "req_pq" *)
+    new nonce:Nonce;
+    event ClientRequestsRegistration(nonce);
+    out(net, (msg1, nonce));
+
+    (* Receive the response: Message "resPQ" *)
+    in(net, (=msg2, =nonce, server_nonce:Nonce, pq:Composite, pubkey:PubKey));
+    
+    (* The client factors pq... *)
+    let p = factor1(pq) in
+    let q = factor2(pq) in
+    
+    (* Get new nonce *)
+    new nuevo_nonce:Nonce;
+
+    (* Send it: Message "req_DH_params" *)
+    out(net, (msg3, nonce, server_nonce, p, q, pubkey, aenc((pq,p,q,nonce,server_nonce,nuevo_nonce),pubkey)));
+    
+    (* Receive the response: Message "server_DH_params_ok" *)
+    in(net, (=msg4, =nonce, =server_nonce, enc_answer:bitstring));
+
+    (* Derive the symmetric key *)
+    let aes_key = kdf(sha1((nonce,nuevo_nonce))) in
+    
+    (* Decrypt the received message *)
+    let (=nonce,=server_nonce,g:GroupElem,dh_prime:Prime,g_a:GroupElem,server_time:Time,answer_hash:bitstring) = sdec(enc_answer, aes_key) in
+   
+    (* Check the answer hash *)
+    let answer_hash' = sha1((nonce,server_nonce,g,dh_prime,g_a,server_time)) in
+ 
+    if answer_hash = answer_hash' then (
+
+      (* Choose b *)
+      new b:Exponent;
+      let g_b = exp(g,b) in
+
+      (* Set auth_key to g^a^b *)
+      let auth_key = exp(g_a,b) in
+
+      (* Send Message "set_client_DH_params" -- ignores retry_id (negotiation always succeeds) *)
+      out(net, (msg5, nonce, server_nonce, senc((nonce,server_nonce,g_b,sha1((nonce,server_nonce,g_b))),aes_key)));
+
+      (* Get the last message: "dh_gen_ok" *)
+      in(net, (=msg6, =nonce, =server_nonce, nuevo_nonce_hash1:bitstring)); 
+
+      (* Check the correctness of the received hash *)
+      let auth_key_hash = sha1key(auth_key) in
+      let nuevo_nonce_hash1' = sha1((auth_key_hash,nuevo_nonce)) in 
+
+      (* If correct, we are done *)
+      if nuevo_nonce_hash1 = nuevo_nonce_hash1' then ( 
+
+          event ClientSuccess(nonce,server_nonce);
+
+	new message:bitstring;
+
+        (* If the attacker learns message, then she has the negotiated key *)
+
+	(* Uncomment the two following lines - and comment out the next - for testing the conversion function *)
+        let final_key = groupelemtokey(auth_key) in 
+	out(net,senc(message,final_key)) 
+
+	(* out(net,sencGE(message,auth_key)) *)
+      )
+
+    ).
+	
+(** The Telegram Server process **)
+let telegram(telegramprvkey: PrvKey) =
+
+    (* Receive message: "req_pq" *)
+    in(net, (=msg1, nonce:Nonce));
+
+    (* Create a composite number pq using primes p and q *)
+    new p: Prime; new q: Prime;
+    let pq = compose(p,q) in
+
+    (* Create server nonce *)
+    new server_nonce:Nonce;
+
+    (* Send message "resPQ" *)
+    let pubkey = getpubkey(telegramprvkey) in
+    out(net, (msg2, nonce, server_nonce, pq, pubkey));
+
+    (* Receive message "req_DH_params" *)
+    in(net, (=msg3, =nonce, =server_nonce, =p, =q, =pubkey, enc_data:bitstring));
+
+    (* Decrypt the enrypted data *)
+    let (=pq,=p,=q,=nonce,=server_nonce,nuevo_nonce:Nonce) = adec(enc_data,telegramprvkey) in
+
+    (* Create the server part of the Diffie-Hellman exchange *)
+    new dh_prime: Prime; new a: Exponent;
+
+    let g_a = exp(g,a) in
+
+    new server_time:Time;
+
+    (* Derive the symmetric key *)
+    let aes_key = kdf(sha1((nonce,nuevo_nonce))) in
+
+    (* Send message "server_DH_params_ok" *)
+    out(net, (msg4, nonce, server_nonce, senc((nonce, server_nonce, g, dh_prime, g_a, server_time, sha1((nonce,server_nonce,g,dh_prime,g_a,server_time))), aes_key)));
+    
+    (* Receive message "set_client_DH_params" *)
+    in(net, (=msg5, =nonce, =server_nonce, enc_data2:bitstring));
+
+    (* Decrypt the client's DH params *)
+    let (=nonce,=server_nonce,g_b:GroupElem,data2_hash:bitstring) = sdec(enc_data2, aes_key) in
+
+    (* Verify hash *)
+    let data2_hash' = sha1((nonce,server_nonce,g_b)) in
+
+    if data2_hash = data2_hash' then (
+    
+      (* Set auth_key to g^a^b *)
+      let auth_key = exp(g_b,a) in
+
+      let auth_key_hash = sha1key(auth_key) in
+      let nuevo_nonce_hash1 = sha1((auth_key_hash,nuevo_nonce)) in
+
+      (* Send "dh_gen_ok" *)
+      event TelegramSuccess(nonce,server_nonce);
+      out(net, (msg6, nonce, server_nonce, nuevo_nonce_hash1))
+
+    ).
+	
+(** The system. **) 
+process
+
+  (* Create Telegram keypair *)
+  new telegramprvkey : PrvKey;
+
+  (* Launch all the processes *)
+  ( (!client)  (* Clients *)
+    | (!telegram(telegramprvkey))         (* Telegram Server *)
+  )	  	

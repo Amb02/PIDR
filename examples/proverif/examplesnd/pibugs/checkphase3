@@ -1,0 +1,14 @@
+(* Bug: secr should still be known in phase 20.
+*)
+
+(* channels *)
+free publicnet.
+
+private free secr.
+
+
+let troyan = out(publicnet, secr); phase 20; 0.
+
+query attacker:secr phase 20.
+
+process ! troyan

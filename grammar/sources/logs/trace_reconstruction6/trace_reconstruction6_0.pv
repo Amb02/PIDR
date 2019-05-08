@@ -1,0 +1,13 @@
+free c:channel.
+
+fun h(bitstring):bitstring.
+
+const a:bitstring.
+
+event A(bitstring).
+
+query y:bitstring, x:bitstring; event(A(x)) ==> x <> h(a) || x = h(y).
+
+process
+  in(c,x:bitstring);
+  event A(x)

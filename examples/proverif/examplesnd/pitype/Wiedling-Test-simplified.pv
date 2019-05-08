@@ -1,0 +1,103 @@
+(* Misc. ProVerif Options *)
+set selFun = Term.
+(* ---------------------- *)
+
+(* Typing *)
+type random. (* Randomness *)
+type pubKey. (* Public Key *)
+type secKey. (* Secret Key *)
+
+(* ---------------------- *)
+
+(* Constants *)
+const OK : bitstring.    
+const NOK : bitstring.   	 (* Stands for Not OK *)
+const v1 : bitstring.        (* Vote option n°1 *)
+const v2 : bitstring.        (* Vote option n°2 *)
+const a1 : secKey [private]. (* Value of the first secret key *)
+
+(* ---------------------- *)
+
+(* Signature *)
+fun hash(bitstring):bitstring.  	(* Hashing function *)
+fun pk(secKey):pubKey.              (* Corresponding pubKey of a secKey *)
+fun penc(bitstring,random,pubKey):bitstring.		(* Public-encryption function *)
+
+(* ---------------------- *)
+
+(* Equational Theory *)
+
+(* Usual decryption *)
+fun dec(bitstring,secKey):bitstring
+	reduc forall x:bitstring, y:random, k:secKey; 
+		dec(penc(x,y,pk(k)),k) = x.
+
+(* Equality check *)
+fun equal(bitstring,bitstring):bitstring
+	reduc forall x:bitstring;
+		equal(x,x) = OK
+	otherwise forall x:bitstring or fail, y:bitstring or fail;
+		equal(x,y) = NOK.
+(* ---------------------- *)
+
+(* Channels *)
+free cOUT : channel. 		     (* Public Channel *)
+free cV1 : channel [private].
+free cV2 : channel [private].	 (* Authenticated Channels *)
+free cB1 : channel [private].
+free cB2 : channel [private].    (* Secure channels *)
+free cA : channel [private].
+free cA1 : channel [private].
+free cA2 : channel [private].    (* Secure channels *)
+
+(* ---------------------- *)
+
+(* Sub-Processes *)
+
+(*  Process of the Voter *)
+let V(cBAL:channel, cAUD:channel, pubK:pubKey, vote:bitstring) =
+	new r:random;
+	let encVote = penc(vote,r,pubK) in
+	out(cOUT,encVote);
+	out(cBAL,encVote);
+	out(cAUD,encVote).
+	
+(* Process of the Ballot Box *)
+let B(cVOT1:channel, cVOT2:channel, cDEC1:channel, cDEC2:channel) =
+	in(cVOT1,x1:bitstring);
+	in(cVOT2,x2:bitstring);
+	(* -- OUTPUT DECRYPTION DEVICE -- *)
+	out(cDEC1,x1);
+	out(cDEC2,x2).	
+	
+(* Process of the Decryption Device *)
+let D(cBAL1:channel, cBAL2:channel, cVOT1:channel, cVOT2:channel) =
+	in(cBAL1,d1:bitstring);
+	in(cBAL2,d2:bitstring);
+	let hashDec = hash((d1,d2)) in
+	(* The decryption device calls the auditor. 
+	   To help ProVerif, I am moving the auditor code here. *)
+	in(cVOT1,Vote1:bitstring);
+	in(cVOT2,Vote2:bitstring);
+	if hash((Vote1,Vote2)) = hashDec then
+	(* End of auditor code *)
+	let result1 = dec(d1,a1) in
+	let result2 = dec(d2,a1) in
+	out(cOUT,choice[result1,result2]);
+	out(cOUT,choice[result2,result1]).	
+	
+(* Process Global *)
+process
+	(* Election Public Keys *)
+	let pk1 = pk(a1) in
+	(* Attacker's Knowledge *)
+	out(cOUT,pk1);
+	out(cOUT,cV1);
+	out(cOUT,cV2);
+	out(cOUT,cB1);
+	out(cOUT,cB2);
+	(* Processes *)
+	V(cV1,cA1,pk1,choice[v1,v2])|
+	V(cV2,cA2,pk1,choice[v2,v1])|
+	(* B(cV1,cV2,cB1,cB2)| *)
+	D(cB1,cB2,cA1,cA2)

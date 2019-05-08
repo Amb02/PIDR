@@ -1,0 +1,26 @@
+(* Causes an internal error *)
+
+(* Handshake protocol. Based on the example of ProVerif *)
+
+(* shared-key encryption as equation *)
+fun encrypt/2.
+
+(* shared-keys *)
+private fun k/2.
+
+(* channel *)
+free c.
+
+(* agents' names *)
+free A,B.
+
+free w0.
+private free w.
+noninterf w among (k(A,B), w0).
+
+let processA =
+    	in(c, a); in (c, b);
+	new x;
+	out(c, encrypt(x, k(a,b))).
+
+process	((!processA) | (phase 1; out(c, w)))

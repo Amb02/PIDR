@@ -1,0 +1,10 @@
+(* False attack.
+   Example used in Abadi, Blanchet, JACM 7037 *)
+
+private free s.
+free d.
+
+query attacker : s.
+
+process	new c;
+	out(c,s)|(in(c,x);out(d,c))

@@ -1,0 +1,8 @@
+free c : bitstring.
+free d : channel [private].
+
+fun f(bitstring): bitstring.
+fun pair(bitstring, bitstring): channel [data].
+
+process
+  out(pair(c,f(c)), choice[d,d])

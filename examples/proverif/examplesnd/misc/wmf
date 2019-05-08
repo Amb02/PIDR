@@ -1,0 +1,94 @@
+free c.
+(* TO DO check that this is the real protocol
+Do I use a different set of keys for A -> S and S -> B ?
+
+A -> S : A, { tA, B, Kab }_{Kas}
+S -> B : { tS, A, Kab }_{Kbs}
+
+*)
+
+(* Table of host names/keys shared with the server 
+   The constructor host maps keys to host names.
+   The private destructor getkey maps host names to keys. *)
+
+fun host/1.
+private reduc getkey(host(x)) = x.
+
+(* Shared key cryptography *)
+
+fun encrypt/2.
+reduc decrypt(encrypt(x,y),y) = x.
+
+(* Tags to distinguish the first from the second encryption *)
+free c0,c1.
+
+(*** Handle timestamps ***)
+
+(* Channel on which the current time is sent *)
+free clock.
+
+(* Uninterpreted predicate, whose semantics is 
+   issmaller:t1,t2,delta <=> t1 <= t2 + delta *)
+pred issmaller/3 block.
+
+(* Values of delta for the server and for B *)
+free delta,delta2.
+
+(*** End timestamps ***)
+
+(* Channel on which the names of honest participants are sent *)
+private free honestParticipants.
+
+private free secretA, secretB.
+query attacker:secretA;
+      attacker:secretB.
+query ev:endBkey(xA, xB, xtB, xkAB) ==> ev:beginBkey(xA, xB, xtA, xkAB) &
+   issmaller:xtB,xtS,delta2 & issmaller:xtS,xtA,delta.
+
+let processA = 
+        in(c, B);
+	in(clock, tA);
+	new Kab;
+	event beginBkey(A, B, tA, Kab);
+        out(c, (A, encrypt((c0, tA, B, Kab), Kas)));
+	(* OK *)
+	in(honestParticipants, =B);
+	out(c, encrypt(secretA, Kab)).
+
+let processS = 
+	in(c, (a, m));
+	let kas = getkey(a) in
+        let (=c0, ta, b, kab) = decrypt(m,kas) in
+	in(clock, tS);
+	if issmaller:tS,ta,delta then
+        let kbs = getkey(b) in
+	out(c, encrypt((c1, tS, a, kab), kbs)).
+                         
+let processB = 
+	in(c, m); 
+	let (=c1, ts, a, kab) = decrypt(m, Kas) in
+	(* This is not what is really done in WMF. B should check that ts
+ 	   is later than all previously received timestamps,
+           which implies that a given key is accepted at most once.
+	   ProVerif probably cannot do that. *)
+	in(clock, tB);
+	if issmaller:tB,ts,delta2 then
+	(* OK *)
+	in(honestParticipants, =a);
+	event endBkey(a, A, tB, kab);
+	out(c, encrypt(secretB, kab)).
+
+
+
+process 
+(
+   !
+   new Kas; let A = host(Kas) in
+   (
+      (!out(honestParticipants, A)) | out(c, A) |
+      (!processA) | (!processB)
+   )
+)
+|
+(!processS)
+

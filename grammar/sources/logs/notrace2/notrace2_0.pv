@@ -1,0 +1,7 @@
+const c : channel.
+const a : bitstring.
+const b : bitstring.
+
+process
+    in(c, =a);
+    out(c, choice[a,b])

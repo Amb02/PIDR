@@ -1,0 +1,14 @@
+fun g(bitstring, bitstring):bitstring.
+
+reduc 
+  forall x:bitstring; r(g(x,x)) = x.
+
+channel c.
+
+let p(x:bitstring,y:bitstring) = let z = r(x) in out(c, g(x,y)) else out(c, g(y,y)).
+
+free a, b, d: bitstring.
+
+
+
+process p(r(g(a,b)),d) | p(b,d)

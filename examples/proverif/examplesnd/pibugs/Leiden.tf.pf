@@ -1,0 +1,159 @@
+(* param predicatesImplementable = nocheck.*) 
+data cons/2.
+data nil/0.
+data emptyTuple/0.
+reduc hd(cons(a,b))=a.
+reduc tl(cons(a,b))=b.
+data Element/3.
+reduc ElementAtt(Element(x,y,z))=y.
+reduc ElementBody(Element(x,y,z))=z.
+data Attribute/2.
+reduc AttributeParm(Attribute(x,y))=y.
+pred memberList/2 memberOptim.
+clauses 
+memberList:x,cons(x,l);
+memberList:x,l -> memberList:x,cons(y,l).
+data BobsPetShopSTRING/0.
+ data ChasMarketSTRING/0.
+ data UsernameTokenTAG/0.
+ data NonceTAG/0.
+ data ReferenceTAG/0.
+ data DigestValueTAG/0.
+ data SignedInfoTAG/0.
+ data OtherTAG/0.
+ data SignatureMethodTAG/0.
+ data AlgorithmTAG/0.
+ data SignatureTAG/0.
+ data SignatureValueTAG/0.
+ data EncryptedDataTAG/0.
+ data CipherDataTAG/0.
+ data CipherValueTAG/0.
+ data ServiceTAG/0.
+ data SubjectTAG/0.
+ data hmacsha1STRING/0.
+ data ToTAG/0.
+ data ActionTAG/0.
+ data EnvelopeTAG/0.
+ data HeaderTAG/0.
+ data FromTAG/0.
+ data SecurityTAG/0.
+ data TimestampTAG/0.
+ data BinarySecurityTokenTAG/0.
+ data rsasha1STRING/0.
+ data BodyTAG/0.
+ data RelatesToTAG/0.
+ data MessageIdTAG/0.
+ data CreatedTAG/0.
+ data UserTAG/0.
+ data UsernameTAG/0.
+ data PasswordTAG/0.
+ data listTAG/0.
+ data concat/2.
+ data c14n/1.
+ data utf8/1.
+ data base64/1.
+ fun sha1/1.
+ fun psha1/2.
+ fun hmacsha1/2.
+ fun pk/1.
+ fun rsasha1/2.
+ fun x509/4.
+ fun rsa/2.
+ pred isUser/3.
+ pred isUserTokenKey/5.
+ pred isX509Cert/5.
+ pred isSigVal/4.
+ pred mkSigVal/4.
+ pred ref/2.
+ pred mkRef/2.
+ pred isRefs/2.
+ pred mkRefs/2.
+ pred isSigInfo/3.
+ pred mkSigInfo/3.
+ pred isSignature/4.
+ pred mkSignature/4.
+ pred isEncryptedData/3.
+ pred mkEncryptedData/3.
+ pred isService/4.
+ pred env1/8.
+ pred mkMsg1/9.
+ pred isMsg1/8.
+ pred env2/8.
+ pred mkMsg2/8.
+ pred isMsg2/7.
+ free soap.
+ free publish.
+ free genUser.
+ private free anyUser.
+ private free MkUserinit.
+ pred isServiceData/3.
+ free genService.
+ private free anyService.
+ private free MkServiceinit.
+ free init.
+ private free Clientinit.
+ free accept.
+ private free Serverinit.
+ reduc decrsa(k,rsa(pk(k),b)) = b.
+ reduc x509key(x509(s,u,a,k)) = k.
+ reduc checkx509(x509(s,u,a,k),pk(s)) = pk(s).
+ reduc checkrsasha1(pk(k),x,rsasha1(k,x)) = pk(k).
+ reduc x509user(x509(s,u,a,k)) = u.
+ reduc x509alg(x509(s,u,a,k)) = a.
+ clauses U = Element(UserTAG,nil,cons(Element(UsernameTAG,nil,cons(u,nil)),cons(Element(PasswordTAG,nil,cons(pwd,nil)),nil))) -> isUser:U,u,pwd.
+ clauses isUser:U,u,pwd & tok = Element(UsernameTokenTAG,nil,cons(Element(UsernameTAG,nil,cons(u,nil)),cons(Element(NonceTAG,nil,cons(base64(n),nil)),cons(Element(CreatedTAG,nil,cons(t,nil)),nil)))) & k = psha1(pwd,concat(n,utf8(t))) -> isUserTokenKey:tok,U,n,t,k.
+ clauses kr = checkx509(xcert,kr) & u = x509user(xcert) & k = x509key(xcert) & a = x509alg(xcert) -> isX509Cert:xcert,kr,u,a,k.
+ clauses hmacsha1STRING = a & sv = hmacsha1(k,c14n(si)) -> isSigVal:sv,si,k,a; 
+  rsasha1STRING = a & p = checkrsasha1(p,c14n(si),sv) -> isSigVal:sv,si,p,a.
+ clauses hmacsha1STRING = a & sv = hmacsha1(k,c14n(si)) -> mkSigVal:sv,si,k,a; 
+  rsasha1STRING = a & sv = rsasha1(k,c14n(si)) -> mkSigVal:sv,si,k,a.
+ clauses r = Element(ReferenceTAG,nil,cons(dummyl143c19,cons(dummyl143c21,cons(Element(DigestValueTAG,nil,cons(base64(sha1(c14n(t))),nil)),nil)))) -> ref:t,r.
+ clauses r = Element(ReferenceTAG,nil,cons(Element(OtherTAG,nil,nil),cons(Element(OtherTAG,nil,nil),cons(Element(DigestValueTAG,nil,cons(base64(sha1(c14n(t))),nil)),nil)))) -> mkRef:t,r.
+ clauses ts = Element(listTAG,nil,cons(t1,nil)) & rs = Element(listTAG,nil,cons(r1,nil)) & ref:t1,r1 -> isRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,nil))) & rs = Element(listTAG,nil,cons(r1,cons(r2,nil))) & ref:t1,r1 & ref:t2,r2 -> isRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,nil)))) & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,nil)))) & ref:t1,r1 & ref:t2,r2 & ref:t3,r3 -> isRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,cons(t4,nil))))) & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,cons(r4,nil))))) & ref:t1,r1 & ref:t2,r2 & ref:t3,r3 & ref:t4,r4 -> isRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,cons(t4,cons(t5,nil)))))) & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,cons(r4,cons(r5,nil)))))) & ref:t1,r1 & ref:t2,r2 & ref:t3,r3 & ref:t4,r4 & ref:t5,r5 -> isRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,cons(t4,cons(t5,cons(t6,nil))))))) & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,cons(r4,cons(r5,cons(r6,nil))))))) & ref:t1,r1 & ref:t2,r2 & ref:t3,r3 & ref:t4,r4 & ref:t5,r5 & ref:t6,r6 -> isRefs:ts,rs.
+ clauses ts = Element(listTAG,nil,cons(t1,nil)) & mkRef:t1,r1 & rs = Element(listTAG,nil,cons(r1,nil)) -> mkRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,nil))) & mkRef:t1,r1 & mkRef:t2,r2 & rs = Element(listTAG,nil,cons(r1,cons(r2,nil))) -> mkRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,nil)))) & mkRef:t1,r1 & mkRef:t2,r2 & mkRef:t3,r3 & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,nil)))) -> mkRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,cons(t4,nil))))) & mkRef:t1,r1 & mkRef:t2,r2 & mkRef:t3,r3 & mkRef:t4,r4 & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,cons(r4,nil))))) -> mkRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,cons(t4,cons(t5,nil)))))) & mkRef:t1,r1 & mkRef:t2,r2 & mkRef:t3,r3 & mkRef:t4,r4 & mkRef:t5,r5 & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,cons(r4,cons(r5,nil)))))) -> mkRefs:ts,rs; 
+  ts = Element(listTAG,nil,cons(t1,cons(t2,cons(t3,cons(t4,cons(t5,cons(t6,nil))))))) & mkRef:t1,r1 & mkRef:t2,r2 & mkRef:t3,r3 & mkRef:t4,r4 & mkRef:t5,r5 & mkRef:t6,r6 & rs = Element(listTAG,nil,cons(r1,cons(r2,cons(r3,cons(r4,cons(r5,cons(r6,nil))))))) -> mkRefs:ts,rs.
+ clauses si = Element(SignedInfoTAG,nil,cons(dummyl242c21,cons(Element(SignatureMethodTAG,cons(Attribute(AlgorithmTAG,a),nil),nil),refs))) & rs = Element(listTAG,nil,refs) & isRefs:ts,rs -> isSigInfo:si,a,ts.
+ clauses mkRefs:ts,rs & rs = Element(listTAG,nil,refs) & si = Element(SignedInfoTAG,nil,cons(Element(OtherTAG,nil,nil),cons(Element(SignatureMethodTAG,cons(Attribute(AlgorithmTAG,a),nil),nil),refs))) -> mkSigInfo:si,a,ts.
+ clauses sig = Element(SignatureTAG,nil,cons(si,cons(Element(SignatureValueTAG,nil,cons(base64(sv),nil)),dummyl255c58))) & isSigInfo:si,a,ts & isSigVal:sv,si,k,a -> isSignature:sig,a,k,ts.
+ clauses mkSigInfo:si,a,ts & mkSigVal:sv,si,k,a & sig = Element(SignatureTAG,nil,cons(si,cons(Element(SignatureValueTAG,nil,cons(base64(sv),nil)),nil))) -> mkSignature:sig,a,k,ts.
+ clauses encrypted = Element(EncryptedDataTAG,nil,cons(Element(CipherDataTAG,nil,cons(Element(CipherValueTAG,nil,cons(base64(cipher),nil)),nil)),nil)) & c14n(plain) = decrsa(dk,cipher) -> isEncryptedData:encrypted,plain,dk.
+ clauses cipher = rsa(ek,c14n(plain)) & encrypted = Element(EncryptedDataTAG,nil,cons(Element(CipherDataTAG,nil,cons(Element(CipherValueTAG,nil,cons(base64(cipher),nil)),nil)),nil)) -> mkEncryptedData:encrypted,plain,ek.
+ clauses S = Element(ServiceTAG,nil,cons(Element(ToTAG,nil,cons(uri,nil)),cons(Element(ActionTAG,nil,cons(ac,nil)),cons(Element(SubjectTAG,nil,cons(subj,nil)),nil)))) -> isService:S,uri,ac,subj.
+ clauses msg1 = Element(EnvelopeTAG,nil,cons(Element(HeaderTAG,nil,cons(Element(ToTAG,nil,cons(uri,nil)),cons(Element(ActionTAG,nil,cons(ac,nil)),cons(Element(MessageIdTAG,nil,cons(id1,nil)),cons(Element(SecurityTAG,nil,cons(Element(TimestampTAG,nil,cons(Element(CreatedTAG,nil,cons(t1,nil)),nil)),cons(eutok,cons(sig1,nil)))),nil))))),cons(Element(BodyTAG,nil,cons(b1,nil)),nil))) -> env1:msg1,uri,ac,id1,t1,eutok,sig1,b1.
+ clauses isService:S,uri,ac,subj & isX509Cert:cert,kr,subj,rsasha1STRING,ek & isUserTokenKey:utok,U,n,t1,sk & mkEncryptedData:eutok,utok,ek & mkSignature:sig1,hmacsha1STRING,sk,Element(listTAG,nil,cons(Element(BodyTAG,nil,cons(b1,nil)),cons(Element(ToTAG,nil,cons(uri,nil)),cons(Element(ActionTAG,nil,cons(ac,nil)),cons(Element(MessageIdTAG,nil,cons(id1,nil)),cons(Element(CreatedTAG,nil,cons(t1,nil)),cons(eutok,nil))))))) & env1:msg1,uri,ac,id1,t1,eutok,sig1,b1 -> mkMsg1:msg1,U,S,kr,cert,n,id1,t1,b1.
+ clauses env1:msg1,uri,ac,id1,t1,eutok,sig1,b1 & isService:S,uri,ac,subj & isEncryptedData:eutok,utok,sx & isUserTokenKey:utok,U,n,t1,sk & isSignature:sig1,hmacsha1STRING,sk,Element(listTAG,nil,cons(Element(BodyTAG,nil,cons(b1,nil)),cons(Element(ToTAG,nil,cons(uri,nil)),cons(Element(ActionTAG,nil,cons(ac,nil)),cons(Element(MessageIdTAG,nil,cons(id1,nil)),cons(Element(CreatedTAG,nil,cons(t1,nil)),cons(eutok,nil))))))) -> isMsg1:msg1,U,sx,cert,S,id1,t1,b1.
+ clauses msg2 = Element(EnvelopeTAG,nil,cons(Element(HeaderTAG,nil,cons(Element(FromTAG,nil,cons(uri,nil)),cons(Element(RelatesToTAG,nil,cons(id1,nil)),cons(Element(MessageIdTAG,nil,cons(id2,nil)),cons(Element(SecurityTAG,nil,cons(Element(TimestampTAG,nil,cons(Element(CreatedTAG,nil,cons(t2,nil)),nil)),cons(Element(BinarySecurityTokenTAG,nil,cons(base64(cert),nil)),cons(sig2,nil)))),nil))))),cons(Element(BodyTAG,nil,cons(b2,nil)),nil))) -> env2:msg2,uri,id1,id2,t2,cert,sig2,b2.
+ clauses isService:S,uri,ac,subj & mkSignature:sig2,rsasha1STRING,sx,Element(listTAG,nil,cons(Element(BodyTAG,nil,cons(b2,nil)),cons(Element(RelatesToTAG,nil,cons(id1,nil)),cons(Element(MessageIdTAG,nil,cons(id2,nil)),cons(Element(CreatedTAG,nil,cons(t2,nil)),nil))))) & env2:msg2,uri,id1,id2,t2,cert,sig2,b2 -> mkMsg2:msg2,sx,cert,S,id1,id2,t2,b2.
+ clauses env2:msg2,uri,id1,id2,t2,cert,sig2,b2 & isService:S,uri,ac,subj & isX509Cert:cert,kr,subj,rsasha1STRING,k & isSignature:sig2,rsasha1STRING,k,Element(listTAG,nil,cons(Element(BodyTAG,nil,cons(b2,nil)),cons(Element(RelatesToTAG,nil,cons(id1,nil)),cons(Element(MessageIdTAG,nil,cons(id2,nil)),cons(Element(CreatedTAG,nil,cons(t2,nil)),nil))))) -> isMsg2:msg2,S,kr,id1,id2,t2,b2.
+ let MkUser = !in (MkUserinit,=emptyTuple());
+ in (genUser,(u));new pwd;let U = Element(UserTAG,nil,cons(Element(UsernameTAG,nil,cons(u,nil)),cons(Element(PasswordTAG,nil,cons(pwd,nil)),nil))) in 
+  (!out (anyUser,(U));0).
+ clauses isService:S,uri,ac,x509user(cert) & pk(sx) = x509key(cert) -> isServiceData:S,sx,cert.
+ let MkService = !in (MkServiceinit,(sx,cert));
+ in (genService,(S));if isServiceData:S,sx,cert then (!out (anyService,(sx,cert,S));0).
+ let Client = !in (Clientinit,(k,U));
+ in (init,(S,certA,n,t1,b1));new id1;event  beginC1(Element(listTAG,nil,cons(U,cons(S,cons(id1,cons(t1,cons(b1,nil))))))); let msg1 suchthat mkMsg1:msg1,U,S,k,certA,n,id1,t1,b1 in 
+  (out (soap,(msg1));in (soap,(msg2));let id2,t2,b2 suchthat isMsg2:msg2,S,k,id1,id2,t2,b2 in 
+  (event endC2(Element(listTAG,nil,cons(U,cons(S,cons(id1,cons(t1,cons(b1,cons(id2,cons(t2,cons(b2,nil)))))))))); event done(); 0)).
+ let Server = !in (Serverinit,(sx,cert,S));
+ in (soap,(msg1));in (anyUser,(U));let id1,t1,b1 suchthat isMsg1:msg1,U,sx,cert,S,id1,t1,b1 in 
+  (event endC1(Element(listTAG,nil,cons(U,cons(S,cons(id1,cons(t1,cons(b1,nil))))))); in (accept,(id2,t2,b2));let msg2 suchthat mkMsg2:msg2,sx,cert,S,id1,id2,t2,b2 in 
+  (event  beginC2(Element(listTAG,nil,cons(U,cons(S,cons(id1,cons(t1,cons(b1,cons(id2,cons(t2,cons(b2,nil)))))))))); out (soap,(msg2));0)).
+
+(* query ev:endC2(a). *)
+ query ev:endC1(a).
+(*  query ev:endC2(x1) ==> ev:beginC2(x1).
+ query ev:endC1(x1) ==> ev:beginC1(x1). *)
+ process new sr;let kr = pk(sr) in 
+  (new sx1;let cert1 = x509(sr,BobsPetShopSTRING,rsasha1STRING,pk(sx1)) in 
+  (new sx2;let cert2 = x509(sr,ChasMarketSTRING,rsasha1STRING,pk(sx2)) in 
+  (out (publish,(base64(kr)));out (publish,(base64(cert1)));out (publish,(base64(cert2)));!(out (MkUserinit,emptyTuple()))|(!(out (MkServiceinit,(sx1,cert1)))|(!(out (MkServiceinit,(sx2,cert2)))|((!in (anyUser,(U));out (Clientinit,(kr,U)))|(!in (anyService,(ss,cert,S));out (Serverinit,(ss,cert,S))))))))) | MkUser | MkService | Client | Server

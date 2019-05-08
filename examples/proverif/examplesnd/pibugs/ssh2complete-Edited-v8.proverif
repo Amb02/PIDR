@@ -1,0 +1,512 @@
+(* Another bug when trying to prove injective queries:
+
+I am now trying to reconstruct a trace that falsifies injectivity.
+@sid_44488Internal error: Constant session ids should be function applications w
+ith no arguments stored as links of variables
+Please report bug to Bruno.Blanchet@ens.fr, including input file and output
+
+FIXED 27/12/2009
+*)
+
+(* tolti i cast*)
+(* Options *)
+param traceDisplay = long.
+
+(* Public Free variables *)
+free cAB0,(* IDC0,IDS0 *) cDebug. (*cDebug added *)
+
+
+(* Constant parameters *)
+data IDC0/0.
+data IDS0/0.
+
+data ALG/0.
+
+data constRSA/0.
+data constPKCS1Padding/0.
+data constECB/0.
+data constSunJCE/0.
+data const2048/0.
+data constSUN/0.
+data SSHMSGKEXINIT0/0.
+data firstkexpacketfollows0/0.
+data NONE0/0.
+data SSHMSGKEXDHINIT0/0.
+data SSHMSGKEXDHREPLY0/0.
+data GETIP0/0.
+data keystoreSUCCESS0/0.
+data keystoreERROR0/0.
+data CLIENTSIDEPROTOCOLENDCORRECTLY0/0.
+data OK0/0.
+data SSHMSGDISCONNECT0/0.
+data SSHDISCONNECTKEYEXCHANGEFAILED0/0.
+data descriptionKEYEXCHANGEFAILED0/0.
+data languagetag0/0.
+data shashdonotmatch0/0.
+data SSHMSGUNIMPLEMENTED0/0.
+data NOSSHMSGKEXDHREPLY0/0.
+data SERVERSIDEPROTOCOLENDCORRECTLY0/0.
+data NOSSHMSGKEXDHINIT0/0.
+data NOSSHMSGKEXINIT0/0.
+data SSHDISCONNECTPROTOCOLERROR0/0.
+data descriptionPUBKEYSDONOTMATCH0/0.
+data pubkeysdonotmatch0/0.
+data SSHDISCONNECTHOSTKEYNOTVERIFIABLE0/0.
+data descriptionHOSTKEYNOTVERIFIABLE0/0.
+data pubkeynotfound0/0.
+data defckexalgorithms0/0.
+data defcserverhostkeyalgorithms0/0.
+data defcencryptionalgorithmsclienttoserver0/0.
+data defcencryptionalgorithmsservertoclient0/0.
+data defcmacalgorithmsclienttoserver0/0.
+data defcmacalgorithmsservertoclient0/0.
+data defccompressionalgorithmsclienttoserver0/0.
+data defccompressionalgorithmsservertoclient0/0.
+data defskexalgorithms0/0.
+data defsserverhostkeyalgorithms0/0.
+data defsencryptionalgorithmsclienttoserver0/0.
+data defsencryptionalgorithmsservertoclient0/0.
+data defsmacalgorithmsclienttoserver0/0.
+data defsmacalgorithmsservertoclient0/0.
+data defscompressionalgorithmsclienttoserver0/0.
+data defscompressionalgorithmsservertoclient0/0.
+data dummypubkey0/0.
+data dummykeypair0/0.
+data KEYNOTFOUND0/0.
+data keypairnotfound0/0.
+
+
+(* begin added *)
+data INT1/0.
+data INT2/0.
+data INT3/0.
+data INT4/0.
+(* end added *)
+
+(* Pair and Pair splitting *)
+reduc GetLeft((left,right)) = left.
+reduc GetRight((left,right)) = right.
+
+(* Asymmetric key cryptography *)
+fun PubPart/1.
+fun PriPart/1.
+fun PriEncrypt/3.
+fun PubEncrypt/3.
+reduc PriDecrypt(PriPart(Key),PubEncrypt(PubPart(Key),M,algs),algs) = M.
+reduc PubDecrypt(PubPart(Key),PriEncrypt(PriPart(Key),M,algs),algs) = M.
+
+(* Shared key cryptography *)
+fun SharedKey/1.
+reduc MaterialShareKey(SharedKey(x)) = x.
+
+fun SymEncrypt/3.
+reduc SymDecrypt(Key, SymEncrypt(Key, M,algs),algs) = M.
+
+(* Hash function *)
+fun H/2.
+
+(* Diffie-Hellman *)
+(* Raw version that is not supported by proverif:
+ * fun EXP/3.
+ * equation EXP(EXP(g,y,p),x,p) = EXP(EXP(g,x,p),y,p).
+ *)
+
+fun DHPUB/1.
+fun DHKEY/2.
+equation DHKEY( x,DHPUB(y) ) = DHKEY( y,DHPUB(x) ).
+
+
+(* Secrecy assumptions *)
+(*not attacker:x.
+not attacker:y. *)
+(*not PrivKey_s.*)
+(*not attacker:PubPrivPair_s.*)
+
+(* Private Free variables *)
+private free secret.
+(* Verifica che il protocollo arrivi a termine:
+ - usare variabile accessoria.
+ - metterla in out(cDebug) quando necessario.
+*)
+private free ClientProtocolEnd.
+private free ServerProtocolEnd.
+private free privateGO.
+
+
+
+(* Query about desired properties*)
+query attacker:ClientProtocolEnd.
+query attacker:ServerProtocolEnd. 
+
+query attacker:secret. 
+query ev:endServerEnd(x) ==> ev:beginServerEnd(x).
+query evinj:endServerEnd(x) ==> evinj:beginServerEnd(x).
+(* query evinj:endServerEnd(x) ==> evinj:beginServerEnd(x). *)
+(* query ev:endServerEnd(x) ==> ev:beginServerEnd(x). *)
+
+(* Instances *)
+process
+let cAlgs1 = GetLeft(((((((((defckexalgorithms0,defcserverhostkeyalgorithms0),defcencryptionalgorithmsclienttoserver0),defcencryptionalgorithmsservertoclient0),defcmacalgorithmsclienttoserver0),defcmacalgorithmsservertoclient0),defccompressionalgorithmsclienttoserver0),defccompressionalgorithmsservertoclient0),NONE0)) in 
+let none1 = GetRight(((((((((defckexalgorithms0,defcserverhostkeyalgorithms0),defcencryptionalgorithmsclienttoserver0),defcencryptionalgorithmsservertoclient0),defcmacalgorithmsclienttoserver0),defcmacalgorithmsservertoclient0),defccompressionalgorithmsclienttoserver0),defccompressionalgorithmsservertoclient0),NONE0)) in 
+let sAlgs2 = GetLeft(((((((((defskexalgorithms0,defsserverhostkeyalgorithms0),defsencryptionalgorithmsclienttoserver0),defsencryptionalgorithmsservertoclient0),defsmacalgorithmsclienttoserver0),defsmacalgorithmsservertoclient0),defscompressionalgorithmsclienttoserver0),defscompressionalgorithmsservertoclient0),NONE0)) in 
+let none2 = GetRight(((((((((defskexalgorithms0,defsserverhostkeyalgorithms0),defsencryptionalgorithmsclienttoserver0),defsencryptionalgorithmsservertoclient0),defsmacalgorithmsclienttoserver0),defsmacalgorithmsservertoclient0),defscompressionalgorithmsclienttoserver0),defscompressionalgorithmsservertoclient0),NONE0)) in 
+new PubPrivPairs3;
+(
+
+(* begin added *)
+!
+(* end added *)
+
+(
+
+(* begin deleted *)
+(* new keystore5; *)
+(* end deleted *)
+
+(* begin added *)
+new keystore5in;
+new keystore5out;
+(* end added *)
+
+
+new cState7;
+(
+(
+out(cAB0,IDC0);
+(* in(cAB0,IDS10); *)
+
+in(cAB0, =IDS0);
+
+new ccookie11;
+out(cAB0,(((SSHMSGKEXINIT0,ccookie11),cAlgs1),firstkexpacketfollows0));
+in(cAB0,KEXS13);
+let w014 = GetLeft(KEXS13) in 
+let xfirstkexpacketfollows14 = GetRight(KEXS13) in 
+let w115 = GetLeft(w014) in 
+let xsAlgs15 = GetRight(w014) in 
+let xSSHMSGKEXINIT16 = GetLeft(w115) in 
+let scookie16 = GetRight(w115) in 
+if SSHMSGKEXINIT0 = xSSHMSGKEXINIT16 then (
+let w018 = GetLeft(cAlgs1) in 
+let ccompressionalgorithmsservertoclient18 = GetRight(cAlgs1) in 
+let w119 = GetLeft(w018) in 
+let ccompressionalgorithmsclienttoserver19 = GetRight(w018) in 
+let w220 = GetLeft(w119) in 
+let cmacalgorithmsservertoclient20 = GetRight(w119) in 
+let w321 = GetLeft(w220) in 
+let cmacalgorithmsclienttoserver21 = GetRight(w220) in 
+let w422 = GetLeft(w321) in 
+let cencryptionalgorithmsservertoclient22 = GetRight(w321) in 
+let w523 = GetLeft(w422) in 
+let cencryptionalgorithmsclienttoserver23 = GetRight(w422) in 
+let ckexalgorithms24 = GetLeft(w523) in 
+let cserverhostkeyalgorithms24 = GetRight(w523) in 
+let w025 = GetLeft(xsAlgs15) in 
+let scompressionalgorithmsservertoclient25 = GetRight(xsAlgs15) in 
+let w126 = GetLeft(w025) in 
+let scompressionalgorithmsclienttoserver26 = GetRight(w025) in 
+let w227 = GetLeft(w126) in 
+let smacalgorithmsservertoclient27 = GetRight(w126) in 
+let w328 = GetLeft(w227) in 
+let smacalgorithmsclienttoserver28 = GetRight(w227) in 
+let w429 = GetLeft(w328) in 
+let sencryptionalgorithmsservertoclient29 = GetRight(w328) in 
+let w530 = GetLeft(w429) in 
+let sencryptionalgorithmsclienttoserver30 = GetRight(w429) in 
+let skexalgorithms31 = GetLeft(w530) in 
+let sserverhostkeyalgorithms31 = GetRight(w530) in 
+let agreedkexalgorithms32 = GetLeft((H((ckexalgorithms24,skexalgorithms31),(ALG)),NONE0)) in 
+let none32 = GetRight((H((ckexalgorithms24,skexalgorithms31),(ALG)),NONE0)) in 
+let agreedserverhostkeyalgorithms33 = GetLeft((H((cserverhostkeyalgorithms24,sserverhostkeyalgorithms31),(ALG)),NONE0)) in 
+let none33 = GetRight((H((cserverhostkeyalgorithms24,sserverhostkeyalgorithms31),(ALG)),NONE0)) in 
+let agreedencryptionalgorithmsclienttoserver34 = GetLeft((H((cencryptionalgorithmsclienttoserver23,sencryptionalgorithmsclienttoserver30),(ALG)),NONE0)) in 
+let none34 = GetRight((H((cencryptionalgorithmsclienttoserver23,sencryptionalgorithmsclienttoserver30),(ALG)),NONE0)) in 
+let agreedencryptionalgorithmsservertoclient35 = GetLeft((H((cencryptionalgorithmsservertoclient22,sencryptionalgorithmsservertoclient29),(ALG)),NONE0)) in 
+let none35 = GetRight((H((cencryptionalgorithmsservertoclient22,sencryptionalgorithmsservertoclient29),(ALG)),NONE0)) in 
+let agreedmacalgorithmsclienttoserver36 = GetLeft((H((cmacalgorithmsclienttoserver21,smacalgorithmsclienttoserver28),(ALG)),NONE0)) in 
+let none36 = GetRight((H((cmacalgorithmsclienttoserver21,smacalgorithmsclienttoserver28),(ALG)),NONE0)) in 
+let agreedmacalgorithmsservertoclient37 = GetLeft((H((cmacalgorithmsservertoclient20,smacalgorithmsservertoclient27),(ALG)),NONE0)) in 
+let none37 = GetRight((H((cmacalgorithmsservertoclient20,smacalgorithmsservertoclient27),(ALG)),NONE0)) in 
+let agreedcompressionalgorithmsclienttoserver38 = GetLeft((H((ccompressionalgorithmsclienttoserver19,scompressionalgorithmsclienttoserver26),(ALG)),NONE0)) in 
+let none38 = GetRight((H((ccompressionalgorithmsclienttoserver19,scompressionalgorithmsclienttoserver26),(ALG)),NONE0)) in 
+let agreedcompressionalgorithmsservertoclient39 = GetLeft((H((ccompressionalgorithmsservertoclient18,scompressionalgorithmsservertoclient25),(ALG)),NONE0)) in 
+let none39 = GetRight((H((ccompressionalgorithmsservertoclient18,scompressionalgorithmsservertoclient25),(ALG)),NONE0)) in 
+
+(* new cast6; *)
+
+let g41 = H((agreedkexalgorithms32,INT1),(ALG)) in
+let p43 = H((agreedkexalgorithms32,INT2),(ALG)) in
+let q45 = H((agreedkexalgorithms32,INT3),(ALG)) in
+let DHHash47 = H((agreedkexalgorithms32,INT4),(ALG)) in
+let csSignHash49 = H((agreedserverhostkeyalgorithms33,INT1),(ALG)) in
+let csSignKeyType51 = H((agreedserverhostkeyalgorithms33,INT2),(ALG)) in
+let csSignMode53 = H((agreedserverhostkeyalgorithms33,INT3),(ALG)) in
+let csSignPadding55 = H((agreedserverhostkeyalgorithms33,INT4),(ALG)) in
+
+new x56;
+out(cAB0,(SSHMSGKEXDHINIT0,DHPUB(x56)));
+in(cAB0,w058);
+let w159 = GetLeft(w058) in 
+let sshash59 = GetRight(w058) in 
+let w260 = GetLeft(w159) in 
+let f60 = GetRight(w159) in 
+let xSSHMSGKEXDHREPLY61 = GetLeft(w260) in 
+let PubKeys61 = GetRight(w260) in 
+if xSSHMSGKEXDHREPLY61 = SSHMSGKEXDHREPLY0 then (
+
+(* out(keystore5out,(GETIP0,(IDS10,cAB0))); *)
+out(keystore5out,(GETIP0,(IDS0,cAB0)));
+
+in(keystore5in,w064);
+let KeystoreResult65 = GetLeft(w064) in 
+let storedPubKeys65 = GetRight(w064) in 
+if KeystoreResult65 = keystoreSUCCESS0 then (
+if storedPubKeys65 = PubKeys61 then (
+
+
+let shash68 = PubDecrypt(PubKeys61,sshash59,(csSignKeyType51,csSignMode53,csSignPadding55,const2048,constSunJCE)) in 
+
+
+if shash68 = H(H((((((((IDC0,IDS0),(((SSHMSGKEXINIT0,ccookie11),cAlgs1),firstkexpacketfollows0)),KEXS13),PubKeys61),DHPUB(x56)),f60),DHKEY(x56,f60)),(DHHash47,constSUN)),(csSignHash49,constSUN)) then (
+out(cState7,(CLIENTSIDEPROTOCOLENDCORRECTLY0,OK0));
+
+(* begin added *)
+	                  (* Sbloccare processo di validazione proprietà *)
+	                  out(privateGO, (sshash59,f60,x56,secret, agreedencryptionalgorithmsclienttoserver34) );
+(* end added *)
+
+0
+)else (
+out(cAB0,(((SSHMSGDISCONNECT0,SSHDISCONNECTKEYEXCHANGEFAILED0),descriptionKEYEXCHANGEFAILED0),languagetag0));
+out(cState7,(SSHDISCONNECTKEYEXCHANGEFAILED0,shashdonotmatch0));
+0
+))else (
+out(cAB0,(((SSHMSGDISCONNECT0,SSHDISCONNECTPROTOCOLERROR0),descriptionPUBKEYSDONOTMATCH0),languagetag0));
+out(cState7,(SSHDISCONNECTPROTOCOLERROR0,pubkeysdonotmatch0));
+0
+))else (
+out(cAB0,(((SSHMSGDISCONNECT0,SSHDISCONNECTHOSTKEYNOTVERIFIABLE0),descriptionHOSTKEYNOTVERIFIABLE0),languagetag0));
+out(cState7,(SSHDISCONNECTHOSTKEYNOTVERIFIABLE0,pubkeynotfound0));
+0
+))else (
+out(cAB0,SSHMSGUNIMPLEMENTED0);
+out(cState7,(SSHMSGUNIMPLEMENTED0,NOSSHMSGKEXDHREPLY0));
+0
+))else (
+out(cAB0,SSHMSGUNIMPLEMENTED0);
+out(cState7,(SSHMSGUNIMPLEMENTED0,NOSSHMSGKEXINIT0));
+0
+))
+|
+(
+in(keystore5out,xMsg87);
+let xGETIP88 = GetLeft(xMsg87) in 
+let xalias88 = GetRight(xMsg87) in 
+if xGETIP88 = GETIP0 then (
+if xalias88 = (IDS0,cAB0) then (
+out(keystore5in,(keystoreSUCCESS0,PubPart(PubPrivPairs3)));
+0
+)else (
+out(keystore5in,(keystoreERROR0,dummypubkey0));
+0
+))else (
+out(keystore5in,(keystoreERROR0,dummypubkey0));
+0
+))
+|
+(
+in(cState7,x97);
+0
+)
+
+
+
+
+
+(* begin added *)
+|
+(
+
+      in(privateGO, (sshash,f,x,secret, agreedencryptionalgorithmsclienttoserver) );
+
+      (* Protocol ended well.
+         We must still check that the received server public key (PubKeyS)
+         is the correct one (SVerKey); then we can
+         recognize that the server ended, and
+         finally we send the secret message to prove secrecy. *)
+      event endServerEnd(sshash);
+      
+      let K = DHKEY( x,f ) in
+      out(cAB0,SymEncrypt(K,secret, agreedencryptionalgorithmsclienttoserver));
+
+      out(cDebug,ClientProtocolEnd);
+      0
+)
+
+(* end added *)
+
+
+)
+)
+|
+
+
+(* begin added *)
+!
+(* end added *)
+
+(
+(* new keystore99; *)
+new keystore99in;
+new keystore99out;
+
+
+new cState101;
+(
+(
+
+(* in(cAB0,IDC103); *)
+in(cAB0,=IDC0); 
+
+out(cAB0,IDS0);
+in(cAB0,w0105);
+let w1106 = GetLeft(w0105) in 
+let xfirstkexpacketfollows106 = GetRight(w0105) in 
+let w2107 = GetLeft(w1106) in 
+let cAlgs107 = GetRight(w1106) in 
+let xSSHMSGKEXINIT108 = GetLeft(w2107) in 
+let ccookie108 = GetRight(w2107) in 
+if SSHMSGKEXINIT0 = xSSHMSGKEXINIT108 then (
+new scookie110;
+out(cAB0,(((SSHMSGKEXINIT0,scookie110),sAlgs2),firstkexpacketfollows0));
+let w0112 = GetLeft(cAlgs107) in 
+let ccompressionalgorithmsservertoclient112 = GetRight(cAlgs107) in 
+let w1113 = GetLeft(w0112) in 
+let ccompressionalgorithmsclienttoserver113 = GetRight(w0112) in 
+let w2114 = GetLeft(w1113) in 
+let cmacalgorithmsservertoclient114 = GetRight(w1113) in 
+let w3115 = GetLeft(w2114) in 
+let cmacalgorithmsclienttoserver115 = GetRight(w2114) in 
+let w4116 = GetLeft(w3115) in 
+let cencryptionalgorithmsservertoclient116 = GetRight(w3115) in 
+let w5117 = GetLeft(w4116) in 
+let cencryptionalgorithmsclienttoserver117 = GetRight(w4116) in 
+let ckexalgorithms118 = GetLeft(w5117) in 
+let cserverhostkeyalgorithms118 = GetRight(w5117) in 
+let w0119 = GetLeft(sAlgs2) in 
+let scompressionalgorithmsservertoclient119 = GetRight(sAlgs2) in 
+let w1120 = GetLeft(w0119) in 
+let scompressionalgorithmsclienttoserver120 = GetRight(w0119) in 
+let w2121 = GetLeft(w1120) in 
+let smacalgorithmsservertoclient121 = GetRight(w1120) in 
+let w3122 = GetLeft(w2121) in 
+let smacalgorithmsclienttoserver122 = GetRight(w2121) in 
+let w4123 = GetLeft(w3122) in 
+let sencryptionalgorithmsservertoclient123 = GetRight(w3122) in 
+let w5124 = GetLeft(w4123) in 
+let sencryptionalgorithmsclienttoserver124 = GetRight(w4123) in 
+let skexalgorithms125 = GetLeft(w5124) in 
+let sserverhostkeyalgorithms125 = GetRight(w5124) in 
+let agreedkexalgorithms126 = GetLeft((H((ckexalgorithms118,skexalgorithms125),(ALG)),NONE0)) in 
+let none126 = GetRight((H((ckexalgorithms118,skexalgorithms125),(ALG)),NONE0)) in 
+let agreedserverhostkeyalgorithms127 = GetLeft((H((cserverhostkeyalgorithms118,sserverhostkeyalgorithms125),(ALG)),NONE0)) in 
+let none127 = GetRight((H((cserverhostkeyalgorithms118,sserverhostkeyalgorithms125),(ALG)),NONE0)) in 
+let agreedencryptionalgorithmsclienttoserver128 = GetLeft((H((cencryptionalgorithmsclienttoserver117,sencryptionalgorithmsclienttoserver124),(ALG)),NONE0)) in 
+let none128 = GetRight((H((cencryptionalgorithmsclienttoserver117,sencryptionalgorithmsclienttoserver124),(ALG)),NONE0)) in 
+let agreedencryptionalgorithmsservertoclient129 = GetLeft((H((cencryptionalgorithmsservertoclient116,sencryptionalgorithmsservertoclient123),(ALG)),NONE0)) in 
+let none129 = GetRight((H((cencryptionalgorithmsservertoclient116,sencryptionalgorithmsservertoclient123),(ALG)),NONE0)) in 
+let agreedmacalgorithmsclienttoserver130 = GetLeft((H((cmacalgorithmsclienttoserver115,smacalgorithmsclienttoserver122),(ALG)),NONE0)) in 
+let none130 = GetRight((H((cmacalgorithmsclienttoserver115,smacalgorithmsclienttoserver122),(ALG)),NONE0)) in 
+let agreedmacalgorithmsservertoclient131 = GetLeft((H((cmacalgorithmsservertoclient114,smacalgorithmsservertoclient121),(ALG)),NONE0)) in 
+let none131 = GetRight((H((cmacalgorithmsservertoclient114,smacalgorithmsservertoclient121),(ALG)),NONE0)) in 
+let agreedcompressionalgorithmsclienttoserver132 = GetLeft((H((ccompressionalgorithmsclienttoserver113,scompressionalgorithmsclienttoserver120),(ALG)),NONE0)) in 
+let none132 = GetRight((H((ccompressionalgorithmsclienttoserver113,scompressionalgorithmsclienttoserver120),(ALG)),NONE0)) in 
+let agreedcompressionalgorithmsservertoclient133 = GetLeft((H((ccompressionalgorithmsservertoclient112,scompressionalgorithmsservertoclient119),(ALG)),NONE0)) in 
+let none133 = GetRight((H((ccompressionalgorithmsservertoclient112,scompressionalgorithmsservertoclient119),(ALG)),NONE0)) in 
+
+(* new cast100; *)
+let g135 = H((agreedkexalgorithms126,INT1),(ALG)) in
+let p137 = H((agreedkexalgorithms126,INT2),(ALG)) in
+let q139 = H((agreedkexalgorithms126,INT3),(ALG)) in
+let DHHash141 = H((agreedkexalgorithms126,INT4),(ALG)) in
+let csSignHash143 = H((agreedserverhostkeyalgorithms127,INT1),(ALG)) in
+let csSignKeyType145 = H((agreedserverhostkeyalgorithms127,INT2),(ALG)) in
+let csSignMode147 = H((agreedserverhostkeyalgorithms127,INT3),(ALG)) in
+let csSignPadding149 = H((agreedserverhostkeyalgorithms127,INT4),(ALG)) in
+
+
+in(cAB0,w0150);
+let msgType151 = GetLeft(w0150) in 
+let dhpublicC151 = GetRight(w0150) in 
+if msgType151 = SSHMSGKEXDHINIT0 then (
+out(keystore99out,(GETIP0,(IDS0,cAB0)));
+in(keystore99in,w0154);
+let KeystoreResult155 = GetLeft(w0154) in 
+let KeyPairs155 = GetRight(w0154) in 
+if KeystoreResult155 = keystoreSUCCESS0 then (
+new y157;
+
+(* begin added *)
+        (* Protocol ended well.
+            Every required parameter has been computed.
+            We've finished our part. *)
+let shash = H(H((((((((IDC0,IDS0),(((SSHMSGKEXINIT0,ccookie108),cAlgs107),firstkexpacketfollows0)),(((SSHMSGKEXINIT0,scookie110),sAlgs2),firstkexpacketfollows0)),PubPart(KeyPairs155)),dhpublicC151),DHPUB(y157)),DHKEY(y157,dhpublicC151)),(DHHash141,constSUN)),(csSignHash143,constSUN)) in
+let sshash = PriEncrypt(PriPart(KeyPairs155) ,shash, (csSignKeyType145,csSignMode147,csSignPadding149,const2048,constSunJCE) ) in 
+ event beginServerEnd( sshash );
+(* end added *)
+
+                                                                                                                                                                                                                                                                                                                                                                                    (*     (csSignKeyType51,csSignMode53,csSignPadding55,const2048,constSunJCE)  *)    
+(* out(cAB0,(((SSHMSGKEXDHREPLY0,PubPart(KeyPairs155)),DHPUB(y157)),PriEncrypt(PriPart(KeyPairs155),H(H((((((((IDC103,IDS0),(((SSHMSGKEXINIT0,ccookie108),cAlgs107),firstkexpacketfollows0)),(((SSHMSGKEXINIT0,scookie110),sAlgs2),firstkexpacketfollows0)),PubPart(KeyPairs155)),dhpublicC151),DHPUB(y157)),DHKEY(y157,dhpublicC151)),(DHHash141,constSUN)),(csSignHash143,constSUN)),(constRSA,constECB,constPKCS1Padding,const2048,constSunJCE)))); *)
+out(cAB0,(((SSHMSGKEXDHREPLY0,PubPart(KeyPairs155)),DHPUB(y157)),PriEncrypt(PriPart(KeyPairs155),H(H((((((((IDC0,IDS0),(((SSHMSGKEXINIT0,ccookie108),cAlgs107),firstkexpacketfollows0)),(((SSHMSGKEXINIT0,scookie110),sAlgs2),firstkexpacketfollows0)),PubPart(KeyPairs155)),dhpublicC151),DHPUB(y157)),DHKEY(y157,dhpublicC151)),(DHHash141,constSUN)),(csSignHash143,constSUN)),(csSignKeyType145,csSignMode147,csSignPadding149,const2048,constSunJCE))));
+out(cState101,(SERVERSIDEPROTOCOLENDCORRECTLY0,OK0));
+
+(* begin added *)
+         in(cAB0,encryptedSecret);
+         let decryptedSecret = SymDecrypt( DHKEY(y157,dhpublicC151), encryptedSecret, agreedencryptionalgorithmsclienttoserver128) in
+
+         out(cDebug,ServerProtocolEnd);
+(* end added *)
+
+
+
+0
+)else (
+out(cState101,(KEYNOTFOUND0,keypairnotfound0));
+0
+))else (
+out(cAB0,SSHMSGUNIMPLEMENTED0);
+out(cState101,(SSHMSGUNIMPLEMENTED0,NOSSHMSGKEXDHINIT0));
+0
+))else (
+out(cAB0,SSHMSGUNIMPLEMENTED0);
+out(cState101,(SSHMSGUNIMPLEMENTED0,NOSSHMSGKEXINIT0));
+0
+))
+|
+(
+in(keystore99out,xMsg169);
+let xGETIP170 = GetLeft(xMsg169) in 
+let xalias170 = GetRight(xMsg169) in 
+if xGETIP170 = GETIP0 then (
+if xalias170 = (IDS0,cAB0) then (
+out(keystore99in,(keystoreSUCCESS0,PubPrivPairs3));
+0
+)else (
+out(keystore99in,(keystoreERROR0,dummykeypair0));
+0
+))else (
+out(keystore99in,(keystoreERROR0,dummykeypair0));
+0
+))
+|
+(
+in(cState101,x179);
+0
+)
+
+
+
+)
+)
+)
+

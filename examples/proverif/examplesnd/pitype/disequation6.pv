@@ -1,0 +1,13 @@
+const a: bitstring.
+fun f(bitstring,bitstring): bool.
+
+equation forall x: bitstring; f(x,x).
+
+equation forall x: bitstring; f(x,x) <> true.
+
+event bad.
+
+query event(bad).
+
+process
+	if f(a,a) then event bad

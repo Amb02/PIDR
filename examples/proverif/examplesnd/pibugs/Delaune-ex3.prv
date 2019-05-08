@@ -1,0 +1,25 @@
+(* Static equivalence of frames *)
+
+param verboseRules = true.
+
+free ch.
+
+(* Signature *)
+fun pair/2.
+fun enc/2.
+fun dec/2.
+fun fst/1.
+fun snd/1.
+
+(* Equational theory *)
+equation  dec(enc(x,y),y) = x.
+equation  fst(pair(x,y)) = x.
+equation  snd(pair(x,y)) = y.
+equation  enc(pair(x,y),z) = pair(enc(x,z),enc(y,z)).
+equation  dec(pair(x,y),z) = pair(dec(x,z),dec(y,z)).
+equation enc(dec(x,y),y) = x.
+
+process 
+	new a; new b;
+	out(ch,choice[enc(a,b),a]);
+	out(ch,choice[dec(a,b), b])

@@ -1,0 +1,93 @@
+(*!Secret de la clé  Ks de B - FtG!*)
+(*!Sur une session avec A ou B, B sort le chiffré d'un secret avec la clé de session  - reveal de B sur toutes les autres sessions - reveal du correspondant pour les sessions non partagées avec B!*)
+
+(*header*)
+set ignoreTypes=none.
+free c: channel.
+type Pkey.
+type pkey.
+type G.
+type exponent.
+type host.
+
+(*functions*)
+
+free A, B: host.
+
+(* Diffie-Hellman *)
+const g: G [data].
+fun exp(G, exponent): G.
+equation forall x: exponent, y: exponent; exp(exp(g, x), y) = exp(exp(g, y), x).
+
+(* Chiffrement symetrique *)
+fun senc(bitstring,bitstring):bitstring.
+reduc forall x: bitstring, y: bitstring; sdec(senc(x,y),y) = x.
+
+(* Hachage *)
+fun hash(bitstring):bitstring.
+
+(* Signature *)
+fun sign(bitstring, pkey): bitstring.
+fun pk(pkey):Pkey.
+reduc forall m: bitstring, k: pkey; getmess(sign(m,k)) = m.
+reduc forall m: bitstring, k: pkey; checksign(sign(m,k), pk(k)) = m.
+
+(* Convertion *)
+fun G_to_bitstring(G): bitstring [data, typeConverter].
+fun Pkey_to_bitstring(Pkey): bitstring [data, typeConverter].
+
+(*tests*)
+free ch:channel [private].
+free secret:bitstring [private].
+query attacker(secret).
+
+(*Process specifications*)
+
+let processB(skA: pkey, skB: pkey,secret:bitstring) = 
+     in (c, Y: host);
+     if Y = A || Y = B then
+    let skY = if Y = A then skA else skB in
+    let pkY = pk(skY) in
+    in(c,(pkX: Pkey,m1: G));
+     new rb: exponent;  
+     out(c,(pkY,exp(g,rb),sign((G_to_bitstring(m1),G_to_bitstring(exp(g,rb)),Pkey_to_bitstring(pkX)),skY))); 
+    in(c,m2: bitstring);
+    let (=G_to_bitstring(exp(g,rb)),=G_to_bitstring(m1),=Pkey_to_bitstring(pkY)) = checksign(m2, pkX) in
+    let Ks =  hash(G_to_bitstring(exp(m1,rb))) in
+     out(c,Ks); 0. 
+
+
+let processTest(skA: pkey, skB: pkey,secret:bitstring) = 
+     in (c, Y: host);
+     if Y = A || Y = A then
+    let skY = if Y = A then skA else skB in
+    let pkY = pk(skY) in
+    in(c,(pkX: Pkey,m1: G));
+     new rb: exponent;  
+     out(c,(pkY,exp(g,rb),sign((G_to_bitstring(m1),G_to_bitstring(exp(g,rb)),Pkey_to_bitstring(pkX)),skY))); 
+    in(c,m2: bitstring);
+    let (=G_to_bitstring(exp(g,rb)),=G_to_bitstring(m1),=Pkey_to_bitstring(pkY)) = checksign(m2, pkX) in
+    let Ks =  hash(G_to_bitstring(exp(m1,rb))) in
+      out(ch,pkY); if (pkX = pk(skA) && pkY=pk(skB)) || (pkX = pk(skB) && pkY=pk(skA)) then   out(c,senc(secret,Ks)). 
+
+
+let processA(skA: pkey, skB: pkey,secret:bitstring) =
+     in (c, X: host);
+    if X = A || X = B then
+    let skX = if X = A then skA else skB in
+    let pkX = pk(skX) in
+     new ra: exponent;  
+    out(c,(pkX,exp(g,ra)));    
+     in(c,(pkY : Pkey, m1: G,m2: bitstring));                   
+     let (=G_to_bitstring(exp(g,ra)),=G_to_bitstring(m1),=Pkey_to_bitstring(pkX)) = checksign(m2, pkY) in
+    let Ks = hash(G_to_bitstring(exp(m1,ra))) in
+    out(c,sign((G_to_bitstring(m1),G_to_bitstring(exp(g,ra)),Pkey_to_bitstring(pkY)),skX));
+     in (ch,pkXX:Pkey); if pkY<>pkXX then out(c,Ks) else 0. 	
+
+
+process new skA: pkey; let pkA = pk(skA) in
+	new skB : pkey; let pkB = pk(skB) in
+	out(c, pkA);
+	out(c, pkB);	
+	((!processA(skA, skB,secret)) | (!processB(skA, skB,secret)) |(processTest(skA, skB,secret))) 
+    

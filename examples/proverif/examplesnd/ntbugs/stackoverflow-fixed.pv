@@ -1,0 +1,316 @@
+(* Bruno: This file caused a stack overflow. The problem is fixed here
+by moving some "new"s towards the beginning of the protocol *)
+
+(* vim:set filetype=ocaml:tw=0: *)
+
+(* Type definitions *)
+type privKey.
+type pubKey.
+type signature.
+type digest.
+type asymEncrypted.
+
+type keyMaterial.
+type key.
+type auth.
+type iv.
+type mac.
+type symEncrypted.
+
+
+(* Symmetric encryption, MAC generation, and convenience functions to do authentication with MACs *)
+fun ekxy(keyMaterial): key.
+fun ekyx(keyMaterial): key.
+fun akxy(keyMaterial): auth.
+fun akyx(keyMaterial): auth.
+
+fun bitstringify(pubKey): bitstring [data, typeConverter].
+
+fun symEncrypt(key, iv, bitstring): symEncrypted.
+reduc forall message: bitstring, k: key, i: iv; symmetricDecrypt(k, i, symEncrypt(k, i, message)) = message.
+
+fun computeMAC(auth, bitstring): mac.
+
+letfun symEncryptWithMAC(symKey: key, currentIV: iv, nextIV: iv, authToken: auth, message: bitstring) =
+    let computedMAC = computeMAC(authToken, (nextIV, message)) in
+    symEncrypt(symKey, currentIV, (computedMAC, (nextIV, message))).
+
+letfun symDecryptWithMAC(symKey: key, currentIV: iv, authToken: auth, encryptedMessage: symEncrypted) =
+    let (receivedMAC: mac, (nextIV: iv, decryptedMessage: bitstring)) = symmetricDecrypt(symKey, currentIV, encryptedMessage) in
+    let computedMAC = computeMAC(authToken, (nextIV, decryptedMessage)) in
+    (computedMAC, receivedMAC, nextIV, decryptedMessage).
+
+
+(* Asymmetric encryption and signing constructs *)
+fun getPubKey(privKey): pubKey.
+
+fun pubEncrypt(pubKey, bitstring): asymEncrypted.
+reduc forall message: bitstring, k: privKey; privDecrypt(k, pubEncrypt(getPubKey(k), message)) = message.
+
+fun hash(bitstring): digest.  (* TODO: Is the digest type necessary? *)
+
+fun sign(privKey, digest): signature.
+reduc forall d: digest, k: privKey; getHash(sign(k, d)) = d.  (* TODO: Is this one here necessary for the attacker? *)
+reduc forall d: digest, k: privKey; verifySign(getPubKey(k), d, sign(k, d)) = true.  (* TODO: Delete this one and use getHash/stripSign instead? *)
+
+
+free internet: channel.
+free bluetooth: channel.
+free mobile: channel.
+
+free Kpriv_S: privKey [private].
+query attacker(Kpriv_S).
+(* noninterf for private keys does not make teh senses *)
+
+free unlockMessage: bitstring [private].
+query attacker(unlockMessage).
+noninterf unlockMessage.
+
+free access: bool [private].
+query attacker(access).
+noninterf access.
+
+free Nprime_MS: bitstring [private].
+query attacker(Nprime_MS).
+noninterf Nprime_MS.
+
+table mobilePubKeys(pubKey).
+table doorPubKeys(bitstring, pubKey).
+
+(* TODO: Make "new"s into free private to attacker-query them? *)
+
+event mobileConnectsToServer(pubKey, keyMaterial).
+event serverSendingMobileChallenge(pubKey, bitstring).
+event mobileServerConnectionReady(pubKey, bitstring).
+event serverAcceptsMobile(pubKey, keyMaterial).
+
+query K_M: pubKey, challenge: bitstring; inj-event(mobileServerConnectionReady(K_M, challenge)) ==> inj-event(serverSendingMobileChallenge(K_M, challenge)).
+query K_M: pubKey, symmetricKeyMaterial: keyMaterial; inj-event(serverAcceptsMobile(K_M, symmetricKeyMaterial)) ==> inj-event(mobileConnectsToServer(K_M, symmetricKeyMaterial)).
+
+event mobileSendingDoorBdAddr(pubKey, bitstring).
+event serverReceivedDoorBdAddr(pubKey, bitstring).
+
+query K_M: pubKey, bdAddr: bitstring; inj-event(serverReceivedDoorBdAddr(K_M, bdAddr)) ==> inj-event(mobileSendingDoorBdAddr(K_M, bdAddr)).
+
+event serverSendingDoorPubKey(pubKey, pubKey).
+event mobileReceivedDoorPubKey(pubKey, pubKey).
+
+query K_M: pubKey, K_D: pubKey; inj-event(mobileReceivedDoorPubKey(K_M, K_D)) ==> inj-event(serverSendingDoorPubKey(K_M, K_D)).
+
+event mobileConnectsToDoor(pubKey, keyMaterial).
+
+event doorReturningChallenge(bitstring).
+event mobileAcceptsDoor(bitstring).
+
+query challenge: bitstring; inj-event(mobileAcceptsDoor(challenge)) ==> inj-event(doorReturningChallenge(challenge)).
+
+event serverSendingFinalUnlock(pubKey, bool).
+event doorUnlockMessageReceived(pubKey, bool).
+
+query K_D: pubKey, challenge: bool; inj-event(doorUnlockMessageReceived(K_D, access)) ==> inj-event(serverSendingFinalUnlock(K_D, access)).
+
+event serverRespondsToDoorChallenge(pubKey, bitstring).
+event doorAcceptsServer(pubKey, bitstring).
+event doorReturningServerChallenge(pubKey, bitstring).
+event serverAcceptsDoor(pubKey, bitstring).
+
+query K_D: pubKey, challenge: bitstring; inj-event(doorAcceptsServer(K_D, challenge)) ==> inj-event(serverRespondsToDoorChallenge(K_D, challenge)).
+query K_D: pubKey, challenge: bitstring; inj-event(serverAcceptsDoor(K_D, challenge)) ==> inj-event(doorReturningServerChallenge(K_D, challenge)).
+
+event mobileDone.
+event serverDone.
+event doorDone.
+
+
+query event(mobileDone).
+query event(serverDone).
+query event(doorDone).
+
+
+
+let Mobile(K_S: pubKey) =
+    new Kpriv_M: privKey;
+    let K_M = getPubKey(Kpriv_M) in
+    insert mobilePubKeys(K_M);
+
+    new N_MS: bitstring;
+    new K_MS: keyMaterial;
+    (* Bruno: generate the IVs early, so that they are represented 
+    internally by functions that depend on few parameters *)
+    new IV1_MS: iv;
+    new IV3_MS: iv;
+    new IV5_MS: iv;
+    new IV1_MD: iv;
+    new IV3_MD: iv;
+    let m1_MS = (N_MS, K_MS, IV1_MS) in
+    event mobileConnectsToServer(K_M, K_MS);
+    out(internet, (K_M, pubEncrypt(K_S, m1_MS)));
+
+    in(internet, ct2_MS: symEncrypted);
+    let (Hc2_MS: mac, H2_MS: mac, IV2_MS: iv, (N_MS_returned: bitstring, N_SM: bitstring)) = symDecryptWithMAC(ekyx(K_MS), IV1_MS, akyx(K_MS), ct2_MS) in
+    if Hc2_MS = H2_MS then
+    if N_MS_returned = N_MS then
+
+    out(internet, symEncryptWithMAC(ekxy(K_MS), IV2_MS, IV3_MS, akxy(K_MS), (sign(Kpriv_M, hash((N_SM, Nprime_MS))), Nprime_MS)));
+
+    in(internet, ct4_MS: symEncrypted);
+    let (Hc4_MS: mac, H4_MS: mac, IV4_MS: iv, Nprime_MS_returned: bitstring) = symDecryptWithMAC(ekyx(K_MS), IV3_MS, akyx(K_MS), ct4_MS) in
+    if Hc4_MS = H4_MS then
+    if Nprime_MS_returned = Nprime_MS then
+
+    event mobileServerConnectionReady(K_M, N_MS_returned);  (* This event is placed here because! *)
+
+
+    (* Scan and find a door and get its pub key from the server *)
+    in(bluetooth, bdAddr: bitstring);
+
+    event mobileSendingDoorBdAddr(K_M, bdAddr);
+    out(internet, symEncryptWithMAC(ekxy(K_MS), IV4_MS, IV5_MS, akxy(K_MS), bdAddr));
+
+    in(internet, ct6_MS: symEncrypted);
+    let (Hc6_MS: mac, H6: mac, IV6_MS: iv, K_D: pubKey) = symDecryptWithMAC(ekyx(K_MS), IV5_MS, akyx(K_MS), ct6_MS) in
+    if Hc6_MS = H6 then
+    event mobileReceivedDoorPubKey(K_M, K_D);
+    
+    new N_MD: bitstring;
+    new K_MD: keyMaterial;
+
+    let m1_MD = (N_MD, IV1_MD, K_MD) in
+    event mobileConnectsToDoor(K_M, K_MD);
+    out(bluetooth, (K_M, pubEncrypt(K_D, m1_MD)));
+
+    in(bluetooth, ct2_MD: symEncrypted);
+    let (Hc2_MD: mac, H2_MD: mac, IV2_MD: iv, N_MD_returned: bitstring) = symDecryptWithMAC(ekyx(K_MD), IV1_MD, akyx(K_MD), ct2_MD) in
+    if Hc2_MD = H2_MD then
+    if N_MD_returned = N_MD then
+    (* Mobile accepts door *)
+
+    out(bluetooth, symEncryptWithMAC(ekxy(K_MD), IV2_MD, IV3_MD, akxy(K_MD), unlockMessage));  (* TODO: Hardcode "unlock"? *)
+
+    event mobileDone;
+    0.
+
+
+
+let Server(Kpriv_S: privKey, K_S: pubKey) =
+
+    (* Get symmetric key material and the challenge to return *)
+    in(internet, (ct1_MS: asymEncrypted, M: pubKey));
+
+    (* Check that the server already knows the mobile by its pub key *)
+    get mobilePubKeys(K_M) suchthat K_M = M in
+
+    let (N_MS: bitstring, K_MS: keyMaterial, IV1_MS: iv) = privDecrypt(Kpriv_S, ct1_MS) in
+
+    new N_SM: bitstring;
+    (* Bruno: generate the IVs early, so that they are represented 
+    internally by functions that depend on few parameters *)
+    new IV2_MS: iv;
+    new IV4_MS: iv;
+    new IV6_MS: iv;
+    event serverSendingMobileChallenge(K_M, N_MS);
+    out(internet, symEncryptWithMAC(ekyx(K_MS), IV1_MS, IV2_MS, akyx(K_MS), (N_MS, N_SM)));
+
+    in(internet, ct3_MS: symEncrypted);
+    let (Hc3_MS: mac, H3: mac, IV3_MS: iv, (returnedChallengeSignature: signature, Nprime_MS_received: bitstring)) = symDecryptWithMAC(ekxy(K_MS), IV2_MS, akxy(K_MS), ct3_MS) in
+    if Hc3_MS = H3 then
+    if verifySign(K_M, hash((N_SM, Nprime_MS_received)), returnedChallengeSignature) = true then
+    event serverAcceptsMobile(K_M, K_MS); (* TODO: Ok to use K_MS here? *)
+
+    (* Send all ok to mobile *)
+    out(internet, symEncryptWithMAC(ekyx(K_MS), IV3_MS, IV4_MS, akyx(K_MS), Nprime_MS_received));
+
+    (* Receive door BD_ADDR that user wants pub key for*)
+    in(internet, ct5_MS: symEncrypted);
+    let (Hc5_MS: mac, H5: mac, IV5_MS: iv, doorBdAddr: bitstring) = symDecryptWithMAC(ekxy(K_MS), IV4_MS, akxy(K_MS), ct5_MS) in
+    if Hc5_MS = H5 then
+    event serverReceivedDoorBdAddr(K_M, doorBdAddr);
+
+    (* Send door pub key *)
+    get doorPubKeys(=doorBdAddr, Kprime_D) in
+    event serverSendingDoorPubKey(K_M, Kprime_D);
+    out(internet, symEncryptWithMAC(ekyx(K_MS), IV5_MS, IV6_MS, akyx(K_MS), bitstringify(Kprime_D)));
+
+    in(mobile, (D: pubKey, ct1_DS: asymEncrypted));
+    (* get doorPubKeys(doorBdAddr_temp, =D) in *)
+    (* let K_D = D in *)
+    get doorPubKeys(temp, K_D) suchthat K_D = D in
+
+    let N_DS = privDecrypt(Kpriv_S, ct1_DS) in
+    new N_SD: bitstring;
+    let s2_DS = sign(Kpriv_S, hash((N_DS, N_SD))) in
+    event serverRespondsToDoorChallenge(K_D, N_DS);
+    out(mobile, (s2_DS, pubEncrypt(K_D, N_SD)));
+
+    in(mobile, (s3_DS: signature, ct3_DS: asymEncrypted));
+    let Nprime_DS = privDecrypt(Kpriv_S, ct3_DS) in
+    if verifySign(K_D, hash((N_SD, Nprime_DS)), s3_DS) = true then
+    event serverAcceptsDoor(K_D, N_SD);
+
+    event serverSendingFinalUnlock(K_D, access);
+    out(mobile, (sign(Kpriv_S, hash((access, N_SD))), pubEncrypt(K_D, (access, N_SD))));
+
+    event serverDone;
+    0.
+
+
+
+let Door(K_S: pubKey) =
+    new Kpriv_D: privKey;
+    let K_D = getPubKey(Kpriv_D) in
+    out(bluetooth, K_D);
+    new bdAddr: bitstring;
+
+
+    (* TODO: Its own keypair? *)
+    insert doorPubKeys(bdAddr, K_D);
+    out(bluetooth, bdAddr);
+
+    in(bluetooth, ct1_MD: asymEncrypted);
+    let (N_MD: bitstring, IV1_MD: iv, K_MD: keyMaterial) = privDecrypt(Kpriv_D, ct1_MD) in
+
+    (* Return challenge from the mobile *)
+    new IV2_MD: iv;
+    event doorReturningChallenge(N_MD);
+    out(bluetooth, symEncryptWithMAC(ekyx(K_MD), IV1_MD, IV2_MD, akyx(K_MD), N_MD));
+
+
+    (* Receive unlock message from mobile *)
+    in(bluetooth, ct3_MD: symEncrypted);
+    let (Hc3_MD: mac, H3_MD: mac, IV3_MD: iv, unlockMessage_received: bitstring) = symDecryptWithMAC(ekxy(K_MD), IV2_MD, akxy(K_MD), ct3_MD) in
+    if Hc3_MD = H3_MD then
+
+    (* Communicate with server *)
+    new N_DS: bitstring;
+    out(mobile, (K_D, pubEncrypt(K_S, N_DS)));
+
+    in(mobile, (s2_DS: signature, ct2_DS: asymEncrypted));
+    let N_SD = privDecrypt(Kpriv_D, ct2_DS) in
+    if verifySign(K_S, hash((N_DS, N_SD)), s2_DS) = true then
+    event doorAcceptsServer(K_D, N_DS);
+
+    new Nprime_DS: bitstring;
+    let s3_DS = sign(Kpriv_D, hash((N_SD, Nprime_DS))) in
+    event doorReturningServerChallenge(K_D, N_SD);  (* TODO: Kig efter i sømmene *)
+    out(mobile, (s3_DS, pubEncrypt(K_S, Nprime_DS)));
+
+    in(mobile, (s4_DS: signature, ct4_DS: asymEncrypted));
+    let message = privDecrypt(Kpriv_D, ct4_DS) in
+    if verifySign(K_S, hash(message), s4_DS) = true then
+    let (access_received: bool, N_SD_returned: bitstring) = message in
+    if N_SD_returned = N_SD then
+    event doorUnlockMessageReceived(K_D, access_received);
+
+    (* TODO: Check if the signature is necessary for the last message (it already has a nonce against replay (N_SD)) *)
+    event doorDone;
+    0.
+
+
+process
+    let K_S = getPubKey(Kpriv_S) in
+    out(internet, K_S);
+    (
+        (!Mobile(K_S)) |
+        (!Server(Kpriv_S, K_S)) |
+        (!Door(K_S))
+    )

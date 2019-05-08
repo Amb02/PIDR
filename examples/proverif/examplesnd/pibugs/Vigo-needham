@@ -1,0 +1,51 @@
+param traceDisplay = long.
+param verboseRules = true.
+
+query attacker: ack.
+
+free c,ack.
+
+(* Host name - key map for the KDC *)
+fun host/1.
+private reduc getkey(host(x)) = x.
+
+(* Shared-key cryptography *)
+fun sencrypt/2.
+reduc sdecrypt(sencrypt(x,y),y) = x.
+
+let alice =
+	new aliceNonce;
+	in(c, partnerID);
+	out(c, (aliceNonce, aliceID, partnerID));
+	in(c, (Xs));
+	let (=aliceNonce, =partnerID, Kab, ticket) = sdecrypt(Xs, Kas) in
+		out(c, ticket);
+		in(c, XpartnerNonce);
+		let(partnerNonce) = sdecrypt(XpartnerNonce, Kab) in
+			out(c, (aliceNonce,sencrypt((partnerNonce, aliceNonce), Kab))).
+		
+let bob =
+	new bobNonce;
+	in(c, Xticket);
+	let(Kab, partnerID) = sdecrypt(Xticket, Kbs) in
+		out(c, sencrypt(bobNonce, Kab));
+		in(c, Y);
+		let(partnerNonce, =(bobNonce, partnerNonce)) = sdecrypt(Y,Kab) in
+			out(c,ack).
+
+let KDC =
+	new Kab;
+	in(c, (nonce1,h1,h2));
+	let k1 = getkey(h1) in
+	let k2 = getkey(h2) in
+	out(c, sencrypt((nonce1, h2, Kab, sencrypt((Kab,h1),k2)), k1)).
+
+process
+	new Kas;
+	let aliceID = host(Kas) in
+	out(c,aliceID);
+	new Kbs;
+	let bobID = host(Kbs) in
+	out(c,bobID);
+	!alice | !bob | !KDC
+

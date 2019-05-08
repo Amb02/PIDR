@@ -1,0 +1,205 @@
+(* A public channel *)
+free net.
+
+(* Message tags *)
+free ClientHello, ClientKeyExchange, ClientCertificate, ServerHello, ServerCertificate, CertificateVerify, ServerKeyExchange.
+
+(* Agent initialization is done over a private channel *)
+private free initialClientData, initialServerData.
+
+(* The cryptographic constructors *)
+fun hash/1. (* hashing *)
+fun encrypt/2. (* symmetric key encryption *)
+fun pencrypt/2. (* Public key encryption *)
+fun sign/2. (* Public key signing *)
+fun enc/1. (* Extracts encryption key from a keypair *)
+fun dec/1. (* Extracts decryption key from a keypair *)
+
+(* The cryptographic destructors *)
+reduc decrypt(encrypt(x, y), y) = x.
+reduc pdecrypt(pencrypt(x, enc(y)), dec(y)) = x.
+reduc unsign(sign(x, enc(y)), dec(y)) = x.
+
+(* A constructor that maps agents to their secret keypairs *)
+private fun signkeypair/1.
+
+(* Pseudo−random−number function *)
+fun PRF/1.
+
+(* Symmetric key construction *)
+fun clientK/3.
+fun serverK/3.
+
+(* Certificates *)
+private fun cert/2.
+
+(* If cert(x, y) establishes x as owner of key y, y is returned *)
+reduc verify(cert(x, y), x) = y.
+(* Diffie-Hellman functions *)
+fun f/2.
+fun g/1.
+equation f(x, g(y)) = f(y, g(x)).
+
+(**************************************************************************
+* QUERIES  *
+**************************************************************************)
+ 
+(* secrecy Pre Master secret *)
+query attacker: PMSa.
+query attacker: PMSb.
+
+(* secrecy Master secret *)
+query attacker: MSa.
+query attacker: MSb.
+
+(* secrecy Finished message from the client *)
+query attacker: FinishedAFlag.
+
+(* secrecy Finished message from the server *)
+query attacker: FinishedBFlag.
+
+(* authenticity of the server *)
+query evinj: endServerAuth(x, y, z) ==> evinj: beginServerAuth(x, y, z).
+
+(* authenticity of the client *)
+query evinj: endClientAuth(x, y, z) ==> evinj: beginClientAuth(x, y, z).
+
+(* Dead code check *)
+query attacker: clientFinished.
+query attacker: serverFinished.
+
+(**************************************************************************
+* CLIENT PROCESS, this client is the initiator of the protocol.          *
+**************************************************************************)
+let client =
+(** Initial agent data from a trusted channel **)
+in(initialClientData, (A, keypair, clientCert));
+let SKc = enc(keypair) in
+let PKc = dec(keypair) in
+(** Replication to model arbitrary sessions **)
+!
+(** Get the server’s name, perhaps as user input **)
+in(net, B);
+(* A generates fresh nonce Na *)
+new Na;
+(* A determines Sid, session is randomly generated in basic model *)
+new Sid;
+(* A chooses options Pa, options are just random data for our model *)
+new Pa;
+(* A −> B : ClientHello *)
+let CH = (ClientHello, A, Na, Sid, Pa) in out(net, CH);
+(* B −> A : ServerHello *)
+in(net, SH); let (=ServerHello, Nb, =Sid, Pb) = SH in
+(* B −> A : ServerCertificate *)
+in(net, SC); let (=ServerCertificate, serverCert) = SC in
+(* Receiving Server DH Key Parameters and checking integrity *)
+in(net, SKE); let (=ServerKeyExchange, G, N, GY, DHSignature) = SKE in
+let unsignKey = verify(serverCert, B) in
+let (=Na, =Nb, =G, =N, =GY) = unsign(DHSignature, unsignKey) in
+(* A −> B: ClientCertificate *)
+let CC = (ClientCertificate, clientCert) in out(net, CC);
+(* A −> B : ClientKeyExchange *)
+new X;
+let CKE = (ClientKeyExchange, g(X)) in out(net, CKE);
+let cvHash = hash((CH, SH, SC, SKE, CC, CKE)) in
+(** begin client authentication **)
+event beginClientAuth(A, B, cvHash);
+(* A −> B: CertificateVerify *)
+let CV = sign((CertificateVerify, cvHash), SKc) in out(net, CV);
+(* Compute the pre-master secret (g^xy) *)
+let PMS = f(GY, g(X)) in
+(* A calculates the Master secret M *)
+let M = PRF((PMS, Na, Nb)) in
+(* A calculates Finished *)
+let Finished = hash((CH, SH, SC, CC, CKE, CV, M)) in
+(* A −> B : Finished *)
+out(net, encrypt(Finished, clientK(Na, Nb, M)));
+(* B −> A : Finished *)
+in(net, FB);
+(* A verifies received finished *)
+let =Finished = decrypt(FB, serverK(Na, Nb, M)) in
+(** end server authentication **)
+event endServerAuth(A, B, Finished);
+(** secrecy check on the Master secret **)
+(new MSa; out(M, MSa)) |
+(** secrecy check on the Pre-Master Secret **)
+(new PMSa; out(PMS, PMSa)) |
+(** secrecy check on the Finished message **)
+(new FinishedAFlag; out(Finished, FinishedAFlag)) |
+(** dead code check **)
+(new clientFinished; out(net, clientFinished)).
+(**************************************************************************
+* THE SERVER PROCESS                                                     *
+**************************************************************************)
+let server =
+(** Initial agent data from a trusted channel **)
+in(initialServerData, (B, keypair, serverCert));
+let PKs = dec(keypair) in
+let SKs = enc(keypair) in
+(** Replication to model arbitrary sessions **)
+!
+(* A −> B : ClientHello *)
+in(net, CH); let (=ClientHello, A, Na, Sid, Pa) = CH in
+(* B generates fresh nonce Nb *)
+new Nb;
+(* B chooses options Pb, just some random data in our model *)
+new Pb;
+(* B −> A : ServerHello *)
+let SH = (ServerHello, Nb, Sid, Pb) in out(net, SH);
+(* B −> A : ServerCertificate *)
+let SC = (ServerCertificate, serverCert) in out(net, SC);
+(* Generate Diffie-Hellman Key Exchange parameters *)
+new G; (* Generator, public *)
+new N; (* Modulus (prime), public *)
+new Y; (* Server's secret exponent *)
+(* B -> A: ServerKeyExchange *)
+let SKE = (ServerKeyExchange, G, N, g(Y), sign((Na, Nb, G, N, g(Y)), SKs)) in out(net, SKE);
+(* A −> B : ClientCertificate *)
+in(net, CC); let (=ClientCertificate, clientCert) = CC in
+(* A −> B : ClientKeyExchange *)
+in(net, CKE); let(=ClientKeyExchange, GX) = CKE in
+(* A −> B : CertificateVerify *)
+let unsignKey = verify(clientCert, A) in
+in(net, CV); let (=CertificateVerify, cvHash) = unsign(CV, unsignKey) in
+(* B verifies client signature *)
+let =cvHash = hash((CH, SH, SC, SKE, CC, CKE)) in
+(** end client authentication **)
+event endClientAuth(A, B, cvHash);
+(* Calculating the Pre-Master Secret *)
+let PMS = f(GX, g(Y)) in
+(* A −> B : Finished *)
+in(net, FA);
+(* B calculates M *)
+let M = PRF((PMS, Na, Nb)) in
+(* B calculates Finished *)
+let Finished = hash((CH, SH, SC, SKE, CC, CKE, CV, M)) in
+(** server authentication **)
+event beginServerAuth(A, B, Finished);
+(* B −> A : Finished *)
+out(net, encrypt(Finished, serverK(Na, Nb, M)));
+(* B verifies received Finished *)
+let =Finished = decrypt(FA, clientK(Na, Nb, M)) in
+(** secrecy check on the Master secret **)
+(new MSb; out(M, MSb)) |
+(** secrecy check on the Pre-Master Secret **)
+(new PMSb; out(PMS, PMSb)) |
+(** secrecy check on the finished **)
+(new FinishedBFlag; out(Finished, FinishedBFlag)) |
+(** dead code check **)
+(new serverFinished; out(net, serverFinished)).
+(**************************************************************************
+* THE INITIALIZER PROCESS                                                *
+**************************************************************************)
+let initializer =
+new C; (* Generate agent name *)
+new S; (* Generate agent name *)
+let clientKeyPair = signkeypair(C) in (* Generate client key *)
+let serverKeyPair = signkeypair(S) in (* Generate server key *)
+let clientCert = cert(C, dec(clientKeyPair)) in
+let serverCert = cert(S, dec(serverKeyPair)) in
+( out(initialClientData, (C, clientKeyPair, clientCert)) | out(initialServerData, (S, serverKeyPair, serverCert)) | out(net, S) ).
+(**************************************************************************
+* THE SYSTEM                                                             *
+**************************************************************************)
+process
+!initializer | !client | !server

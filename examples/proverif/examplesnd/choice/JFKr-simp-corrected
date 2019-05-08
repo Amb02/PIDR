@@ -1,0 +1,169 @@
+(* JFKr
+   Trying to reconstruct the attack against identify protection
+   mentioned in the long version of our paper. This is the version
+   with a corrected protocol (using H(NI, xI) instead of NI).
+   ProVerif finds a false attack: A can/cannot connect
+   with responder 1 in the first/resp. second version.
+ *)
+
+(* Equivalence proof unfortunately fails... *)
+
+param channels = names.
+(* param redundantHypElim = true. VERY SLOW *)
+(* param verboseRules = yes. *)
+
+
+data cst1/0.
+data cst2/0.
+
+reduc isin(x,(x,y)) = x;
+      isin(y,(x,y)) = y.
+
+(* Exponential and Diffie-Hellman *)
+
+data g/0.
+fun exp/2.
+equation exp(exp(g,y),z) = exp(exp(g,z),y).
+
+(* Signature *)
+
+fun S/2.
+fun Pk/1.
+data true/0.
+reduc V(S(k,v), Pk(k),v) = true.
+reduc RecoverKey(S(k,v)) = Pk(k). (* For the attacker *)
+reduc RecoverText(S(k,v)) = v.    (* For the attacker *)
+
+(* Shared-key encryption *)
+
+fun E/2.
+fun D/2.
+equation D(k,E(k,v)) = v.
+
+(* Keyed hash function *)
+
+fun H/2.
+
+(* Tags *)
+
+data tagE/0. data tagA/0. data tagV/0.
+
+(* Constructors for JFK's formatted messages
+   Selectors are implicit when using "data" *)
+
+data cons1/2. data cons2/5. data cons3/7. data cons4/2.
+
+(* More constants *)
+
+data constI/0. data constR/0. data saR/0.
+
+(* Free names *)
+
+free c. (* Public channel *)
+free grpinfoR.
+
+(* Secrecy assumptions *)
+
+not kIminus.
+not kR1minus.
+not kR2minus.
+not dI.
+
+(* Initiator 
+   The process processI corresponds to I^A in the figure. *)
+
+let processI =
+  !
+  in(init, (IDRp, saI));    (* Init message *)
+  new NI; 
+  out(c, cons1(H(NI,xI), xI));
+  in(c, cons2(=H(NI,xI), NR, xR, grpinfoR, tR));
+  let h = exp(xR, dI) in
+  let Ka = H(h, (NI, NR, tagA)) in
+  let Ke = H(h, (NI, NR, tagE)) in
+  let Kv = H(h, (NI, NR, tagV)) in
+  let sI = S(kAminus, (NI, NR, xI, xR, grpinfoR)) in
+  let eI = E(Ke, (IDA, IDRp, saI, sI)) in
+  let hI = H(Ka, (constI, eI)) in
+  out(c, cons3(NI, NR, xI, xR, tR, eI, hI)) (* ;
+  in(c, cons4(eR, hR));
+  if H(Ka, (constR, eR)) = hR then
+  let (IDRl, saR, sR) = D(Ke, eR) in
+  if V(sR, IDRl, (NI, NR, xI, xR)) = true then 
+  out(connect, (IDRl, IDRp, saI, saR, Kv)) *).
+
+(* Responder
+   The process processR corresponds to R^A in the figure. *)
+
+let processR =
+  new KR;
+  (* R_1^A *)
+  !
+  in(c, cons1(HNI, xI));
+  new NR;
+  let tR = H(KR, (xR, NR, HNI)) in
+  out(c, cons2(HNI, NR, xR, grpinfoR, tR));
+  in(c, cons3(NI,NR,xI,xR,=tR,eI,hI));
+  let h = exp(xI,dR) in
+  let Ka = H(h, (NI, NR, tagA)) in
+  let Ke = H(h, (NI, NR, tagE)) in
+  let Kv = H(h, (NI, NR, tagV)) in
+  if H(Ka, (constI, eI)) = hI then
+  let (IDIl, IDRp, saI, sI) = D(Ke,eI) in
+  if V(sI, IDIl, (NI, NR, xI, xR, grpinfoR)) = true then
+  let void = isin(IDIl, SIA) in
+  (* out(accept, (IDIl, IDRp, saI, saR, Kv)); *)
+  let sR = S(kAminus, (NI, NR, xI, xR)) in
+  let eR = E(Ke, (IDA, saR, sR)) in
+  let hR = H(Ka, (constR, eR)) in
+  out(c, cons4(eR, hR)).
+
+
+(* Whole JFK system. *)
+
+process
+  (* Attacker key *)
+  new kCminus;
+  let IDC = Pk(kCminus) in
+  out(getprinc, kCminus);
+  (* Initiator *)
+  new kIminus;
+  let IDI = Pk(kIminus) in
+  out(getprinc, IDI);
+  (* Two responders *)
+  new kR1minus;
+  let IDR1 = Pk(kR1minus) in
+  out(getprinc, IDR1);
+  new kR2minus;
+  let IDR2 = Pk(kR2minus) in
+  out(getprinc, IDR2);
+  (* Exponential *)
+  new dI;
+  let xI = exp(g, dI) in
+  out(c, xI);
+  let dR = dI in
+  let xR = xI in
+  (
+  (* Initiator; two sessions *)
+  let kAminus = kIminus in
+  let IDA = IDI in
+  new init; 
+  out(init, (cst1,cst2)) | 
+  out(init, (cst1,cst2)) |
+  processI
+  )
+  |
+  (
+  let kAminus = kR1minus in
+  let IDA = IDR1 in
+  let SIA = (choice[IDI,IDC], IDC) in  
+  processR
+  )
+  |
+  (
+  let kAminus = kR2minus in
+  let IDA = IDR2 in
+  let SIA = (IDI, IDI) in  
+  processR
+  )
+

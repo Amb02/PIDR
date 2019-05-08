@@ -1,0 +1,10 @@
+table T(bitstring).
+
+free a: bitstring.
+free c: channel.
+
+event bad.
+query event(bad).
+
+process
+	insert T(a); get T(=a) in 0 else event bad

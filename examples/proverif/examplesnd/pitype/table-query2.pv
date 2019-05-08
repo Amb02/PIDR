@@ -1,0 +1,13 @@
+free net:channel.
+
+type nonce.
+
+table cconn(bitstring,bitstring,nonce).
+
+query a:bitstring, b:bitstring, c:nonce;
+      table(cconn(a,b,c)) phase 2.
+
+process
+    new x: nonce;
+    in(net, (a:bitstring, b:bitstring));
+    insert cconn(a,b,x)

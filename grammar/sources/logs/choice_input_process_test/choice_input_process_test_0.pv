@@ -1,0 +1,9 @@
+  set traceDisplay = long.
+
+
+free c: channel [private].
+free a, b: bitstring.
+free d: channel.
+
+process
+  out(c, choice[a,b]) | in(c, =a);out(d, a)

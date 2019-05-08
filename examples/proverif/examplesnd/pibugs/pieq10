@@ -1,0 +1,16 @@
+(* The verifier does not support an equational theory that equates all terms.
+ *)
+
+
+fun f/2.
+
+equation f(x,y) = x.
+equation f(x,y) = y.
+
+free c.
+private free secret.
+query attacker:secret.
+
+
+process
+	new a; new b; if a = b then out(c, secret)

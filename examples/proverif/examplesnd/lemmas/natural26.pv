@@ -1,0 +1,10 @@
+free c:channel.
+
+event A(nat).
+
+
+query x:nat, x':nat;
+  event(A(x)) ==> attacker(x') && x' >= x.
+
+process
+  event A(3)

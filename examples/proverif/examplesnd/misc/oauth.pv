@@ -1,0 +1,626 @@
+fun localLogin(Id):Session [data].
+fun socialLogin(Uri,Id,bitstring):Session [data].
+
+letfun loginCSRFCheck() = true. (* true enables login CSRF checking *)
+letfun dataCSRFCheck() = true. (* true enables data form CSRF checking *)
+letfun autoSocialLoginCSRFCheck() = true. (* true enables automatic social login CSRF checking *)
+letfun stateSocialLoginCSRFCheck() = true. (* true enables social login CSRF checking *)
+letfun socialDataCSRFCheck() = true. (* true enables social data form CSRF checking *)
+letfun secureCookies() = true. (* true enables HTTPS-only cookies for login/data *)
+letfun passwordHash() = false. (* true enables Login JavaScript that hashes password *)
+letfun oauthImplicitFlow() = true. (* true enables OAuth User-Agent flow *)
+letfun oauthExplicitFlow() = false. (* true enables OAuth Web Server flow *)
+
+fun Authorize(Principal,Browser,Cookie,Uri,Uri):Fact.
+fun SocialLogin(Principal,Browser,Cookie,Uri,Uri):Fact.
+fun SocialLoginAccepted(Principal,bitstring,Uri,Uri,Cookie):Fact.
+fun SocialLoginDone(Principal,Browser,Cookie,Uri,Uri):Fact.
+
+fun DataWrite(Principal,Browser,Cookie,Uri,bitstring): Fact.
+fun DataStoreAuthorized(Principal,Uri,Id,Cookie,bitstring): Fact.
+fun DataStore(Principal,Host,Path,Id,bitstring): Fact.
+fun DataRead(Principal,Browser,Cookie,Uri,bitstring): Fact.
+fun DataReleaseAuthorized(Principal,Uri,Id,Cookie): Fact.
+
+letfun checkSecureCookie(u:Uri,c:Cookie) =
+   if secureCookies() = false &&
+      secure(c) <> nullCookie() then true   (* WHY? *)
+   else
+    if protocol(u) = https() &&
+       secureCookies() = true &&
+       secure(c) <> nullCookie() then true
+    else false.
+
+fun newCorrCookie(Uri,bitstring):bitstring [private].
+letfun makeCorrCookie(u:Uri,c:bitstring) =
+   let sC = newCorrCookie(u,c) in
+   shcookie(sC).
+
+letfun makeClient(p:Principal,ep:Uri,as:Uri) =
+    new appId: Id;
+    new appSecret: Secret;
+    (appId,appSecret).
+
+(* Login App *)
+
+fun startLogin(Host,Path,Browser): AppCommand [data].
+fun startOAuthPermissionApp(Host,Path,Browser): AppCommand [data].
+fun loginPath():Path [data].
+fun permissionPath():Path.
+fun loginSuccess(): bitstring [data].
+fun loginFailure(): bitstring [data].
+free loginForm : HTMLtag .
+fun loginFormReply(bitstring,Id,Secret): Params [data].
+
+fun Login(Principal,Browser,Uri,Id):Fact.
+fun LoginAuthorized(Principal,Id,Uri,Cookie):Fact.
+fun ValidSession(Principal,Browser,Cookie,Uri): Fact.
+
+
+table authorizedClients(Host,Id,Id).
+table oauthClients(Host,Principal,Id,Secret,Uri).
+table userData(Principal,Id,Host,bitstring).
+
+fun oauthLogin() : Params [data].
+fun oauthGetData() : Params [data].
+fun oauthSetData() : Params [data].
+
+fun oauthRequest(Id,Cookie,Uri): Params [data].
+fun oauthCode(Id,bitstring,Uri,bitstring): Params [data].
+fun oauthToken(Cookie,bitstring): Params [data].
+fun oauthCodeToken(bitstring): Params [data].
+
+fun oauthTokenRequest(Id,Secret,bitstring): Params [data].
+fun oauthDataRequest(bitstring): Params [data].
+fun oauthDataSubmit(bitstring,bitstring): Params [data].
+fun socialDataFormReply(bitstring,bitstring): Params [data].
+fun oauthFormReply(bitstring): Params [data].
+
+fun oauthClientPath(Path):Path [data].
+fun oauthServerPath(Path):Path [data].
+
+fun createOAuthClient(Principal,Uri,Uri):AppCommand [data].
+fun startOAuthServerApp(Host,Path):AppCommand [data].
+fun startOAuthClientApp(Host,Path,Uri):AppCommand [data].
+
+
+fun dataGen(HTMLtag,bitstring): bitstring [data].
+reduc forall tag: HTMLtag, d:bitstring; dataTag(dataGen(tag,d))=tag .
+reduc forall tag: HTMLtag, d:bitstring; dataPayload(dataGen(tag,d))=d .
+fun dataFormReply(bitstring,bitstring): Params [data]. (* or UDATA? *)
+fun genData(Principal,Cookie):bitstring [private].
+
+free socialDataForm: HTMLtag .
+free socialDataDisplay: HTMLtag .
+
+fun authCode(Uri,Id,Cookie,Id,Cookie): bitstring [private].
+fun authToken(bitstring): bitstring [private].
+
+
+reduc forall as:Uri,appId:Id,state:Cookie,uid:Id,c:Cookie;
+      codeAppId(authCode(as,appId,state,uid,c),as) = appId.
+reduc forall as:Uri,appId:Id,state:Cookie,uid:Id,c:Cookie;
+      tokenUId(authToken(authCode(as,appId,state,uid,c)),as) = uid.
+
+reduc forall as:Uri,appId:Id,state:Cookie,uid:Id,c:Cookie;
+      verifyCode(authCode(as,appId,state,uid,c),as,appId,uid,c) = true.
+reduc forall as:Uri,appId:Id,state:Cookie,uid:Id,c:Cookie;
+      verifyToken(authToken(authCode(as,appId,state,uid,c)),as,appId,uid) = true.
+reduc forall as:Uri,appId:Id,state:Cookie,uid:Id,c:Cookie;
+      verifyTokenUid(authToken(authCode(as,appId,state,uid,c)),as,uid) = true.
+
+
+(* Forms *)
+fun oauthForm(Uri) : HTMLtag [data].
+fun socialLoginForm(Uri) : HTMLtag [data].
+fun socialLoginFormReply(bitstring): Params [data].
+fun socialLoginSuccess(Uri): bitstring [data].
+
+let OAuthCommonClientApp(h:Host,app:Path,as:Uri) =
+(
+  (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   let uri(=https(),=h,=oauthClientPath(app),q) = u in
+   if oauthLogin() = params(u) then
+   let c = makeCorrCookie(u,corr) in
+   out(httpServerResponse,(u,httpOk(formGen(socialLoginForm(as),u,c)),c,corr)))
+
+| (in(httpServerRequest,(u:Uri,hs:Headers,req:HttpRequest,corr:bitstring));
+   let uri(=https(),=h,=oauthClientPath(app),q) = u in
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   if checkSecureCookie(u,cs) = true then
+   let httpPost(socialLoginFormReply(d)) = req in
+   if (formTag(d) = socialLoginForm(as)) then
+   if (autoSocialLoginCSRFCheck() = false || formId(d) = cs) then
+   get oauthClients(=host(as),sp,appId,appSecret,=uri(protocol(as),host(u),oauthServerPath(path(u)),nullParams())) in
+   let reqUri = uri(protocol(as),host(as), path(as), oauthRequest(appId,cs,u)) in
+   out(httpServerResponse,(u,httpRedirect(reqUri),c,corr)))
+
+| (in(httpServerRequest,(u:Uri,hs:Headers,req:HttpRequest,corr:bitstring));
+   let uri(=https(),=h,=oauthClientPath(app),q) = u in
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   if checkSecureCookie(u,cs) = true then
+   let httpPost(socialDataFormReply(f,d)) = req in
+   if (formTag(f) = socialDataForm) then
+   if (socialDataCSRFCheck() = false || formId(f) = cs) then
+   get serverSessions(=h,=cs,socialLogin(=as,appId,token)) in
+   let ash = host(as) in
+   let oauthServerPath(asapp) = path(as) in
+   get oauthClients(=ash,sp,=appId,appSecret,=u) in
+   let reqUri = uri(protocol(as), host(as), path(as), oauthDataSubmit(token,d)) in
+   new b:Browser;
+   new ncorr:bitstring;
+   out(rawRequest(),(b, reqUri, httpGet(), headers(noneUri(), nullCookiePair(), notajax()), ncorr)))
+
+| (in(httpServerRequest,(u:Uri,=httpGet(),hs:Headers,corr:bitstring));
+   if oauthImplicitFlow() = true then
+   let uri(=https(),=h,=oauthClientPath(app),q) = u in
+   if oauthGetData() = params(u) then
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   if checkSecureCookie(u,cs) = true then
+   get serverSessions(=h,=cs,socialLogin(=as,appId,token)) in
+   let ash = host(as) in
+   let oauthServerPath(asapp) = path(as) in
+   get oauthClients(=ash,sp,=appId,appSecret,=u) in
+   let reqUri = uri(protocol(as),host(as),path(as),oauthDataRequest(token)) in
+   new ncorr:bitstring;
+   new b:Browser;
+   out(rawRequest(),(b, reqUri, httpGet(), headers(noneUri(), nullCookiePair(), notajax()), ncorr));
+   in(rawRequest(),(=b, resp:HttpResponse, c1:CookiePair, foo:XDR, =ncorr));
+   let httpOk(dataIn)= resp in
+   if socialDataDisplay = dataTag(dataIn) then
+   out(httpServerResponse,(u,httpOk(dataIn), c, corr)))
+).
+
+let OAuthImplicitClientApp(h:Host,app:Path,as:Uri) =
+(
+  (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   if oauthImplicitFlow() = true then
+   let uri(=https(),=h,=oauthClientPath(app),q) = u in
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   let oauthToken(state,token) = q in
+   if (stateSocialLoginCSRFCheck() = false || cs = state) then
+   if checkSecureCookie(u,state) = true then
+   get oauthClients(=host(as),sp,appId,appSecret,=u) in
+   if oauthServerPath(path(u)) = path(as) then
+   let reqUri = uri(protocol(as),host(as),path(as),oauthDataRequest(token)) in
+   new ncorr:bitstring;
+   new b:Browser;
+   out(rawRequest(),(b, reqUri, httpGet(), headers(noneUri(), nullCookiePair(), notajax()), ncorr));
+   in(rawRequest(),(=b, resp:HttpResponse, c1:CookiePair, foo:XDR, =ncorr));
+   let httpOk(dataIn) = resp in
+   if socialDataDisplay = dataTag(dataIn) then
+   event Expect(SocialLoginAccepted(sp,token,u,as,state)); 
+   insert serverSessions(h, cs, socialLogin(as,appId,token));
+   out(httpServerResponse,(u, httpOk(socialLoginSuccess(as)), cookiePair(cs, nullCookie()), corr)))
+).
+
+
+let OAuthImplicitServerApp(h:Host,app:Path) =
+( (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   let uri(=https(),=h,=oauthServerPath(slash()),q) = u in
+   if oauthImplicitFlow() = true then
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   if checkSecureCookie(u,cs) = true then
+   get serverSessions(=h,=cs,localLogin(uId)) in
+   let oauthRequest(appId,CSRFToken,redirectURI) = params(u) in
+   get authorizedClients(=h,=appId,=uId) in
+   let code = authCode(u,appId,CSRFToken,uId,cs) in
+   let token = authToken(code) in
+   get oauthClients(=h,clp,=appId,appSecret,=redirectURI) in
+   let tokenUri = uri(protocol(redirectURI),host(redirectURI),path(redirectURI),oauthToken(CSRFToken,token)) in
+   out(httpServerResponse,(u,httpRedirect(tokenUri),c,corr)))
+).
+
+let OAuthCommonServerApp(h:Host,app:Path) =
+( (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   if h = host(u) && oauthServerPath(app) = path(u) && protocol(u) = https() then
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   if checkSecureCookie(u,cs) = true then
+   get serverSessions(=h,=cs,localLogin(uId)) in
+   let oauthRequest(appId,state,redirectEp) = params(u) in
+   let f = formGen(oauthForm(redirectEp),u,cs) in
+   out(httpServerResponse,(u,httpOk(f),c,corr)))
+
+| (in(httpServerRequest,(u:Uri,hs:Headers,req:HttpRequest,corr:bitstring));
+   if h = host(u) && oauthServerPath(app) = path(u) && protocol(u) = https() then
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   if checkSecureCookie(u,cs) = true then
+   get serverSessions(=h,=cs,localLogin(uId)) in
+   let httpPost(oauthFormReply(d)) = req in
+   let oauthRequest(appId,state,redirectEp) = params(u) in
+   if (oauthForm(redirectEp) = formTag(d)) then
+   if (loginCSRFCheck() = false || formId(d) = cs) then
+   insert authorizedClients(h, appId, uId);
+   out(httpServerResponse,(u,httpOk(nullBits()),c,corr)))
+
+| (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   if h = host(u) && oauthServerPath(app) = path(u) && protocol(u) = https() then
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   let oauthDataRequest(token) = params(u) in
+   let uId = tokenUId(token,u) in
+(*   if assume(DataRequestAccepted(sp,h,app,token,uId)) then   *)
+   get userData(p,=uId,=h,d) in
+   out(httpServerResponse,(u,httpOk(dataGen(socialDataDisplay,d)),c,corr)))
+
+| (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   if h = host(u) && oauthServerPath(app) = path(u) && protocol(u) = https() then
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   let oauthDataSubmit(token,d) = params(u) in
+   let uId = tokenUId(token,u) in
+   get userData(p,=uId,=h,data) in
+(*   if assume(DataSubmitAccepted(sp,h,app,token,uId,d)) then*)
+(*   get serverIdentities(=h,sp,xx,yy,zz) in
+   if assume(DataStore(sp,h,uId,cs,d)) then  
+*)
+   insert userData(p,uId,h,d))
+).
+
+
+let OAuthPermissionsUserAgent(h:Host,a:Path,b:Browser) =
+  (in (newPage(b),(p1:Page, u:Uri, d:bitstring));
+   if h = host(u) && oauthServerPath(a) = path(u) && protocol(u) = https() then
+   let p = principal(b) in
+   let oauthForm(cl) = formTag(d) in
+   in (getCookieStorage(b),(=p1,cookiePair(sid,ch),z:Data));
+   if assume(Authorize(p,b,sid,cl,u)) then  
+   out(pageClick(b),(p1,formAction(d),httpPost(oauthFormReply(d))))).
+
+let OAuthPermissionsServerApp(h:Host,app:Path) =
+( (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   if h = host(u) && oauthServerPath(app) = path(u) && protocol(u) = https() then
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   if checkSecureCookie(u,cs) = true then
+   get serverSessions(=h,=cs,localLogin(uId)) in
+   let oauthRequest(appId,state,redirectEp) = params(u) in
+   let f = formGen(oauthForm(redirectEp),u,cs) in
+   out(httpServerResponse,(u,httpOk(f),c,corr)))
+
+| (in(httpServerRequest,(u:Uri,hs:Headers,req:HttpRequest,corr:bitstring));
+   if h = host(u) && oauthServerPath(app) = path(u) && protocol(u) = https() then
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   if checkSecureCookie(u,cs) = true then
+   get serverSessions(=h,=cs,localLogin(uId)) in
+   let httpPost(oauthFormReply(d)) = req in
+   let oauthRequest(appId,state,redirectEp) = params(u) in
+   if (oauthForm(redirectEp) = formTag(d)) then
+   if (loginCSRFCheck() = false || formId(d) = cs) then
+
+   insert authorizedClients(h,appId,uId);
+   out(httpServerResponse,(u,httpOk(nullBits()),c,corr)))
+).
+
+(* DataServer App *)
+
+free dataDisplay: HTMLtag .
+free dataForm : HTMLtag .
+fun startDataApp(Host,Path): AppCommand [data].
+fun startPermissionApp(Host,Path): AppCommand [data].
+fun addUserData(Id,Host,Path): AppCommand [data].
+fun dataPath(Path):Path [data].
+
+let DataServerApp(h:Host,app:Path) =
+( (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   if h = host(u) && dataPath(app) = path(u) then
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   if checkSecureCookie(u,cs) = true then
+   get serverSessions(=h,=cs,localLogin(uId)) in
+   get userData(p,=uId,=h,data) in
+   get serverIdentities(=h,sp,xx,yy,zz) in
+   event Expect(DataReleaseAuthorized(sp,u,uId,cs));  
+   out(httpServerResponse,(u,httpOk(dataGen(dataDisplay,data)),c,corr)))
+| (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   if h = host(u) && dataPath(app) = path(u) then
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   if checkSecureCookie(u,cs) = true then
+   get serverSessions(=h,=cs,localLogin(uId)) in
+   let df = formGen(dataForm,u,cs) in
+   out(httpServerResponse,(u,httpOk(df),c,corr)))
+| (in(httpServerRequest,(u:Uri,hs:Headers,req:HttpRequest,corr:bitstring));
+   if h = host(u) && dataPath(app) = path(u) then
+   let c = getCookie(hs) in
+   let cookiePair(cs,ch) = c in
+   if checkSecureCookie(u,cs) = true then
+   let httpPost(dataFormReply(d,newData)) = req in
+   if (formTag(d) = dataForm) then
+   if (dataCSRFCheck() = false || formId(d) = cs) then
+   get serverSessions(=h,=cs,localLogin(uId)) in
+   get serverIdentities(=h,sp,xx,yy,zz) in
+   event Expect(DataStoreAuthorized(sp,u,uId,cs,newData)); 
+(*   if assume(DataStore(sp,h,app,uId,newData)) then   *)
+   get credentials(=h,p,=uId,sec) in
+   insert userData(p,uId,h,newData);  (* Use with care: Causes ProVerif to use up a lot of memory *)
+   out(httpServerResponse,(u,httpOk(nullBits()),c,corr)))).
+
+
+let OAuthClientUserAgent(b:Browser) =
+(
+  (in (newPage(b),(p1:Page, u:Uri, d:bitstring));
+   let p = principal(b) in
+   let socialLoginForm(as) = formTag(d) in
+   let (=https(),h:Host,oauthClientPath(app)) = (protocol(u),host(u),path(u)) in
+   in (getCookieStorage(b),(=p1,cookiePair(sid,ch),z:Data));
+   if assume(SocialLogin(p,b,sid,u,as)) then  
+   out(pageClick(b),(p1,formAction(d),httpPost(socialLoginFormReply(d)))))
+
+| (in (newPage(b),(p1:Page, u:Uri, d:bitstring));
+   let p = principal(b) in
+   let (=https(),h:Host,oauthClientPath(app)) = (protocol(u),host(u),path(u)) in
+   let socialLoginSuccess(as) = d in 
+   in (getCookieStorage(b),(=p1,cookiePair(sid,ch),z:Data));
+   event Expect(SocialLoginDone(p,b,sid,u,as)))
+
+| (in (newPage(b),(p1:Page, u:Uri, d:bitstring));
+   let p = principal(b) in
+   let oauthClientPath(a) = path(u) in
+   if (socialDataForm = formTag(d)) then
+   in (getCookieStorage(b),(=p1,cookiePair(cs,ch),z:Data));
+   let newData = genData(p,cs) in
+   if assume(DataWrite(p,b,cs,u,newData)) then  
+   out(pageClick(b),(p1,formAction(d),httpPost(socialDataFormReply(d,newData)))))
+
+| (in (newPage(b),(p1:Page, u:Uri, d:bitstring));
+   let p = principal(b) in
+   let oauthClientPath(a) = path(u) in
+   if(socialDataDisplay = dataTag(d)) then 
+   in (getCookieStorage(b),(=p1,cookiePair(sid,ch),z:Data));
+   event Expect(DataRead(p,b,sid,u,dataPayload(d))) 
+  )
+).
+
+let DataServerUserAgent(b:Browser) =
+ ( (in (newPage(b),(p1:Page, u:Uri, d:bitstring));
+   let p = principal(b) in
+   let dataPath(a) = path(u) in
+   if(dataForm = formTag(d)) then
+   in (getCookieStorage(b),(=p1,cookiePair(cs,ch),z:Data));
+   let newData = genData(p,cs) in
+   if assume(DataWrite(p,b,cs,u,newData)) then  
+   out(pageClick(b),(p1,formAction(d),httpPost(dataFormReply(d,newData))))
+  )
+| (in (newPage(b),(p1:Page, u:Uri, d:bitstring));
+   let p = principal(b) in
+   let dataPath(a) = path(u) in
+   if(dataDisplay = dataTag(d)) then 
+   in (getCookieStorage(b),(=p1,cookiePair(sid,ch),z:Data));
+   event Expect(DataRead(p,b,sid,u,dataPayload(d)))
+  )
+).
+
+let LoginUserAgent(h:Host, a:Path, b:Browser) =
+(
+  (in(newPage(b),(p1:Page, loginURI:Uri, d:bitstring));
+   let p = principal(b) in
+   if loginForm = formTag(d) then
+   let uri(=https(), =h, =a, =nullParams()) = loginURI in
+   get credentials(=h,=p,uId,c) in
+   let (=uId,pwd:Secret) = c in
+(*   if assume(Login(p,b,loginURI,uId)) then *)
+   out(pageClick(b),(p1,loginURI,httpPost(loginFormReply(d,uId,pwd))))
+  )
+|
+ (in(newPage(b), (p1:Page,loginURI:Uri,d:bitstring));
+   let p = principal(b) in
+   if loginSuccess() = d then
+   let uri(=https(), =h, =a, =nullParams()) = loginURI in
+   in (getCookieStorage(b),(=p1,cookiePair(sid,ch),z:Data));
+(*   event Expect(ValidSession(p,b,sid,loginURI));*)
+   out(net, (h)))
+ ).
+
+
+let LoginApp(h:Host, a:Path) =
+(
+  (in(httpServerRequest,(u:Uri,hs:Headers,=httpGet(),corr:bitstring));
+   let uri(=https(), =h, =a, q) = u in
+   new state:Cookie;
+   out(httpServerResponse,(u,httpOk(formGen(loginForm,u,state)),nullCookiePair(),corr)))
+| (in(httpServerRequest,(u:Uri,hs:Headers,req:HttpRequest,corr:bitstring));
+   let uri(=https(), =h, =a, q) = u in
+   let httpPost(loginFormReply(d,uId,pwd)) = req in
+   if (formTag(d) = loginForm) then
+   get credentials(=h,p,=uId,(=uId,=pwd)) in
+   let sid = mkHttpOnlySecureCookie((h,uId)) in
+   get serverIdentities(=h,sp,xx,yy,zz) in
+   event Expect(LoginAuthorized(sp,uId,u,sid));
+   insert serverSessions(h,sid,localLogin(uId));
+   let c = cookiePair(sid,nullCookie()) in
+   out(httpServerResponse,(u,httpOk(loginSuccess()),c,corr)))).
+
+
+let ServerFactory () =
+(   (in (admin,appCommand(startLogin(h:Host,a:Path, b:Browser)));
+     (LoginUserAgent(h,a,b)) | LoginApp(h, a))
+(*
+ |   (in (admin,appCommand(startOAuthPermissionApp(h:Host,a:Path, b:Browser)));
+     (OAuthPermissionsUserAgent(h,a,b)) | OAuthPermissionsServerApp(h,a))
+ |  (in (admin,appCommand(startDataApp(h:Host,a:Path)));
+     DataServerApp(h,a))
+ |  (in(admin,appCommand(addUserData(uId:Id,h:Host,a:Path)));
+    get credentials(=h,p,=uId,sec) in
+    new data:bitstring;
+    get serverIdentities(=h,sp,xx,yy,zz) in
+    if assume(DataStore(sp,h,a,uId,data)) then 
+    insert userData(p,uId,h,data))
+ |  (in (admin,appCommand(createOAuthClient(clp:Principal,cl:Uri,as:Uri)));
+    if protocol(as) = https() && protocol(cl) = https() then
+    let (appId:Id,appSecret:Secret) = makeClient(clp,cl,as) in
+    let oauthClientPath(cla) = path(cl) in
+    insert oauthClients(host(as),clp,appId,appSecret,cl))
+ | (in (admin,appCommand(startOAuthClientApp(clh:Host,clp:Path,as:Uri)));
+    get oauthClients(=host(as),p,appId,appSecret,cl) in
+    if host(cl) = clh && path(cl) = oauthClientPath(clp) && protocol(cl) = https() && protocol(as) = https() then
+     OAuthCommonClientApp(clh,clp,as) | OAuthImplicitClientApp(clh,clp,as))
+ |  (in (admin,appCommand(startOAuthServerApp(h:Host,a:Path)));
+     OAuthCommonServerApp(h,a) | OAuthImplicitServerApp(h,a))
+*)
+).
+
+free alice:Principal.
+free eve:Principal.
+free yahoo:Principal.
+free facebook:Principal.
+free yahoocom:Domain.
+free facebookcom:Domain.
+free evecom:Domain.
+event Check().
+
+let Init() =
+    (
+        let h = topLevelHost(facebookcom) in
+        out (admin,createServer(facebook, h, notxdr()));
+        in (config,((=createServer(facebook, h, notxdr()),fbk:pubkey)));
+
+        let h1 = topLevelHost(yahoocom) in
+        out (admin,createServer(yahoo, h1, notxdr()));
+        in (config,((=createServer(yahoo, h1, notxdr()),yahook:pubkey)));
+
+        let eveHost = topLevelHost(evecom) in
+        out (admin,createServer(eve, eveHost, notxdr()));
+        in (config,(=createServer(eve, eveHost, notxdr()),eveKey:pubkey));
+
+        out (admin,appCommand(startOAuthServerApp(h,slash())));
+
+        (* Seed the Browser Cookie Jar *)
+        out (pub,(orig(https(),h), oauthServerPath(slash())));
+        out (pub,(orig(https(),h), oauthServerPath(permissionPath())));
+        out (pub,(orig(https(),h), loginPath()));
+
+        let(aliceId:Id,alicePwd:Secret) = makeUser(alice, h) in
+        let userCmd = createUser(alice,h,aliceId,(aliceId,alicePwd)) in
+        out (admin, userCmd);
+        in (config,=userCmd);
+
+        out (admin,openBrowser(alice));
+        in (config,(=openBrowser(alice),aliceBrowser:Browser));
+        out (admin,appCommand(startLogin(h,loginPath(),aliceBrowser)));
+
+        let facebookLoginUri = uri(https(), h, loginPath(), nullParams()) in
+        out (admin,surf(aliceBrowser,facebookLoginUri));
+
+        let yahooUri = uri(https(), h1, oauthClientPath(slash()), nullParams()) in
+        let facebookOAuthUri = uri(https(), h, oauthServerPath(slash()), nullParams()) in
+
+        out (admin,appCommand(createOAuthClient(yahoo, yahooUri, facebookOAuthUri)));
+        
+        (* Seed Cookies *)
+        out (pub,(orig(https(),h1), oauthClientPath(slash())));
+
+        out (admin,appCommand(startOAuthPermissionApp(h,permissionPath(),aliceBrowser)));
+
+        (*  Alice Authorizes Yahoo on Facebook *)
+        new state:Cookie;
+        get oauthClients(=h,clp,appId,xx,cl) in
+        let facebookASUri = uri(https(), h, oauthServerPath(permissionPath()),oauthRequest(appId,state,yahooUri)) in
+        out (admin,surf(aliceBrowser,facebookASUri));
+
+        out (admin,startUntrustedApp(uri(http(),eveHost,slash(),nullParams())));
+        let eveUri = uri(http(), eveHost, slash(), nullParams()) in
+
+        (* Alice browses to Eve's website *)
+        out (admin,surf(aliceBrowser,eveUri));
+
+        out (admin,getServerRequest(eveUri));
+        in (config,(=getServerRequest(eveUri),
+                (u1:Uri,req:HttpRequest,hs:Headers,corr1:bitstring)));
+
+        out (admin,startRedirector(uri(https(),h1,oauthClientPath(slash()),nullParams()), eveUri));
+
+        (* Eve redirects Alice to Facebook's OAuth Server
+           using redirect_uri=yahoo_eve_redirector *)
+        new state1:Cookie;
+        let authUri = uri(https(), h, oauthServerPath(slash()),
+                oauthRequest(appId,state1,yahooUri)) in
+        let C2 = sendServerResponse(eveUri,
+                  (u1,httpRedirect(authUri),
+               nullCookiePair(),corr1)) in
+        out(admin,C2);
+
+        (* Alice is redirected to yahoo_eve_redirector with
+         her access token for Yahoo, which redirects her back to Eve *)
+        let C5 = getServerRequest(eveUri) in
+        out (admin,C5);
+        in (config,(=C5,(u2:Uri,req2:HttpRequest,
+                   hs2:Params,corr2:bitstring)));
+        let oauthToken(=state1,token) = params(u2) in
+        event Check()
+    ).
+
+pred endpointUri(Uri,Protocol,Host,Path).
+clauses forall p:Protocol,h:Host,a:Path,x:Params; 
+        endpointUri(uri(p,h,a,x),p,h,a).
+
+(*
+clauses 
+	forall up:Principal,sp:Principal,x:Id,h:Host,app:Path,e:Uri,b:Browser,sid:Cookie;
+	fact(Server(sp,h)) &&
+	fact(User(up,x,h)) &&
+	endpointUri(e,https(),h,loginPath()) &&
+	fact(Says(up,Login(up,b,e,x))) ->    
+	fact(LoginAuthorized(sp,x,e,sid)).
+*)
+(*
+clauses 
+	forall up:Principal,cp:Principal,sp:Principal,
+	       x:Id,cl:Uri,as:Uri,b:Browser,sid:Cookie,
+	       token:bitstring,state:Cookie,
+	       h:Host,app:Path,h':Host,app':Path;
+
+	fact(Server(sp,h)) && 
+	fact(Server(cp,h')) && 
+	fact(User(up,x,h)) &&
+	endpointUri(as,https(),h,oauthServerPath(app)) &&
+	endpointUri(cl,https(),h',oauthClientPath(app')) &&
+	fact(Says(up,SocialLogin(up,b,sid,cl,as))) ->    
+	fact(SocialLoginAccepted(cp,token,cl,as,state)).
+
+clauses 
+	forall up:Principal,cp:Principal,sp:Principal,
+	       x:Id,cl:Uri,as:Uri,b:Browser,sid:Cookie,
+	       token:bitstring,state:Cookie,
+	       h:Host,app:Path,h':Host,app':Path;
+
+	fact(Server(sp,h)) && 
+	fact(Server(cp,h')) && 
+	fact(User(up,x,h)) &&
+	endpointUri(as,https(),h,oauthServerPath(app)) &&
+	endpointUri(cl,https(),h',oauthClientPath(app')) &&
+	fact(Says(up,SocialLogin(up,b,sid,cl,as))) &&   
+	fact(Says(up,SocialLoginAccepted(cp,token,cl,as,state))) ->    
+	fact(SocialLoginDone(up,b,sid,cl,as)).
+
+clauses
+	forall up:Principal,sp:Principal,x:Id,h:Host,app:Path,
+	b:Browser,sid:Cookie,data:bitstring,e:Uri,b':Browser,
+	e':Uri,h':Host,app':Path,sid':Cookie,e'':Uri;
+	
+	fact(Server(sp,h)) &&
+	fact(User(up,x,h)) &&
+	endpointUri(e,https(),h,oauthServerPath(app)) &&
+	endpointUri(e,https(),h,oauthServerPath(app)) &&
+	endpointUri(e'',https(),h',loginPath()) &&
+	fact(Says(up,Login(up,b,sid,e'',x))) && 
+	fact(Says(up,SocialLogin(up,b,sid,e',e))) &&
+	fact(DataStore(sp,h,app,x,data))  ->
+	fact(DataRead(up,b',sid',e',data)).
+
+*)
+
+query p:Principal,u:Id,sid:Cookie,e:Uri; 
+      event(Expect(LoginAuthorized(p,u,e,sid))).
+
+process(
+    (* Init() | *) Network() | !ServerFactory()
+)

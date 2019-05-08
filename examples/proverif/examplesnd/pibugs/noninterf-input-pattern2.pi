@@ -1,0 +1,15 @@
+(* ProVerif should find an attack:
+   in(c,=s) can be executed iff secret = s*)
+
+param traceDisplay = long.
+
+free d.
+free s.
+
+private free secret.
+noninterf secret.
+
+private free c.
+
+process
+   out(c,secret) | in(c,=s); out(d,d)

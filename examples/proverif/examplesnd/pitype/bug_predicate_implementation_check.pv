@@ -1,0 +1,20 @@
+free ch:channel.
+
+fun func(bitstring) : bitstring.
+
+
+query attacker(ch). (* Just any query so that proverif starts doing its magic *)
+
+
+pred is_collision(bitstring,bitstring).
+clauses
+    forall l1:bitstring;
+   is_collision(func(l1),func(l1)).
+
+process  !(
+    new var:bitstring;
+    new x:bitstring; (* Was input in bigger model *)
+    if is_collision(func(var),x) then (
+        0
+    )
+)

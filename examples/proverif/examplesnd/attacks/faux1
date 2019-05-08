@@ -1,0 +1,16 @@
+private free secret,cprivate.
+free cpublic.
+
+query attacker:secret.
+
+let pin = 
+	in(cpublic,x);
+	in(cprivate,y);
+	0.
+
+let pout =
+	out(cprivate,secret);
+	out(cpublic,secret);
+	0.
+
+process (pin|pout)

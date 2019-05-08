@@ -1,0 +1,165 @@
+-- Secrecy & events.
+Starting rules:
+Rule 0: equal:v_20,v_20
+Rule 1: attacker:sign(m_22,k_23) -> attacker:m_22
+Rule 2: attacker:sencrypt(x_24,y_25) & attacker:y_25 -> attacker:x_24
+Rule 3: attacker:sign(m_26,k_27) & attacker:pk(k_27) -> attacker:m_26
+Rule 4: attacker:v_29 & attacker:v_28 -> attacker:encrypt(v_29,v_28)
+Rule 5: attacker:v_31 & attacker:v_30 -> attacker:sign(v_31,v_30)
+Rule 6: attacker:v_32 -> attacker:host(v_32)
+Rule 7: attacker:v_33 -> attacker:pk(v_33)
+Rule 8: attacker:encrypt(x_34,pk(y_35)) & attacker:y_35 -> attacker:x_34
+Rule 9: attacker:v_37 & attacker:v_36 -> attacker:sencrypt(v_37,v_36)
+Rule 10: mess:v_39,v_38 & attacker:v_39 -> attacker:v_38
+Rule 11: attacker:v_41 & attacker:v_40 -> mess:v_41,v_40
+Rule 12: attacker:c[]
+Rule 13: attacker:new_name[v_42]
+Rule 14: attacker:pk(skA[])
+Rule 15: attacker:pk(skB[])
+Rule 16: attacker:v_45 -> attacker:encrypt(sign(k[v_45,sid_46],skA[]),v_45)
+Rule 17: attacker:encrypt(sign(m_53,skA[]),pk(skB[])) -> attacker:sencrypt(secretB[],m_53)
+Completing...
+ok, secrecy assumption verified: fact unreachable attacker:skA[]
+ok, secrecy assumption verified: fact unreachable attacker:skB[]
+Starting query not attacker:secretB[]
+goal reachable: attacker:secretB[]
+rule 2 attacker:secretB[]
+  rule 17 attacker:sencrypt(secretB[],k[pk(y_116),sid_117])
+    rule 4 attacker:encrypt(sign(k[pk(y_116),sid_117],skA[]),pk(skB[]))
+      rule 8 attacker:sign(k[pk(y_116),sid_117],skA[])
+        rule 16 attacker:encrypt(sign(k[pk(y_116),sid_117],skA[]),pk(y_116))
+          rule 7 attacker:pk(y_116)
+            duplicate attacker:y_116
+        duplicate attacker:y_116
+      rule 15 attacker:pk(skB[])
+  rule 1 attacker:k[pk(y_116),sid_117]
+    rule 8 attacker:sign(k[pk(y_116),sid_117],skA[])
+      rule 16 attacker:encrypt(sign(k[pk(y_116),sid_117],skA[]),pk(y_116))
+        rule 7 attacker:pk(y_116)
+          duplicate attacker:y_116
+      any attacker:y_116
+
+Goal of the attack :
+attacker:secretB[]
+Initial state
+
+New processes:
+      new skA;
+      let pkA_14 = pk(skA) in
+      out(c,pkA_14);
+      new skB;
+      let pkB_15 = pk(skB) in
+      out(c,pkB_15);
+      (
+          !
+          in(c,pk2_19);
+          new k;
+          out(c,encrypt(sign(k,skA),pk2_19));
+          0.
+      ) | (
+          !
+          in(c,km_16);
+          let ks_17 = decrypt(km_16,skB) in
+          let k_18 = checksign(ks_17,pkA_14) in
+          out(c,sencrypt(secretB,k_18));
+          0.
+      )
+
+New knowledge of the attacker:
+      a_1
+      c
+
+--------------------------------------------------------------
+1st process: New skA creating skA_2
+
+1st process: Let pkA_14 = pk(skA_2) succeeds
+
+1st process: Out(c, pk(skA_2)) done
+
+1st process: New skB creating skB_3
+
+1st process: Let pkB_119 = pk(skB_3) succeeds
+
+1st process: Out(c, pk(skB_3)) done
+
+1st process: Reduction |
+
+2nd process: Reduction !
+
+1st process: Reduction !
+
+New processes:
+      in(c,pk2_131);
+      new k;
+      out(c,encrypt(sign(k,skA_2),pk2_131));
+      0.
+
+|
+      in(c,km_128);
+      let ks_129 = decrypt(km_128,skB_3) in
+      let k_130 = checksign(ks_129,pk(skA_2)) in
+      out(c,sencrypt(secretB,k_130));
+      0.
+
+New knowledge of the attacker:
+      pk(a_1)
+      pk(skB_3)
+      pk(skA_2)
+      a_1
+      c
+
+--------------------------------------------------------------
+1st process: In(c, pk2_131) done with message pk(a_1)
+
+1st process: New k creating k_4
+
+1st process: Out(c, encrypt(sign(k_4,skA_2),pk(a_1))) done
+
+1st process: Reduction 0
+
+New processes:
+      in(c,km_128);
+      let ks_129 = decrypt(km_128,skB_3) in
+      let k_130 = checksign(ks_129,pk(skA_2)) in
+      out(c,sencrypt(secretB,k_130));
+      0.
+
+New knowledge of the attacker:
+      k_4
+      encrypt(sign(k_4,skA_2),pk(skB_3))
+      sign(k_4,skA_2)
+      encrypt(sign(k_4,skA_2),pk(a_1))
+      pk(a_1)
+      pk(skB_3)
+      pk(skA_2)
+      a_1
+      c
+
+--------------------------------------------------------------
+1st process: In(c, km_128) done with message encrypt(sign(k_4,skA_2),pk(skB_3))
+
+1st process: Let ks_134 = decrypt(encrypt(sign(k_4,skA_2),pk(skB_3)),skB_3) succeeds
+
+1st process: Let k_138 = checksign(sign(k_4,skA_2),pk(skA_2)) succeeds
+
+1st process: Out(c, sencrypt(secretB,k_4)) done
+
+1st process: Reduction 0
+
+New processes:
+New knowledge of the attacker:
+      secretB
+      sencrypt(secretB,k_4)
+      k_4
+      encrypt(sign(k_4,skA_2),pk(skB_3))
+      sign(k_4,skA_2)
+      encrypt(sign(k_4,skA_2),pk(a_1))
+      pk(a_1)
+      pk(skB_3)
+      pk(skA_2)
+      a_1
+      c
+
+--------------------------------------------------------------
+An attack has been found.
+RESULT not attacker:secretB[] is false.

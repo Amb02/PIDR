@@ -1,0 +1,22 @@
+(* The given query is false.
+
+   The system wrongly proved it, because it thinks the event e2
+   e2(f(x,y)) determines the value of x,
+   which is not true for the given equational theory.
+
+*)
+
+
+fun f/2.
+fun g/1.
+equation f(y,g(x)) = f(x, g(y)).
+
+
+free c.
+query ev:e3(x) ==> (ev:e2(f(x,y)) ==> ev:e1(x)).
+
+process
+	in(c,x);
+	in(c,y);
+	event e1(y); event e2(f(x,g(y))); event e3(x)
+

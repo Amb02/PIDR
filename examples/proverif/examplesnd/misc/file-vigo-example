@@ -1,0 +1,74 @@
+free c.
+(* 
+
+Needham-Schroeder public key protocol
+Corrected version by Lowe
+
+	   ? -> A : pkB
+Message 1: A -> B : { N_A, A }_pkB
+Message 2: B -> A : { N_A, N_B, B }_pkA
+Message 3: A -> B : { N_B }_pkB
+
+
+*)
+
+(* Public key cryptography *)
+
+fun pk/1.
+fun encrypt/2.
+reduc decrypt(encrypt(x,pk(y)),y) = x.
+
+(* Shared-key cryptography *)
+
+fun sencrypt/2.
+reduc sdecrypt(sencrypt(x,y),y) = x.
+
+(* Secrecy assumptions *)
+
+not skA.
+not skB.
+
+query evinj:endBparam(x) ==> evinj:beginBparam(x).
+query evinj:endBfull(x1,x2,x3,x4) ==> evinj:beginBfull(x1,x2,x3,x4).
+query evinj:endAparam(x) ==> evinj:beginAparam(x).
+query evinj:endAfull(x1,x2,x3,x4) ==> evinj:beginAfull(x1,x2,x3,x4).
+
+let processA =  
+	(* Choose the other host *)
+	in(c,pkX);
+	event beginBparam(pkX);
+	new Na; 
+        out(c, encrypt((Na, pkA), pkX));
+	(* Message 2 *)
+        in(c, m); 
+        let (=Na, NX2, =pkX) = decrypt(m, skA) in
+	event beginBfull(Na, pkX, pkA, NX2);
+	(* Message 3 *)
+        out(c, encrypt(NX2, pkX));
+        (* OK *)
+	if pkX = pkB then
+	event endAparam(pkA);
+	event endAfull(Na, pkX, pkA, NX2)(*;
+	out(c, (Na, NX2))*).
+
+let processB =
+	in(c, m); 
+	let (NY, pkY) = decrypt(m, skB) in
+	event beginAparam(pkY);
+	new Nb;
+	event beginAfull(NY, pkB, pkY, Nb);
+	out(c, encrypt((NY, Nb, pkB), pkY));
+        (* Message 3 *)
+	in(c, m3);
+        if Nb = decrypt(m3, skB) then
+	(* OK *)
+        if pkY = pkA then
+	event endBparam(pkB);
+	event endBfull(NY, pkB, pkA, Nb);
+	out(c, (NY, Nb)).
+
+process new skA; let pkA = pk(skA) in
+        out(c, pkA);
+        new skB; let pkB = pk(skB) in
+        out(c, pkB);
+	((!processA) | (!processB))

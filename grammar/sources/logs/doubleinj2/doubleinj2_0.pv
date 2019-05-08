@@ -1,0 +1,21 @@
+type nonce.
+
+event ea(bitstring, nonce).
+event eb(bitstring, nonce).
+event ec(bitstring, nonce).
+
+
+query x:bitstring, y: nonce, y': nonce;
+      inj-event(ea(x, y)) && inj-event(eb(x, y)) ==> inj-event(ec(x, y')).
+
+channel c.
+param n.
+
+process
+       ! i <= n
+       in(c, (x:bitstring));
+       new n: nonce;
+       event ec(x, n);
+       event eb(x, n);
+       event ea(x, n)
+       

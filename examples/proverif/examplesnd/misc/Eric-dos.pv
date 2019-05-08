@@ -1,0 +1,34 @@
+private free c1.
+private free c.
+fun key/3.
+fun mic/2.
+query evinj:enddosS(na,ns)==>(evinj:mess3rec(na,ns,Anonce,mic(Anonce,PTK))==>(evinj:mess2(na,ns,Snonce,mic(Snonce,PTK))==>evinj:mess1rec(na,Anonce))).
+
+query evinj:mess3rec(na,ns,Anonce,mic(Anonce,PTK))==>evinj:mess2(na,ns,Snonce,mic(Snonce,PTK)).
+
+
+let AP=new na;new Anonce;
+       event mess1(na,Anonce);
+       out(c1,(na,Anonce));
+       in(c,(=na,ns,Snonce,MIC));
+       event mess2rec(na,ns,Snonce,MIC);
+       let PTK=key(Anonce,Snonce,sk) in
+       if MIC=mic(Snonce,PTK) then
+       event mess3(Anonce,mic(Anonce,PTK));
+       out(c,(na,ns,Anonce,mic(Anonce,PTK))).
+
+let STA=(new ns;new Snonce;
+	!in(c1,(na,Anonce));
+	event mess1rec(na,Anonce);	
+	let PTK=key(Anonce,Snonce,sk) in
+	out(channel,(na,ns,Anonce,PTK));
+	event mess2(na,ns,Snonce,mic(Snonce,PTK));
+	out(c,(na,ns,Snonce,mic(Snonce,PTK))))
+	|in(channel,(na,ns,Anonce,PTK));
+	!in(c,(=na,=ns,=Anonce,MIC));
+	event mess3rec(na,ns,Anonce,MIC);
+	event enddosS(na,ns).
+	
+	
+process new sk;new channel;(AP)|(STA)
+	

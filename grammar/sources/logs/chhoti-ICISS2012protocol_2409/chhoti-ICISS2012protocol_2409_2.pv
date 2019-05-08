@@ -1,0 +1,73 @@
+type mkey.
+type G.
+
+const g : G[data].
+
+fun exp(G, bitstring):G.
+fun mac(bitstring, mkey): bitstring.
+fun g_to_bs(G):bitstring.
+fun bs_to_G(bitstring):G.
+fun poly(bitstring, bitstring):mkey[private].
+
+equation forall x:bitstring, y:bitstring; exp(exp(g, x), y) = exp(exp(g, y), x).
+equation forall x:bitstring, y:bitstring; poly(x,y) = poly(y, x).
+equation forall x:G; bs_to_G(g_to_bs(x)) = x.
+
+free c : channel.
+free nA: bitstring[private].
+free nB: bitstring[private].
+free idA:bitstring.
+free idB:bitstring.
+free k1: bitstring[private].
+free k2: bitstring[private].
+
+event  acceptsA(bitstring).
+event  acceptsB(mkey, bitstring).
+event  termA(mkey, bitstring).
+event  termB(bitstring).
+
+(* query attacker(nA).
+query attacker(nB).
+query attacker(idA).
+query attacker(idB).
+query attacker(k1).
+query attacker(k2). *)
+
+query x:mkey, y:bitstring;  inj-event(termA(x,y)) ==> inj-event(acceptsB(x,y)).
+query x:bitstring;  inj-event(termB(x)) ==> inj-event(acceptsA(x)).
+
+(* Process for node A *) 
+let NodeA() =
+ 
+      out(c, idA);	 											  (* 1. A sends out its ID in plain *)
+
+      in(c, ((idX:bitstring, mgX:bitstring), macX:bitstring));			  (* 6. A receives a response from some node X *)
+      let kAX = poly(idA, idX) in 								  (* 7. A computes shared key with responding node X *)
+      let macA = mac((idX, mgX), kAX) in						  (* 8. A computes mac using the supplied values and check with the supplied mac value *)
+      if  macA = macX then 					       			   (* 9. if verifies, accpets X's response *)
+          let k1 = g_to_bs(exp(bs_to_G(mgX), nA)) in	                      (* 10. A computes the new shared key *)
+          event acceptsA(k1);									
+      
+      let gA = exp(g, nA) in									         (* 11. A now computes g^nA = gA using its nonce nA and converts the result into bitstring type *)
+      let mgA = g_to_bs(gA) in 	
+      out(c, ((idA, gA), (mac(((idA, mgA), mgX), kAX))));				  (* 12. A sends confirmation back to node X and terminates*)
+      event termA(kAX, mgX).
+
+(* Process for node B *) 
+let NodeB() =
+    in(c, idX:bitstring);                                               					     (* 2. B receives a msg with some node ID *)
+    let kBX = poly(idB, idX) in                             				    (* 3. B computes the shared polynomial based key with node X *)
+    let gB = exp(g, nB) in   				                                    (* 4. B takes a nonce value, computes g^nB = gB, since it is of type G, converts it into bitstring type *)
+    let mgB = g_to_bs(gB) in					
+    out(c, ((idB, mgB), (mac((idB, mgB), kBX))));	                                      (* 5. B responds back with idB, gB, and mac of both values using shared key kBX *)	
+    in(c, ((idX1:bitstring, mgX:bitstring), macX:bitstring));                        (* 13. B receives the confirmation from requesting node *)
+    let macB =  mac(((idX1, mgX), mgB), kBX) in                                 (* 14. B computes mac using the supplied values, checks with supplied mac value *)     	 
+    if macB = macX then    
+       event acceptsB(kBX, mgX);
+       let k2 = g_to_bs(exp(bs_to_G(mgX), nB)) in				    (* 15. B computes the new shared key, and accepts to communicate with A and terminates *)
+       event termB(k2);			
+     0.
+
+process
+	 ( !NodeA() | !NodeB() )
+

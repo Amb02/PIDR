@@ -1,0 +1,20 @@
+free c:channel.
+
+fun h(bitstring):bitstring.
+
+const a,b:bitstring.
+
+event A(bitstring).
+
+const ok,ko:bitstring.
+
+lemma x:bitstring,y:bitstring; event(A(x)) ==> x=a.
+
+process
+  in(c,x:bitstring);
+  if x = diff[a,b]
+  then
+    event A(a);
+    out(c,ok)
+  else
+    out(c,ko)

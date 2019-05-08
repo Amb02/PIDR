@@ -1,0 +1,91 @@
+free c:channel.  (* declaring a free channel name *)
+
+type id.
+type key.
+type pkey.
+type skey.
+
+free a, b, d, s: id. (* declaring identities as free names*)
+
+(* Public key cryptography *)
+
+fun pk(id):pkey.     			(* public key *)
+fun sk(id):skey [private].     		(* secret key *)
+fun ltk(id):key [private].		(* symmetyric key *)
+fun enc(bitstring, key):bitstring. 	(* symmetric encryption *)
+fun dec(bitstring, key):bitstring.	(* symmetric decryption *)
+fun aenc(bitstring, pkey):bitstring. 	(* asymmetric encryption *)
+fun adec(bitstring, skey):bitstring.	(* asymmetric decryption *)
+
+
+equation forall x:bitstring, y:id; adec(aenc(x,pk(y)),sk(y)) = x.
+equation forall x:bitstring, y:key; dec(enc(x,y),y) = x.
+
+
+(* authentification *)
+
+event startA(id,id,bitstring).
+event acceptA(id,id,bitstring).
+event startB(id,id,bitstring).
+event acceptB(id,id,bitstring).
+
+
+query y:bitstring; event(acceptA(a,b,y)) ==> event(startB(a,b,y)).
+
+(* PB correspond a Bob *)
+(* ia celui qui envoi et ra celui qui recoit *)
+let PB(ib:id,ra:id) = 	
+	
+	new nb:bitstring;
+	event startB(ra, ib, nb);
+
+    out(c, (ib, aenc((nb),pk( ra )))); (*c chan sur lequel on communique *)
+
+	in(c,( xser:bitstring));
+    let(=nb, cleAB: key) = dec(xser,ltk(ib)) in
+
+   	
+    out(c,(enc(nb, cleAB) ) ).
+
+
+(* PA correspond a Alice *)
+let PA (ia:id,rb:id)=
+
+
+    in(c,(xb:id, xa:bitstring));
+    let(xaNb:bitstring) = adec(xa,sk(ia)) in
+
+	new na:bitstring;
+
+   	out(c,(aenc( ((ia, (xb, na)), (enc(xaNb, ltk(ia) ))), pk( s )  ) ) );
+
+	(* A recoit du Serveur *)
+	in(c,( xNewSer:bitstring));
+    	let(=na,cleAB:key) = dec(xNewSer,ltk(ia)) in
+
+	(* A recoit de B *)
+  	in(c,( xNewb:bitstring));
+    let(=xaNb) = dec(xNewb,cleAB) in
+    
+	event acceptA(ia,rb,xaNb).
+
+
+let S() =
+
+  	in(c,( xfroma:bitstring));
+    let((xa:id, (xb:id, xna:bitstring)), xnbStr:bitstring) = adec(xfroma,sk(s)) in
+	let(xnb:bitstring) = dec(xnbStr,ltk(xa)) in
+
+	new cleAB:key;
+
+   	out (c, (enc((xna, cleAB), ltk(xa) ) ));
+
+	out (c, (enc((xnb, cleAB), ltk(xb) ) )).
+
+
+(* main process *)
+process  ! ( in(c, xb:id); in(c, xa:id);  PA(xa,xb) ) |
+	 ! ( in(c, xb:id); in(c, xa:id);  PB(xb,xa) ) |
+          out(c, ltk(d)) |
+	 
+	 ! S()  (* server for any participants *)

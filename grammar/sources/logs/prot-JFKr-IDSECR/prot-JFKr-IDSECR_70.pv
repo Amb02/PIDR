@@ -1,0 +1,339 @@
+(* JFKr *)
+
+set redundantHypElim = beginOnly.
+
+type G.
+type texponent.
+type skey.
+type pkey.
+type key.
+type tag.
+type nonce.
+type grpinfo.
+type sainfo.
+
+fun G_to_key(G):key [data, typeConverter].
+
+(* Exponential and Diffie-Hellman *)
+
+const g: G.
+fun exp(G, texponent): G.
+equation forall y: texponent, z: texponent; exp(exp(g,y),z) = exp(exp(g,z),y).
+
+(* Signature *)
+
+fun S(skey, bitstring): bitstring.
+fun Pk(skey): pkey.
+fun V(bitstring, pkey, bitstring): bool.
+fun RecoverKey(bitstring): pkey.
+fun RecoverText(bitstring): bitstring.
+equation forall k: skey, v: bitstring; V(S(k,v), Pk(k),v) = true.
+equation forall k: skey, v: bitstring; RecoverKey(S(k,v)) = Pk(k). (* For the attacker *)
+equation forall k: skey, v: bitstring; RecoverText(S(k,v)) = v.    (* For the attacker *)
+
+(* Shared-key encryption *)
+
+fun E(key, bitstring): bitstring.
+fun D(key, bitstring): bitstring.
+equation forall k: key, v: bitstring; D(k,E(k,v)) = v.
+
+(* Keyed hash function *)
+
+fun H(key, bitstring): key.
+
+(* Sets *)
+
+type keyset.
+fun consset(key, keyset): keyset [data].
+const emptyset: keyset [data].
+pred member(key, keyset).
+clauses
+  forall x: key, y: keyset; member(x,consset(x,y));
+  forall x: key, y: keyset, z: key; member(x,y) -> member(x,consset(z,y)).
+
+type idset.
+fun considset(pkey, idset): idset [data].
+const emptyidset: idset [data].
+pred memberid(pkey, idset).
+clauses
+  forall x: pkey, y: idset; memberid(x,considset(x,y));
+  forall x: pkey, y: idset, z: pkey; memberid(x,y) -> memberid(x,considset(z,y)).
+
+(* Tags *)
+
+const tagE, tagA, tagV: tag [data].
+
+(* Constructors for JFK's formatted messages
+   Selectors are implicit when using "data" *)
+
+fun cons1(nonce, G): bitstring [data]. 
+fun cons2(nonce, nonce, G, grpinfo, key): bitstring [data] . 
+fun cons3(nonce, nonce, G, G, key, bitstring, key): bitstring [data]. 
+fun cons4(bitstring, key): bitstring [data].
+
+(* More constants *)
+
+const constI, constR: tag [data].
+
+(* Queries: properties to prove *)
+
+(* Correspondence assertions *)
+
+event princ(skey, pkey, channel, channel, channel, idset).
+event enddosi(pkey, nonce).
+event enddosr(pkey, nonce, nonce).
+event initev(channel, pkey, sainfo).
+event mess1(pkey, nonce, G, channel, pkey, sainfo).
+event mess1rec(pkey, nonce, G).
+event mess2(pkey, nonce, nonce, G, G, grpinfo, key).
+event mess2rec(pkey, nonce, nonce, G, grpinfo, key, G, pkey, sainfo).
+event mess3(pkey, nonce, nonce, G, G, key, bitstring, key, grpinfo, pkey, sainfo, key).
+event mess3rec(pkey, nonce, nonce, G, G, key, bitstring, key).
+event mess4(pkey, pkey, bitstring, key, nonce, nonce, G, G, key, bitstring, key).
+event mess4rec(pkey, bitstring, key, channel, pkey, pkey, sainfo, sainfo, key).
+event acceptev(channel, pkey, pkey, sainfo, sainfo, key).
+event accepthonest(channel, pkey, pkey, sainfo, sainfo, key).
+event connectev(channel, pkey, pkey, sainfo, sainfo, key).
+event connecthonest(channel, pkey, pkey, sainfo, sainfo, key).
+
+
+
+
+
+
+
+(* Secrecy *)
+
+
+
+(* Identity protection.
+   The predicate member must be removed, because it is not supported
+   for observational equivalence proofs. So we use a version without cache.
+   Only compliant principals are allowed to connect to R. *)
+
+
+
+  (* Identity protection for both R and I against passive adversaries *)
+  type harg.
+  fun honest(harg): skey [private].
+  reduc forall x: harg; ishonest(Pk(honest(x))) = true.
+
+  free hRminus0, hRminus3, hIminus0, hIminus3, 
+       hminus1, hminus2, hminus3, hminus4: harg [private].
+  noninterf hRminus0 among (hminus1, hminus2, hminus3, hminus4), 
+            hRminus3 among (hminus1, hminus2, hminus3, hminus4), 
+            hIminus0 among (hminus1, hminus2, hminus3, hminus4), 
+            hIminus3 among (hminus1, hminus2, hminus3, hminus4).
+  not attacker(hminus1).
+  not attacker(hminus2).
+  not attacker(hminus3).
+  not attacker(hminus4).
+  not attacker(honest(hminus1)).
+  not attacker(honest(hminus2)).
+  not attacker(honest(hminus3)).
+  not attacker(honest(hminus4)).
+  not attacker(new hAminus).
+  not attacker(honest(new hAminus)).
+  
+
+
+(* Secrecy assumptions *)
+
+
+not attacker(new d).
+
+
+(* Initiator 
+   The process processI corresponds to I^A in the figure. *)
+
+let processI(c: channel, exponent: channel, init: channel, connect: channel, honestC: channel, IDA: pkey, kAminus: skey) =
+  !
+  in(exponent, (dI: texponent, xI: G));
+  !
+  in(init, (IDRp: pkey, saI: sainfo));    (* Init message *)
+  event initev(init, IDRp, saI); 
+  new NI: nonce; 
+  event mess1(IDA, NI, xI, init, IDRp, saI);
+  out(c, cons1(NI, xI));
+  in(c, cons2(=NI, NR, xR, grpinfoR, tR));
+  event mess2rec(IDA, NI, NR, xR, grpinfoR, tR, xI, IDRp, saI);
+  event enddosi(IDA, NI);
+  let h = G_to_key(exp(xR, dI)) in
+  let Ka = H(h, ((NI, NR), tagA)) in
+  let Ke = H(h, ((NI, NR), tagE)) in
+  let Kv = H(h, ((NI, NR), tagV)) in
+  let sI = S(kAminus, ((NI, NR), ((xI, xR), grpinfoR))) in
+  let eI = E(Ke, ((IDA, IDRp), (saI, sI))) in
+  let hI = H(Ka, (constI, eI)) in
+  event mess3(IDA, NI, NR, xI, xR, tR, eI, hI, grpinfoR, IDRp, saI, Kv);
+  out(c, cons3(NI, NR, xI, xR, tR, eI, hI));
+  in(c, cons4(eR, hR));
+  if H(Ka, (constR, eR)) = hR then
+  let ((IDRl:pkey, saR: sainfo), sR: bitstring) = D(Ke, eR) in
+  if V(sR, IDRl, ((NI, NR), (xI, xR))) then 
+  event mess4rec(IDA, eR, hR, connect, IDRl, IDRp, saI, saR, Kv);
+  event connectev(connect, IDRl, IDRp, saI, saR, Kv);
+  out(connect, ((IDRl, IDRp), ((saI, saR), Kv)));
+  (
+
+    (  
+
+      0
+    )
+  ).
+
+(* Responder
+   The process processR corresponds to R^A in the figure. *)
+
+free grpinfoR: grpinfo.
+const saR: sainfo [data].
+
+let processR4(c: channel, accept: channel, honestC: channel, IDA: pkey, kAminus: skey, NI: nonce, NR: nonce, xI: G, xR: G, dR: texponent, tR: key, eI: bitstring, hI: key, SIA: idset) = 
+  event enddosr(IDA, NI, NR);
+  let h = G_to_key(exp(xI,dR)) in
+  let Ka = H(h, ((NI, NR), tagA)) in
+  let Ke = H(h, ((NI, NR), tagE)) in
+  let Kv = H(h, ((NI, NR), tagV)) in
+  if H(Ka, (constI, eI)) = hI then
+  let ((IDIl: pkey, IDRp: pkey), (saI: sainfo, sI: bitstring)) = D(Ke,eI) in
+if ishonest(IDIl) then
+
+  if V(sI, IDIl, ((NI, NR), ((xI, xR), grpinfoR))) then
+  event acceptev(accept, IDIl, IDRp, saI, saR, Kv);
+  out(accept, ((IDIl, IDRp), ((saI, saR), Kv)));
+  (
+
+    (
+      let sR = S(kAminus, ((NI, NR), (xI, xR))) in
+      let eR = E(Ke, ((IDA, saR), sR)) in
+      let hR = H(Ka, (constR, eR)) in
+      event mess4(IDA, IDIl, eR, hR, NI, NR, xI, xR, tR, eI, hI);
+      out(c, cons4(eR, hR));
+
+      0
+    )
+  ).
+
+
+
+
+let processR(c: channel, exponent: channel, accept: channel, honestC: channel, IDA: pkey, kAminus: skey, SIA: idset) =
+  new KR: key;
+  !
+  in(exponent, (dR: texponent, xR: G));
+  !
+  in(c, cons1(NI, xI));
+  event mess1rec(IDA, NI, xI);
+  new NR: nonce;
+  new tR: key;
+  event mess2(IDA, NI, NR, xI, xR, grpinfoR, tR);
+  out(c, cons2(NI, NR, xR, grpinfoR, tR));
+  new l: channel;
+  (
+    (
+    !
+    in(c, cons3(=NI,=NR,xI,=xR,=tR,eI,hI));
+    out(l, ((xI, eI), hI))
+    )
+  |
+    (
+    in(l, ((xI: G, eI: bitstring), hI: key));
+    event mess3rec(IDA, NI, NR, xI, xR, tR, eI, hI);
+    processR4(c, accept, honestC, IDA, kAminus, NI, NR, xI, xR, dR, tR, eI, hI, SIA)
+    )
+  ).
+
+
+
+
+(* Free names *)
+
+free c: channel. (* Public channel *)
+free pub, getprinc, getexponential, channelSIAR1, channelSIAR2: channel.
+
+(* Whole JFK system. *)
+
+(* Version for identity protection with passive adversaries *)
+
+process
+  new exponent: channel;
+  new honestC: channel;  (* private channel used to simulate the set C of honest principals *)
+  ( ! new d: texponent; let x = exp(g,d) in out(getexponential, x); ! out(exponent, (d,x)) )
+  |
+  new c: channel;  (* c is now private: passive attacker, can listen but not
+                 send on c *)
+  ( ! in(c,x: bitstring); out(pub,x); out(c,x))
+  |
+  let kminus1 = honest(hminus1) in
+  let ID1 = Pk(kminus1) in
+  let kminus2 = honest(hminus2) in
+  let ID2 = Pk(kminus2) in
+  out(pub, ID1);
+  out(pub, ID2);
+  (
+    (
+      (* Create principal playing role R, with secret key kRminus0 *)
+      in(channelSIAR1, SIA0: idset);
+      let kRminus0 = honest(hRminus0) in
+      let IDR0 = Pk(kRminus0) in
+      new accept0: channel;
+      (
+        (! in(accept0, x: bitstring))
+      | processR(c, exponent, accept0, honestC, IDR0, kRminus0, SIA0)
+      )
+    )
+  |
+    (
+      (* Create principal playing role R, with secret key kRminus3 *)
+      in(channelSIAR2, SIA3: idset);
+      let kRminus3 = honest(hRminus3) in
+      let IDR3 = Pk(kRminus3) in
+      new accept3: channel;
+      (
+        (! in(accept3, x: bitstring))
+      | processR(c, exponent, accept3, honestC, IDR3, kRminus3, SIA3)
+      )
+    )
+  |
+    (
+      (* Create principal playing role I, with secret key kIminus0 *)
+      let kIminus0 = honest(hIminus0) in
+      let IDI0 = Pk(kIminus0) in
+      new connect0: channel; new init0: channel;
+      out(pub, init0);
+      (
+        (! in(connect0, x: bitstring))
+      | processI(c, exponent, init0, connect0, honestC, IDI0, kIminus0)
+      )
+    )
+  |
+    (
+      (* Create principal playing role I, with secret key kIminus3 *)
+      let kIminus3 = honest(hIminus3) in
+      let IDI3 = Pk(kIminus3) in
+      new connect3: channel; new init3: channel;
+      out(pub, init3);
+      (
+        (! in(connect3, x: bitstring))
+      | processI(c, exponent, init3, connect3, honestC, IDI3, kIminus3)
+      )
+    )
+  |
+    (
+      !
+      new hAminus: harg;
+      let kAminus = honest(hAminus) in
+      let IDA = Pk(kAminus) in
+      new connect: channel; new accept: channel; new init: channel; new channelSIA: channel;
+      out(getprinc, ((IDA, init), channelSIA));
+      in(channelSIA, SIA: idset);
+      (
+        (! in(accept, x: bitstring))
+      | (! in(connect, x: bitstring))
+      | processI(c, exponent, init, connect, honestC, IDA, kAminus)
+      | processR(c, exponent, accept, honestC, IDA, kAminus, SIA)
+      )
+    )
+  )
+
+

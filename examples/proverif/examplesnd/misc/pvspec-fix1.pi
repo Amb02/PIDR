@@ -1,0 +1,123 @@
+(* Generated proverif specification *)
+
+(* Boolean return types *)
+data true/0.
+data false/0.
+
+(* Functions data *)
+data UNKNOWN/0.
+
+(* Public key cryptography *)
+fun pk/1.
+fun aencrypt/2.
+reduc adecrypt(aencrypt(x,pk(y)),y) = x.
+
+fun sign/2.
+fun verifySign/3.
+equation verifySign(m, sign(m,sk), pk(sk))=true.
+
+(* Certificates  *)
+fun cert/2.
+fun verifyCert/2.
+equation verifyCert(cert(epk, sign(epk, sk)), pk(sk))=true.
+reduc getpk(cert(epk, sign(epk,sk))) = epk.
+
+(* Symmetric key cryptography *)
+fun sencrypt/2.
+reduc sdecrypt(sencrypt(x,k),k) = x.
+
+(* MAC *)
+fun MAC/2.
+reduc verifyMAC(m, k, MAC(m, k)) = true.
+
+(* HASH *)
+fun hash/1.
+
+(* CONCAT *)
+fun concat/5.
+reduc get1(concat(m1, m2, m3, m4, m5))= m1.
+reduc get2(concat(m1, m2, m3, m4, m5))= m2.
+reduc get3(concat(m1, m2, m3, m4, m5))= m3.
+reduc get4(concat(m1, m2, m3, m4, m5))= m4.
+reduc get5(concat(m1, m2, m3, m4, m5))= m5.
+
+
+(* Channel *)
+free ch.
+
+(* Channel *)
+private free chprivate.
+private free chprivate1.
+
+(* Data *)
+
+(* Secrecy Assumptions *)
+
+(* Queries *)
+query ev:enteringState__ECU2__ECU2Done().
+query ev:enteringState__ECU2__AnalyzingMessageMsg1().
+query ev:enteringState__ECU2__WaitingForMsg1().
+query ev:enteringState__ECU1__WaitingForMsg2().
+query ev:enteringState__ECU1__SendingMsg1().
+query ev:enteringState__ECU3__ECU3Done().
+query ev:enteringState__ECU3__WaitingForFirstMessage().
+query ev:enteringState__ECU3__WaitingForSecondMessage().
+
+(* Authenticity *)
+
+
+let SecuredSystem__0 = 
+	0.
+
+let ECU2__0 = 
+	new m0__data;
+	new m1__data;
+	ECU2__1.
+
+let ECU2__1 = 
+	event enteringState__ECU2__WaitingForMsg1();
+	in(chprivate, m0__data);
+	ECU2__2.
+
+let ECU2__2 = 
+	event enteringState__ECU2__AnalyzingMessageMsg1();
+	out(chprivate1, m1__data);
+	ECU2__3.
+
+let ECU2__3 = 
+	event enteringState__ECU2__ECU2Done().
+
+let ECU1__0 = 
+	new m0__data;
+	ECU1__1.
+
+let ECU1__1 = 
+	event enteringState__ECU1__SendingMsg1();
+	out(chprivate, m0__data);
+	out(chprivate, m0__data); (* Fix: duplicate message on chprivate *)
+	ECU1__2.
+
+let ECU1__2 = 
+	event enteringState__ECU1__WaitingForMsg2().
+
+let ECU3__0 = 
+	new m1__data;
+	new m2__data;
+	ECU3__1.
+
+let ECU3__1 = 
+	event enteringState__ECU3__WaitingForSecondMessage();
+	in(chprivate1, m1__data);
+	ECU3__2.
+
+let ECU3__2 = 
+	event enteringState__ECU3__WaitingForFirstMessage();
+	in(chprivate, m2__data);
+	ECU3__3.
+
+let ECU3__3 = 
+	event enteringState__ECU3__ECU3Done().
+
+process
+	(
+((SecuredSystem__0) | (ECU2__0) | (ECU1__0) | (ECU3__0)))

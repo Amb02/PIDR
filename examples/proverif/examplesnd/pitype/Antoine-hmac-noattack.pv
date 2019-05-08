@@ -1,0 +1,205 @@
+type Memloc.
+type Memval.
+
+table heap(Memloc, Memval).
+
+(** Memory Types **)
+type Undefined.
+type String.
+type Number.
+type Boolean.
+type Function.
+type Object.
+type Array.
+type Field.
+
+(* Memory write *)
+fun mem_undefined(Undefined): Memval [data].
+fun mem_string(String): Memval [data].
+fun mem_number(Number): Memval [data].
+fun mem_boolean(Boolean): Memval [data].
+fun mem_function(Function): Memval [data].
+fun mem_object(Object): Memval [data].
+fun mem_array(Array): Memval [data].
+
+(** Constants **)
+fun undefined(): Undefined [data].
+fun bool_true(): Boolean [data].
+fun bool_false(): Boolean [data].
+fun obj_empty(): Object [data].
+fun arr_empty(): Array [data].
+fun arr_add(Memval,Array): Array [data].
+fun obj_prop(String,Memval): Field [data].
+fun obj_add(Object,Field): Object [data].
+
+reduc forall o:Object,s:String,v:Memval;
+      obj_property(obj_add(o,obj_prop(s,v)),s) = v.
+
+(** Booleans **)
+fun is_nonzero(Number): Boolean [data].
+fun is_nonempty(String): Boolean [data].
+fun negate(Boolean): Boolean [data].
+fun eq_number(Number, Number): Boolean [data].
+fun geq_number(Number, Number): Boolean [data].
+fun gt_number(Number, Number): Boolean [data].
+fun lt_number(Number, Number): Boolean [data].
+fun leq_number(Number, Number): Boolean [data].
+
+reduc forall x:Memval, y:Memval; equal(x,x) = bool_true();
+      forall x:Memval, y:Memval; equal(x,y) = bool_false().
+
+(** Numbers **)
+fun str_to_num(String): Number [data].
+fun add(Number, Number): Number [data].
+fun neg(Number): Number [data].
+fun bitneg(Number): Number [data].
+fun bit_and(Number, Number): Number [data].
+fun bit_or(Number, Number): Number [data].
+fun bit_xor(Number, Number): Number [data].
+fun substract(Number, Number): Number [data].
+fun multiply(Number, Number): Number [data].
+fun divide(Number, Number): Number [data].
+fun modulo(Number, Number): Number [data].
+fun left_shift(Number, Number): Number [data].
+fun right_shift(Number, Number): Number [data].
+fun a_right_shift(Number, Number): Number [data].
+
+(** Strings **)
+fun concat(String, String): String [data].
+fun num_left_concat(Number, String): String [data].
+fun num_right_concat(String, Number): String [data].
+fun length(String): Number [data].
+
+(** Functions **)
+fun function(channel): Function [data].
+
+(** Objects **)
+letfun obj_property_undefined(o:Object, s:String) =
+        let mem_undefined(u) = obj_property(o, s) in u.
+letfun obj_property_string(o:Object, s:String) =
+	let mem_string(t) = obj_property(o, s) in t.
+letfun obj_property_number(o:Object, s:String) =
+        let mem_number(n) = obj_property(o, s) in n.
+letfun obj_property_boolean(o:Object, s:String) =
+        let mem_boolean(b) = obj_property(o, s) in b.
+letfun obj_property_function(o:Object, s:String) =
+        let mem_function(f) = obj_property(o, s) in f.
+letfun obj_property_object(o:Object, s:String) =
+        let mem_object(p) = obj_property(o, s) in p.
+letfun obj_property_array(o:Object, s:String) =
+        let mem_array(a) = obj_property(o, s) in a.
+
+fun hmac(String, String): String.
+
+letfun f_secret(s:String) = 
+       new k:String; k.
+
+free pub:channel.
+
+let attackerHeap() = 
+    (!in(pub,m:Memloc);
+      get heap(=m,v) in
+      out(pub,v)) 
+  | 
+    (!in(pub,(m:Memloc,v:Memval));
+      insert heap(m,v);
+      out(pub,v)).
+
+
+fun JSON_stringify(Object):String.
+reduc forall o:Object; 
+      JSON_parse(JSON_stringify(o)) = o.
+
+fun DJSON_stringify(Object):String.
+reduc forall o:Object, pre:Object; 
+      DJSON_parse(DJSON_stringify(o),pre) = o.
+
+fun JWE_encrypt(String,String,String): String.
+reduc forall s:String, k:String, pk:String;
+      JWE_decrypt(JWE_encrypt(s, k, pk), k) = s.
+
+
+free num_1:Number.
+free str_1:String.
+free str_2:String.
+free str_3:String.
+free str_4:String.
+free str_5:String.
+free str_6:String.
+free str_7:String.
+
+event Leaked(String,Boolean).
+query x:String; event(Leaked(x,bool_true())).
+
+process
+
+new fun_1:channel;
+(!in(fun_1, (ret_1:channel));
+new var_mac_key:Memloc;
+insert heap(var_mac_key,mem_string(f_secret(str_1)));
+new var_guess:Memloc;
+new fun_4:channel;
+(!in(fun_4, (ret_4:channel,arg_k:String));
+new var_k:Memloc;
+insert heap(var_k,mem_string(arg_k));
+new var_res:Memloc;
+get heap(=var_k, mem_string(val_12)) in
+get heap(=var_mac_key, mem_string(val_13)) in
+insert heap(var_res,mem_boolean(equal(mem_string(val_12),mem_string(val_13))));
+get heap(=var_k, mem_string(val_14)) in
+get heap(=var_res, mem_boolean(val_15)) in
+event Leaked(val_14,val_15);
+get heap(=var_res, mem_boolean(val_16)) in
+let val_17=(if val_16=bool_true() then str_2 else str_3) in
+out(ret_4,val_17);
+0)|
+
+insert heap(var_guess,mem_function(function(fun_4)));
+new var__:Memloc;
+new fun_5:channel;
+(!in(fun_5, (ret_5:channel,arg_s:String));
+new var_s:Memloc;
+insert heap(var_s,mem_string(arg_s));
+new var_o:Memloc;
+get heap(=var_s, mem_string(val_18)) in
+
+insert heap(var_o,mem_object(DJSON_parse(val_18,obj_add(obj_add(obj_add(obj_empty(), obj_prop(str_5, mem_string(str_4))), obj_prop(str_6, mem_number(num_1))), obj_prop(str_7, mem_string(str_4))))));
+get heap(=var_o, mem_object(val_27)) in
+get heap(=var_mac_key, mem_string(val_22)) in
+get heap(=var_guess, mem_function(val_19)) in
+get heap(=var_o, mem_object(val_20)) in
+
+let function(fun_6)=val_19 in
+new ret_6:channel;
+out(fun_6, (ret_6,obj_property_string(val_20,str_7)));
+in(ret_6, val_21:String);
+
+
+let x= obj_property_number(val_27,str_6) in
+(
+ out(ret_5,concat(val_22,val_21))
+)
+else
+(
+ out(ret_5,concat(val_22,val_21))
+)
+
+)|
+
+insert heap(var__,mem_function(function(fun_5)));
+new fun_8:channel;(!in(fun_8, (ret_8:channel, arg_s:Memval));let mem_string(s)=arg_s in (new var_s:Memloc;insert heap(var_s,arg_s);get heap(=var__, mem_function(val_29)) in
+
+get heap(=var_s, mem_string(val_30)) in
+
+let function(fun_9)=val_29 in
+new ret_9:channel;
+out(fun_9, (ret_9,val_30));
+in(ret_9, val_31:String);
+out(ret_8,val_31);
+0) else out(ret_8, undefined()))|
+out(ret_1,function(fun_8));
+0)|
+out(pub,(function(fun_1)));
+0
+
+

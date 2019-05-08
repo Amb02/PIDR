@@ -1,0 +1,21 @@
+fun pencrypt/2.
+fun pk/1.
+reduc pdecrypt(pencrypt(x,pk(y)),y) = x.
+
+private free secret.
+free e.
+
+query	attacker : secret.
+
+let processA =
+	in(e,x);
+	let y = pdecrypt(x,skA) in
+	out(e,cle);
+	if y = cle then 
+	out(e,secret).
+
+process	new skA;
+	new cle;
+	let pkA = pk(skA) in
+	out(e,pkA);
+	processA

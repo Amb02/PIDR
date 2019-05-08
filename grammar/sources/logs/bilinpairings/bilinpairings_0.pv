@@ -1,0 +1,14 @@
+type id.
+type pt.
+type rand.
+const idA : id .
+const idB : id .
+const idC : id .
+free c : channel .
+fun ptmul (rand, pt ) : pt .
+fun pairing (pt, pt) : pt .
+fun exp(pt, pt): pt.
+fun rand_to_pt(rand): pt [data,typeConverter].
+equation forall aa: rand, bb: rand, p: pt; exp(pairing(p,p), ptmul(aa,rand_to_pt(bb))) = pairing(ptmul(aa,p),ptmul(bb,p)).
+
+process 0

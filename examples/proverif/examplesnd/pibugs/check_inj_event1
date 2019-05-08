@@ -1,0 +1,151 @@
+free c.
+(* 
+A -> S : A, { c0, B, Kab }_{Kas}
+S -> B : { c1, A, Kab }_{Kbs}
+I added tags to distinguish the two encryptions.
+*)
+
+(* Shared key cryptography *)
+
+fun encrypt/3.
+reduc decrypt(encrypt(x,y,r),y) = x.
+
+(* Host names *)
+free A, B.
+
+(* Role names *)
+free I, R, S.
+
+(* Tags to distinguish the first from the second encryption *)
+free c0,c1.
+
+query ev:endBkey(xA, xB, xkAB) ==> ev:beginBkey(xA, xB, xkAB).
+query evinj:endBkey(xA, xB, xkAB) ==> evinj:beginBkey(xA, xB, xkAB).
+
+(* Tests if the first argument is the equal to the second or third one
+   Hubert: "eqor(x,A,B) = true" can be coded by a unary predicate;
+   Similarly, "if x <> A then if x <> B then" can also be coded by 
+   a unary predicate.  *)
+data true/0.
+reduc eqor(x,x,y) = true;
+      eqor(x,y,x) = true.
+
+
+private free secretResp.
+
+noninterf secretResp.
+
+(* Initiator *)
+
+let processInitA = 
+        new pid; out(c, (pid, A, I)); (* process identifier; for computational soundness *)
+        in(c, (=pid, xB));
+	new Kab;
+	event beginBkey(A, xB, Kab);
+	new r;
+        out(c, (A, encrypt((c0, xB, Kab), Kas, r))).
+
+
+let processInitB =
+        new pid; out(c, (pid, B, I)); (* process identifier; for computational soundness *)
+        in(c, (=pid, xB));
+	new Kab;
+	event beginBkey(B, xB, Kab);
+	new r;
+        out(c, (B, encrypt((c0, xB, Kab), Kbs, r))).
+
+(* Server *)
+
+let processSAA = 
+        new pid; out(c, (pid, S)); (* process identifier; for computational soundness *)
+	in(c, (=pid, (=A, m)));
+ 	let (=c0, =A, kab) = decrypt(m,Kas) in
+	new r;
+	out(c, encrypt((c1, A, kab), Kas, r)).
+
+let processSAB = 
+        new pid; out(c, (pid, S)); (* process identifier; for computational soundness *)
+	in(c, (=pid, (=A, m)));
+ 	let (=c0, =B, kab) = decrypt(m,Kas) in
+	new r;
+	out(c, encrypt((c1, A, kab), Kbs, r)).
+
+let processSAOther = 
+        new pid; out(c, (pid, S)); (* process identifier; for computational soundness *)
+	in(c, (=pid, (=A, m)));
+ 	let (=c0, b, kab) = decrypt(m,Kas) in
+	if b <> A then if b <> B then 
+        in(c, (=pid, kbs));
+	new r;
+	out(c, encrypt((c1, A, kab), kbs, r)).
+
+let processSBA = 
+        new pid; out(c, (pid, S)); (* process identifier; for computational soundness *)
+	in(c, (=pid, (=B, m)));
+ 	let (=c0, =A, kab) = decrypt(m,Kbs) in
+	new r;
+	out(c, encrypt((c1, B, kab), Kas, r)).
+
+let processSBB = 
+        new pid; out(c, (pid, S)); (* process identifier; for computational soundness *)
+	in(c, (=pid, (=B, m)));
+ 	let (=c0, =B, kab) = decrypt(m,Kbs) in
+	new r;
+	out(c, encrypt((c1, B, kab), Kbs, r)).
+
+let processSBOther = 
+        new pid; out(c, (pid, S)); (* process identifier; for computational soundness *)
+	in(c, (=pid, (=B, m)));
+ 	let (=c0, b, kab) = decrypt(m,Kbs) in
+	if b <> A then if b <> B then 
+        in(c, (=pid, kbs));
+	new r;
+	out(c, encrypt((c1, B, kab), kbs, r)).
+
+let processSOtherA = 
+        new pid; out(c, (pid, S)); (* process identifier; for computational soundness *)
+	in(c, (=pid, (a, m)));
+	if a <> A then if a <> B then
+	in(c, (=pid, kas));
+ 	let (=c0, =A, kab) = decrypt(m,kas) in
+	new r;
+	out(c, encrypt((c1, a, kab), Kas, r)).
+
+let processSOtherB = 
+        new pid; out(c, (pid, S)); (* process identifier; for computational soundness *)
+	in(c, (=pid, (a, m)));
+	if a <> A then if a <> B then
+	in(c, (=pid, kas));
+ 	let (=c0, =B, kab) = decrypt(m,kas) in
+	new r;
+	out(c, encrypt((c1, a, kab), Kbs, r)).
+
+(* Responder *)
+
+let processRespA = 
+        new pid; out(c, (pid, A, R)); (* process identifier; for computational soundness *)
+	in(c, (=pid, m)); 
+	let (=c1, a, kab) = decrypt(m, Kas) in
+	(* OK *)
+	if eqor(a, A, B) = true then
+	event endBkey(a, A, kab);
+	new r;
+	out(c, encrypt(secretResp, kab, r)).
+
+let processRespB =
+        new pid; out(c, (pid, B, R)); (* process identifier; for computational soundness *)
+	in(c, (=pid, m)); 
+	let (=c1, a, kab) = decrypt(m, Kbs) in
+	(* OK *)
+	if eqor(a, A, B) = true then
+	event endBkey(a, B, kab);
+	new r;
+	out(c, encrypt(secretResp, kab, r)).
+
+process 
+	new Kas; new Kbs; 
+	((!processInitA) | (!processInitB) | 
+	 (!processRespA) | (!processRespB) | 
+	 (!processSAA) | (!processSAB) | (!processSAOther) | 
+	 (!processSBA) | (!processSBB) | (!processSBOther) | 
+	 (!processSOtherA) | (!processSOtherB))

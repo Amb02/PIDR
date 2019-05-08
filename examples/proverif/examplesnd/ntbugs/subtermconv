@@ -1,0 +1,17 @@
+(*
+Mathieu Baudet, Veronique Cortier and Stephanie Delaune said that
+this equational theory is subterm convergent, but it is not
+(non-joignable critical pair between f(g(f(x))) = x and itself)
+*)
+
+
+fun f/1. 
+fun g/1.
+equation f(g(f(x))) = x.
+
+free n,pub.
+
+query ev:EVENT(x).
+
+process
+	in(pub,x); if n = f(x) then 0 else event EVENT(f(x))

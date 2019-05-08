@@ -1,0 +1,38 @@
+param verboseTerm=true.
+param verboseRules=true.
+
+pred attacker/2.  (* attacker:u,x means: in state u, attacker can obtain x *)
+pred extend/2. 
+fun enc/2. (* enc(u,m) is a term that can be decrypted in state u *)
+fun h/2.
+
+nounif attacker:u,x.
+nounif attacker:u,enc(h(u,v),*m).
+
+query attacker:u,a[].
+
+reduc
+
+extend:u,h(u,v); 
+attacker:u,x & extend:u,v -> attacker:v,x;
+attacker:u,enc(u,m) -> attacker:u,m;
+attacker:p1[],enc(h(p1[],e1[]),a[]).
+
+
+(* 
+
+1. Without the given nounifs, ProVerif loops during the saturation phase.
+
+2. With the given nounifs, ProVerif still loops, but with a different chain of
+   growing rules, such as the one below. Why is that, since the hypothesis of
+   these rules matches "attacker:u,enc(h(u,v),*m)"?
+
+attacker:U,enc(hUV,enc(hUV,enc(hUV,enc(hUV,enc(hUV,enc(hUV,enc(hUV,enc(hUV,enc(hUV,enc(hUV,enc(hUV,enc(hUV,m_58)))))))))))) -> attacker:hUV,m_58
+
+3. How to make these rules work in ProVerif? Perhaps there is a "general rule"
+   encompasing all the rules in the infinite chain, as explained in
+   Blanchet:CSFW'01 section 4.2?
+
+
+*)
+

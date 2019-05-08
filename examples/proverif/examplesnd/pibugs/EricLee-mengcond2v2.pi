@@ -1,0 +1,245 @@
+fun pPKenc/3.  (*概率公钥加密*)
+fun pPKdec/2.  (*概率公钥解密*)
+
+fun sign/2.     (*私钥签名*)
+fun decsign/2.  (*公钥解签名*)
+
+
+fun TpPKenc/3.
+fun TpPKdec/2.   (*门限概率公钥解密*)
+
+fun SK/1.         (*产生私钥*)
+fun PK/1.          (*产生公钥*)
+
+fun checkciphertext/2.   (*明文相等测试*)
+fun add/2.                (*加法操作*)
+fun multi/2.               (*乘法操作*)
+fun equals/2.              (*相等测试*)
+private fun projection1/1.            (*产生分量1*)
+private fun projection2/1.            (*产生分量2*)
+
+fun zk/2.
+fun zkver/1.
+fun public1/1.
+
+fun NDAMAC/3.
+
+
+data true/0.
+
+equation  pPKdec(pPKenc(x,PK(y),z),SK(y))=x.
+equation  decsign(sign(x,SK(y)),PK(y))=x.
+
+equation  equals(x,x)=true.
+equation  add(projection1(x),projection2(x))=x.
+equation  add(projection2(x),projection1(x))=x.
+
+equation  TpPKdec(TpPKenc(x,PK(y),r),SK(y))=x.
+
+equation  checkciphertext(TpPKenc(x,PK(y),r1),TpPKenc(x,PK(z),r2))=true.
+
+equation  public1(zk(x,y))=y.
+equation  zkver(zk((cred,r1,r2),(TpPKenc(cred,PK(V),r1),TpPKenc(cred,PK(C),r2))))=true.
+
+equation  equals(NDAMAC(x,SK(y),PK(z)),NDAMAC(x,SK(z),PK(y)))=true.
+
+(*公共通道*)
+free pub,com,c.
+private free chvote,chTE,chVE,chcRT,internal1,internal.
+
+free va,vb.
+
+free n1,n2.
+
+not attacker:chTE.
+not attacker:chVE.
+not attacker:internal1.
+not attacker:internal.
+not attacker:C.
+not attacker:V.
+not attacker:keyV.
+not attacker:keyR.
+not attacker:chVR.
+not attacker:chVR1.
+not attacker:chVR2.
+not attacker:chVR3.
+not attacker:chcRT.
+
+
+
+
+(*投票者*)
+let votechooser = 
+    		out(chvote,va) | out(chvote,vb).
+
+let voter=
+	   in(chVR,id);
+	   new nonce;
+	   out(chVR,(n1,nonce));
+	   in(chVR,(=n2,=nonce,kencNDAMAC1)); 
+	   let (NDAMAC1,PK_R,PEP1)=pPKdec(kencNDAMAC1,SK(keyV)) in
+	   if equals(NDAMAC(PEP1,SK(keyV),PK_R),NDAMAC1)=true  then
+	   if zkver(PEP1)=true then
+	   let (venccred1,cenccred1)=public1(PEP1) in
+	   if checkciphertext(venccred1,cenccred1)=true then
+	   let cred=venccred1  in
+	   new r;
+	   in(chvote,vote);
+	   let vencvote=TpPKenc(vote,PK(V),r) in
+	   out(pub,(cred,vencvote)).
+	   
+	   
+let corruptedvoter=
+	   in(chVR,id);
+	   new nonce;
+	   out(chVR,(n1,nonce));
+	   in(chVR,(=n2,=nonce,kencNDAMAC1)); 
+	   out(pub,kencNDAMAC1).
+
+
+let coercedvoter=
+    	   in(chVR,id);
+	   new nonce;
+	   out(chVR1,(n1,nonce));
+	   in(chVR1,(=n2,=nonce,cred));	   
+	   new fake;
+	   out(c,choice[cred,fake]);
+	   out(internal,(n2,cred,fake)).
+	   
+	  
+let voterreg=
+           new nonce1;
+	   out(chVR2,(n1,nonce1)); 
+	   in(chVR2,(=n2,=nonce1,credI,credJ,credE)); 
+           out(internal1,(n2,credI,credJ,credE)).
+	  
+let votercast=
+	  in(internal1,(=n2,cred,credJ,credE));
+	  in(internal,(=n2,=cred,fake));
+	  out(chVE,choice[(cred,cred,credJ,credE),(fake,cred,credJ,credE)]);
+          new r;
+	  let vencvote=TpPKenc(va,PK(V),r) in
+	  out(pub,(choice[credJ,cred],vencvote)).
+     	   
+
+
+
+
+(*权威机构*)
+let tallying_authority=
+		new nonce;
+	 	out(chRT,(n1,nonce));
+		in(chRT,(=n2,=nonce,enccred1));
+		let cenccred=enccred1 in 
+		in(pub,res);
+		let (venccred,vencvote)=res in
+		let cred=TpPKdec(cenccred,SK(C)) in
+		let cred1=TpPKdec(venccred,SK(V)) in
+		if cred=cred1 then
+		let vote=TpPKdec(vencvote,SK(V)) in
+		out(com,vote).
+		
+		
+let modified_tally_authority = 
+		    new nonce; 
+		    out(chcRT,(n1,nonce)); 
+		    in(chcRT,(=n2,=nonce,enccred1)); 
+		    in(pub,res);  
+		    let (venccred,vencvote)=res in
+		    out(chTE,(n1,venccred,vencvote,enccred1)).
+
+
+let extractor =
+    	   in(chVR,id);
+           new nonceE; 
+	   out(chVR3,(n1,nonceE)); 
+	   in(chVR3,(=n2,=nonceE,credI,credJ,credE)); 
+           in(chVE,(coercercred,=credI,=credJ,=credE)); 
+           ! in(chTE,(=n1,venccred,vencvote,enccred1)); 
+           let vote = TpPKdec(vencvote,SK(V)) in 
+	   let cred = TpPKdec(venccred,SK(V)) in 
+    	   let cred1 = TpPKdec(enccred1,SK(C)) in 
+           let xif8 = equals((cred,cred1),(coercercred,choice[credI,credE])) in 
+    	   out(com,vote) 
+           else 
+           let xif7 = equals((cred,cred1),(choice[credJ,credI],choice[credJ,credI])) in 
+           out(com,vote).     
+       
+
+let registration_authority=              
+		new id; 
+		out(chVR,id);
+		out(pub,id);
+		in(chRT,(=n1,nonceT));
+		in(chVR,(=n1,nonceV));
+		new cred;
+	(*	let cred1=projection1(cred) in
+		let cred2=projection2(cred) in
+		new r;new r1;new r2;
+		let PEP1=zk((cred1,r1,r2),(TpPKenc(cred1,PK(V),r1),TpPKenc(cred1,PK(C),r2))) in
+		let PEP2=zk((cred2,r1,r2),(TpPKenc(cred2,PK(V),r1),TpPKenc(cred2,PK(C),r2))) in     
+		out(chVR,(n2,nonceV,pPKenc((NDAMAC((PEP1,PEP2),SK(keyR),PK(keyV)),PK(keyR),(PEP1,PEP2)),PK(keyV),r)));
+		out(chRT,(n2,nonceT,TpPKenc(cred1,PK(C),r1),TpPKenc(cred2,PK(C),r2)));        *)
+		
+		let PEP=zk((cred,r1,r2),(TpPKenc(cred,PK(V),r1),TpPKenc(cred,PK(C),r2))) in   
+		out(chVR,(n2,nonceV,pPKenc((NDAMAC(PEP,SK(keyR),PK(keyV)),PK(keyR),PEP1),PK(keyV),r)));
+		out(chRT,(n2,nonceT,TpPKenc(cred,PK(C),r1))); 
+		out(pub,TpPKenc(cred,PK(C),r1)).
+				
+				
+let modified_registration_authority = 
+    		    in(chcRT,(=n1,nonceT)); 
+    		    in(chcRT,(=n1,nonceT2)); 
+    		    in(chcRT,(=n1,nonceT3)); 
+		    in(chVR1,(=n1,nonceV)); 
+		    in(chVR2,(=n1,nonceV2)); 
+		    in(chVR3,(=n1,nonceE)); 
+		    new cred; 
+		    new r1; 
+		    new cred2; 
+		    new r2; 
+		    new cred3; 
+		    new r3; 
+		    let venccred = TpPKenc(cred,PK(V),r1) in 
+		    let venccred2 = TpPKenc(cred2,PK(V),r1) in 
+		    let venccred3 = TpPKenc(cred3,PK(V),r1) in 
+		    let cenccred = TpPKenc(cred,PK(C),r2) in 
+		    let cenccred2 = TpPKenc(cred2,PK(C),r2) in 
+		    let cenccred3 = TpPKenc(cred3,PK(C),r2) in 
+		    out(chcRT,(n2,nonceT,choice[cenccred,cenccred3])); 
+		    out(chcRT,(n2,nonceT2,choice[cenccred2,cenccred])); 
+		    out(chcRT,(n2,nonceT3,choice[cenccred3,cenccred2])); 
+		    out(chVR1,(n2,nonceV,venccred)); 
+		    out(chVR2,(n2,nonceV2,venccred,venccred2,venccred3)); 
+		    out(chVR3,(n2,nonceE,venccred,venccred2,venccred3));
+		    out(pub,(cenccred,cenccred2,cenccred3)).
+	     
+	    
+
+
+process  new C;new V; 
+	 new keyV;
+	 new keyR;								
+	 new chVR;
+	 new chRT;
+	 new chVR1;
+	 new chVR2;
+	 new chVR3;
+	 out(pub,PK(C));
+	 out(pub,PK(V));
+	 out(pub,PK(keyV));
+	 out(pub,PK(keyR));
+	 ((!voter)|(!corruptedvoter)|(!tallying_authority)|(!registration_authority)|
+	 (!votechooser )|(!modified_tally_authority)|votercast|voterreg|
+          coercedvoter|extractor|modified_registration_authority)
+
+
+
+	 
+
+
+
+
+
+
+

@@ -1,0 +1,8 @@
+free c:channel.
+free d:bitstring [private].
+
+
+query mess(c,d).
+
+process 
+	out(c,d) | in(c, x: bitstring)

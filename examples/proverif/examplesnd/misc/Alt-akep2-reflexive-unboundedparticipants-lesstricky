@@ -1,0 +1,89 @@
+(* Variantes de AKEP2 : 
+Bellare Rogaway 1993 : Entity Authentication and Key Distribution
+Attaque reflexive quand on enleve l'identité dans le deuxieme echange *)
+
+
+param attacker = active.
+param simplifyDerivation = true.
+
+(**** Header ****)
+free c.
+private free honestParticipants.
+
+(* fonctions *)
+fun encrypt/2.
+reduc decrypt(encrypt(x,y),y) = x.
+
+private fun K/2.
+
+equation K(h1,h2) = K(h2,h1).
+
+(* - the key K shared between A and B is a function of the host names
+   A and B. 
+   - The equation K(h1,h2) = K(h2,h1) makes sure that the key between
+   A and B is the same when A is the initiator or when A is the
+   responder.
+   - The function K is private so that the adversary does not have all
+   keys. Still, the adversary must have keys shared with dishonest hosts.
+   These keys are explicitly given to him (see the process at the bottom).
+*)
+
+
+(* Queries *)
+
+query evinj: InitAEnd(xA,xB,z,t) ==> evinj:RespABegin(xB).
+query evinj: InitAEnd(xA,xB,z,t) ==> evinj:RespASession(xB,xA,z,t).
+
+query ev:InitAEnd(xA,hostX,xra,xrb).
+query ev:RespAEnd(hostY,xA,xra,xrb).
+
+
+(* Processus *)
+let processInitA = 
+    new ra;
+    let m1 = (ra,A) in
+    out(c,m1);
+    in(c,(hostX,m2)); 
+    let Kax = K(hostX, A) in
+    (*if hostX=A then 0
+    else*) 
+    let (=ra,=hostX,rb) = decrypt(m2,Kax) in
+    let m3 = encrypt((rb,A),Kax)  in
+    in(honestParticipants, =hostX);
+    event InitAEnd(A,hostX,ra,rb);
+    out(c,m3).
+
+let processRespA = 
+    in(c,m1);
+    let (ra,hostY) = m1 in
+    let Kay = K(hostY, A) in
+    event RespABegin(A);
+    new rb;
+    event RespASession(A,hostY,ra,rb);
+    let m2 = encrypt((ra,A,rb),Kay) in
+    out(c, (A,m2));
+    in(c,m3);
+    let (=rb,=hostY)=decrypt(m3,Kay) in
+    in(honestParticipants, =hostY);
+    event RespAEnd(A,hostY,ra,rb).
+
+process 
+(!
+     (* Create an unbounded number of honest participants *)
+     new A;
+     (
+        out(c, A) |
+	(!out(honestParticipants, A)) |  
+        (!processInitA) | 
+        (!processRespA)
+     )
+)
+|
+(!
+     (* Create an unbounded number of dishonest participants *)
+     new I;
+     out(c, I);
+     (* Give to the adversary all keys between I and any participant B
+        (also when B is honest) *)
+     ! in(c, B); out(c, K(I, B))
+)

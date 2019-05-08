@@ -1,0 +1,14 @@
+type nonce.
+
+table t(nonce).
+
+nounif x:nonce; table(t( *x)).
+
+fun hash(nonce): nonce.
+
+free c: channel.
+
+process
+	new n: nonce;
+	phase 1;
+	out(c, choice[n, hash(n)])

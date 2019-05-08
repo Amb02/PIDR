@@ -1,0 +1,30 @@
+free c:channel.
+free d:channel [private].
+
+fun h(bitstring):bitstring.
+
+const a,b,e:bitstring.
+
+event A(bitstring).
+event B(bitstring).
+
+const ok,ko,k:bitstring[private].
+
+axiom x:bitstring,y:bitstring; event(A(choice[x,y])) ==> x = a for { secret x [real_or_random] } [fullSat].
+axiom x:bitstring,y:bitstring; event(B(choice[x,y])) ==> x = a [fullSat].
+
+axiom x:bitstring,y:bitstring; event(A(choice[x,y])) ==> x = b for { secret x public_vars y [real_or_random] } [fullSat].
+axiom x:bitstring,y:bitstring; event(B(choice[x,y])) ==> x = b for { public_vars y } [fullSat].
+
+process
+  !(in(c,x:bitstring);
+  in(c,y:bitstring);
+  if x = a
+  then
+    new k:bitstring;
+    event A(choice[a,a]);
+    out(d,k)
+  else
+    out(c,ko))
+
+  | in(d,x:bitstring); out(c,ok)

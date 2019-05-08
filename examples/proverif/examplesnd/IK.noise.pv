@@ -1,0 +1,437 @@
+(* The generation of clauses takes a long time for this example *)
+
+
+(* ---------------------------------------------------------------- *)
+(* PARAMETERS                                                       *)
+(* ---------------------------------------------------------------- *)
+
+set removeUselessClausesBeforeDisplay = true.
+set abbreviateClauses = true.
+set redundancyElim = no.
+set redundantHypElim = true.
+set expandIfTermsToTerms = true.
+
+(* ---------------------------------------------------------------- *)
+(* TYPES                                                            *)
+(* ---------------------------------------------------------------- *)
+
+type key.
+type nonce.
+type keypair.
+type aead.
+type token.
+
+type cipherstate.
+type symmetricstate.
+type handshakestate.
+
+type handshakepattern.
+
+fun key2bit(key):bitstring     [typeConverter].
+fun bit2key(bitstring):key     [typeConverter].
+
+fun nonce2bit(nonce):bitstring [typeConverter].
+fun bit2nonce(bitstring):nonce [typeConverter].
+
+fun token2bit(token):bitstring [typeConverter].
+fun bit2token(bitstring):token [typeConverter].
+
+fun keypairpack(key, key):keypair [data].
+reduc forall public_key:key, private_key:key;
+	keypairunpack(keypairpack(public_key, private_key))
+		= (public_key, private_key).
+reduc forall public_key:key, private_key:key;
+	getpublickey(keypairpack(public_key, private_key))
+		= public_key.
+	
+fun aeadpack(bool, bitstring, bitstring):aead [data].
+reduc forall b:bool, ad:bitstring, plaintext:bitstring;
+	aeadunpack(aeadpack(b, ad, plaintext)) = (b, ad, plaintext).
+
+fun cipherstatepack(key, nonce):cipherstate [data].
+reduc forall k:key, n:nonce;
+	cipherstateunpack(cipherstatepack(k, n)) = (k, n).
+
+fun symmetricstatepack(cipherstate, key, bitstring):symmetricstate [data].
+reduc forall cs:cipherstate, k:key, h:bitstring;
+	symmetricstateunpack(symmetricstatepack(cs, k, h)) = (cs, k, h).
+
+fun handshakestatepack(symmetricstate, keypair, keypair, key, key, key, bool):handshakestate [data].
+reduc forall ss:symmetricstate, s:keypair, e:keypair, rs:key, re:key, psk:key, i:bool;
+	handshakestateunpack(handshakestatepack(ss, s, e, rs, re, psk, i)) =
+		(ss, s, e, rs, re, psk, i).
+
+(* ---------------------------------------------------------------- *)
+(* CONSTANTS                                                        *)
+(* ---------------------------------------------------------------- *)
+
+const zero:bitstring     [data].
+const one:bitstring      [data].
+const two:bitstring      [data].
+const three:bitstring    [data].
+const four:bitstring     [data].
+const five:bitstring     [data].
+const six:bitstring      [data].
+const seven:bitstring    [data].
+const eight:bitstring    [data].
+const noise:bitstring    [data].
+
+const g:key              [data].
+const minnonce:nonce     [data].
+const maxnonce:nonce     [data].
+
+const alice:bitstring    [private].
+const bob:bitstring      [private].
+const mallory:bitstring  [data].
+
+const empty:bitstring    [data].
+const somename:bitstring [data].
+
+const e_token:token      [data].
+const s_token:token      [data].
+const ee_token:token     [data].
+const es_token:token     [data].
+const se_token:token     [data].
+const ss_token:token     [data].
+const rs_token:token     [data].
+const re_token:token     [data].
+const rers_token:token   [data].
+const psk_token:token    [data].
+const notoken:token      [data].
+
+const key_0:key [private].
+const key_1:key [private].
+const key_2:key [private].
+const key_3:key [private].
+const key_4:key [private].
+const key_5:key [private].
+const psk_key:key [private].
+
+const secmsg_a:bitstring [private].
+const secmsg_b:bitstring [private].
+const secmsg_c:bitstring [private].
+const secmsg_d:bitstring [private].
+const secmsg_e:bitstring [private].
+const secmsg_f:bitstring [private].
+const secmsg_g:bitstring [private].
+const secmsg_h:bitstring [private].
+
+(* ---------------------------------------------------------------- *)
+(* STRING CONCATENATION                                             *)
+(* ---------------------------------------------------------------- *)
+
+fun concat2(bitstring, bitstring): bitstring [data].
+reduc forall a:bitstring, b:bitstring;
+	deconcat2(concat2(a, b)) = (a, b).
+
+fun concat3(bitstring, bitstring, bitstring): bitstring [data].
+reduc forall a:bitstring, b:bitstring, c:bitstring;
+	deconcat3(concat3(a, b, c)) = (a, b, c).
+
+fun concat4(bitstring, bitstring, bitstring, bitstring): bitstring [data].
+	reduc forall a:bitstring, b:bitstring, c:bitstring, d:bitstring;
+		deconcat4(concat4(a, b, c, d)) = (a, b, c, d).
+
+(* ---------------------------------------------------------------- *)
+(* PRIMITIVES                                                       *)
+(* ---------------------------------------------------------------- *)
+
+fun increment_nonce(nonce):nonce.
+fun decrement_nonce(nonce):nonce reduc
+	forall n:nonce;
+		decrement_nonce(increment_nonce(n)) = n.
+
+fun dhexp(key, key):key.
+equation forall a:key, b:key;
+	dhexp(b, dhexp(a, g)) = dhexp(a, dhexp(b, g)).
+
+letfun dh(my_keypair:keypair, pubkey:key) =
+	let (my_public_key:key, my_private_key:key) = keypairunpack(my_keypair) in
+	dhexp(my_private_key, pubkey).
+
+letfun generate_keypair(basis:key) =
+	let public_key = dhexp(basis, g) in
+	keypairpack(public_key, basis).
+
+fun encrypt(key, nonce, bitstring, bitstring):bitstring.
+
+fun decrypt(key, nonce, bitstring, bitstring):aead reduc
+	forall k:key, n:nonce, ad:bitstring, plaintext:bitstring;
+		decrypt(k, n, ad, encrypt(k, n, ad, plaintext)) = aeadpack(true, ad, plaintext)
+	otherwise forall k:key, n:nonce, ad:bitstring, ciphertext:bitstring;
+		decrypt(k, n, ad, ciphertext) = aeadpack(false, empty, empty).
+		
+fun hash(bitstring, bitstring):bitstring.
+(*
+letfun hmac_hash(k:key, data:bitstring) =
+	bit2key(hash(concat2(key2bit(k), data))).
+
+letfun hkdf(chaining_key:key, input_key_material:key) =
+	let ikm_bitstring = key2bit(input_key_material) in
+	let temp_key = hmac_hash(chaining_key, ikm_bitstring) in
+	let output1 = hmac_hash(temp_key, one) in
+	let output2 = hmac_hash(temp_key, concat2(key2bit(output1), two)) in
+	let output3 = hmac_hash(temp_key, concat2(key2bit(output2), three)) in
+  (output1, output2, output3).
+*)
+
+fun hmac_hash1(key, key):key.
+fun hmac_hash2(key, key):key.
+fun hmac_hash3(key, key):key.
+
+letfun hkdf(chaining_key:key, input_key_material:key) =
+	let output1 = hmac_hash1(chaining_key, input_key_material) in
+	let output2 = hmac_hash2(chaining_key, input_key_material) in
+	let output3 = hmac_hash3(chaining_key, input_key_material) in
+  (output1, output2, output3).
+
+(*
+fun sign(key, bitstring): bitstring.
+	fun sigpk(key): key.
+	
+fun sigver(key, bitstring, bitstring): bool reduc
+	forall sk:key, m:bitstring;
+		sigver(sigpk(sk), sign(sigpk(sk), m), m) = true
+	otherwise forall pk:key, s:bitstring, m:bitstring;
+		sigver(pk, s, m) = false.
+*)
+
+(* ---------------------------------------------------------------- *)
+(* STATE MANAGEMENT                                                 *)
+(* ---------------------------------------------------------------- *)
+
+(* CipherState *)
+
+letfun initializeKey(k:key) =
+	cipherstatepack(k, minnonce).
+
+letfun hasKey(cs:cipherstate) =
+	let (k:key, n:nonce) = cipherstateunpack(cs) in
+	(k <> bit2key(empty)).
+
+letfun setNonce(cs:cipherstate, n:nonce) =
+	let (k:key, o:nonce) = cipherstateunpack(cs) in
+	cipherstatepack(k, n).
+
+letfun encryptWithAd(cs:cipherstate, ad:bitstring, plaintext:bitstring) =
+	let (k:key, n:nonce) = cipherstateunpack(cs) in
+	let e = encrypt(k, n, ad, plaintext) in
+	let csi = setNonce(cs, increment_nonce(n)) in
+	(csi, e).
+
+letfun decryptWithAd(cs:cipherstate, ad:bitstring, ciphertext:bitstring) =
+	let (k:key, n:nonce) = cipherstateunpack(cs) in
+	let d = decrypt(k, n, ad, ciphertext) in
+	let (valid:bool, adi:bitstring, plaintext:bitstring) = aeadunpack(d) in
+	let csi = setNonce(cs, increment_nonce(n)) in
+	(csi, plaintext, valid).
+
+letfun reKey(cs:cipherstate) =
+	let (k:key, n:nonce) = cipherstateunpack(cs) in
+	let ki = encrypt(k, maxnonce, empty, zero) in
+	cipherstatepack(bit2key(ki), n).
+
+(* SymmetricState *)
+
+letfun initializeSymmetric(protocol_name:bitstring) =
+	let h = hash(protocol_name, empty) in
+	let ck = bit2key(h) in
+	let cs = initializeKey(bit2key(empty)) in
+	symmetricstatepack(cs, ck, h).
+
+letfun mixKey(ss:symmetricstate, input_key_material:key) =
+	let (cs:cipherstate, ck:key, h:bitstring) = symmetricstateunpack(ss) in
+	let (ck:key, temp_k:key, output_3:key) = hkdf(ck, input_key_material) in
+	symmetricstatepack(initializeKey(temp_k), ck, h).
+
+letfun mixHash(ss:symmetricstate, data:bitstring) =
+	let (cs:cipherstate, ck:key, h:bitstring) = symmetricstateunpack(ss) in
+	symmetricstatepack(cs, ck, hash(h, data)).
+
+letfun mixKeyAndHash(ss:symmetricstate, input_key_material:key) =
+	let (cs:cipherstate, ck:key, h:bitstring) = symmetricstateunpack(ss) in
+	let (ck:key, temp_h:key, temp_k:key) = hkdf(ck, input_key_material) in
+	let (cs:cipherstate, temp_ck:key, h:bitstring) = symmetricstateunpack(mixHash(symmetricstatepack(cs, ck, h), key2bit(temp_h))) in
+	symmetricstatepack(initializeKey(temp_k), ck, h).
+	
+letfun getHandshakeHash(ss:symmetricstate) =
+	let (cs:cipherstate, ck:key, h:bitstring) = symmetricstateunpack(ss) in
+	(ss, h).
+
+letfun encryptAndHash(ss:symmetricstate, plaintext:bitstring) =
+	let (cs:cipherstate, ck:key, h:bitstring) = symmetricstateunpack(ss) in
+	let (cs:cipherstate, ciphertext:bitstring) = encryptWithAd(cs, h, plaintext) in
+	let ss = mixHash(symmetricstatepack(cs, ck, h), ciphertext) in
+	(ss, ciphertext).
+
+letfun decryptAndHash(ss:symmetricstate, ciphertext:bitstring) =
+	let (cs:cipherstate, ck:key, h:bitstring) = symmetricstateunpack(ss) in
+	let (cs:cipherstate, plaintext:bitstring, valid:bool) = decryptWithAd(cs, h, ciphertext) in
+	let ss = mixHash(symmetricstatepack(cs, ck, h), ciphertext) in
+	(ss, plaintext, valid).
+
+letfun split(ss:symmetricstate) =
+	let (cs:cipherstate, ck:key, h:bitstring) = symmetricstateunpack(ss) in
+	let (temp_k1:key, temp_k2:key, temp_k3:key) = hkdf(ck, bit2key(zero)) in
+	let cs1 = initializeKey(temp_k1) in
+	let cs2 = initializeKey(temp_k2) in
+	(ss, cs1, cs2).
+
+(* HandshakeState *)
+
+letfun initialize_a(prologue:bitstring, s:keypair, e:keypair, rs:key, re:key, psk:key) =
+	let ss = mixHash(initializeSymmetric(somename), prologue) in
+	let ss = mixHash(ss, key2bit(rs)) in
+	handshakestatepack(ss, s, e, rs, re, psk, true).
+
+letfun initialize_b(prologue:bitstring, s:keypair, e:keypair, rs:key, re:key, psk:key) =
+	let ss = mixHash(initializeSymmetric(somename), prologue) in
+	let ss = mixHash(ss, key2bit(getpublickey(s))) in
+	handshakestatepack(ss, s, e, rs, re, psk, false).
+
+letfun writeMessage_a(hs:handshakestate, payload:bitstring) =
+	let (ss:symmetricstate, s:keypair, e:keypair, rs:key, re:key, psk:key, initiator:bool) = handshakestateunpack(hs) in
+	let (new_e:bitstring, ciphertext1:bitstring, ciphertext2:bitstring) = (empty, empty, empty) in
+	let e = generate_keypair(key_2) in
+	let new_e = key2bit(getpublickey(e)) in
+	let ss = mixHash(ss, key2bit(getpublickey(e))) in
+	(* No PSK, so skipping mixKey. *)
+	let ss = mixKey(ss, dh(e, rs)) in
+	let s = generate_keypair(key_3) in
+	let (ss:symmetricstate, ciphertext1:bitstring) = encryptAndHash(ss, key2bit(getpublickey(s))) in
+	let ss = mixKey(ss, dh(s, rs)) in
+	let (ss:symmetricstate, ciphertext2:bitstring) = encryptAndHash(ss, payload) in
+	let hs = handshakestatepack(ss, s, e, rs, re, psk, initiator) in
+	let message_buffer = concat3(new_e, ciphertext1, ciphertext2) in
+	(hs, message_buffer).
+
+letfun writeMessage_b(hs:handshakestate, payload:bitstring) =
+	let (ss:symmetricstate, s:keypair, e:keypair, rs:key, re:key, psk:key, initiator:bool) = handshakestateunpack(hs) in
+	let (new_e:bitstring, ciphertext1:bitstring, ciphertext2:bitstring) = (empty, empty, empty) in
+	let e = generate_keypair(key_4) in
+	let new_e = key2bit(getpublickey(e)) in
+	let ss = mixHash(ss, key2bit(getpublickey(e))) in
+	(* No PSK, so skipping mixKey. *)
+	let ss = mixKey(ss, dh(e, re)) in
+	let ss = mixKey(ss, dh(e, rs)) in
+	let (ss:symmetricstate, ciphertext2:bitstring) = encryptAndHash(ss, payload) in
+	let hs = handshakestatepack(ss, s, e, rs, re, psk, initiator) in
+	let message_buffer = concat3(new_e, ciphertext1, ciphertext2) in
+	let (ssi:symmetricstate, cs1:cipherstate, cs2:cipherstate) = split(ss) in
+	(hs, message_buffer, cs1, cs2).
+
+letfun readMessage_a(hs:handshakestate, message:bitstring) =
+	let (ss:symmetricstate, s:keypair, e:keypair, rs:key, re:key, psk:key, initiator:bool) = handshakestateunpack(hs) in
+	let (new_e:bitstring, ciphertext1:bitstring, ciphertext2:bitstring) = deconcat3(message) in
+	let valid1 = true in
+	let re = bit2key(new_e) in
+	let ss = mixHash(ss, key2bit(re)) in
+	(* No PSK, so skipping mixKey. *)
+	let ss = mixKey(ss, dh(s, re)) in
+	let (ss:symmetricstate, plaintext:bitstring, valid1:bool) = decryptAndHash(ss, ciphertext1) in
+	let rs = bit2key(plaintext) in
+	let ss = mixKey(ss, dh(s, rs)) in
+	let (ss:symmetricstate, plaintexti:bitstring, valid2:bool) = decryptAndHash(ss, ciphertext2) in
+	if (valid1 && valid2) then (
+		let hs = handshakestatepack(ss, s, e, rs, re, psk, initiator) in
+		(hs, plaintexti, (valid1 && valid2))
+	) else (
+		(hs, plaintexti, (valid1 && valid2))
+	).
+
+letfun readMessage_b(hs:handshakestate, message:bitstring) =
+	let (ss:symmetricstate, s:keypair, e:keypair, rs:key, re:key, psk:key, initiator:bool) = handshakestateunpack(hs) in
+	let (new_e:bitstring, ciphertext1:bitstring, ciphertext2:bitstring) = deconcat3(message) in
+	let valid1 = true in
+	let re = bit2key(new_e) in
+	let ss = mixHash(ss, key2bit(re)) in
+	(* No PSK, so skipping mixKey. *)
+	let ss = mixKey(ss, dh(e, re)) in
+	let ss = mixKey(ss, dh(s, re)) in
+	let (ss:symmetricstate, plaintexti:bitstring, valid2:bool) = decryptAndHash(ss, ciphertext2) in
+	if (valid1 && valid2) then (
+		let hs = handshakestatepack(ss, s, e, rs, re, psk, initiator) in
+		let (ssi:symmetricstate, cs1:cipherstate, cs2:cipherstate) = split(ss) in
+		(hs, plaintexti, (valid1 && valid2), cs1, cs2)
+	) else (
+		let (ssi:symmetricstate, cs1:cipherstate, cs2:cipherstate) = split(ss) in
+		(hs, plaintexti, (valid1 && valid2), cs1, cs2)
+	).
+
+(* ---------------------------------------------------------------- *)
+(* CHANNELS                                                         *)
+(* ---------------------------------------------------------------- *)
+
+const pub:channel.
+
+(* ---------------------------------------------------------------- *)
+(* EVENTS & QUERIES                                                 *)
+(* ---------------------------------------------------------------- *)
+
+event Error().
+event SendEnd(bool).
+event RecvEnd(bool).
+event SendMsg(bitstring, bitstring, bitstring, bool).
+event RecvMsg(bitstring, bitstring, bitstring, bool).
+event LeakedStatic(bitstring, bitstring).
+
+query a:bitstring, b:bitstring, m:bitstring;
+	event(RecvMsg(b, a, m, true)) ==> event(SendMsg(a, b, m, true));
+attacker(secmsg_a) ==> event(LeakedStatic(bob, secmsg_a));
+attacker(secmsg_b) ==> event(LeakedStatic(alice, secmsg_b));
+event(RecvEnd(true)).
+
+(* ---------------------------------------------------------------- *)
+(* PROCESSES                                                        *)
+(* ---------------------------------------------------------------- *)
+
+(*
+IK(s, rs):
+	<- s
+	...
+	-> e, es, s, ss
+	<- e, ee, se
+*)
+
+let proc_alice() =
+	let s = keypairpack(bit2key(empty), bit2key(empty)) in
+	let e = keypairpack(bit2key(empty), bit2key(empty)) in
+	let rs = getpublickey(generate_keypair(key_1)) in
+	let re = bit2key(empty) in
+	let hsa:handshakestate = initialize_a(empty, s, e, rs, re, bit2key(empty)) in
+	let (hsa:handshakestate, message_a:bitstring) = writeMessage_a(hsa, secmsg_a) in
+	event SendMsg(alice, bob, secmsg_a, true);
+	out(pub, message_a);
+	in(pub, message_b:bitstring);
+	let (hsa:handshakestate, plaintext_b:bitstring, valid:bool, cs1:cipherstate, cs2:cipherstate) = readMessage_b(hsa, message_b) in
+	event RecvMsg(alice, bob, plaintext_b, valid);
+	event RecvEnd(valid);
+	phase 3;
+	event LeakedStatic(alice, message_b);
+	out(pub, s).
+
+let proc_bob() =
+	let s = generate_keypair(key_1) in
+	let e = keypairpack(bit2key(empty), bit2key(empty)) in
+	let rs = bit2key(empty) in
+	let re = bit2key(empty) in
+	let hsb:handshakestate = initialize_b(empty, s, e, rs, re, bit2key(empty)) in
+	in(pub, message_a:bitstring);
+	let (hsb:handshakestate, plaintext_a:bitstring, valid:bool) = readMessage_a(hsb, message_a) in
+	event RecvMsg(bob, alice, plaintext_a, valid);
+	let (hsb:handshakestate, message_b:bitstring, cs1:cipherstate, cs2:cipherstate) = writeMessage_b(hsb, secmsg_b) in
+	event SendMsg(bob, alice, secmsg_b, true);
+	out(pub, message_b);
+	(* Not last recipient. *)
+	phase 2;
+	event LeakedStatic(bob, message_a);
+	out(pub, s).
+
+(* ---------------------------------------------------------------- *)
+(* TOP-LEVEL PROCESS                                                *)
+(* ---------------------------------------------------------------- *)
+
+process
+  phase 1;
+  !(proc_alice() | proc_bob())
+

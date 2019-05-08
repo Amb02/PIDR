@@ -1,0 +1,11 @@
+set attacker = passive.
+
+free c:channel.
+free d:bitstring [private].
+free e:bitstring [private].
+
+
+query mess(c,d).
+
+process 
+	in(c, x: bitstring) | out(c,d) 

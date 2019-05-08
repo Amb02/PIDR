@@ -1,0 +1,8 @@
+private free secret.
+free c.
+
+query attacker:secret.
+
+process new a;
+	out(a,secret) | (in(a,x); out(c,a))
+

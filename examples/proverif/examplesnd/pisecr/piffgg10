@@ -1,0 +1,43 @@
+(* 
+
+A -> B : A
+B -> A : B, N_1, N_2
+A -> B : A, { N_1, N_2, M }_pkB received as { N_1, X, Y }_pkB
+B -> A : N_1, X, { X, Y, N_1 }_pkB
+
+simplified into 
+
+B -> A : N_1, N_2
+A -> B : { N_1, N_2, M }_pkB received as { N_1, X, Y }_pkB
+B -> A : N_1, X, { X, Y, N_1 }_pkB
+
+version with 4 nonces.
+
+*)
+
+(* Public key cryptography *)
+
+fun pk/1.
+fun encrypt/2.
+reduc decrypt(encrypt(x,pk(y)),y) = x.
+
+free c.
+private free M.
+
+query attacker:M.
+
+let processA = 
+	in(c,(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10));
+	out(c, encrypt(( n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, M ), pkB)).
+
+let processB = 
+	new n1; new n2; new n3; new n4; new n5; new n6; new n7; new n8; new n9; new n10;
+	out(c, (n1, n2, n3, n4, n5, n6, n7, n8, n9, n10));
+	in(c, mes);
+	let (=n1, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10) = decrypt(mes, skB) in
+	out(c, (n1, x1, encrypt((x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, n1), pkB))).
+
+process 
+        new skB; let pkB = pk(skB) in
+        out(c, pkB);
+	((!processA) | (!processB))

@@ -1,0 +1,113 @@
+(* Options *)
+param traceDisplay = long.
+
+(* Public Free variables *)
+free cAB0, cDebug. 
+
+(* Constant parameters *)
+data ALG/0.
+data agreedkexalgorithms32/0.
+data agreedserverhostkeyalgorithms33/0.
+
+
+
+(* begin added *)
+data INT1/0.
+data INT2/0.
+data INT3/0.
+data INT4/0.
+(* end added *)
+
+(* Hash function *)
+fun H/2.
+
+(* Diffie-Hellman *)
+fun DHPUB/1.
+fun DHKEY/2.
+equation DHKEY( x,DHPUB(y) ) = DHKEY( y,DHPUB(x) ).
+
+(* Private Free variables *)
+private free ClientProtocolEnd.
+
+
+(* Query about desired properties*)
+query attacker:ClientProtocolEnd.
+
+(* Instances *)
+process
+
+(
+
+
+!
+(
+new cast6out1;
+new cast6in1;
+new cast6out2;
+new cast6in2;
+new cast6out3;
+new cast6in3;
+new cast6out4;
+new cast6in4;
+new cast6out5;
+new cast6in5;
+new cast6out6;
+new cast6in6;
+new cast6out7;
+new cast6in7;
+new cast6out8;
+new cast6in8;
+
+(
+(
+
+
+out(cast6out1,H((agreedkexalgorithms32,INT1),(ALG)));
+in(cast6in1,g41);
+out(cast6out2,H((agreedkexalgorithms32,INT2),(ALG)));
+in(cast6in2,p43);
+out(cast6out3,H((agreedkexalgorithms32,INT3),(ALG)));
+in(cast6in3,q45);
+out(cast6out4,H((agreedkexalgorithms32,INT4),(ALG)));
+in(cast6in4,DHHash47);
+out(cast6out5,H((agreedserverhostkeyalgorithms33,INT1),(ALG)));
+in(cast6in5,csSignHash49);
+out(cast6out6,H((agreedserverhostkeyalgorithms33,INT2),(ALG)));
+in(cast6in6,csSignKeyType51);
+out(cast6out7,H((agreedserverhostkeyalgorithms33,INT3),(ALG)));
+in(cast6in7,csSignMode53);
+out(cast6out8,H((agreedserverhostkeyalgorithms33,INT4),(ALG)));
+in(cast6in8,csSignPadding55);
+
+out(cDebug,ClientProtocolEnd);
+0
+)
+
+|
+(
+
+in(cast6out1, x1);
+out(cast6in1,x1);
+in(cast6out2, x2);
+out(cast6in2,x2);
+in(cast6out3, x3);
+out(cast6in3,x3);
+in(cast6out4, x4);
+out(cast6in4,x4);
+in(cast6out5, x5);
+out(cast6in5,x5);
+in(cast6out6, x6);
+out(cast6in6,x6);
+in(cast6out7, x7);
+out(cast6in7,x7);
+in(cast6out8, x8);
+out(cast6in8,x8);
+0
+)
+
+)
+
+)
+
+)
+

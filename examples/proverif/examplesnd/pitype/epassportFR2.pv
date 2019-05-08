@@ -1,0 +1,80 @@
+(* ePassport Protocol
+   Taken from Myrto Ryan, CSF'10 *)
+
+set verboseRules = false.
+set ignoreTypes = true.
+set movenew = true.
+
+fun aenc(bitstring, bitstring): bitstring.
+fun enc(bitstring, bitstring): bitstring.
+(*fun dec(bitstring, bitstring): bitstring.*)
+
+fun pk(bitstring): bitstring.
+fun mac(bitstring,bitstring): bitstring.
+
+(* asymetric decryption definition *)
+
+reduc forall x: bitstring, y: bitstring; adec(aenc(x,pk(y)),y) = x.
+
+(* If Then Else destructor *)
+
+reduc forall x:bitstring, y:bitstring, z:bitstring, t:bitstring; ifthenelse(x,y,z,t) = t if x <> y;
+forall x:bitstring, z:bitstring, t:bitstring; ifthenelse(x,x,z,t) = z.
+
+(* Symetric decryption *)
+(*
+equation forall x: bitstring, y:bitstring; dec(enc(x,y),y) = x.*)
+
+reduc forall x: bitstring, y:bitstring; dec(enc(x,y),y) = x.
+
+reduc forall x: bitstring, y:bitstring, m2:bitstring; letindec(enc(x,y),y,m2) = x;
+      forall x: bitstring, y:bitstring, m1:bitstring, m2:bitstring; letindec(x,y,m2) = m2
+          if forall z: bitstring; x <> enc(z,y).
+
+(* addition of one *)
+
+free c: channel.
+free d_k:channel [private].
+free get_challenge: bitstring.
+free error_6A80: bitstring.
+free error: bitstring [private].
+free error_6300: bitstring.
+
+let reader(c_k:channel) =
+	in(c_k, x_k:bitstring);
+	let (ke:bitstring,km:bitstring) = x_k in
+	out(c, get_challenge);
+	in(c,nt:bitstring);
+	new nr:bitstring; 
+	new kr:bitstring;
+	let m:bitstring = enc((nr,nt,kr),ke) in
+	out(c,(m,mac(m,km)));
+	in(c,y:bitstring).
+
+let mainFR(c_k:channel, ke:bitstring, km:bitstring) =
+	out(c_k,(ke,km));
+	in(c,x:bitstring);
+	if x = get_challenge
+	then
+	  new nt:bitstring;
+	  out(c,nt);
+	  in(c,y:bitstring);
+	  let (m_e:bitstring,m_m:bitstring) = y in
+	  
+	  
+	  let (nr:bitstring,nt':bitstring,kr:bitstring) = dec(m_e,ke) in
+	  
+	  new kt:bitstring;
+	  let m:bitstring = enc((nt,nr,kt),ke) in
+	  let msg_1 = ifthenelse(nt,nt',(m,mac(m,km)),error_6300) in
+	  let out_m = ifthenelse(m_m,mac(m_e,km),msg_1 ,error_6300) in
+	  out(c,out_m).
+
+process
+	new c_k:channel;
+	((!reader(c_k))
+	|
+	(
+	!(new ke1:bitstring; new km1:bitstring;
+	!(new ke2:bitstring; new km2:bitstring;
+	    mainFR(c_k,choice[ke1,ke2],choice[km1,km2])))))

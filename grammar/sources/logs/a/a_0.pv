@@ -1,0 +1,48 @@
+(* Handshake protocol.
+   From Delaune, Jacquemard, CSFW'04
+*)
+set ignoreTypes = false.
+
+set traceDisplay = long.
+
+free c: channel [private].
+
+free d:channel.
+
+free A:bitstring [private].
+
+free B:bitstring.
+
+fun h(channel,bitstring):channel.
+
+fun decr(channel):channel.
+
+reduc forall x:bitstring, y:channel; g(h(decr(y),x)) = y.
+
+fun pair(channel, bitstring): bitstring [data].
+
+free C:channel.
+
+table k(bitstring, bitstring).
+
+let processA = new s:bitstring; out (d, decr(c)).
+
+fun f(channel):channel.
+
+(* reduc forall y:channel; f(y) = y. *)
+
+(*  let processB = out(d, g(h(h(c)))); in (c, x:bitstring). *)
+
+ let processBB = out(d, c); out(f(f(c)),B); in (c, x:bitstring).
+
+ let processC = (in (c, x:channel); out(c, x); insert k(A,B); insert k(A, B)) | (!new A:bitstring).
+
+(* let processC = get k(=A, B) in out (c, A). *)
+
+process
+(*       out(c, A); in(c, x:bitstring) *)
+(*          processA *)
+(*	out(c, choice[c, d]) *)
+(* (processA | processC | processA | processA) *)
+(*!processBB | processB | !processC*)
+             event c

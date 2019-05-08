@@ -1,0 +1,10 @@
+type nonce.
+channel c.
+
+fun f(nonce, nonce): bitstring.
+
+query i1: sid, i2: sid; attacker(f(new A[!1 = i1], new B[!1 = i2])) ==> i1 = i2.
+
+process ! new A: nonce;
+	new B: nonce;
+	out(c, f(A, B))

@@ -1,0 +1,54 @@
+(* 
+
+? -> A : pkB
+A -> B : { N_A, pkA }_pkB
+B -> A : { N_A, N_B, pkB }_pkA
+A -> B : { N_B }_pkB
+B -> A : { S }_hNa,Nb
+
+This protocol takes into account Lowe's correction.
+The analyzer loops...
+It succeeds in proving the expected secrecy result when limiting the depth.
+
+*)
+
+param maxDepth = 8.
+
+(* Public key cryptography *)
+
+fun pk/1.
+fun encrypt/2.
+reduc decrypt(encrypt(x,pk(y)),y) = x.
+
+(* Hash function *)
+
+fun hash/2.
+
+(* Shared-key cryptography *)
+
+fun sencrypt/2.
+reduc sdecrypt(sencrypt(x,y),y) = x.
+
+query secret.
+
+let processA = in(c,pkX); new Na; 
+               (out(c, encrypt((Na, pkA), pkX)) |
+                in(c, m); let (Na2, NX2, pkX2) = decrypt(m, skA) in
+			  if Na2 = Na then
+                             if pkX2 = pkX then 
+                               out(c, encrypt(NX2, pkX))).
+
+let processB = in(c, m); let (NY, pkY) = decrypt(m, skB) in
+			 new Nb;
+			 (out(c, encrypt((NY, Nb, pkB), pkY)) |
+                          in(c,m); let Nb2 = decrypt(m, skB) in 
+                          if Nb2 = Nb then
+			    if pkY = pkA then
+                             out(c, sencrypt(secret, hash(NY, Nb)))).
+
+process new skA; let pkA = pk(skA) in
+        out(c, pkA);
+        new skB; let pkB = pk(skB) in
+        out(c, pkB);
+	new secret;
+	(!processA | !processB)

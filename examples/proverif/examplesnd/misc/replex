@@ -1,0 +1,8 @@
+(* No attack: a single value k can be sent on channel d, so the
+   test x = y always succeeds and out(c, choice[c1,c2]) is never executed. *)
+
+free c, c1, c2.
+
+process
+	new d; ((new k; !out(d, k)) | 
+                (in(d, x); in(d,y); if x = y then 0 else out(c, choice[c1,c2])))

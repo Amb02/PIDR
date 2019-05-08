@@ -1,0 +1,18 @@
+free c:channel.
+free s:bitstring [private].
+
+table tbl(bitstring).
+
+fun enc(bitstring,bitstring):bitstring.
+reduc forall x:bitstring,y:bitstring; dec(enc(x,y),y) = x.
+
+lemma x:bitstring, y:bitstring; table(tbl(choice[x,y])).
+
+process
+  new k1:bitstring;
+  new k2:bitstring;
+  insert tbl(k1);
+  insert tbl(k2);
+  get tbl(x:bitstring) [precise] in
+  out(c,x);
+  out(c,choice[enc(s,(k1,k2)),s])

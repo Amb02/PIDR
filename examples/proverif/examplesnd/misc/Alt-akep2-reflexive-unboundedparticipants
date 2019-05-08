@@ -1,0 +1,86 @@
+(* Variantes de AKEP2 : 
+Bellare Rogaway 1993 : Entity Authentication and Key Distribution
+Attaque reflexive quand on enleve l'identité dans le deuxieme echange *)
+
+
+param attacker = active.
+param simplifyDerivation = true.
+
+(**** Header ****)
+free c.
+private free honestParticipants.
+
+(* fonctions *)
+fun encrypt/2.
+reduc decrypt(encrypt(x,y),y) = x.
+
+fun host/1.
+fun K/2.
+
+equation K(host(s1),s2) = K(host(s2),s1).
+
+(* Tricky encoding:
+   - each host name is a function of a secret s. The host name
+   is public, the secret s remains secret for honest participants,
+   while it is public for the dishonest participants.
+   - the key K shared between two hosts A = host(sA) and B = host(sB)
+   is written K(host(sA),sB). The equation K(host(s1),s2) = K(host(s2),s1)
+   makes sure that the key between A and B is the same when A is the 
+   initiator or when A is the responder. Furthermore, when A or B is
+   dishonest, the key K can be computed by the adversary, because
+   he has one of the two secrets sA or sB and the other host name.
+
+   You can note the similarity between the equation
+    K(host(s1),s2) = K(host(s2),s1)
+   and the one used for encoding Diffie-Hellman.
+*)
+
+
+(* Queries *)
+
+query evinj: InitAEnd(xA,xB,z,t) ==> evinj:RespABegin(xB).
+query evinj: InitAEnd(xA,xB,z,t) ==> evinj:RespASession(xB,xA,z,t).
+
+query ev:InitAEnd(xA,hostX,xra,xrb).
+query ev:RespAEnd(hostY,xA,xra,xrb).
+
+
+(* Processus *)
+let processInitA = 
+    new ra;
+    let m1 = (ra,A) in
+    out(c,m1);
+    in(c,(hostX,m2)); 
+    let Kax = K(hostX, sA) in
+    (*if hostX=A then 0
+    else*) 
+    let (=ra,=hostX,rb) = decrypt(m2,Kax) in
+    let m3 = encrypt((rb,A),Kax)  in
+    in(honestParticipants, =hostX);
+    event InitAEnd(A,hostX,ra,rb);
+    out(c,m3).
+
+let processRespA = 
+    in(c,m1);
+    let (ra,hostY) = m1 in
+    in(honestParticipants, =hostY);
+    let Kay = K(hostY, sA) in
+    event RespABegin(A);
+    new rb;
+    event RespASession(A,hostY,ra,rb);
+    let m2 = encrypt((ra,A,rb),Kay) in
+    out(c, (A,m2));
+    in(c,m3);
+    let (=rb,=hostY)=decrypt(m3,Kay) in
+    event RespAEnd(A,hostY,ra,rb).
+
+process 
+(!
+     new sA; let A = host(sA) in
+     (
+        out(c, A) |
+	(!out(honestParticipants, A)) |  
+        (!processInitA) | 
+        (!processRespA)
+     )
+)

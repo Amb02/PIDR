@@ -1,0 +1,84 @@
+(* DO NOT DISTRIBUTE *)
+
+(* param predicatesImplementable = nocheck.*) 
+data cons/2.
+data nil/0.
+data emptyTuple/0.
+reduc hd(cons(a,b))=a.
+reduc tl(cons(a,b))=b.
+data Element/3.
+reduc ElementAtt(Element(x,y,z))=y.
+reduc ElementBody(Element(x,y,z))=z.
+data Attribute/2.
+reduc AttributeParm(Attribute(x,y))=y.
+pred memberList/2 memberOptim.
+clauses 
+memberList:x,cons(x,l);
+memberList:x,l -> memberList:x,cons(y,l).
+data JunkTAG/0.
+ data SecurityTAG/0.
+ data EnvelopeTAG/0.
+ data HeaderTAG/0.
+ data UserTAG/0.
+ data PasswordTAG/0.
+ data UsernameTokenTAG/0.
+ data UsernameTAG/0.
+ data NonceTAG/0.
+ data CreatedTAG/0.
+ data rsasha1STRING/0.
+ data ReferenceTAG/0.
+ data DigestValueTAG/0.
+ data SignedInfoTAG/0.
+ data SignatureMethodTAG/0.
+ data AlgorithmTAG/0.
+ data SignatureTAG/0.
+ data SignatureValueTAG/0.
+ data BodyTAG/0.
+ data GetOrderTAG/0.
+ data orderIdTAG/0.
+ data hmacsha1STRING/0.
+ data concat/2.
+ data c14n/1.
+ data utf8/1.
+ data base64/1.
+ fun sha1/1.
+ fun psha1/2.
+ fun hmacsha1/2.
+ fun pk/1.
+ fun rsasha1/2.
+ fun principal/1.
+ pred hasSecurityHeader/2.
+ pred hasBody/2.
+ pred isUser/3.
+ pred isUserTokenKey/5.
+ pred isSigVal/4.
+ pred ref/2.
+ pred isSigInfo1/3.
+ pred isSignature1/4.
+ free httpChan.
+ free publishChan.
+ free initChan.
+ pred isGetOrder/2.
+ pred hasUserSignedBody/6.
+ reduc checkrsasha1(pk(k),x,rsasha1(k,x)) = pk(k).
+ clauses env = Element(EnvelopeTAG,nil,cons(Element(HeaderTAG,nil,headers),cons(dummyl47c42,nil))) & memberList:header,headers & header = Element(SecurityTAG,nil,toks) -> hasSecurityHeader:env,toks.
+ clauses env = Element(EnvelopeTAG,nil,cons(Element(HeaderTAG,nil,dummyl52c31),cons(b,nil))) & b = Element(BodyTAG,dummyl53c15,cons(dummyl53c18,nil)) -> hasBody:env,b.
+ clauses U = Element(UserTAG,nil,cons(Element(UsernameTAG,nil,cons(u,nil)),cons(Element(PasswordTAG,nil,cons(pwd,nil)),nil))) -> isUser:U,u,pwd.
+ clauses isUser:U,u,pwd & tok = Element(UsernameTokenTAG,nil,cons(Element(UsernameTAG,nil,cons(u,nil)),cons(Element(NonceTAG,nil,cons(base64(n),nil)),cons(Element(CreatedTAG,nil,cons(t,nil)),nil)))) & k = psha1(pwd,concat(n,utf8(t))) -> isUserTokenKey:tok,U,n,t,k.
+ clauses hmacsha1STRING = a & sv = hmacsha1(k,c14n(si)) -> isSigVal:sv,si,k,a; 
+  rsasha1STRING = a & p = checkrsasha1(p,c14n(si),sv) -> isSigVal:sv,si,p,a.
+ clauses r = Element(ReferenceTAG,nil,cons(dummyl143c19,cons(dummyl143c21,cons(Element(DigestValueTAG,nil,cons(base64(sha1(c14n(t))),nil)),nil)))) -> ref:t,r.
+ clauses si = Element(SignedInfoTAG,nil,cons(dummyl265c20,cons(Element(SignatureMethodTAG,cons(Attribute(AlgorithmTAG,a),nil),nil),cons(r1,nil)))) & ref:x1,r1 -> isSigInfo1:si,a,x1.
+ clauses sig = Element(SignatureTAG,nil,cons(si,cons(Element(SignatureValueTAG,nil,cons(base64(sv),nil)),cons(dummyl269c56,nil)))) & isSigInfo1:si,a,x & isSigVal:sv,si,k,a -> isSignature1:sig,a,k,x.
+ clauses b = Element(BodyTAG,dummyl18c16,cons(Element(GetOrderTAG,nil,cons(Element(orderIdTAG,nil,cons(orderid,nil)),nil)),nil)) -> isGetOrder:b,orderid.
+ clauses hasBody:e,b & hasSecurityHeader:e,toks & memberList:utok,toks & u = principal(pwd) & isUser:U,u,pwd & isUserTokenKey:utok,U,n,t,k & memberList:sig,toks & isSignature1:sig,hmacsha1STRING,k,b -> hasUserSignedBody:e,u,pwd,n,t,b.
+ 
+ query ev:endLog(a,b,c,d).
+ process new pwdu;let u = principal(pwdu) in 
+  (out (publishChan,(u));!(in (initChan,(orderid,n,t));event  beginLog(u,n,t,orderid); let k = psha1(pwdu,concat(n,utf8(t))) in 
+  (let b = Element(BodyTAG,nil,cons(Element(GetOrderTAG,nil,cons(Element(orderIdTAG,nil,cons(orderid,nil)),nil)),nil)) in 
+  (let junk = Element(JunkTAG,nil,nil) in 
+  (let siginfo = Element(SignedInfoTAG,nil,cons(junk,cons(Element(SignatureMethodTAG,cons(Attribute(AlgorithmTAG,hmacsha1STRING),nil),nil),cons(Element(ReferenceTAG,nil,cons(junk,cons(junk,cons(Element(DigestValueTAG,nil,cons(base64(sha1(c14n(b))),nil)),nil)))),nil)))) in 
+  (out (httpChan,(Element(EnvelopeTAG,nil,cons(Element(HeaderTAG,nil,cons(Element(SecurityTAG,nil,cons(Element(UsernameTokenTAG,nil,cons(Element(UsernameTAG,nil,cons(u,nil)),cons(Element(NonceTAG,nil,cons(base64(n),nil)),cons(Element(CreatedTAG,nil,cons(t,nil)),nil)))),cons(Element(SignatureTAG,nil,cons(siginfo,cons(Element(SignatureValueTAG,nil,cons(base64(hmacsha1(k,c14n(siginfo))),nil)),cons(junk,nil)))),nil))),nil)),cons(b,nil)))));0)))))|(!in (httpChan,(e));let b,v,n,t suchthat hasUserSignedBody:e,v,pwdu,n,t,b in 
+  (let orderid suchthat isGetOrder:b,orderid in 
+  (event endLog(v,n,t,orderid); event done(); 0))))

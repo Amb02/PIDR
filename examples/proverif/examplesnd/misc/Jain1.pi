@@ -1,0 +1,23 @@
+param reconstructTrace = true.
+param traceDisplay = long.
+param displayDerivation = true.
+param explainDerivation = true.
+param unifyDerivation = true.
+param selFun = NounifsetMaxsize.
+param attacker = active.   (**Change to passive and proverif is unable to
+find a trace.**)
+
+(* sym-key Crypto *)
+fun senc/3.
+reduc sdec(senc(x, y, z), y) = x.
+
+free net.
+private free s.
+
+query attacker: s.
+
+process
+    new key; new r;
+    out(net, key);
+    out(net, senc(s, key, r));
+    0

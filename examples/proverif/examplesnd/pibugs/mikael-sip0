@@ -1,0 +1,93 @@
+(* Simple SIP messaging. *)
+
+(*
+	I -> S1  :  
+	S1 -> S2 :
+	S2 -> R  :
+	R -> S2  :
+	S2 -> S1 :
+	S1 -> I  :
+
+ *)
+
+
+(* Asymmetric cryptography and hashfunction *)
+
+fun pk/1.
+fun encrypt/2.
+reduc decrypt(encrypt(M, pk(s)), s) = M.
+
+fun h/2.
+
+
+(* Messages *)
+data invite/3. (* from, n, to*)
+reduc invite1(invite(f, n, t)) = f.
+reduc invite2(invite(f, n, t)) = n.
+reduc invite3(invite(f, n, t)) = t.
+data ack/3. (* from, n, to *)
+reduc ack1(invite(f, n, t)) = f.
+reduc ack2(invite(f, n, t)) = n.
+reduc ack3(invite(f, n, t)) = t.
+
+
+(* Hostnames and servers *)
+
+free net, r, i, s1, s2.
+
+
+(* Secrecy tests *)
+
+query attacker:nr.
+
+query evinj:recievedinvite(f, n, t) ==> evinj:sendinvite(f, n, t).
+query evinj:recievedack(f, n, t)    ==> evinj:sendack(f, n, t).
+query evinj:sessioninitiated(f, t)  ==> evinj:initiatesession(f, t).
+
+(* process parts *)
+
+let I =
+	new nr;
+	event initiatesession(i, r);
+	event sendinvite(i, nr, r);
+	out(s1, invite(i, nr, r));
+	in(i, x);
+	let ack(axf, axnr, axi) = x in
+		event recievedack(axf, axnr, axi);
+		event sessioninitiated(axf, axi)
+	else 0.
+
+let R =
+	in(r, x);
+	let invite(xf, xn, xr) = x in
+		if xr = r then
+			event recievedinvite(xf, xn, xr);
+			event sendack(xf, xn, xr); 
+			out(s2, ack(xf, xn, r))
+		else 0
+	else 0.
+
+let S1 =
+	in(s1, x);
+	let invite(ixf, ixnr, ixr) = x in
+		out(s2, x)
+	else let ack(axf, axnr, axr) = x in
+		out(i, x)
+	else 0.
+
+let S2 =
+	in(s2, x);
+	let invite(ixf, ixnr, ixr) = x in
+		out(r, x)
+	else let ack(axf, axnr, axr) = x in
+		out(s1, x)
+	else 0.
+		
+
+(* The final process *)
+
+process
+	new ski; let pki = pk(ski) in
+	new skr; let pkr = pk(skr) in
+	out(net, pki); out(net, pkr);
+	(I | R | !S1 | !S2)

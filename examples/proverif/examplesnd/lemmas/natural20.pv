@@ -1,0 +1,26 @@
+free c:channel.
+
+event A.
+event B.
+
+free a:bitstring[private].
+free b:bitstring[private].
+
+
+fun test(nat):bitstring.
+
+fun proj(bitstring):nat
+reduc forall i:nat; proj(test(i)) = i.
+
+equation test(0) = test(1).
+
+axiom event(B) ==> event(A).
+
+process
+  in(c,(i:nat,x:bitstring));
+  in(c,(j:nat,y:bitstring));
+  if choice[is_nat(i),i<j] then
+  if is_nat(j) then
+  if (i - 5) > j
+  then out(c,choice[a,b])
+  else event B

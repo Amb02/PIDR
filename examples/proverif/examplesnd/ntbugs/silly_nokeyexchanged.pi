@@ -1,0 +1,40 @@
+(*
+This example loops, because processA is expanded inside processA
+itself. ProVerif should rather print an error message.
+This problem is fixed in the type front-end, but remains in the
+untyped front-end.
+*)
+free c.
+(* 
+My first silly cryptographic protocol
+
+Message 1: B -> A : {message}skK
+
+*)
+
+
+(* Shared-key cryptography *)
+
+fun sencrypt/2.
+reduc sdecrypt(sencrypt(x,y),y) = x.
+
+
+private free skK, message.
+query attacker:message.
+
+let processA =  
+	        
+        (* Message 1 : Receive a cipher text from the other process *)
+        event receiveMessage();
+        in(c, ms);
+	let (msg) = sdecrypt(ms, skK) in
+	event messageDeciphered(msg);
+	processA.
+
+let processB = 
+                 
+        (* Message 1 : Send a cipher message to the other process *)
+	out(c, sencrypt(message, skK)).
+
+process 
+	((!processA) | (!processB))

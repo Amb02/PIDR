@@ -1,0 +1,136 @@
+(* The type key was replaced by bitstring since types are ignored. *)
+
+free Internet:channel.
+free Init:bitstring.
+free Abort:bitstring.
+free Resolve_1:bitstring.
+free Resolve_2:bitstring.
+free Aborted:bitstring.
+free Resolved_2:bitstring.
+free Resolved_1:bitstring.
+
+fun Public_Key(bitstring):bitstring.
+fun Sign(bitstring,bitstring):bitstring.
+fun PCS(bitstring,bitstring,bitstring,bitstring):bitstring.
+
+reduc forall Secret_Key:bitstring,Message:bitstring; Check_Get_Message(Public_Key(Secret_Key),Sign(Secret_Key,Message)) = Message.
+
+fun OK():bitstring.
+
+reduc forall Contract:bitstring,Secret_Key_X:bitstring,Public_Key_Y:bitstring,Public_Key_Z:bitstring; Check_PCS(Contract,Public_Key(Secret_Key_X),Public_Key_Y,Public_Key_Z,PCS(Secret_Key_X,Public_Key_Y,Public_Key_Z,Contract)) = OK.
+
+reduc forall Secret_Key_X:bitstring,Public_Key_Y:bitstring,Secret_Key_Z:bitstring,Contract:bitstring; Convert_PCS(Secret_Key_Z,PCS(Secret_Key_X,Public_Key_Y,Public_Key(Secret_Key_Z),Contract)) = Sign(Secret_Key_X,Contract).
+
+fun Legit(bitstring,bitstring,bitstring,bitstring):bitstring [private].
+
+type stamp.
+
+free id:stamp [private].
+
+event Counter(channel,stamp,stamp,nat).
+event VCell_bitstring(channel,bitstring).
+event UAction_bitstring(stamp,bitstring).
+event UAction_key(stamp,bitstring).
+
+query Trusted_Party_Secret_Key:bitstring,Witnessing_Contract:bitstring,Secret_Key_1:bitstring,Secret_Key_2:bitstring,i:nat,i1:nat,x:bitstring,x1:bitstring,st:stamp,st1:stamp,st2:stamp,x2:bitstring,x3:bitstring,x4:bitstring,x5:bitstring,d:channel;
+  attacker((Legit(Trusted_Party_Secret_Key,Witnessing_Contract,Secret_Key_1,Secret_Key_2),Sign(Trusted_Party_Secret_Key,((Witnessing_Contract,(Public_Key(Secret_Key_1),Public_Key(Secret_Key_2))),Sign(Secret_Key_1,(Witnessing_Contract,(Public_Key(Secret_Key_1),Public_Key(Secret_Key_2)))))),Sign(Trusted_Party_Secret_Key,(Sign(Secret_Key_1,Witnessing_Contract),Sign(Secret_Key_2,Witnessing_Contract))))) ==>
+        event(UAction_key(st2,x1)) && event(UAction_key(st2,x)) && x1 <> x
+    ||  event(UAction_bitstring(st2,x5)) && event(UAction_bitstring(st2,x2)) && x5 <> x2
+    ||  event(VCell_bitstring(d,(i1,x5,x2))) && event(VCell_bitstring(d,(i,x3,x4))) && i1 = i && (i1,x5,x2) <> (i,x3,x4)
+    ||  event(Counter(d,st2,st,i1)) && event(Counter(d,st2,st,i)) && i1 <> i
+    ||  event(Counter(d,st2,st,i1)) && event(Counter(d,st2,st1,i1)) && st <> st1.
+
+process
+  !(
+  new Trusted_Party_Secret_Key:bitstring;
+  out(Internet,Public_Key(Trusted_Party_Secret_Key));
+  in(Internet,Contract:bitstring); (* Application of the process Trusted_Party *)
+  new st[]:stamp;
+  event UAction_bitstring(st,Contract);
+  in(Internet,Secret_Key_1:bitstring);
+  new st1[]:stamp;
+  event UAction_key(st1,Secret_Key_1);
+  in(Internet,Secret_Key_2:bitstring);
+  new st2[]:stamp;
+  event UAction_key(st2,Secret_Key_2);
+  new Trusted_Party_State:channel;
+  out(Trusted_Party_State,(0,Init,Init));
+  out(Internet,Legit(Trusted_Party_Secret_Key,Contract,Secret_Key_1,Secret_Key_2));
+  let Public_Key_1:bitstring = Public_Key(Secret_Key_1) in
+  let Public_Key_2:bitstring = Public_Key(Secret_Key_2) in
+  (
+    !(
+    in(Internet,(= Abort,(= Contract,= Public_Key_1,= Public_Key_2,Signature:bitstring))); (* Application of the process Abort_1_Process *)
+    new st3[]:stamp;
+    event UAction_bitstring(st3,(Abort,(Contract,Public_Key_1,Public_Key_2,Signature)));
+    let Parties:bitstring = (Public_Key_1,Public_Key_2) in
+    if Check_Get_Message(Public_Key_1,Signature) = (Contract,Parties) then
+    in(Trusted_Party_State,(i:nat,Current_State:bitstring,Current_Signatures:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+    event VCell_bitstring(Trusted_Party_State,(i,Current_State,Current_Signatures));
+    if 0 <= i then (* Added test due to sequential round of a cell. *)
+    if Current_State = Aborted
+    then
+      out(Trusted_Party_State,(i,Current_State,Current_Signatures));
+      out(Internet,Current_Signatures);
+      0
+    else
+      new st4[]:stamp;
+      event Counter(Trusted_Party_State,id,st4,i);
+      if Current_State = Init then
+      let TP_Signature:bitstring = Sign(Trusted_Party_Secret_Key,((Contract,Parties),Signature)) in
+      event VCell_bitstring(Trusted_Party_State,(i + 1,Aborted,TP_Signature));
+      out(Trusted_Party_State,(i + 1,Aborted,TP_Signature));
+      out(Internet,TP_Signature);
+      0
+    )  ) | (
+    !(
+    in(Internet,(= Resolve_2,(= Contract,= Public_Key_1,= Public_Key_2,PCS_1:bitstring,Signature_2:bitstring))); (* Application of the process Resolve_2_Process *)
+    new st3[]:stamp;
+    event UAction_bitstring(st3,(Resolve_2,(Contract,Public_Key_1,Public_Key_2,PCS_1,Signature_2)));
+    if Contract = Check_Get_Message(Public_Key_2,Signature_2) then
+    if Check_PCS(Contract,Public_Key_1,Public_Key_2,Public_Key(Trusted_Party_Secret_Key),PCS_1) = OK then
+    in(Trusted_Party_State,(i:nat,Current_Status:bitstring,Current_Signatures:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+    event VCell_bitstring(Trusted_Party_State,(i,Current_Status,Current_Signatures));
+    if 0 <= i then (* Added test due to sequential round of a cell. *)
+    if Current_Status = Resolved_2
+    then
+      out(Trusted_Party_State,(i,Current_Status,Current_Signatures));
+      out(Internet,Current_Signatures);
+      0
+    else
+      new st4[]:stamp;
+      event Counter(Trusted_Party_State,id,st4,i);
+      if Current_Status = Init then
+      let Signature_1:bitstring = Convert_PCS(Trusted_Party_Secret_Key,PCS_1) in
+      let TP_Signature:bitstring = Sign(Trusted_Party_Secret_Key,(Signature_1,Signature_2)) in
+      event VCell_bitstring(Trusted_Party_State,(i + 1,Resolved_2,TP_Signature));
+      out(Trusted_Party_State,(i + 1,Resolved_2,TP_Signature));
+      out(Internet,TP_Signature);
+      0
+    )  ) | (
+    !(
+    in(Internet,(= Resolve_1,(= Contract,= Public_Key_1,= Public_Key_2,Signature_1:bitstring,PCS_2:bitstring))); (* Application of the process Resolve_1_Process *)
+    new st3[]:stamp;
+    event UAction_bitstring(st3,(Resolve_1,(Contract,Public_Key_1,Public_Key_2,Signature_1,PCS_2)));
+    if Contract = Check_Get_Message(Public_Key_1,Signature_1) then
+    if Check_PCS(Contract,Public_Key_2,Public_Key_1,Public_Key(Trusted_Party_Secret_Key),PCS_2) = OK then
+    in(Trusted_Party_State,(i:nat,Current_Status:bitstring,Current_Signatures:bitstring)); (* The first nat variable has been added due to the cell parameter *)
+    event VCell_bitstring(Trusted_Party_State,(i,Current_Status,Current_Signatures));
+    if 0 <= i then (* Added test due to sequential round of a cell. *)
+    if Current_Status = Resolved_1
+    then
+      out(Trusted_Party_State,(i,Current_Status,Current_Signatures));
+      out(Internet,Current_Signatures);
+      0
+    else
+      new st4[]:stamp;
+      event Counter(Trusted_Party_State,id,st4,i);
+      if Current_Status = Init then
+      let Signature_2:bitstring = Convert_PCS(Trusted_Party_Secret_Key,PCS_2) in
+      let TP_Signature:bitstring = Sign(Trusted_Party_Secret_Key,(Signature_1,Signature_2)) in
+      event VCell_bitstring(Trusted_Party_State,(i + 1,Resolved_1,TP_Signature));
+      out(Trusted_Party_State,(i + 1,Resolved_1,TP_Signature));
+      out(Internet,TP_Signature);
+      0
+    )  )
+  )

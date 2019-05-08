@@ -1,0 +1,129 @@
+(* Some comments
+
+- The output produces by GSVerif is wrong. Some parentheses have to be added regarding the queries.
+*)
+
+(* public communiscation channel *)
+free c : channel.
+free ct : channel.
+free cr : channel.
+
+(* constant values *)
+const g : bitstring.
+
+free ok:bitstring.
+free tokenR: bitstring.
+free tokenP:bitstring.
+fun exp (bitstring, bitstring) : bitstring.
+
+equation forall x : bitstring, y : bitstring; exp(exp(g,x),y) = exp(exp(g,y),x).
+
+fun enc (bitstring, bitstring) : bitstring.
+fun dec (bitstring, bitstring) : bitstring.
+equation forall x : bitstring, y : bitstring; dec(enc(x,y),y) = x.
+
+fun mac(bitstring, bitstring) : bitstring.
+
+fun kdf(bitstring,bitstring) : bitstring.
+
+
+nounif i:nat; mess(new dP,i).
+(*************)
+(*  *)
+
+
+(* == DECLARATIONS OF EVENTS == *)
+event Rin_1(nat,bitstring,bitstring,bitstring).
+event Rout_1(nat,bitstring,bitstring,bitstring,bitstring).
+event Rin_2(nat,bitstring,bitstring,bitstring,bitstring,bitstring).
+event Rout_2(nat,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+event Rin_3(nat,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+event Rtest_1(nat,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+event Rout_3(nat,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+
+event Iout_1(nat,bitstring,bitstring,bitstring).
+event Iin_1(nat,bitstring,bitstring,bitstring,bitstring).
+event Iout_2(nat,bitstring,bitstring,bitstring,bitstring,bitstring).
+event Iin_2(nat,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+event Itest_1(nat,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+event Iout_3(nat,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+event Iin_3(nat,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring,bitstring).
+
+
+(* == DECLARATIONS OF QUERIES == *)
+ query i1:nat,i2:nat,i3:nat,i4:nat,i5:nat,i6:nat,i7:nat,i8:nat,i9:nat,i10:nat,i11:nat,k:bitstring, n1:bitstring, n2:bitstring,
+      m1:bitstring, m2:bitstring, m3:bitstring, m4:bitstring, m5:bitstring;
+   (event(Rtest_1(i1,k,n2,m1,m2,m3,m4,m5))  ==>
+   (event(Rin_3(i2,k,n2,m1,m2,m3,m4,m5))  ==>
+   (event(Iout_3(i3,k,n1,m1,m2,m3,m4,m5))  ==>
+   (event(Iin_2(i4,k,n1,m1,m2,m3,m4))  ==>
+   (event(Rout_2(i5,k,n2,m1,m2,m3,m4))  ==>
+   (event(Rin_2(i6,k,n2,m1,m2,m3))  ==>
+   (event(Iout_2(i7,k,n1,m1,m2,m3))  ==>
+   (event(Iin_1(i8,k,n1,m1,m2)) ==>
+   (event(Rout_1(i9,k,n2,m1,m2)) ==>
+   (event(Rin_1(i10,k,n2,m1)) ==>
+   (event(Iout_1(i11,k,n1,m1))))))))))))).
+
+set preciseActions = true.
+
+event Test(nat,bitstring).
+
+axiom i:nat, i':nat, st:bitstring,st':bitstring;
+  event(Test(i,st)) && event(Test(i,st')) ==> st = st';
+  event(Test(i,st)) && event(Test(i',st)) ==> i = i'.
+
+(* == PROTOCOL WITH EVENTS == *)
+let SYSTEM =
+( !
+  new k : bitstring;
+     new dP: channel;
+     new dR: channel;
+     (out(dP,tokenP)  | out(dR,tokenP) |
+   !  new st:bitstring; ((
+
+        in(dP,i:nat);
+        event Test(i,st);
+        new sess_I: bitstring;
+        new s: bitstring;
+        event Iout_1(i,k,sess_I,enc(s,k));
+        out(ct, enc(s,k));
+        in(ct, x1: bitstring);
+        event Iin_1(i,k,sess_I,enc(s,k),x1);
+        new nI: bitstring;
+        event Iout_2(i,k,sess_I,enc(s,k),x1,exp(g,nI));
+        out(ct, exp(g,nI));
+        in(ct, x2: bitstring);
+        event Iin_2(i,k,sess_I,enc(s,k),x1,exp(g,nI),x2);
+        let (xk: bitstring) = kdf(s,exp(x1,nI)) in
+        if mac(exp(g,nI),xk) = x2 then
+        event Itest_1(i,k,sess_I,enc(s,k),x1,exp(g,nI),x2);
+        event Iout_3(i,k,sess_I,enc(s,k),x1,exp(g,nI),x2,mac(x1,xk));
+        out(ct, mac(x1,xk));
+        out(dP,i+1)
+      )|(
+        in(dR,i:nat);
+        event Test(i,st);
+        in(cr, y1: bitstring);
+        new sess_R: bitstring;
+        event Rin_1(i,k,sess_R,y1);
+        new nR: bitstring;
+        event Rout_1(i,k,sess_R,y1,exp(g,nR));
+        out(cr, exp(g,nR));
+        in(cr, y2: bitstring);
+        event Rin_2(i,k,sess_R,y1,exp(g,nR),y2);
+        let (yk: bitstring) = kdf(dec(y1,k), exp(y2,nR)) in
+        if (y2 <> exp(g,nR))  then
+        event Rout_2(i,k,sess_R,y1,exp(g,nR),y2,mac(y2,yk));
+        out(cr, mac(y2,yk));
+        in(cr, y3: bitstring);
+        event Rin_3(i,k,sess_R,y1,exp(g,nR),y2,mac(y2,yk),y3);
+        if (mac(exp(g,nR),yk) = y3) then
+        event Rtest_1(i,k,sess_R,y1,exp(g,nR),y2,mac(y2,yk),y3);
+        event Rout_3(i,k,sess_R,y1,exp(g,nR),y2,mac(y2,yk),y3,ok);
+        out(cr, ok);
+        out(dR,i+1)
+      ))
+))
+.
+process SYSTEM

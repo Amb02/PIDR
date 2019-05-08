@@ -1,0 +1,36 @@
+(*public channel*)
+free c.
+(*private secure channels*)
+private free s1.
+private free s2.
+
+data ACK/0.
+
+fun host/1.
+private reduc getkey(host(x)) = x.
+
+not ka.
+
+query ev:end(x) ==> ev:begin(x).
+
+let pA =
+    event begin(A);
+    out(c, A).
+
+let pB =
+    !
+    in(c, hostX);
+    out(s1, hostX);
+    in(s2, =ACK);
+    event end(hostX).
+
+let pS =
+    !
+    in(s1,  hostY);
+    if getkey(hostY) = ka then
+        out(s2, ACK).
+
+process
+    new ka;
+    let A = host(ka) in
+    (pA | pB | pS)

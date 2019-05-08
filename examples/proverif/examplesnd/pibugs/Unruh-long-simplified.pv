@@ -1,0 +1,29 @@
+(* This file was automatically generated from daa-verify-tpmcontrolled-rogue3.pvz. *)
+(*** META: expect: ^RESULT ev:DAAVERIFIEDP.* ==> ev:DAASIGNEDP.* is true\.$ ***)
+(*** META: expect: ^RESULT ev:DAAVERIFIEDA.* ==> \(?ev:DAASIGNEDA.* is true\.$ ***)
+
+fun roguetest/5.
+fun exp/2.
+free rogue1.
+free rogue2.
+free rogue3.
+free c1.
+fun true/0.
+
+private free d.
+
+query ev:VERIF(x,y).
+
+reduc equals(x,x)=x.
+equation roguetest(zeta,exp(zeta,x),x,y,z) = true.
+equation roguetest(zeta,exp(zeta,y),x,y,z) = true.
+equation roguetest(zeta,exp(zeta,z),x,y,z) = true.
+
+process
+        out(d, (c1, exp(c1, rogue1))) | 
+	(in(d, (a,b)); 
+	let xif = equals(roguetest(a,b,rogue1,rogue2,rogue3), true) in 
+	  event ROGUE(a,b)
+	else 
+	  event VERIF(a,b))
+

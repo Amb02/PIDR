@@ -1,0 +1,66 @@
+free c:channel.
+
+fun HasVoted(channel,bitstring,bitstring):bitstring [private].
+
+table VoterTbl(bitstring,bitstring,bitstring).
+
+set ignoreTypes = false.
+
+type stamp.
+
+free id:stamp [private].
+
+event Counter(channel,stamp,stamp,nat).
+event Not_in_VoterTbl(nat,bitstring,bitstring).
+event In_VoterTbl(nat,bitstring).
+event VCell_bitstring(channel,bitstring).
+event UAction_bitstring(stamp,bitstring).
+
+query a:bitstring,v1:bitstring,v2:bitstring,d:channel,i:nat,i1:nat,st:stamp,st1:stamp,st2:stamp,x:bitstring,x1:bitstring,x2:bitstring,x3:bitstring,d1:channel;
+  attacker((HasVoted(d,a,v1),HasVoted(d,a,v2))) ==>
+        v1 = v2
+    ||  event(UAction_bitstring(st2,x3)) && event(UAction_bitstring(st2,x)) && x3 <> x
+    ||  event(VCell_bitstring(d1,(i1,x3))) && event(VCell_bitstring(d1,(i,x))) && i1 = i && (i1,x3) <> (i,x)
+    ||  event(In_VoterTbl(i,x2)) && event(Not_in_VoterTbl(i1,x3,x)) && x2 = (x3,x,x1) && i <= i1
+    ||  event(Counter(d1,st2,st,i1)) && event(Counter(d1,st2,st,i)) && i1 <> i
+    ||  event(Counter(d1,st2,st,i1)) && event(Counter(d1,st2,st1,i1)) && st <> st1.
+
+process
+  !( 
+  new d:channel;
+  new id1:bitstring;
+  (
+    !( 
+    in(c,(x_a:bitstring,x_v:bitstring)); (* Application of the process S *)
+    new st[]:stamp;
+    event UAction_bitstring(st,(x_a,x_v));
+    in(d,(i:nat,x:bitstring));
+    event VCell_bitstring(d,(i,x));
+    get VoterTbl(= id1,= x_a,x_v':bitstring) in
+      new st1[]:stamp;
+      event UAction_bitstring(st1,(id1,x_a,x_v'));
+      event In_VoterTbl(i,(id1,x_a,x_v'));
+      out(d,(i,x)); (* 1 variables have been added in the term for precise tables. *)
+      0
+    else
+      event Not_in_VoterTbl(i,id1,x_a);
+      new st1[]:stamp;
+      event Counter(d,id,st1,i);
+      event VCell_bitstring(d,(i + 1,x));
+      event In_VoterTbl(i + 1,(id1,x_a,x_v));
+      insert VoterTbl(id1,x_a,x_v);
+      out(c,HasVoted(d,x_a,x_v));
+      out(d,(i + 1,x)); (* 1 variables have been added in the term for precise tables. *)
+      0
+    )  ) | (
+    new a:bitstring;
+    out(d,(0,a)); (* 1 variables have been added in the term for precise tables. *)
+    0
+  ) | (
+    !( 
+    in(d,(i:nat,x:bitstring));
+    event VCell_bitstring(d,(i,x));
+    out(d,(i,x)); (* 1 variables have been added in the term for precise tables. *)
+    0
+    )  )
+  )
